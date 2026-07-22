@@ -59,11 +59,61 @@
     .btn:hover {
       background-color: #0077ed;
     }
-    /* Печатная форма акта */
+
+    /* === СТИЛИ ДЛЯ ПЕЧАТИ (ФИТИНГ НА 1 ЛИСТ A4) === */
     @media print {
-      body * { visibility: hidden; }
-      #act-print-area, #act-print-area * { visibility: visible; }
-      #act-print-area { position: absolute; left: 0; top: 0; width: 100%; }
+      @page {
+        size: A4 portrait;
+        margin: 8mm 10mm;
+      }
+      body {
+        background: #fff;
+        margin: 0;
+        padding: 0;
+        font-size: 10pt;
+      }
+      .container {
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+        max-width: 100%;
+      }
+      /* Скрываем элементы управления при печати */
+      #reader, .form-group, .btn, h2 {
+        display: none !important;
+      }
+      /* Делаем печатный блок видимым и компактным */
+      #act-print-area {
+        display: block !important;
+        width: 100%;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 8px;
+        margin-bottom: 8px;
+        page-break-inside: avoid;
+      }
+      th, td {
+        padding: 4px 6px;
+        font-size: 9.5pt;
+        line-height: 1.15;
+      }
+      .rules-box {
+        font-size: 8.5pt;
+        line-height: 1.2;
+        margin-top: 8px;
+        padding: 6px;
+        border: 1px solid #ddd;
+        page-break-inside: avoid;
+      }
+      .signatures-table td {
+        padding-top: 12px;
+        padding-bottom: 4px;
+        font-size: 9pt;
+      }
     }
   </style>
 </head>
