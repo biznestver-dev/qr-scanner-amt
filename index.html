@@ -3,279 +3,168 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Учет Оборудования AMT & Акт приема-передачи</title>
+  <title>Учет оборудования (МТБ) — АртМастерс 2026</title>
+  <!-- Подключение сканера QR-кодов html5-qrcode -->
   <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
-    :root { --primary: #007aff; --bg: #f2f2f7; --card: #ffffff; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); margin: 0; padding: 15px; }
-    .card { background: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    h2 { margin-top: 0; font-size: 20px; text-align: center; color: #1c1c1e; }
-    label { display: block; font-size: 13px; color: #8e8e93; margin: 10px 0 4px; font-weight: 600; }
-    input, select { width: 100%; padding: 10px; border: 1px solid #c7c7cc; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
-    .radio-group { display: flex; gap: 10px; margin-top: 5px; }
-    .radio-btn { flex: 1; text-align: center; padding: 10px; border: 1px solid #c7c7cc; border-radius: 8px; background: #fff; cursor: pointer; font-weight: 600; }
-    .radio-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-    
-    .btn-submit { width: 100%; background: var(--primary); color: #fff; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: 600; margin-top: 10px; cursor: pointer; }
-    .btn-act { width: 100%; background: #34c759; color: #fff; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: 600; margin-top: 10px; cursor: pointer; }
-    .btn-submit:active, .btn-act:active { opacity: 0.8; }
-    
-    #reader { width: 100%; border-radius: 8px; overflow: hidden; margin-top: 10px; }
-    #status { margin-top: 12px; text-align: center; font-weight: bold; font-size: 14px; min-height: 20px; }
-    .divider { border-top: 1px solid #e5e5ea; margin: 15px 0; text-align: center; line-height: 0.1em; }
-    .divider span { background: #fff; padding: 0 10px; color: #8e8e93; font-size: 12px; }
-    .success { color: #34c759; }
-    .error { color: #ff3b30; }
-
-    /* СТИЛИ ДЛЯ ПЕЧАТИ АКТА */
-    #act-template { display: none; background: #fff; padding: 20px; font-family: Arial, sans-serif; color: #000; }
-    .act-header { text-align: center; font-weight: bold; font-size: 16px; margin-bottom: 15px; white-space: pre-line; }
-    .act-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 11px; }
-    .act-table th, .act-table td { border: 1px solid #000; padding: 5px; text-align: center; vertical-align: middle; }
-    .act-table th { background: #f0f0f0; }
-    .act-notes { font-size: 11px; line-height: 1.4; margin-bottom: 25px; white-space: pre-line; }
-    .act-signatures { font-size: 11px; line-height: 2; margin-top: 20px; }
-    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 20px;
+      background-color: #f5f5f7;
+      color: #1d1d1f;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    h2 {
+      margin-top: 0;
+      color: #111;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    input[type="text"], select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 15px;
+    }
+    #reader {
+      width: 100%;
+      max-width: 400px;
+      margin: 10px auto;
+    }
+    .btn {
+      background-color: #0071e3;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .btn:hover {
+      background-color: #0077ed;
+    }
+    /* Печатная форма акта */
     @media print {
       body * { visibility: hidden; }
-      #act-template, #act-template * { visibility: visible; }
-      #act-template { display: block !important; position: absolute; left: 0; top: 0; width: 100%; }
+      #act-print-area, #act-print-area * { visibility: visible; }
+      #act-print-area { position: absolute; left: 0; top: 0; width: 100%; }
     }
   </style>
 </head>
 <body>
 
-  <div class="card" id="main-form">
-    <h2>Учет Оборудования AMT</h2>
-    
-    <label>Проект / Мероприятие:</label>
-    <input type="text" id="project" value="Основной чемпионат Артмастерс 2026">
+  <div class="container">
+    <h2>Учет оборудования (МТБ)</h2>
 
-    <label>Режиссер / Руководитель:</label>
-    <input type="text" id="director" value="Швецова Яна">
-
-    <label>Действие:</label>
-    <div class="radio-group">
-      <div class="radio-btn active" id="btn-checkout" onclick="setAction('checkout')">Выдать на площадку</div>
-      <div class="radio-btn" id="btn-checkin" onclick="setAction('checkin')">Вернуть в офис</div>
-    </div>
-
-    <label for="location">Текущая площадка:</label>
-    <select id="location">
-      <option value="Офис">Офис</option>
-      <option value="Академия Крутого">Академия Крутого</option>
-      <option value="Bestmemories">Bestmemories</option>
-    </select>
-
-    <div style="display: flex; gap: 10px;">
-      <div style="flex: 1;">
-        <label for="issuedBy">Выдал (Тех. менеджер):</label>
-        <input type="text" id="issuedBy" value="Смутный Богдан Сергеевич">
-      </div>
-      <div style="flex: 1;">
-        <label for="receivedBy">Получил (Участник / ФИО):</label>
-        <input type="text" id="receivedBy" placeholder="Арсений Гдалин">
-      </div>
-    </div>
-
-    <label for="comment">Комментарий к комплектации:</label>
-    <input type="text" id="comment" value="Диск отдан в полной комплектации: Заводская коробка - 1 шт., Диск - 1 шт., Провод usb/type-c - 1 шт.">
-  </div>
-
-  <div class="card">
+    <!-- Область сканирования -->
     <div id="reader"></div>
-    
-    <div class="divider"><span>ИЛИ ВВЕДИТЕ ВРУЧНУЮ</span></div>
-    
-    <label for="manualQr">Инвентарный номер / QR:</label>
-    <input type="text" id="manualQr" placeholder="Например: AM-DS-0005">
-    
-    <button class="btn-submit" onclick="submitManual()">1. Отправить в Таблицу</button>
-    <button class="btn-act" onclick="generateAndPrintAct()">2. Сформировать и распечатать Акт</button>
 
-    <div id="status">Выберите параметры и сканируйте QR</div>
-  </div>
-
-  <!-- ШАБЛОН АКТА ДЛЯ ПЕЧАТИ -->
-  <div id="act-template">
-    <div class="act-header" id="act-title"></div>
-
-    <table class="act-table">
-      <thead>
-        <tr>
-          <th>№</th>
-          <th>Наименование</th>
-          <th>Инвентарный номер</th>
-          <th>Участник ФИО</th>
-          <th>Кол-во</th>
-          <th>Дата выдачи</th>
-          <th>Подпись</th>
-          <th>Дата возврата</th>
-          <th>Подпись</th>
-          <th>Комментарии</th>
-        </tr>
-      </thead>
-      <tbody id="act-table-body">
-        <!-- Сюда подставятся строки оборудования -->
-      </tbody>
-    </table>
-
-    <div class="act-notes" id="act-rules">
-<b>Просим обратить внимание:</b>
-На жёсткий диск и его упаковку (коробку) не допускается наклеивать какие‑либо стикеры, бирки, надписи или иные маркировочные материалы.
-В случае необходимости идентификации содержимого диска следует создать на нём отдельную папку и обозначить её фамилией ответственного сотрудника либо иным согласованным способом.
-Перед переносом информации диски должны быть отформатированы в exFAT.
-Диски сдаются с полностью отснятым материалом — ничего не удаляется.
-
-С правилами выдачи ознакомлен, участник: <span id="act-participant-name"></span>  __________________________
+    <div class="form-group">
+      <label for="inv-input">Инвентарный номер (QR / Штрихкод):</label>
+      <input type="text" id="inv-input" placeholder="Сканируйте или введите номер (напр. AM-SH-0001)..." oninput="onInventoryChange(this.value)">
     </div>
 
-    <div class="act-signatures">
-      <div style="display: flex; justify-content: space-between;">
-        <div>Выдал тех. менеджер: <span id="act-issued-name"></span>  ____________________</div>
-        <div>Принял тех. менеджер: <span id="act-issued-name2"></span>  ____________________</div>
-      </div>
-      <br>
-      <div style="display: flex; justify-content: space-between;">
-        <div>Получил (а) Режиссер: <span id="act-director-name"></span>  ____________________</div>
-        <div>Сдал (а) Режиссер: <span id="act-director-name2"></span>  ____________________</div>
-      </div>
+    <div class="form-group">
+      <label for="equipment-name">Наименование оборудования:</label>
+      <input type="text" id="equipment-name" placeholder="Автоматически подставится из базы...">
     </div>
+
+    <div class="form-group">
+      <label for="competence-select">Компетенция:</label>
+      <select id="competence-select">
+        <option value="моушн-дизайнер">моушн-дизайнер</option>
+        <option value="веб-дизайнер (UX/UI)">веб-дизайнер (UX/UI)</option>
+        <option value="оператор кино и ТВ">оператор кино и ТВ</option>
+        <option value="звукорежиссёр (FOH)">звукорежиссёр (FOH)</option>
+        <option value="креативный продюсер">креативный продюсер</option>
+        <option value="художник-аниматор">художник-аниматор</option>
+        <option value="композитор популярной музыки">композитор популярной музыки</option>
+        <option value="драматург театра и кино">драматург театра и кино</option>
+        <option value="фотограф">фотограф</option>
+        <option value="графический дизайнер">графический дизайнер</option>
+        <option value="стилист">стилист</option>
+        <option value="художник по свету">художник по свету</option>
+        <option value="медиакомпозитор">медиакомпозитор</option>
+        <option value="промпт-инженер">промпт-инженер</option>
+        <option value="геймдизайнер">геймдизайнер</option>
+        <option value="сценограф">сценограф</option>
+        <option value="оператор механики сцены">оператор механики сцены</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="status-select">Статус операции:</label>
+      <select id="status-select">
+        <option value="checkout">Выдача (Занят / На площадке)</option>
+        <option value="checkin">Возврат (Свободен / В офисе)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="manager-select">Технический менеджер:</label>
+      <select id="manager-select">
+        <option value="Зломанов Олег Викторович">Зломанов Олег Викторович</option>
+        <option value="Смутный Богдан Сергеевич">Смутный Богдан Сергеевич</option>
+        <option value="Белоусов Алексей Алексеевич">Белоусов Алексей Алексеевич</option>
+        <option value="Белоусова Анастасия Константиновна">Белоусова Анастасия Константиновна</option>
+        <option value="Сидоренко Артем Валерьевич">Сидоренко Артем Валерьевич</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="participant-name">Сотрудник / Участник ФИО:</label>
+      <input type="text" id="participant-name" placeholder="Введите ФИО...">
+    </div>
+
+    <button class="btn" onclick="generateAndPrintAct()">Сформировать и напечатать Акт</button>
   </div>
+
+  <!-- Подключение базы оборудования и основной логики -->
+  <script src="equipment.js"></script>
+  <script src="app.js"></script>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOK6oa_rIBmo-GJyay_k05XcGZUB70jhUHsQb3L8-Wa19Y2z6_BNYH3V-mX6gg431Wow/exec"; 
-
-    let currentAction = "checkout";
-    let scannedItemsList = []; // Храним отсканированные позиций для бланка
-
-    function setAction(action) {
-      currentAction = action;
-      document.getElementById('btn-checkout').classList.toggle('active', action === 'checkout');
-      document.getElementById('btn-checkin').classList.toggle('active', action === 'checkin');
-      
-      const locSelect = document.getElementById('location');
-      if (action === 'checkin') locSelect.value = "Офис";
-    }
-
-    function sendData(qrCode) {
-      const statusDiv = document.getElementById('status');
-      statusDiv.className = "";
-      statusDiv.innerText = "⏳ Запись данных в Google Таблицу...";
-      
-      if (html5QrcodeScanner) {
-        try { html5QrcodeScanner.pause(); } catch(e) {}
+    // Обработка ввода/сканирования инвентарного номера
+    function onInventoryChange(invVal) {
+      if (typeof findEquipment === 'function') {
+        const found = findEquipment(invVal);
+        const nameField = document.getElementById('equipment-name');
+        if (found) {
+          nameField.value = found.name;
+        }
       }
-
-      const payload = {
-        qrData: qrCode,
-        action: currentAction,
-        location: document.getElementById('location').value,
-        issuedBy: document.getElementById('issuedBy').value,
-        receivedBy: document.getElementById('receivedBy').value,
-        comment: document.getElementById('comment').value
-      };
-
-      // Добавляем в локальный список для формирования Акта
-      scannedItemsList.push({
-        qr: qrCode,
-        name: "Samsung T7 2Tb (Комплект)",
-        user: payload.receivedBy || "Участник",
-        comment: payload.comment
-      });
-
-      fetch(SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain" },
-        body: JSON.stringify(payload)
-      })
-      .then(() => {
-        statusDiv.className = "success";
-        statusDiv.innerText = `✅ Добавлено: ${qrCode}! Всего позиций в акте: ${scannedItemsList.length}`;
-        document.getElementById('manualQr').value = ""; 
-
-        setTimeout(() => {
-          statusDiv.className = "";
-          statusDiv.innerText = "Сканируйте следующий QR или нажмите 'Сформировать Акт'...";
-          if (html5QrcodeScanner) { try { html5QrcodeScanner.resume(); } catch(e) {} }
-        }, 1500);
-      })
-      .catch(err => {
-        statusDiv.className = "error";
-        statusDiv.innerText = "❌ Ошибка отправки";
-        console.error(err);
-      });
     }
 
-    function onScanSuccess(decodedText) { sendData(decodedText); }
-
-    function submitManual() {
-      const val = document.getElementById('manualQr').value.trim();
-      if (!val) { alert("Введите ID оборудования!"); return; }
-      sendData(val);
-    }
-
-    // ГЕНЕРАЦИЯ И ПЕЧАТЬ АКТА
-    function generateAndPrintAct() {
-      if (scannedItemsList.length === 0) {
-        // Если ничего не сканировали, возьмем то, что написано в поле вручную
-        const manualVal = document.getElementById('manualQr').value.trim() || "AM-DS-0001";
-        scannedItemsList.push({
-          qr: manualVal,
-          name: "Samsung T7 2Tb (Комплект)",
-          user: document.getElementById('receivedBy').value || "Арсений Гдалин",
-          comment: document.getElementById('comment').value
-        });
-      }
-
-      const project = document.getElementById('project').value;
-      const director = document.getElementById('director').value;
-      const issuedBy = document.getElementById('issuedBy').value;
-      const receivedBy = document.getElementById('receivedBy').value || "Арсений Гдалин";
-      
-      const today = new Date().toLocaleDateString('ru-RU');
-
-      // 1. Шапка
-      document.getElementById('act-title').innerText = `${project}\n\nРежиссер - ${director}`;
-      
-      // 2. Таблица
-      const tbody = document.getElementById('act-table-body');
-      tbody.innerHTML = "";
-      
-      scannedItemsList.forEach((item, index) => {
-        const row = `
-          <tr>
-            <td>${index + 1}</td>
-            <td style="text-align:left;">${item.name}</td>
-            <td><b>${item.qr}</b></td>
-            <td>${item.user}</td>
-            <td>1</td>
-            <td>${today}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td style="text-align:left; font-size:9px;">${item.comment}</td>
-          </tr>
-        `;
-        tbody.innerHTML += row;
-      });
-
-      // 3. Подписи
-      document.getElementById('act-participant-name').innerText = receivedBy;
-      document.getElementById('act-issued-name').innerText = issuedBy;
-      document.getElementById('act-issued-name2').innerText = issuedBy;
-      document.getElementById('act-director-name').innerText = director;
-      document.getElementById('act-director-name2').innerText = director;
-
-      // 4. Открываем окно печати
-      window.print();
+    // Инициализация камеры-сканера
+    function onScanSuccess(decodedText, decodedResult) {
+      document.getElementById('inv-input').value = decodedText;
+      onInventoryChange(decodedText);
     }
 
     const html5QrcodeScanner = new Html5QrcodeScanner(
       "reader", { fps: 10, qrbox: { width: 220, height: 220 } }
     );
     html5QrcodeScanner.render(onScanSuccess);
+
+    function generateAndPrintAct() {
+      window.print();
+    }
   </script>
 </body>
 </html>
