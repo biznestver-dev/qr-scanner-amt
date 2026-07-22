@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Учет оборудования (МТБ) — ArtMasters 2026</title>
-  <!-- Подключение сканера QR-кодов html5-qrcode -->
+  <!-- Сканер QR-кодов html5-qrcode -->
   <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
     body {
@@ -21,18 +21,9 @@
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
-    h2 {
-      margin-top: 0;
-      color: #111;
-    }
-    .form-group {
-      margin-bottom: 16px;
-    }
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
+    h2 { margin-top: 0; color: #111; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-weight: 600; margin-bottom: 6px; }
     input[type="text"], select, textarea {
       width: 100%;
       padding: 10px 12px;
@@ -41,11 +32,7 @@
       box-sizing: border-box;
       font-size: 15px;
     }
-    #reader {
-      width: 100%;
-      max-width: 400px;
-      margin: 10px auto;
-    }
+    #reader { width: 100%; max-width: 400px; margin: 10px auto; }
     .btn {
       background-color: #0071e3;
       color: white;
@@ -56,81 +43,107 @@
       font-size: 16px;
       font-weight: 500;
     }
-    .btn:hover {
-      background-color: #0077ed;
-    }
+    .btn:hover { background-color: #0077ed; }
 
-    /* === СТИЛИ ДЛЯ ПЕЧАТИ (СТРОГИЙ ФИТИНГ НА 1 ЛИСТ) === */
+    /* По умолчанию печатный акт скрыт на экране */
+    #act-print-area { display: none; }
+
+    /* === СТИЛИ ПЕЧАТИ (ОРИГИНАЛ АКТА АРТМАСТЕРС) === */
     @media print {
       @page {
         size: A4 landscape !important;
-        margin: 5mm 5mm !important;
+        margin: 5mm 6mm !important;
       }
       html, body {
-        width: 100%;
-        height: 100%;
+        width: 100% !important;
+        height: auto !important;
         margin: 0 !important;
         padding: 0 !important;
         background: #fff !important;
-        font-size: 8.5pt !important;
-        zoom: 90% !important; /* Авто-уменьшение для 1 листа */
+        font-family: Arial, sans-serif !important;
+        color: #000 !important;
+        zoom: 82% !important; /* Гарантия влезания с колонтитулами */
       }
-      .container {
-        box-shadow: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        max-width: 100% !important;
-        width: 100% !important;
-      }
-      /* Скрываем всё лишнее */
-      #reader, .form-group, .btn, h2 {
+      .container, #reader, .form-group, .btn, h2 {
         display: none !important;
       }
       #act-print-area {
         display: block !important;
         width: 100% !important;
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
+        box-sizing: border-box !important;
       }
-      table {
-        width: 100% !important;
-        border-collapse: collapse !important;
-        margin-top: 4px !important;
-        margin-bottom: 4px !important;
-        page-break-inside: avoid !important;
+      .act-header {
+        text-align: center;
+        font-weight: bold;
+        font-size: 12pt;
+        margin-bottom: 10px;
       }
-      th, td {
-        padding: 2px 4px !important;
-        font-size: 8pt !important;
-        line-height: 1.1 !important;
+      .act-header .subtitle {
+        font-size: 10.5pt;
+        margin-top: 3px;
       }
-      .rules-box {
-        font-size: 7pt !important;
-        line-height: 1.05 !important;
-        margin-top: 4px !important;
-        padding: 3px 5px !important;
-        border: 1px solid #ccc !important;
-        page-break-inside: avoid !important;
+      table.act-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 8px;
       }
-      .signatures-table td {
-        padding-top: 6px !important;
-        padding-bottom: 1px !important;
-        font-size: 7.5pt !important;
+      table.act-table th, table.act-table td {
+        border: 1px solid #000;
+        padding: 4px 6px;
+        font-size: 8.5pt;
+        text-align: center;
+        vertical-align: middle;
+      }
+      table.act-table th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+      }
+      .rules-block {
+        border: 1px solid #000;
+        padding: 6px 10px;
+        font-size: 7.5pt;
+        line-height: 1.25;
+        margin-bottom: 10px;
+      }
+      .rules-block ul {
+        margin: 3px 0 0 16px;
+        padding: 0;
+      }
+      .signature-line {
+        margin-top: 8px;
+        font-size: 8.5pt;
+        line-height: 1.6;
+      }
+      .signatures-grid {
+        width: 100%;
+        margin-top: 10px;
+        border-collapse: collapse;
+      }
+      .signatures-grid td {
+        width: 50%;
+        font-size: 8.5pt;
+        padding: 4px 0;
+        vertical-align: top;
+      }
+      .underline {
+        display: inline-block;
+        border-bottom: 1px solid #000;
+        min-width: 180px;
       }
     }
   </style>
 </head>
 <body>
 
+  <!-- ФОРМА ВВОДА (ДЛЯ ЭКРАНА) -->
   <div class="container">
     <h2>Учет оборудования (МТБ)</h2>
 
-    <!-- Область сканирования -->
     <div id="reader"></div>
 
     <div class="form-group">
       <label for="inv-input">Инвентарный номер (QR / Штрихкод):</label>
-      <input type="text" id="inv-input" placeholder="Сканируйте или введите номер (напр. AM-SH-0001)..." oninput="onInventoryChange(this.value)">
+      <input type="text" id="inv-input" placeholder="Сканируйте или введите номер..." oninput="onInventoryChange(this.value)">
     </div>
 
     <div class="form-group">
@@ -185,26 +198,93 @@
       <input type="text" id="participant-name" placeholder="Введите ФИО...">
     </div>
 
+    <div class="form-group">
+      <label for="comment-input">Комментарии:</label>
+      <textarea id="comment-input" rows="2" placeholder="Комплектация, состояние и т.д."></textarea>
+    </div>
+
     <button class="btn" onclick="generateAndPrintAct()">Сформировать и напечатать Акт</button>
   </div>
 
-  <!-- Подключение базы оборудования и основной логики -->
+  <!-- ШАБЛОН АКТА ДЛЯ ПЕЧАТИ (ИЗ ФАЙЛА «АКТ СДАЧИ И ПРИЕМКИ 2025.XLSX») -->
+  <div id="act-print-area">
+    <div class="act-header">
+      Основной чемпионат Артмастерс 2026
+      <div class="subtitle">Компетенция — <span id="print-competence">моушн-дизайнер</span></div>
+    </div>
+
+    <table class="act-table">
+      <thead>
+        <tr>
+          <th style="width: 4%;">№</th>
+          <th style="width: 32%;">Наименование</th>
+          <th style="width: 14%;">Инвентарный номер</th>
+          <th style="width: 16%;">Участник / Сотрудник ФИО</th>
+          <th style="width: 6%;">Кол-во</th>
+          <th style="width: 9%;">Дата выдачи</th>
+          <th style="width: 8%;">Подпись</th>
+          <th style="width: 9%;">Дата возврата</th>
+          <th style="width: 8%;">Подпись</th>
+          <th style="width: 18%;">Комментарии</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td id="print-name" style="text-align: left;">—</td>
+          <td id="print-inv">—</td>
+          <td id="print-participant">—</td>
+          <td>1</td>
+          <td id="print-date-out">—</td>
+          <td></td>
+          <td id="print-date-in">—</td>
+          <td></td>
+          <td id="print-comment" style="text-align: left;">—</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="rules-block">
+      <b>Просим обратить внимание:</b>
+      <ul>
+        <li>На технику, жёсткий диск и упаковку не допускается наклеивать какие‑либо стикеры, бирки, надписи или иные маркировочные материалы.</li>
+        <li>В случае необходимости идентификации содержимого диска/накопителя следует создать отдельную папку с фамилией ответственного сотрудника.</li>
+        <li>Перед переносом информации диски должны быть отформатированы в exFAT.</li>
+        <li>Оборудование и диски сдаются с полностью отснятым/рабочим материалом — ничего не удаляется.</li>
+      </ul>
+    </div>
+
+    <div class="signature-line">
+      С правилами выдачи ознакомлен, участник: <b><span id="print-participant-sig">__________________________</span></b> <span class="underline"></span>
+    </div>
+
+    <table class="signatures-grid">
+      <tr>
+        <td>Выдал технический менеджер: <b><span id="print-manager-out">Смутный Богдан Сергеевич</span></b> <span class="underline"></span></td>
+        <td>Принял технический менеджер: <b><span id="print-manager-in">Смутный Богдан Сергеевич</span></b> <span class="underline"></span></td>
+      </tr>
+      <tr>
+        <td>Получил (а) Менеджер компетенций: <b><span id="print-competence-mgr1">__________________________</span></b> <span class="underline"></span></td>
+        <td>Сдал (а) Менеджер компетенций: <b><span id="print-competence-mgr2">__________________________</span></b> <span class="underline"></span></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Скрипты базы данных и логики -->
   <script src="equipment.js"></script>
   <script src="app.js"></script>
 
   <script>
-    // Обработка ввода/сканирования инвентарного номера
+    // Обработка сканирования/ввода
     function onInventoryChange(invVal) {
       if (typeof findEquipment === 'function') {
         const found = findEquipment(invVal);
-        const nameField = document.getElementById('equipment-name');
         if (found) {
-          nameField.value = found.name;
+          document.getElementById('equipment-name').value = found.name;
         }
       }
     }
 
-    // Инициализация камеры-сканера
     function onScanSuccess(decodedText, decodedResult) {
       document.getElementById('inv-input').value = decodedText;
       onInventoryChange(decodedText);
@@ -215,7 +295,35 @@
     );
     html5QrcodeScanner.render(onScanSuccess);
 
+    // Подстановка данных формы перед печатью
     function generateAndPrintAct() {
+      const today = new Date().toLocaleDateString('ru-RU');
+      const status = document.getElementById('status-select').value;
+      const inv = document.getElementById('inv-input').value || '—';
+      const name = document.getElementById('equipment-name').value || '—';
+      const comp = document.getElementById('competence-select').value;
+      const manager = document.getElementById('manager-select').value;
+      const participant = document.getElementById('participant-name').value || '—';
+      const comment = document.getElementById('comment-input').value || '—';
+
+      document.getElementById('print-competence').innerText = comp;
+      document.getElementById('print-inv').innerText = inv;
+      document.getElementById('print-name').innerText = name;
+      document.getElementById('print-participant').innerText = participant;
+      document.getElementById('print-participant-sig').innerText = participant !== '—' ? participant : '__________________________';
+      document.getElementById('print-comment').innerText = comment;
+
+      document.getElementById('print-manager-out').innerText = manager;
+      document.getElementById('print-manager-in').innerText = manager;
+
+      if (status === 'checkout') {
+        document.getElementById('print-date-out').innerText = today;
+        document.getElementById('print-date-in').innerText = '—';
+      } else {
+        document.getElementById('print-date-out').innerText = '—';
+        document.getElementById('print-date-in').innerText = today;
+      }
+
       window.print();
     }
   </script>
