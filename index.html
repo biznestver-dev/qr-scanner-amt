@@ -6,7 +6,7 @@
   <title>Учет оборудования (МТБ) — ArtMasters 2026</title>
   <!-- Сканер QR-кодов html5-qrcode -->
   <script src="https://unpkg.com/html5-qrcode"></script>
-  <!-- Подключение красивого шрифта Inter -->
+  <!-- Шрифт Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -22,8 +22,6 @@
       --text-secondary: #9ca3af;
       --accent-brand: #7c3aed;
       --accent-brand-hover: #6d28d9;
-      --accent-success: #10b981;
-      --accent-success-hover: #059669;
     }
 
     * {
@@ -324,9 +322,49 @@
       background: var(--accent-brand-hover);
     }
 
+    /* Цветные бейджи статусов */
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge-status::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .badge-status.free {
+      background-color: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .badge-status.free::before {
+      background-color: #34d399;
+      box-shadow: 0 0 6px #34d399;
+    }
+
+    .badge-status.busy {
+      background-color: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .badge-status.busy::before {
+      background-color: #f87171;
+      box-shadow: 0 0 6px #f87171;
+    }
+
     #act-print-area { display: none; }
 
-    /* === СТИЛИ ПЕЧАТИ (ОСТАЮТСЯ БЕЛЫМИ ДЛЯ А4) === */
+    /* === СТИЛИ ПЕЧАТИ (БЕЛЫЙ A4 LANDSCAPE) === */
     @media print {
       @page { size: A4 landscape !important; margin: 5mm 6mm !important; }
       html, body {
@@ -573,16 +611,21 @@
       const filter = filterText.toLowerCase().trim();
 
       Object.values(window.EQUIPMENT_DB).forEach(item => {
-        const text = `${item.inv} ${item.category} ${item.name} ${item.sn} ${item.status}`.toLowerCase();
+        const rawStatus = item.status || 'Свободен';
+        const text = `${item.inv} ${item.category} ${item.name} ${item.sn} ${rawStatus}`.toLowerCase();
         
         if (!filter || text.includes(filter)) {
+          // Определяем, свободен или занят предмет
+          const isFree = rawStatus.toLowerCase().includes('свобод') || rawStatus.toLowerCase().includes('офис');
+          const badgeClass = isFree ? 'free' : 'busy';
+
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td><b>${item.inv}</b></td>
             <td>${item.category}</td>
             <td>${item.name}</td>
             <td>${item.sn || '—'}</td>
-            <td>${item.status || '—'}</td>
+            <td><span class="badge-status ${badgeClass}">${rawStatus}</span></td>
             <td><button class="select-btn" onclick="selectEquipment('${item.inv}')">Выбрать</button></td>
           `;
           tbody.appendChild(tr);
