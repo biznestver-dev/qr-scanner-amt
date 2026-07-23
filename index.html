@@ -6,122 +6,327 @@
   <title>Учет оборудования (МТБ) — ArtMasters 2026</title>
   <!-- Сканер QR-кодов html5-qrcode -->
   <script src="https://unpkg.com/html5-qrcode"></script>
+  <!-- Подключение красивого шрифта Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
   <style>
+    :root {
+      --bg-main: #121417;
+      --bg-card: #1c2026;
+      --bg-input: #262b33;
+      --border-color: #2e3540;
+      --border-focus: #7c3aed;
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --accent-brand: #7c3aed;
+      --accent-brand-hover: #6d28d9;
+      --accent-success: #10b981;
+      --accent-success-hover: #059669;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      margin: 20px;
-      background-color: #f5f5f7;
-      color: #1d1d1f;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 24px 16px;
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
     }
+
     .container {
-      max-width: 800px;
-      margin: 0 auto;
-      background: #ffffff;
-      padding: 24px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 860px;
+      background: var(--bg-card);
+      padding: 28px;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
     }
-    h2 { margin-top: 0; color: #111; }
-    .form-group { margin-bottom: 16px; }
-    label { display: block; font-weight: 600; margin-bottom: 6px; }
+
+    /* Шапка приложения */
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .app-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .app-logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #7c3aed, #a855f7);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+      color: #fff;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+
+    /* Контейнер QR сканера */
+    #reader {
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto 20px auto;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px dashed var(--border-color);
+      background: #0d0e11;
+    }
+
+    #reader video {
+      border-radius: 8px;
+    }
+
+    /* Сеточные поля формы */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
     input[type="text"], select, textarea {
       width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      box-sizing: border-box;
+      padding: 12px 14px;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
       font-size: 15px;
+      font-family: inherit;
+      transition: all 0.2s ease;
     }
-    #reader { width: 100%; max-width: 400px; margin: 10px auto; }
-    
+
+    input[type="text"]:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+    }
+
+    select option {
+      background-color: var(--bg-card);
+      color: var(--text-primary);
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    /* Кнопки */
     .btn-group {
       display: flex;
-      gap: 10px;
-      margin-top: 10px;
+      gap: 12px;
+      margin-top: 12px;
     }
+
+    @media (max-width: 500px) {
+      .btn-group {
+        flex-direction: column;
+      }
+    }
+
     .btn {
       flex: 1;
-      background-color: #0071e3;
+      background-color: var(--accent-brand);
       color: white;
-      padding: 12px 16px;
+      padding: 14px 20px;
       border: none;
-      border-radius: 6px;
+      border-radius: 10px;
       cursor: pointer;
       font-size: 15px;
-      font-weight: 500;
+      font-weight: 600;
       text-align: center;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
+
+    .btn:hover {
+      background-color: var(--accent-brand-hover);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
     .btn-secondary {
-      background-color: #34c759;
+      background-color: #2b313a;
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
     }
-    .btn:hover { opacity: 0.9; }
+
+    .btn-secondary:hover {
+      background-color: #353c47;
+    }
 
     /* === МОДАЛЬНОЕ ОКНО С БАЗОЙ ДАННЫХ === */
     .modal {
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
       z-index: 1000;
       justify-content: center;
       align-items: center;
+      padding: 16px;
     }
+
     .modal-content {
-      background: #fff;
-      width: 90%;
+      background: var(--bg-card);
+      width: 100%;
       max-width: 1000px;
       max-height: 85vh;
-      border-radius: 12px;
-      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      padding: 24px;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
     }
+
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
+
+    .modal-header h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
     .close-btn {
-      font-size: 24px;
+      font-size: 20px;
       cursor: pointer;
       border: none;
-      background: none;
-      font-weight: bold;
+      background: var(--bg-input);
+      color: var(--text-secondary);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
     }
+
+    .close-btn:hover {
+      color: var(--text-primary);
+      background: var(--border-color);
+    }
+
     .search-bar {
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
+
     .table-wrapper {
       overflow-y: auto;
       flex: 1;
-      border: 1px solid #ddd;
-      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
     }
+
     table.db-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 13px;
-    }
-    table.db-table th, table.db-table td {
-      padding: 8px 10px;
-      border-bottom: 1px solid #eee;
+      font-size: 14px;
       text-align: left;
     }
+
+    table.db-table th, table.db-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
     table.db-table th {
-      background: #f0f0f2;
+      background: var(--bg-input);
+      color: var(--text-secondary);
       position: sticky;
       top: 0;
       font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
+
     table.db-table tr:hover {
-      background: #f9f9fb;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .select-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      background: var(--accent-brand);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .select-btn:hover {
+      background: var(--accent-brand-hover);
     }
 
     #act-print-area { display: none; }
 
-    /* === СТИЛИ ПЕЧАТИ === */
+    /* === СТИЛИ ПЕЧАТИ (ОСТАЮТСЯ БЕЛЫМИ ДЛЯ А4) === */
     @media print {
       @page { size: A4 landscape !important; margin: 5mm 6mm !important; }
       html, body {
@@ -129,11 +334,12 @@
         margin: 0 !important;
         padding: 0 !important;
         background: #fff !important;
+        color: #000 !important;
         font-family: Arial, sans-serif !important;
         zoom: 82% !important;
       }
-      .container, .modal, #reader, .form-group, .btn-group, h2 { display: none !important; }
-      #act-print-area { display: block !important; width: 100% !important; }
+      .container, .modal, #reader, .form-group, .btn-group, .app-header { display: none !important; }
+      #act-print-area { display: block !important; width: 100% !important; color: #000 !important; }
       .act-header { text-align: center; font-weight: bold; font-size: 12pt; margin-bottom: 10px; }
       .act-header .subtitle { font-size: 10.5pt; margin-top: 3px; }
       table.act-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
@@ -152,74 +358,81 @@
 
   <!-- ФОРМА ВВОДА -->
   <div class="container">
-    <h2>Учет оборудования (МТБ)</h2>
+    <div class="app-header">
+      <div class="app-title">
+        <div class="app-logo">A</div>
+        <h2>Учет оборудования (МТБ) — ArtMasters 2026</h2>
+      </div>
+    </div>
 
     <div id="reader"></div>
 
-    <div class="form-group">
-      <label for="inv-input">Инвентарный номер (QR / Штрихкод):</label>
-      <input type="text" id="inv-input" placeholder="Сканируйте или введите номер..." oninput="onInventoryChange(this.value)">
-    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="inv-input">Инвентарный номер (QR / Штрихкод)</label>
+        <input type="text" id="inv-input" placeholder="Сканируйте или введите номер..." oninput="onInventoryChange(this.value)">
+      </div>
 
-    <div class="form-group">
-      <label for="equipment-name">Наименование оборудования:</label>
-      <input type="text" id="equipment-name" placeholder="Автоматически подставится из базы...">
-    </div>
+      <div class="form-group">
+        <label for="equipment-name">Наименование оборудования</label>
+        <input type="text" id="equipment-name" placeholder="Автоматически из базы...">
+      </div>
 
-    <div class="form-group">
-      <label for="competence-select">Компетенция:</label>
-      <select id="competence-select">
-        <option value="моушн-дизайнер">моушн-дизайнер</option>
-        <option value="веб-дизайнер (UX/UI)">веб-дизайнер (UX/UI)</option>
-        <option value="оператор кино и ТВ">оператор кино и ТВ</option>
-        <option value="звукорежиссёр (FOH)">звукорежиссёр (FOH)</option>
-        <option value="креативный продюсер">креативный продюсер</option>
-        <option value="художник-аниматор">художник-аниматор</option>
-        <option value="композитор популярной музыки">композитор популярной музыки</option>
-        <option value="драматург театра и кино">драматург театра и кино</option>
-        <option value="фотограф">фотограф</option>
-        <option value="графический дизайнер">графический дизайнер</option>
-        <option value="стилист">стилист</option>
-        <option value="художник по свету">художник по свету</option>
-        <option value="медиакомпозитор">медиакомпозитор</option>
-        <option value="промпт-инженер">промпт-инженер</option>
-        <option value="геймдизайнер">геймдизайнер</option>
-        <option value="сценограф">сценограф</option>
-        <option value="оператор механики сцены">оператор механики сцены</option>
-      </select>
-    </div>
+      <div class="form-group">
+        <label for="competence-select">Компетенция</label>
+        <select id="competence-select">
+          <option value="моушн-дизайнер">моушн-дизайнер</option>
+          <option value="веб-дизайнер (UX/UI)">веб-дизайнер (UX/UI)</option>
+          <option value="оператор кино и ТВ">оператор кино и ТВ</option>
+          <option value="звукорежиссёр (FOH)">звукорежиссёр (FOH)</option>
+          <option value="креативный продюсер">креативный продюсер</option>
+          <option value="художник-аниматор">художник-аниматор</option>
+          <option value="композитор популярной музыки">композитор популярной музыки</option>
+          <option value="драматург театра и кино">драматург театра и кино</option>
+          <option value="фотограф">фотограф</option>
+          <option value="графический дизайнер">графический дизайнер</option>
+          <option value="стилист">стилист</option>
+          <option value="художник по свету">художник по свету</option>
+          <option value="медиакомпозитор">медиакомпозитор</option>
+          <option value="промпт-инженер">промпт-инженер</option>
+          <option value="геймдизайнер">геймдизайнер</option>
+          <option value="сценограф">сценограф</option>
+          <option value="оператор механики сцены">оператор механики сцены</option>
+        </select>
+      </div>
 
-    <div class="form-group">
-      <label for="status-select">Статус операции:</label>
-      <select id="status-select">
-        <option value="checkout">Выдача (Занят / На площадке)</option>
-        <option value="checkin">Возврат (Свободен / В офисе)</option>
-      </select>
-    </div>
+      <div class="form-group">
+        <label for="status-select">Статус операции</label>
+        <select id="status-select">
+          <option value="checkout">Выдача (Занят / На площадке)</option>
+          <option value="checkin">Возврат (Свободен / В офисе)</option>
+        </select>
+      </div>
 
-    <div class="form-group">
-      <label for="manager-select">Технический менеджер:</label>
-      <select id="manager-select">
-        <option value="Зломанов Олег Викторович">Зломанов Олег Викторович</option>
-        <option value="Смутный Богдан Сергеевич">Смутный Богдан Сергеевич</option>
-        <option value="Белоусов Алексей Алексеевич">Белоусов Алексей Алексеевич</option>
-        <option value="Белоусова Анастасия Константиновна">Белоусова Анастасия Константиновна</option>
-        <option value="Сидоренко Артем Валерьевич">Сидоренко Артем Валерьевич</option>
-      </select>
-    </div>
+      <div class="form-group">
+        <label for="manager-select">Технический менеджер</label>
+        <select id="manager-select">
+          <option value="Зломанов Олег Викторович">Зломанов Олег Викторович</option>
+          <option value="Смутный Богдан Сергеевич">Смутный Богдан Сергеевич</option>
+          <option value="Белоусов Алексей Алексеевич">Белоусов Алексей Алексеевич</option>
+          <option value="Белоусова Анастасия Константиновна">Белоусова Анастасия Константиновна</option>
+          <option value="Сидоренко Артем Валерьевич">Сидоренко Артем Валерьевич</option>
+        </select>
+      </div>
 
-    <div class="form-group">
-      <label for="participant-name">Сотрудник / Участник ФИО:</label>
-      <input type="text" id="participant-name" placeholder="Введите ФИО...">
-    </div>
+      <div class="form-group">
+        <label for="participant-name">Сотрудник / Участник ФИО</label>
+        <input type="text" id="participant-name" placeholder="Введите ФИО...">
+      </div>
 
-    <div class="form-group">
-      <label for="comment-input">Комментарии:</label>
-      <textarea id="comment-input" rows="2" placeholder="Комплектация, состояние и т.д."></textarea>
+      <div class="form-group full-width">
+        <label for="comment-input">Комментарии</label>
+        <textarea id="comment-input" rows="2" placeholder="Комплектация, состояние и т.д."></textarea>
+      </div>
     </div>
 
     <div class="btn-group">
-      <button class="btn" onclick="generateAndPrintAct()">Напечатать Акт</button>
+      <button class="btn" onclick="generateAndPrintAct()">🖨️ Напечатать Акт</button>
       <button class="btn btn-secondary" onclick="openDbModal()">📋 Посмотреть базу МТБ</button>
     </div>
   </div>
@@ -370,7 +583,7 @@
             <td>${item.name}</td>
             <td>${item.sn || '—'}</td>
             <td>${item.status || '—'}</td>
-            <td><button style="padding:4px 8px; font-size:12px; cursor:pointer;" onclick="selectEquipment('${item.inv}')">Выбрать</button></td>
+            <td><button class="select-btn" onclick="selectEquipment('${item.inv}')">Выбрать</button></td>
           `;
           tbody.appendChild(tr);
         }
