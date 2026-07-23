@@ -87,49 +87,6 @@
       letter-spacing: -0.01em;
     }
 
-    /* ИНТЕРАКТИВНЫЙ ПЕРЕКЛЮЧАТЕЛЬ СТАТУСА ОПЕРАЦИИ */
-    .status-toggle-container {
-      margin-bottom: 24px;
-    }
-
-    .status-toggle-buttons {
-      display: flex;
-      background: var(--bg-input);
-      padding: 4px;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-      gap: 4px;
-    }
-
-    .status-toggle-btn {
-      flex: 1;
-      padding: 12px 16px;
-      border: none;
-      background: transparent;
-      color: var(--text-secondary);
-      font-size: 14px;
-      font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .status-toggle-btn.active-checkout {
-      background: var(--accent-brand);
-      color: #ffffff;
-      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.35);
-    }
-
-    .status-toggle-btn.active-checkin {
-      background: #10b981;
-      color: #ffffff;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
-    }
-
     /* Контейнер QR сканера */
     #reader {
       width: 100%;
@@ -201,6 +158,50 @@
 
     textarea {
       resize: vertical;
+    }
+
+    /* ИНТЕРАКТИВНЫЙ ПЕРЕКЛЮЧАТЕЛЬ СТАТУСА ОПЕРАЦИИ ВНИЗУ */
+    .status-toggle-container {
+      margin-top: 8px;
+      margin-bottom: 20px;
+    }
+
+    .status-toggle-buttons {
+      display: flex;
+      background: var(--bg-input);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      gap: 4px;
+    }
+
+    .status-toggle-btn {
+      flex: 1;
+      padding: 12px 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .status-toggle-btn.active-checkout {
+      background: var(--accent-brand);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.35);
+    }
+
+    .status-toggle-btn.active-checkin {
+      background: #10b981;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
     }
 
     /* Кнопки */
@@ -446,19 +447,6 @@
       </div>
     </div>
 
-    <!-- АКТИВНЫЙ ИНТЕРАКТИВНЫЙ ПЕРЕКЛЮЧАТЕЛЬ -->
-    <div class="status-toggle-container">
-      <label>Режим работы</label>
-      <div class="status-toggle-buttons">
-        <button type="button" id="btn-checkout" class="status-toggle-btn active-checkout" onclick="setOperationStatus('checkout')">
-          📤 Выдача техники
-        </button>
-        <button type="button" id="btn-checkin" class="status-toggle-btn" onclick="setOperationStatus('checkin')">
-          📥 Возврат техники
-        </button>
-      </div>
-    </div>
-
     <div id="reader"></div>
 
     <div class="form-grid">
@@ -495,7 +483,7 @@
         </select>
       </div>
 
-      <!-- СКРЫТЫЙ СЕЛЕКТОР (ДЛЯ СОХРАНЕНИЯ СОВМЕСТИМОСТИ) -->
+      <!-- СКРЫТЫЙ СЕЛЕКТОР (ДЛЯ СОХРАНЕНИЯ СОВМЕСТИМОСТИ C JS) -->
       <div class="form-group" style="display: none;">
         <label for="status-select">Статус операции</label>
         <select id="status-select">
@@ -523,6 +511,19 @@
       <div class="form-group full-width">
         <label for="comment-input">Комментарии</label>
         <textarea id="comment-input" rows="2" placeholder="Комплектация, состояние и т.д."></textarea>
+      </div>
+    </div>
+
+    <!-- АКТИВНЫЙ ИНТЕРАКТИВНЫЙ ПЕРЕКЛЮЧАТЕЛЬ (ТЕПЕРЬ ВНИЗУ) -->
+    <div class="status-toggle-container">
+      <label>Статус операции</label>
+      <div class="status-toggle-buttons">
+        <button type="button" id="btn-checkout" class="status-toggle-btn active-checkout" onclick="setOperationStatus('checkout')">
+          📤 Выдача техники
+        </button>
+        <button type="button" id="btn-checkin" class="status-toggle-btn" onclick="setOperationStatus('checkin')">
+          📥 Возврат техники
+        </button>
       </div>
     </div>
 
