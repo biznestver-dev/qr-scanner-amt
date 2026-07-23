@@ -87,6 +87,49 @@
       letter-spacing: -0.01em;
     }
 
+    /* ИНТЕРАКТИВНЫЙ ПЕРЕКЛЮЧАТЕЛЬ СТАТУСА ОПЕРАЦИИ */
+    .status-toggle-container {
+      margin-bottom: 24px;
+    }
+
+    .status-toggle-buttons {
+      display: flex;
+      background: var(--bg-input);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      gap: 4px;
+    }
+
+    .status-toggle-btn {
+      flex: 1;
+      padding: 12px 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .status-toggle-btn.active-checkout {
+      background: var(--accent-brand);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.35);
+    }
+
+    .status-toggle-btn.active-checkin {
+      background: #10b981;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+    }
+
     /* Контейнер QR сканера */
     #reader {
       width: 100%;
@@ -376,7 +419,7 @@
         font-family: Arial, sans-serif !important;
         zoom: 82% !important;
       }
-      .container, .modal, #reader, .form-group, .btn-group, .app-header { display: none !important; }
+      .container, .modal, #reader, .form-group, .btn-group, .app-header, .status-toggle-container { display: none !important; }
       #act-print-area { display: block !important; width: 100% !important; color: #000 !important; }
       .act-header { text-align: center; font-weight: bold; font-size: 12pt; margin-bottom: 10px; }
       .act-header .subtitle { font-size: 10.5pt; margin-top: 3px; }
@@ -400,6 +443,19 @@
       <div class="app-title">
         <div class="app-logo">A</div>
         <h2>Учет оборудования (МТБ) — ArtMasters 2026</h2>
+      </div>
+    </div>
+
+    <!-- АКТИВНЫЙ ИНТЕРАКТИВНЫЙ ПЕРЕКЛЮЧАТЕЛЬ -->
+    <div class="status-toggle-container">
+      <label>Режим работы</label>
+      <div class="status-toggle-buttons">
+        <button type="button" id="btn-checkout" class="status-toggle-btn active-checkout" onclick="setOperationStatus('checkout')">
+          📤 Выдача техники
+        </button>
+        <button type="button" id="btn-checkin" class="status-toggle-btn" onclick="setOperationStatus('checkin')">
+          📥 Возврат техники
+        </button>
       </div>
     </div>
 
@@ -439,7 +495,8 @@
         </select>
       </div>
 
-      <div class="form-group">
+      <!-- СКРЫТЫЙ СЕЛЕКТОР (ДЛЯ СОХРАНЕНИЯ СОВМЕСТИМОСТИ) -->
+      <div class="form-group" style="display: none;">
         <label for="status-select">Статус операции</label>
         <select id="status-select">
           <option value="checkout">Выдача (Занят / На площадке)</option>
@@ -573,6 +630,23 @@
   <script src="app.js"></script>
 
   <script>
+    /* ПЕРЕКЛЮЧАТЕЛЬ РЕЖИМА ВЫДАЧА / ВОЗВРАТ */
+    function setOperationStatus(status) {
+      const select = document.getElementById('status-select');
+      const btnCheckout = document.getElementById('btn-checkout');
+      const btnCheckin = document.getElementById('btn-checkin');
+
+      select.value = status;
+
+      if (status === 'checkout') {
+        btnCheckout.className = 'status-toggle-btn active-checkout';
+        btnCheckin.className = 'status-toggle-btn';
+      } else {
+        btnCheckout.className = 'status-toggle-btn';
+        btnCheckin.className = 'status-toggle-btn active-checkin';
+      }
+    }
+
     function onInventoryChange(invVal) {
       if (typeof findEquipment === 'function') {
         const found = findEquipment(invVal);
@@ -615,7 +689,6 @@
         const text = `${item.inv} ${item.category} ${item.name} ${item.sn} ${rawStatus}`.toLowerCase();
         
         if (!filter || text.includes(filter)) {
-          // Определяем, свободен или занят предмет
           const isFree = rawStatus.toLowerCase().includes('свобод') || rawStatus.toLowerCase().includes('офис');
           const badgeClass = isFree ? 'free' : 'busy';
 
