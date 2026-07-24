@@ -151,7 +151,7 @@
       box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
     }
 
-    /* Настройка иконки календаря для Safari/Chrome */
+    /* Настройка иконки календаря */
     input[type="date"]::-webkit-calendar-picker-indicator {
       filter: invert(1);
       cursor: pointer;
@@ -514,9 +514,9 @@
         <input type="text" id="participant-name" placeholder="Введите ФИО...">
       </div>
 
-      <!-- НОВОЕ ПОЛЕ: ДАТА ВОЗВРАТА -->
-      <div class="form-group" id="return-date-group" style="display: none;">
-        <label for="return-date-input">Дата возврата</label>
+      <!-- ПОЛЕ ДАТЫ ВОЗВРАТА (ДОСТУПНО ВСЕГДА) -->
+      <div class="form-group" id="return-date-group">
+        <label for="return-date-input" id="return-date-label">Дата возврата (план / факт)</label>
         <input type="date" id="return-date-input">
       </div>
 
@@ -643,7 +643,7 @@
   <script src="app.js"></script>
 
   <script>
-    // Инициализация сегодняшней даты YYYY-MM-DD в инпуте
+    // Инициализация сегодняшней даты YYYY-MM-DD
     const todayISO = new Date().toISOString().split('T')[0];
     document.getElementById('return-date-input').value = todayISO;
 
@@ -652,18 +652,18 @@
       const select = document.getElementById('status-select');
       const btnCheckout = document.getElementById('btn-checkout');
       const btnCheckin = document.getElementById('btn-checkin');
-      const returnDateGroup = document.getElementById('return-date-group');
+      const returnDateLabel = document.getElementById('return-date-label');
 
       select.value = status;
 
       if (status === 'checkout') {
         btnCheckout.className = 'status-toggle-btn active-checkout';
         btnCheckin.className = 'status-toggle-btn';
-        returnDateGroup.style.display = 'none'; // Скрываем дату возврата при выдаче
+        returnDateLabel.innerText = 'Планируемая дата возврата';
       } else {
         btnCheckout.className = 'status-toggle-btn';
         btnCheckin.className = 'status-toggle-btn active-checkin';
-        returnDateGroup.style.display = 'block'; // Показываем дату возврата
+        returnDateLabel.innerText = 'Фактическая дата возврата';
       }
     }
 
@@ -747,7 +747,7 @@
       const participant = document.getElementById('participant-name').value || '—';
       const comment = document.getElementById('comment-input').value || '—';
 
-      // Обработка даты возврата из поля input[type="date"]
+      // Чтение даты из инпута
       const rawReturnDate = document.getElementById('return-date-input').value;
       let formattedReturnDate = '—';
       if (rawReturnDate) {
@@ -767,7 +767,8 @@
 
       if (status === 'checkout') {
         document.getElementById('print-date-out').innerText = todayFormatted;
-        document.getElementById('print-date-in').innerText = '—';
+        // Подставляем планируемую дату возврата в печатный акт при выдаче
+        document.getElementById('print-date-in').innerText = formattedReturnDate;
       } else {
         document.getElementById('print-date-out').innerText = '—';
         document.getElementById('print-date-in').innerText = formattedReturnDate !== '—' ? formattedReturnDate : todayFormatted;
