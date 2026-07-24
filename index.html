@@ -174,7 +174,7 @@
       margin-top: 20px;
     }
 
-    @media (max-width: 500px) {
+    @media (max-width: 600px) {
       .btn-group {
         flex-direction: column;
       }
@@ -184,11 +184,11 @@
       flex: 1;
       background-color: var(--accent-brand);
       color: white;
-      padding: 14px 20px;
+      padding: 14px 16px;
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       text-align: center;
       transition: background-color 0.2s ease, transform 0.1s ease;
@@ -216,7 +216,7 @@
       background-color: #353c47;
     }
 
-    /* === МОДАЛЬНОЕ ОКНО С БАЗОЙ ДАННЫХ === */
+    /* === МОДАЛЬНОЕ ОКНО === */
     .modal {
       display: none;
       position: fixed;
@@ -275,7 +275,6 @@
       background: var(--border-color);
     }
 
-    /* КНОПКИ ФИЛЬТРАЦИИ СТАТУСА В МОДАЛЬНОМ ОКНЕ */
     .filter-tabs {
       display: flex;
       gap: 8px;
@@ -369,7 +368,6 @@
       background: var(--accent-brand-hover);
     }
 
-    /* Кнопка смены статуса на "В офисе" */
     .return-btn {
       padding: 6px 12px;
       font-size: 13px;
@@ -386,7 +384,6 @@
       background: #059669;
     }
 
-    /* Цветные бейджи статусов */
     .badge-status {
       display: inline-flex;
       align-items: center;
@@ -533,7 +530,8 @@
 
     <div class="btn-group">
       <button class="btn" onclick="generateAndPrintAct()">🖨️ Напечатать Акт</button>
-      <button class="btn btn-secondary" onclick="openDbModal()">📋 Посмотреть базу МТБ</button>
+      <button class="btn btn-secondary" onclick="openDbModal()">📋 База МТБ</button>
+      <button class="btn btn-secondary" onclick="openHistoryModal()">📜 История накладных</button>
     </div>
   </div>
 
@@ -545,7 +543,6 @@
         <button class="close-btn" onclick="closeDbModal()">&times;</button>
       </div>
       
-      <!-- ФИЛЬТРЫ СТАТУСА -->
       <div class="filter-tabs">
         <button class="filter-tab active" id="tab-all" onclick="setDbStatusFilter('all')">Все</button>
         <button class="filter-tab tab-free" id="tab-free" onclick="setDbStatusFilter('free')">🟢 В офисе</button>
@@ -567,9 +564,36 @@
               <th>Действия</th>
             </tr>
           </thead>
-          <tbody id="dbTableBody">
-            <!-- Заполняется JS -->
-          </tbody>
+          <tbody id="dbTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНОЕ ОКНО ИСТОРИИ НАКЛАДНЫХ -->
+  <div id="historyModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="margin:0;">Реестр выданных накладных (Актов)</h3>
+        <button class="close-btn" onclick="closeHistoryModal()">&times;</button>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="historySearchInput" placeholder="Поиск по № акта, ФИО или оборудованию..." oninput="renderHistoryTable()">
+      </div>
+      <div class="table-wrapper">
+        <table class="db-table">
+          <thead>
+            <tr>
+              <th>№ Накладной</th>
+              <th>Дата</th>
+              <th>Получатель (ФИО)</th>
+              <th>Оборудование</th>
+              <th>Инв. №</th>
+              <th>Тех. менеджер</th>
+              <th>Действие</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody"></tbody>
         </table>
       </div>
     </div>
@@ -579,6 +603,7 @@
   <div id="act-print-area">
     <div class="act-header">
       Основной чемпионат Артмастерс 2026
+      <div style="font-size: 11pt; margin-top: 4px;"><b>Акт приема-передачи оборудования № <span id="print-act-num">2026-001</span></b></div>
       <div class="subtitle">Компетенция — <span id="print-competence">моушн-дизайнер</span></div>
     </div>
 
@@ -673,7 +698,7 @@
     );
     html5QrcodeScanner.render(onScanSuccess);
 
-    /* === ЛОГИКА МОДАЛЬНОГО ОКНА БАЗЫ ДАННЫХ === */
+    /* === ЛОГИКА БАЗЫ ДАННЫХ === */
     function openDbModal() {
       renderDbTable();
       document.getElementById('dbModal').style.display = 'flex';
@@ -685,15 +710,12 @@
 
     function setDbStatusFilter(filterType) {
       currentStatusFilter = filterType;
-      
       document.getElementById('tab-all').className = 'filter-tab' + (filterType === 'all' ? ' active' : '');
       document.getElementById('tab-free').className = 'filter-tab tab-free' + (filterType === 'free' ? ' active' : '');
       document.getElementById('tab-busy').className = 'filter-tab tab-busy' + (filterType === 'busy' ? ' active' : '');
-
       renderDbTable();
     }
 
-    // Возврат техники обратно на склад "В офисе"
     function returnEquipmentToOffice(inv) {
       if (window.EQUIPMENT_DB) {
         let foundKey = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === inv);
@@ -707,7 +729,6 @@
     function renderDbTable(filterText = '') {
       const tbody = document.getElementById('dbTableBody');
       tbody.innerHTML = '';
-
       if (!window.EQUIPMENT_DB) return;
 
       const searchFilter = (filterText || document.getElementById('dbSearchInput').value).toLowerCase().trim();
@@ -723,8 +744,6 @@
         
         if (!searchFilter || text.includes(searchFilter)) {
           const badgeClass = isFree ? 'free' : 'busy';
-
-          // Если техника на площадке, добавляем зелёную кнопку "Вернуть"
           const returnBtnHtml = !isFree 
             ? `<button class="return-btn" onclick="returnEquipmentToOffice('${item.inv}')">📥 Вернуть</button>` 
             : '';
@@ -748,9 +767,7 @@
       });
     }
 
-    function filterDbTable() {
-      renderDbTable();
-    }
+    function filterDbTable() { renderDbTable(); }
 
     function selectEquipment(inv) {
       document.getElementById('inv-input').value = inv;
@@ -758,6 +775,77 @@
       closeDbModal();
     }
 
+    /* === ЛОГИКА ИСТОРИИ НАКЛАДНЫХ === */
+    function getActsHistory() {
+      return JSON.parse(localStorage.getItem('artmasters_acts_history') || '[]');
+    }
+
+    function saveActToHistory(act) {
+      const history = getActsHistory();
+      history.unshift(act);
+      localStorage.setItem('artmasters_acts_history', JSON.stringify(history));
+    }
+
+    function openHistoryModal() {
+      renderHistoryTable();
+      document.getElementById('historyModal').style.display = 'flex';
+    }
+
+    function closeHistoryModal() {
+      document.getElementById('historyModal').style.display = 'none';
+    }
+
+    function renderHistoryTable() {
+      const tbody = document.getElementById('historyTableBody');
+      tbody.innerHTML = '';
+      const history = getActsHistory();
+      const filter = document.getElementById('historySearchInput').value.toLowerCase().trim();
+
+      if (history.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px;">История накладных пуста</td></tr>';
+        return;
+      }
+
+      history.forEach(act => {
+        const searchStr = `${act.num} ${act.date} ${act.participant} ${act.name} ${act.inv} ${act.manager}`.toLowerCase();
+        if (!filter || searchStr.includes(filter)) {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><b>№ ${act.num}</b></td>
+            <td>${act.date}</td>
+            <td>${act.participant}</td>
+            <td>${act.name}</td>
+            <td>${act.inv}</td>
+            <td>${act.manager}</td>
+            <td><button class="select-btn" onclick="reprintAct('${act.num}')">🖨️ Печать</button></td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+    }
+
+    function reprintAct(actNum) {
+      const history = getActsHistory();
+      const act = history.find(a => a.num === actNum);
+      if (!act) return;
+
+      document.getElementById('print-act-num').innerText = act.num;
+      document.getElementById('print-competence').innerText = act.comp;
+      document.getElementById('print-inv').innerText = act.inv;
+      document.getElementById('print-name').innerText = act.name;
+      document.getElementById('print-participant').innerText = act.participant;
+      document.getElementById('print-participant-sig').innerText = act.participant !== '—' ? act.participant : '__________________________';
+      document.getElementById('print-comment').innerText = act.comment;
+      document.getElementById('print-manager-out').innerText = act.manager;
+      document.getElementById('print-manager-in').innerText = act.manager;
+      document.getElementById('print-date-out').innerText = act.date;
+      document.getElementById('print-date-in').innerText = act.returnDate;
+
+      closeHistoryModal();
+      window.print();
+    }
+
+    /* === ГЕНЕРАЦИЯ И ПЕЧАТЬ === */
     function generateAndPrintAct() {
       const todayFormatted = new Date().toLocaleDateString('ru-RU');
       const inv = document.getElementById('inv-input').value || '—';
@@ -767,7 +855,12 @@
       const participant = document.getElementById('participant-name').value || '—';
       const comment = document.getElementById('comment-input').value || '—';
 
-      // Автоматическая смена статуса на "На площадке"
+      // Автоматическая нумерация акта
+      const history = getActsHistory();
+      const nextNumInt = history.length + 1;
+      const actNum = `2026-${String(nextNumInt).padStart(3, '0')}`;
+
+      // Смена статуса в базе
       if (inv !== '—' && window.EQUIPMENT_DB) {
         let foundKey = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === inv);
         if (foundKey) {
@@ -775,7 +868,7 @@
         }
       }
 
-      // Чтение планируемой даты возврата
+      // Планируемая дата возврата
       const rawReturnDate = document.getElementById('return-date-input').value;
       let formattedReturnDate = '—';
       if (rawReturnDate) {
@@ -783,18 +876,31 @@
         formattedReturnDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
       }
 
+      // Подстановка в Акт
+      document.getElementById('print-act-num').innerText = actNum;
       document.getElementById('print-competence').innerText = comp;
       document.getElementById('print-inv').innerText = inv;
       document.getElementById('print-name').innerText = name;
       document.getElementById('print-participant').innerText = participant;
       document.getElementById('print-participant-sig').innerText = participant !== '—' ? participant : '__________________________';
       document.getElementById('print-comment').innerText = comment;
-
       document.getElementById('print-manager-out').innerText = manager;
       document.getElementById('print-manager-in').innerText = manager;
-
       document.getElementById('print-date-out').innerText = todayFormatted;
       document.getElementById('print-date-in').innerText = formattedReturnDate;
+
+      // Сохраняем накладную в историю
+      saveActToHistory({
+        num: actNum,
+        date: todayFormatted,
+        returnDate: formattedReturnDate,
+        inv: inv,
+        name: name,
+        comp: comp,
+        manager: manager,
+        participant: participant,
+        comment: comment
+      });
 
       window.print();
     }
