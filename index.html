@@ -21,7 +21,7 @@
       --accent-purple: #8b5cf6;
       --accent-cyan: #06b6d4;
       --accent-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-      --accent-glow: rgba(168, 85, 247, 0.35);
+      --accent-glow: rgba(168, 85, 247, 0.45);
       
       --text-primary: #f8fafc;
       --text-secondary: #94a3b8;
@@ -163,6 +163,12 @@
       transition: all 0.25s ease;
     }
 
+    /* Белая иконка календаря */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      cursor: pointer;
+    }
+
     input[type="text"]:focus, input[type="date"]:focus, select:focus, textarea:focus {
       outline: none;
       border-color: var(--accent-purple);
@@ -181,7 +187,7 @@
       color: var(--text-primary);
     }
 
-    /* Button Group */
+    /* Единые стильные кнопки с одинаковой гаммой */
     .btn-group {
       display: flex;
       gap: 14px;
@@ -199,7 +205,7 @@
       background: var(--accent-gradient);
       color: white;
       padding: 16px 20px;
-      border: none;
+      border: 1px solid var(--glass-border);
       border-radius: 14px;
       cursor: pointer;
       font-size: 14px;
@@ -208,31 +214,26 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      box-shadow: 0 10px 25px -5px var(--accent-glow);
       transition: all 0.25s ease;
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 15px 30px -5px var(--accent-glow);
-      filter: brightness(1.1);
-    }
-
-    .btn:active {
-      transform: translateY(0);
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
     }
 
     .btn-secondary {
-      background: rgba(30, 41, 59, 0.8);
-      border: 1px solid var(--glass-border);
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%);
       color: var(--text-primary);
-      box-shadow: none;
     }
 
-    .btn-secondary:hover {
-      background: var(--glass-hover);
-      box-shadow: 0 10px 20px -5px rgba(0,0,0,0.3);
-      filter: none;
+    .btn:hover, .btn-secondary:hover {
+      background: var(--accent-gradient);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px -4px var(--accent-glow);
+      filter: brightness(1.15);
+    }
+
+    .btn:active, .btn-secondary:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 12px var(--accent-glow);
     }
 
     /* Modal Design */
