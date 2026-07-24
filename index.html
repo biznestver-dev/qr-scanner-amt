@@ -22,6 +22,8 @@
       --text-secondary: #9ca3af;
       --accent-brand: #7c3aed;
       --accent-brand-hover: #6d28d9;
+      --accent-success: #10b981;
+      --accent-success-hover: #059669;
     }
 
     * {
@@ -346,6 +348,11 @@
       background: rgba(255, 255, 255, 0.02);
     }
 
+    .action-btn-group {
+      display: flex;
+      gap: 6px;
+    }
+
     .select-btn {
       padding: 6px 12px;
       font-size: 13px;
@@ -360,6 +367,23 @@
 
     .select-btn:hover {
       background: var(--accent-brand-hover);
+    }
+
+    /* Кнопка смены статуса на "В офисе" */
+    .return-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      background: #10b981;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .return-btn:hover {
+      background: #059669;
     }
 
     /* Цветные бейджи статусов */
@@ -540,7 +564,7 @@
               <th>Наименование / Модель</th>
               <th>Серийный №</th>
               <th>Статус</th>
-              <th>Действие</th>
+              <th>Действия</th>
             </tr>
           </thead>
           <tbody id="dbTableBody">
@@ -619,7 +643,6 @@
   <script src="app.js"></script>
 
   <script>
-    // Текущий фильтр статуса в модальном окне
     let currentStatusFilter = 'all';
 
     // Устанавливаем СЕГОДНЯШНЮЮ локальную дату (YYYY-MM-DD)
@@ -670,6 +693,17 @@
       renderDbTable();
     }
 
+    // Возврат техники обратно на склад "В офисе"
+    function returnEquipmentToOffice(inv) {
+      if (window.EQUIPMENT_DB) {
+        let foundKey = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === inv);
+        if (foundKey) {
+          window.EQUIPMENT_DB[foundKey].status = 'В офисе';
+          renderDbTable();
+        }
+      }
+    }
+
     function renderDbTable(filterText = '') {
       const tbody = document.getElementById('dbTableBody');
       tbody.innerHTML = '';
@@ -682,7 +716,6 @@
         const rawStatus = item.status || 'В офисе';
         const isFree = rawStatus.toLowerCase().includes('свобод') || rawStatus.toLowerCase().includes('офис');
         
-        // Фильтрация по табам "В офисе" / "На площадке"
         if (currentStatusFilter === 'free' && !isFree) return;
         if (currentStatusFilter === 'busy' && isFree) return;
 
@@ -691,6 +724,11 @@
         if (!searchFilter || text.includes(searchFilter)) {
           const badgeClass = isFree ? 'free' : 'busy';
 
+          // Если техника на площадке, добавляем зелёную кнопку "Вернуть"
+          const returnBtnHtml = !isFree 
+            ? `<button class="return-btn" onclick="returnEquipmentToOffice('${item.inv}')">📥 Вернуть</button>` 
+            : '';
+
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td><b>${item.inv}</b></td>
@@ -698,7 +736,12 @@
             <td>${item.name}</td>
             <td>${item.sn || '—'}</td>
             <td><span class="badge-status ${badgeClass}">${rawStatus}</span></td>
-            <td><button class="select-btn" onclick="selectEquipment('${item.inv}')">Выбрать</button></td>
+            <td>
+              <div class="action-btn-group">
+                <button class="select-btn" onclick="selectEquipment('${item.inv}')">Выбрать</button>
+                ${returnBtnHtml}
+              </div>
+            </td>
           `;
           tbody.appendChild(tr);
         }
@@ -724,7 +767,7 @@
       const participant = document.getElementById('participant-name').value || '—';
       const comment = document.getElementById('comment-input').value || '—';
 
-      // Автоматическое обновление статуса в локальной базе!
+      // Автоматическая смена статуса на "На площадке"
       if (inv !== '—' && window.EQUIPMENT_DB) {
         let foundKey = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === inv);
         if (foundKey) {
