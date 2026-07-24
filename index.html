@@ -151,7 +151,6 @@
       box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
     }
 
-    /* Настройка иконки календаря */
     input[type="date"]::-webkit-calendar-picker-indicator {
       filter: invert(1);
       cursor: pointer;
@@ -272,6 +271,41 @@
     .close-btn:hover {
       color: var(--text-primary);
       background: var(--border-color);
+    }
+
+    /* КНОПКИ ФИЛЬТРАЦИИ СТАТУСА В МОДАЛЬНОМ ОКНЕ */
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .filter-tab {
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-input);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-tab.active {
+      background: var(--accent-brand);
+      color: #fff;
+      border-color: var(--accent-brand);
+    }
+
+    .filter-tab.tab-free.active {
+      background: #10b981;
+      border-color: #10b981;
+    }
+
+    .filter-tab.tab-busy.active {
+      background: #ef4444;
+      border-color: #ef4444;
     }
 
     .search-bar {
@@ -486,6 +520,14 @@
         <h3 style="margin:0;">База оборудования МТБ (Справочник)</h3>
         <button class="close-btn" onclick="closeDbModal()">&times;</button>
       </div>
+      
+      <!-- ФИЛЬТРЫ СТАТУСА -->
+      <div class="filter-tabs">
+        <button class="filter-tab active" id="tab-all" onclick="setDbStatusFilter('all')">Все</button>
+        <button class="filter-tab tab-free" id="tab-free" onclick="setDbStatusFilter('free')">🟢 В офисе</button>
+        <button class="filter-tab tab-busy" id="tab-busy" onclick="setDbStatusFilter('busy')">🔴 На площадке</button>
+      </div>
+
       <div class="search-bar">
         <input type="text" id="dbSearchInput" placeholder="Быстрый поиск по модели, инвентарнику или категории..." oninput="filterDbTable()">
       </div>
@@ -577,6 +619,9 @@
   <script src="app.js"></script>
 
   <script>
+    // Текущий фильтр статуса в модальном окне
+    let currentStatusFilter = 'all';
+
     // Устанавливаем СЕГОДНЯШНЮЮ локальную дату (YYYY-MM-DD)
     const now = new Date();
     const year = now.getFullYear();
@@ -615,20 +660,35 @@
       document.getElementById('dbModal').style.display = 'none';
     }
 
+    function setDbStatusFilter(filterType) {
+      currentStatusFilter = filterType;
+      
+      document.getElementById('tab-all').className = 'filter-tab' + (filterType === 'all' ? ' active' : '');
+      document.getElementById('tab-free').className = 'filter-tab tab-free' + (filterType === 'free' ? ' active' : '');
+      document.getElementById('tab-busy').className = 'filter-tab tab-busy' + (filterType === 'busy' ? ' active' : '');
+
+      renderDbTable();
+    }
+
     function renderDbTable(filterText = '') {
       const tbody = document.getElementById('dbTableBody');
       tbody.innerHTML = '';
 
       if (!window.EQUIPMENT_DB) return;
 
-      const filter = filterText.toLowerCase().trim();
+      const searchFilter = (filterText || document.getElementById('dbSearchInput').value).toLowerCase().trim();
 
       Object.values(window.EQUIPMENT_DB).forEach(item => {
-        const rawStatus = item.status || 'Свободен';
+        const rawStatus = item.status || 'В офисе';
+        const isFree = rawStatus.toLowerCase().includes('свобод') || rawStatus.toLowerCase().includes('офис');
+        
+        // Фильтрация по табам "В офисе" / "На площадке"
+        if (currentStatusFilter === 'free' && !isFree) return;
+        if (currentStatusFilter === 'busy' && isFree) return;
+
         const text = `${item.inv} ${item.category} ${item.name} ${item.sn} ${rawStatus}`.toLowerCase();
         
-        if (!filter || text.includes(filter)) {
-          const isFree = rawStatus.toLowerCase().includes('свобод') || rawStatus.toLowerCase().includes('офис');
+        if (!searchFilter || text.includes(searchFilter)) {
           const badgeClass = isFree ? 'free' : 'busy';
 
           const tr = document.createElement('tr');
@@ -646,8 +706,7 @@
     }
 
     function filterDbTable() {
-      const query = document.getElementById('dbSearchInput').value;
-      renderDbTable(query);
+      renderDbTable();
     }
 
     function selectEquipment(inv) {
@@ -664,6 +723,14 @@
       const manager = document.getElementById('manager-select').value;
       const participant = document.getElementById('participant-name').value || '—';
       const comment = document.getElementById('comment-input').value || '—';
+
+      // Автоматическое обновление статуса в локальной базе!
+      if (inv !== '—' && window.EQUIPMENT_DB) {
+        let foundKey = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === inv);
+        if (foundKey) {
+          window.EQUIPMENT_DB[foundKey].status = `На площадке (${participant !== '—' ? participant : 'Занят'})`;
+        }
+      }
 
       // Чтение планируемой даты возврата
       const rawReturnDate = document.getElementById('return-date-input').value;
@@ -683,7 +750,6 @@
       document.getElementById('print-manager-out').innerText = manager;
       document.getElementById('print-manager-in').innerText = manager;
 
-      // Дата выдачи всегда сегодня, дата возврата — выбранная планируемая
       document.getElementById('print-date-out').innerText = todayFormatted;
       document.getElementById('print-date-in').innerText = formattedReturnDate;
 
