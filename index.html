@@ -133,7 +133,7 @@
       letter-spacing: 0.03em;
     }
 
-    input[type="text"], select, textarea {
+    input[type="text"], input[type="date"], select, textarea {
       width: 100%;
       padding: 12px 14px;
       background-color: var(--bg-input);
@@ -145,10 +145,16 @@
       transition: all 0.2s ease;
     }
 
-    input[type="text"]:focus, select:focus, textarea:focus {
+    input[type="text"]:focus, input[type="date"]:focus, select:focus, textarea:focus {
       outline: none;
       border-color: var(--border-focus);
       box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+    }
+
+    /* Настройка иконки календаря для Safari/Chrome */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      cursor: pointer;
     }
 
     select option {
@@ -160,7 +166,7 @@
       resize: vertical;
     }
 
-    /* ИНТЕРАКТИВНЫЙ ПЕРЕКЛЮЧАТЕЛЬ СТАТУСА ОПЕРАЦИИ ВНИЗУ */
+    /* ИНТЕРАКТИВНЫЙ ПЕРЕКЛЮЧАТЕЛЬ СТАТУСА ОПЕРАЦИИ */
     .status-toggle-container {
       margin-top: 8px;
       margin-bottom: 20px;
@@ -508,13 +514,19 @@
         <input type="text" id="participant-name" placeholder="Введите ФИО...">
       </div>
 
+      <!-- НОВОЕ ПОЛЕ: ДАТА ВОЗВРАТА -->
+      <div class="form-group" id="return-date-group" style="display: none;">
+        <label for="return-date-input">Дата возврата</label>
+        <input type="date" id="return-date-input">
+      </div>
+
       <div class="form-group full-width">
         <label for="comment-input">Комментарии</label>
         <textarea id="comment-input" rows="2" placeholder="Комплектация, состояние и т.д."></textarea>
       </div>
     </div>
 
-    <!-- АКТИВНЫЙ ИНТЕРАКТИВНЫЙ ПЕРЕКЛЮЧАТЕЛЬ (ТЕПЕРЬ ВНИЗУ) -->
+    <!-- АКТИВНЫЙ ИНТЕРАКТИВНЫЙ ПЕРЕКЛЮЧАТЕЛЬ -->
     <div class="status-toggle-container">
       <label>Статус операции</label>
       <div class="status-toggle-buttons">
@@ -631,20 +643,27 @@
   <script src="app.js"></script>
 
   <script>
+    // Инициализация сегодняшней даты YYYY-MM-DD в инпуте
+    const todayISO = new Date().toISOString().split('T')[0];
+    document.getElementById('return-date-input').value = todayISO;
+
     /* ПЕРЕКЛЮЧАТЕЛЬ РЕЖИМА ВЫДАЧА / ВОЗВРАТ */
     function setOperationStatus(status) {
       const select = document.getElementById('status-select');
       const btnCheckout = document.getElementById('btn-checkout');
       const btnCheckin = document.getElementById('btn-checkin');
+      const returnDateGroup = document.getElementById('return-date-group');
 
       select.value = status;
 
       if (status === 'checkout') {
         btnCheckout.className = 'status-toggle-btn active-checkout';
         btnCheckin.className = 'status-toggle-btn';
+        returnDateGroup.style.display = 'none'; // Скрываем дату возврата при выдаче
       } else {
         btnCheckout.className = 'status-toggle-btn';
         btnCheckin.className = 'status-toggle-btn active-checkin';
+        returnDateGroup.style.display = 'block'; // Показываем дату возврата
       }
     }
 
@@ -719,7 +738,7 @@
     }
 
     function generateAndPrintAct() {
-      const today = new Date().toLocaleDateString('ru-RU');
+      const todayFormatted = new Date().toLocaleDateString('ru-RU');
       const status = document.getElementById('status-select').value;
       const inv = document.getElementById('inv-input').value || '—';
       const name = document.getElementById('equipment-name').value || '—';
@@ -727,6 +746,14 @@
       const manager = document.getElementById('manager-select').value;
       const participant = document.getElementById('participant-name').value || '—';
       const comment = document.getElementById('comment-input').value || '—';
+
+      // Обработка даты возврата из поля input[type="date"]
+      const rawReturnDate = document.getElementById('return-date-input').value;
+      let formattedReturnDate = '—';
+      if (rawReturnDate) {
+        const parts = rawReturnDate.split('-');
+        formattedReturnDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
+      }
 
       document.getElementById('print-competence').innerText = comp;
       document.getElementById('print-inv').innerText = inv;
@@ -739,11 +766,11 @@
       document.getElementById('print-manager-in').innerText = manager;
 
       if (status === 'checkout') {
-        document.getElementById('print-date-out').innerText = today;
+        document.getElementById('print-date-out').innerText = todayFormatted;
         document.getElementById('print-date-in').innerText = '—';
       } else {
         document.getElementById('print-date-out').innerText = '—';
-        document.getElementById('print-date-in').innerText = today;
+        document.getElementById('print-date-in').innerText = formattedReturnDate !== '—' ? formattedReturnDate : todayFormatted;
       }
 
       window.print();
