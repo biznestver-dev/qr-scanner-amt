@@ -545,10 +545,10 @@
         <input type="text" id="participant-name" placeholder="Введите ФИО участника...">
       </div>
 
-      <!-- НОВОЕ ПОЛЕ: Контакты получателя -->
+      <!-- ПОЛЕ КОНТАКТОВ: Телефон / Telegram / MAX -->
       <div class="form-group">
-        <label for="contact-input">Телефон / Telegram получателя</label>
-        <input type="text" id="contact-input" placeholder="+7 (999) 000-00-00 или @username">
+        <label for="contact-input">Телефон / Telegram / MAX</label>
+        <input type="text" id="contact-input" placeholder="+7 (999) 000-00-00, @username, MAX...">
       </div>
 
       <!-- ПОЛЕ ДАТЫ ВОЗВРАТА -->
@@ -623,7 +623,7 @@
               <th>Дата</th>
               <th>Роль</th>
               <th>Получатель (ФИО)</th>
-              <th>Контакты</th>
+              <th>Телефон / Telegram / MAX</th>
               <th>Оборудование</th>
               <th>Инв. №</th>
               <th>Действия</th>
@@ -647,16 +647,16 @@
       <thead>
         <tr>
           <th style="width: 4%;">№</th>
-          <th style="width: 28%;">Наименование</th>
-          <th style="width: 14%;">Инвентарный номер</th>
+          <th style="width: 26%;">Наименование</th>
+          <th style="width: 13%;">Инвентарный номер</th>
           <th style="width: 16%;" id="print-header-role">Получатель ФИО</th>
-          <th style="width: 12%;">Телефон / TG</th>
+          <th style="width: 15%;">Телефон / Telegram / MAX</th>
           <th style="width: 5%;">Кол-во</th>
           <th style="width: 8%;">Дата выдачи</th>
           <th style="width: 7%;">Подпись</th>
           <th style="width: 8%;">Дата возврата</th>
           <th style="width: 7%;">Подпись</th>
-          <th style="width: 15%;">Комментарии</th>
+          <th style="width: 11%;">Комментарии</th>
         </tr>
       </thead>
       <tbody>
@@ -933,7 +933,7 @@
       const nextNumInt = history.length + 1;
       const actNum = `2026-${String(nextNumInt).padStart(3, '0')}`;
 
-      // Смена статуса в базе (включая контакты)
+      // Смена статуса в базе
       if (inv !== '—' && window.EQUIPMENT_DB) {
         let foundKey = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === inv);
         if (foundKey) {
