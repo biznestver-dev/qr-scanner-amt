@@ -187,7 +187,7 @@
       color: var(--text-primary);
     }
 
-    /* Единые стильные кнопки с одинаковой гаммой */
+    /* Единые стильные кнопки — одинаковые по умолчанию, загораются при наведении */
     .btn-group {
       display: flex;
       gap: 14px;
@@ -202,8 +202,8 @@
 
     .btn {
       flex: 1;
-      background: var(--accent-gradient);
-      color: white;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%);
+      color: var(--text-primary);
       padding: 16px 20px;
       border: 1px solid var(--glass-border);
       border-radius: 14px;
@@ -215,15 +215,10 @@
       justify-content: center;
       gap: 10px;
       transition: all 0.25s ease;
-      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
-    .btn-secondary {
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%);
-      color: var(--text-primary);
-    }
-
-    .btn:hover, .btn-secondary:hover {
+    .btn:hover {
       background: var(--accent-gradient);
       color: white;
       transform: translateY(-2px);
@@ -231,7 +226,7 @@
       filter: brightness(1.15);
     }
 
-    .btn:active, .btn-secondary:active {
+    .btn:active {
       transform: translateY(0);
       box-shadow: 0 4px 12px var(--accent-glow);
     }
@@ -511,8 +506,8 @@
 
     <div class="btn-group">
       <button class="btn" onclick="generateAndPrintAct()">🖨️ Напечатать Акт</button>
-      <button class="btn btn-secondary" onclick="openDbModal()">📋 База МТБ</button>
-      <button class="btn btn-secondary" onclick="openHistoryModal()">📜 История накладных</button>
+      <button class="btn" onclick="openDbModal()">📋 База МТБ</button>
+      <button class="btn" onclick="openHistoryModal()">📜 История накладных</button>
     </div>
   </div>
 
