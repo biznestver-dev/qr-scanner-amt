@@ -527,13 +527,8 @@
         <input type="text" id="participant-name" placeholder="Введите ФИО участника...">
       </div>
 
-      <div class="form-group">
-        <label for="comp-manager-name">Менеджер компетенции ФИО</label>
-        <input type="text" id="comp-manager-name" placeholder="Укажите ФИО Менеджера компетенции...">
-      </div>
-
       <!-- ПОЛЕ ДАТЫ ВОЗВРАТА -->
-      <div class="form-group" id="return-date-group">
+      <div class="form-group full-width" id="return-date-group">
         <label for="return-date-input">Планируемая дата возврата</label>
         <input type="date" id="return-date-input">
       </div>
@@ -665,7 +660,7 @@
     </div>
 
     <div class="signature-line">
-      С правилами выдачи ознакомлен, <span id="print-sig-role-label">участник</span>: <b><span id="print-participant-sig">__________________________</span></b> <span class="underline"></span>
+      С правилами выдачи ознакомлен (а), <span id="print-sig-role-label">участник</span>: <b><span id="print-participant-sig">__________________________</span></b> <span class="underline"></span>
     </div>
 
     <table class="signatures-grid">
@@ -674,8 +669,8 @@
         <td>Принял технический менеджер: <b><span id="print-manager-in">Смутный Богдан Сергеевич</span></b> <span class="underline"></span></td>
       </tr>
       <tr>
-        <td>Получил (а) Менеджер компетенций: <b><span id="print-competence-mgr1">__________________________</span></b> <span class="underline"></span></td>
-        <td>Сдал (а) Менеджер компетенций: <b><span id="print-competence-mgr2">__________________________</span></b> <span class="underline"></span></td>
+        <td>Получил (а) <span id="print-recipient-role-grid1">Участник</span>: <b><span id="print-competence-mgr1">__________________________</span></b> <span class="underline"></span></td>
+        <td>Сдал (а) <span id="print-recipient-role-grid2">Участник</span>: <b><span id="print-competence-mgr2">__________________________</span></b> <span class="underline"></span></td>
       </tr>
     </table>
   </div>
@@ -832,7 +827,7 @@
       }
 
       history.forEach(act => {
-        const searchStr = `${act.num} ${act.date} ${act.role || ''} ${act.participant} ${act.compManager || ''} ${act.name} ${act.inv} ${act.manager}`.toLowerCase();
+        const searchStr = `${act.num} ${act.date} ${act.role || ''} ${act.participant} ${act.name} ${act.inv} ${act.manager}`.toLowerCase();
         if (!filter || searchStr.includes(filter)) {
           const tr = document.createElement('tr');
           tr.innerHTML = `
@@ -869,9 +864,11 @@
       document.getElementById('print-date-out').innerText = act.date;
       document.getElementById('print-date-in').innerText = act.returnDate;
 
-      const compMgrText = act.compManager && act.compManager !== '—' ? act.compManager : '__________________________';
-      document.getElementById('print-competence-mgr1').innerText = compMgrText;
-      document.getElementById('print-competence-mgr2').innerText = compMgrText;
+      // Динамически выставляем роль в нижней сетке подписей
+      document.getElementById('print-recipient-role-grid1').innerText = role;
+      document.getElementById('print-recipient-role-grid2').innerText = role;
+      document.getElementById('print-competence-mgr1').innerText = act.participant !== '—' ? act.participant : '__________________________';
+      document.getElementById('print-competence-mgr2').innerText = act.participant !== '—' ? act.participant : '__________________________';
 
       closeHistoryModal();
       window.print();
@@ -886,7 +883,6 @@
       const manager = document.getElementById('manager-select').value;
       const role = document.getElementById('recipient-role-select').value;
       const participant = document.getElementById('participant-name').value || '—';
-      const compManager = document.getElementById('comp-manager-name').value || '—';
       const comment = document.getElementById('comment-input').value || '—';
 
       // Автоматическая нумерация акта
@@ -925,9 +921,12 @@
       document.getElementById('print-date-out').innerText = todayFormatted;
       document.getElementById('print-date-in').innerText = formattedReturnDate;
 
-      const compMgrText = compManager !== '—' ? compManager : '__________________________';
-      document.getElementById('print-competence-mgr1').innerText = compMgrText;
-      document.getElementById('print-competence-mgr2').innerText = compMgrText;
+      // Динамически выставляем роль и ФИО в нижней сетке подписей
+      document.getElementById('print-recipient-role-grid1').innerText = role;
+      document.getElementById('print-recipient-role-grid2').innerText = role;
+      const recipientSigText = participant !== '—' ? participant : '__________________________';
+      document.getElementById('print-competence-mgr1').innerText = recipientSigText;
+      document.getElementById('print-competence-mgr2').innerText = recipientSigText;
 
       // Сохраняем накладную в историю
       saveActToHistory({
@@ -940,7 +939,6 @@
         manager: manager,
         role: role,
         participant: participant,
-        compManager: compManager,
         comment: comment
       });
 
