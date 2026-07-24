@@ -6,121 +6,136 @@
   <title>Учет оборудования (МТБ) — ArtMasters 2026</title>
   <!-- Сканер QR-кодов html5-qrcode -->
   <script src="https://unpkg.com/html5-qrcode"></script>
-  <!-- Шрифт Inter -->
+  <!-- Шрифт Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      --bg-main: #121417;
-      --bg-card: #1c2026;
-      --bg-input: #262b33;
-      --border-color: #2e3540;
-      --border-focus: #7c3aed;
-      --text-primary: #f3f4f6;
-      --text-secondary: #9ca3af;
-      --accent-brand: #7c3aed;
-      --accent-brand-hover: #6d28d9;
-      --accent-success: #10b981;
-      --accent-success-hover: #059669;
-      --accent-danger: #ef4444;
-      --accent-danger-hover: #dc2626;
+      --bg-gradient: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 60%, #020617 100%);
+      --glass-bg: rgba(30, 41, 59, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-hover: rgba(51, 65, 85, 0.8);
+      
+      --accent-purple: #8b5cf6;
+      --accent-cyan: #06b6d4;
+      --accent-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+      --accent-glow: rgba(168, 85, 247, 0.35);
+      
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      
+      --status-free: #10b981;
+      --status-free-bg: rgba(16, 185, 129, 0.12);
+      --status-busy: #f43f5e;
+      --status-busy-bg: rgba(244, 63, 94, 0.12);
     }
 
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      margin: 0;
-      padding: 24px 16px;
-      background-color: var(--bg-main);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-gradient);
       color: var(--text-primary);
       min-height: 100vh;
+      padding: 32px 16px;
       display: flex;
       justify-content: center;
       align-items: flex-start;
+      background-attachment: fixed;
     }
 
     .container {
       width: 100%;
-      max-width: 860px;
-      background: var(--bg-card);
-      padding: 28px;
-      border-radius: 16px;
-      border: 1px solid var(--border-color);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+      max-width: 920px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 36px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 80px rgba(99, 102, 241, 0.1);
     }
 
-    /* Шапка приложения */
+    /* Header Design */
     .app-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 24px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 32px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--glass-border);
     }
 
     .app-title {
       display: flex;
       align-items: center;
-      gap: 12px;
-    }
-
-    .app-logo {
-      width: 36px;
-      height: 36px;
-      background: linear-gradient(135deg, #7c3aed, #a855f7);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 18px;
-      color: #fff;
-    }
-
-    h2 {
-      margin: 0;
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--text-primary);
-      letter-spacing: -0.01em;
-    }
-
-    /* Контейнер QR сканера */
-    #reader {
-      width: 100%;
-      max-width: 440px;
-      margin: 0 auto 20px auto;
-      border-radius: 12px;
-      overflow: hidden;
-      border: 2px dashed var(--border-color);
-      background: #0d0e11;
-    }
-
-    #reader video {
-      border-radius: 8px;
-    }
-
-    /* Сеточные поля формы */
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
       gap: 16px;
     }
 
-    @media (max-width: 640px) {
+    .app-logo {
+      width: 48px;
+      height: 48px;
+      background: var(--accent-gradient);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 22px;
+      color: #fff;
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .app-title-text h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .app-title-text p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* Scanner styling */
+    #reader {
+      width: 100%;
+      max-width: 460px;
+      margin: 0 auto 28px auto;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px dashed var(--glass-border);
+      background: rgba(15, 23, 42, 0.6);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+    }
+
+    /* Form Layout */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 680px) {
       .form-grid {
         grid-template-columns: 1fr;
       }
     }
 
     .form-group {
-      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
     }
 
     .form-group.full-width {
@@ -128,52 +143,49 @@
     }
 
     label {
-      display: block;
-      font-weight: 500;
-      font-size: 13px;
+      font-size: 12px;
+      font-weight: 700;
       color: var(--text-secondary);
       margin-bottom: 8px;
       text-transform: uppercase;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.06em;
     }
 
     input[type="text"], input[type="date"], select, textarea {
       width: 100%;
-      padding: 12px 14px;
-      background-color: var(--bg-input);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
+      padding: 14px 16px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
       color: var(--text-primary);
-      font-size: 15px;
+      font-size: 14px;
       font-family: inherit;
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
     }
 
     input[type="text"]:focus, input[type="date"]:focus, select:focus, textarea:focus {
       outline: none;
-      border-color: var(--border-focus);
-      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+      border-color: var(--accent-purple);
+      background: rgba(15, 23, 42, 0.85);
+      box-shadow: 0 0 0 4px var(--accent-glow);
     }
 
-    input[type="date"]::-webkit-calendar-picker-indicator {
-      filter: invert(1);
-      cursor: pointer;
+    input#inv-input {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      letter-spacing: 0.05em;
     }
 
     select option {
-      background-color: var(--bg-card);
+      background-color: #0f172a;
       color: var(--text-primary);
     }
 
-    textarea {
-      resize: vertical;
-    }
-
-    /* Кнопки */
+    /* Button Group */
     .btn-group {
       display: flex;
-      gap: 12px;
-      margin-top: 20px;
+      gap: 14px;
+      margin-top: 28px;
     }
 
     @media (max-width: 600px) {
@@ -184,131 +196,126 @@
 
     .btn {
       flex: 1;
-      background-color: var(--accent-brand);
+      background: var(--accent-gradient);
       color: white;
-      padding: 14px 16px;
+      padding: 16px 20px;
       border: none;
-      border-radius: 10px;
+      border-radius: 14px;
       cursor: pointer;
       font-size: 14px;
-      font-weight: 600;
-      text-align: center;
-      transition: background-color 0.2s ease, transform 0.1s ease;
+      font-weight: 700;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
+      box-shadow: 0 10px 25px -5px var(--accent-glow);
+      transition: all 0.25s ease;
     }
 
     .btn:hover {
-      background-color: var(--accent-brand-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px -5px var(--accent-glow);
+      filter: brightness(1.1);
     }
 
     .btn:active {
-      transform: scale(0.98);
+      transform: translateY(0);
     }
 
     .btn-secondary {
-      background-color: #2b313a;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid var(--glass-border);
       color: var(--text-primary);
-      border: 1px solid var(--border-color);
+      box-shadow: none;
     }
 
     .btn-secondary:hover {
-      background-color: #353c47;
+      background: var(--glass-hover);
+      box-shadow: 0 10px 20px -5px rgba(0,0,0,0.3);
+      filter: none;
     }
 
-    /* === МОДАЛЬНОЕ ОКНО === */
+    /* Modal Design */
     .modal {
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(4px);
+      background: rgba(2, 6, 23, 0.85);
+      backdrop-filter: blur(12px);
       z-index: 1000;
       justify-content: center;
       align-items: center;
-      padding: 16px;
+      padding: 20px;
     }
 
     .modal-content {
-      background: var(--bg-card);
+      background: #0f172a;
+      border: 1px solid var(--glass-border);
       width: 100%;
-      max-width: 1050px;
-      max-height: 85vh;
-      border-radius: 16px;
-      border: 1px solid var(--border-color);
-      padding: 24px;
+      max-width: 1080px;
+      max-height: 88vh;
+      border-radius: 24px;
+      padding: 28px;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
     }
 
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .modal-header h3 {
-      font-size: 18px;
-      font-weight: 600;
+      font-size: 20px;
+      font-weight: 700;
       color: var(--text-primary);
     }
 
     .close-btn {
-      font-size: 20px;
+      font-size: 22px;
       cursor: pointer;
       border: none;
-      background: var(--bg-input);
+      background: rgba(255,255,255,0.05);
       color: var(--text-secondary);
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s ease;
+      transition: all 0.2s;
     }
 
     .close-btn:hover {
-      color: var(--text-primary);
-      background: var(--border-color);
+      background: rgba(255,255,255,0.15);
+      color: #fff;
     }
 
     .filter-tabs {
       display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
+      gap: 10px;
+      margin-bottom: 16px;
     }
 
     .filter-tab {
-      padding: 8px 14px;
+      padding: 10px 18px;
       font-size: 13px;
       font-weight: 600;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      background: var(--bg-input);
+      border-radius: 10px;
+      border: 1px solid var(--glass-border);
+      background: rgba(30, 41, 59, 0.5);
       color: var(--text-secondary);
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s;
     }
 
     .filter-tab.active {
-      background: var(--accent-brand);
+      background: var(--accent-gradient);
       color: #fff;
-      border-color: var(--accent-brand);
-    }
-
-    .filter-tab.tab-free.active {
-      background: #10b981;
-      border-color: #10b981;
-    }
-
-    .filter-tab.tab-busy.active {
-      background: #ef4444;
-      border-color: #ef4444;
+      border-color: transparent;
     }
 
     .search-bar {
@@ -318,8 +325,8 @@
     .table-wrapper {
       overflow-y: auto;
       flex: 1;
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
     }
 
     table.db-table {
@@ -330,120 +337,60 @@
     }
 
     table.db-table th, table.db-table td {
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--border-color);
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--glass-border);
     }
 
     table.db-table th {
-      background: var(--bg-input);
+      background: #1e293b;
       color: var(--text-secondary);
       position: sticky;
       top: 0;
-      font-weight: 600;
-      font-size: 12px;
+      font-weight: 700;
+      font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    table.db-table tr:hover {
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .action-btn-group {
-      display: flex;
-      gap: 6px;
-    }
-
-    .select-btn {
-      padding: 6px 12px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      background: var(--accent-brand);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      transition: background 0.2s;
-    }
-
-    .select-btn:hover {
-      background: var(--accent-brand-hover);
-    }
-
-    .return-btn {
-      padding: 6px 12px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      background: #10b981;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      transition: background 0.2s;
-    }
-
-    .return-btn:hover {
-      background: #059669;
-    }
-
-    .delete-btn {
-      padding: 6px 12px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      background: var(--accent-danger);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      transition: background 0.2s;
-    }
-
-    .delete-btn:hover {
-      background: var(--accent-danger-hover);
+      letter-spacing: 0.05em;
     }
 
     .badge-status {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 10px;
+      padding: 6px 12px;
       border-radius: 20px;
       font-size: 12px;
       font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .badge-status::before {
-      content: '';
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
     }
 
     .badge-status.free {
-      background-color: rgba(16, 185, 129, 0.15);
-      color: #34d399;
+      background: var(--status-free-bg);
+      color: var(--status-free);
       border: 1px solid rgba(16, 185, 129, 0.3);
-    }
-    .badge-status.free::before {
-      background-color: #34d399;
-      box-shadow: 0 0 6px #34d399;
     }
 
     .badge-status.busy {
-      background-color: rgba(239, 68, 68, 0.15);
-      color: #f87171;
-      border: 1px solid rgba(239, 68, 68, 0.3);
+      background: var(--status-busy-bg);
+      color: var(--status-busy);
+      border: 1px solid rgba(244, 63, 94, 0.3);
     }
-    .badge-status.busy::before {
-      background-color: #f87171;
-      box-shadow: 0 0 6px #f87171;
+
+    .select-btn, .return-btn, .delete-btn {
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
     }
+
+    .select-btn { background: var(--accent-purple); color: white; }
+    .return-btn { background: var(--status-free); color: white; }
+    .delete-btn { background: var(--status-busy); color: white; }
 
     #act-print-area { display: none; }
 
-    /* === СТИЛИ ПЕЧАТИ (БЕЛЫЙ A4 LANDSCAPE) === */
+    /* Print Styles */
     @media print {
       @page { size: A4 landscape !important; margin: 5mm 6mm !important; }
       html, body {
@@ -473,12 +420,14 @@
 </head>
 <body>
 
-  <!-- ФОРМА ВВОДА -->
   <div class="container">
     <div class="app-header">
       <div class="app-title">
         <div class="app-logo">A</div>
-        <h2>Учет оборудования (МТБ) — ArtMasters 2026</h2>
+        <div class="app-title-text">
+          <h2>Учет оборудования (МТБ)</h2>
+          <p>Основной чемпионат ArtMasters 2026</p>
+        </div>
       </div>
     </div>
 
@@ -487,7 +436,7 @@
     <div class="form-grid">
       <div class="form-group">
         <label for="inv-input">Инвентарный номер (QR / Штрихкод)</label>
-        <input type="text" id="inv-input" placeholder="Сканируйте или введите номер..." oninput="onInventoryChange(this.value)">
+        <input type="text" id="inv-input" placeholder="Сканируйте или введите..." oninput="onInventoryChange(this.value)">
       </div>
 
       <div class="form-group">
@@ -529,7 +478,6 @@
         </select>
       </div>
 
-      <!-- ВЫБОР РОЛИ ПОЛУЧАТЕЛЯ -->
       <div class="form-group">
         <label for="recipient-role-select">Роль получателя</label>
         <select id="recipient-role-select" onchange="onRoleChange(this.value)">
@@ -539,19 +487,16 @@
         </select>
       </div>
 
-      <!-- ВВОД ФИО ПОЛУЧАТЕЛЯ -->
       <div class="form-group">
         <label for="participant-name" id="participant-label">ФИО Участника</label>
         <input type="text" id="participant-name" placeholder="Введите ФИО участника...">
       </div>
 
-      <!-- ПОЛЕ КОНТАКТОВ: Телефон / Telegram / MAX -->
       <div class="form-group">
         <label for="contact-input">Телефон / Telegram / MAX</label>
         <input type="text" id="contact-input" placeholder="+7 (999) 000-00-00, @username, MAX...">
       </div>
 
-      <!-- ПОЛЕ ДАТЫ ВОЗВРАТА -->
       <div class="form-group" id="return-date-group">
         <label for="return-date-input">Планируемая дата возврата</label>
         <input type="date" id="return-date-input">
@@ -570,22 +515,19 @@
     </div>
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ПРОСМОТРА ВСЕЙ БАЗЫ -->
   <div id="dbModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 style="margin:0;">База оборудования МТБ (Справочник)</h3>
+        <h3>База оборудования МТБ (Справочник)</h3>
         <button class="close-btn" onclick="closeDbModal()">&times;</button>
       </div>
-      
       <div class="filter-tabs">
         <button class="filter-tab active" id="tab-all" onclick="setDbStatusFilter('all')">Все</button>
         <button class="filter-tab tab-free" id="tab-free" onclick="setDbStatusFilter('free')">🟢 В офисе</button>
         <button class="filter-tab tab-busy" id="tab-busy" onclick="setDbStatusFilter('busy')">🔴 На площадке</button>
       </div>
-
       <div class="search-bar">
-        <input type="text" id="dbSearchInput" placeholder="Быстрый поиск по модели, инвентарнику или категории..." oninput="filterDbTable()">
+        <input type="text" id="dbSearchInput" placeholder="Быстрый поиск..." oninput="filterDbTable()">
       </div>
       <div class="table-wrapper">
         <table class="db-table">
@@ -605,15 +547,14 @@
     </div>
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО ИСТОРИИ НАКЛАДНЫХ -->
   <div id="historyModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 style="margin:0;">Реестр выданных накладных (Актов)</h3>
+        <h3>Реестр выданных накладных (Актов)</h3>
         <button class="close-btn" onclick="closeHistoryModal()">&times;</button>
       </div>
       <div class="search-bar">
-        <input type="text" id="historySearchInput" placeholder="Поиск по № акта, ФИО, контакту, роли или оборудованию..." oninput="renderHistoryTable()">
+        <input type="text" id="historySearchInput" placeholder="Поиск по реестру..." oninput="renderHistoryTable()">
       </div>
       <div class="table-wrapper">
         <table class="db-table">
@@ -623,7 +564,7 @@
               <th>Дата</th>
               <th>Роль</th>
               <th>Получатель (ФИО)</th>
-              <th>Телефон / Telegram / MAX</th>
+              <th>Контакты</th>
               <th>Оборудование</th>
               <th>Инв. №</th>
               <th>Действия</th>
@@ -635,14 +576,12 @@
     </div>
   </div>
 
-  <!-- ШАБЛОН АКТА ДЛЯ ПЕЧАТИ -->
   <div id="act-print-area">
     <div class="act-header">
       Основной чемпионат Артмастерс 2026
       <div style="font-size: 11pt; margin-top: 4px;"><b>Акт приема-передачи оборудования № <span id="print-act-num">2026-001</span></b></div>
       <div class="subtitle">Компетенция — <span id="print-competence">моушн-дизайнер</span></div>
     </div>
-
     <table class="act-table">
       <thead>
         <tr>
@@ -675,7 +614,6 @@
         </tr>
       </tbody>
     </table>
-
     <div class="rules-block">
       <b>Просим обратить внимание:</b>
       <ul>
@@ -685,11 +623,9 @@
         <li>Оборудование и диски сдаются с полностью отснятым/рабочим материалом — ничего не удаляется.</li>
       </ul>
     </div>
-
     <div class="signature-line">
       С правилами выдачи ознакомлен (а), <span id="print-sig-role-label">участник</span>: <b><span id="print-participant-sig">__________________________</span></b> <span class="underline"></span>
     </div>
-
     <table class="signatures-grid">
       <tr>
         <td>Выдал технический менеджер: <b><span id="print-manager-out">Смутный Богдан Сергеевич</span></b> <span class="underline"></span></td>
@@ -708,68 +644,46 @@
   <script>
     let currentStatusFilter = 'all';
 
-    // Устанавливаем СЕГОДНЯШНЮЮ локальную дату (YYYY-MM-DD)
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
-    const todayLocalISO = `${year}-${month}-${day}`;
-    
-    document.getElementById('return-date-input').value = todayLocalISO;
+    document.getElementById('return-date-input').value = `${year}-${month}-${day}`;
 
-    // Смена роли получателя
     function onRoleChange(role) {
-      const label = document.getElementById('participant-label');
-      const input = document.getElementById('participant-name');
-      
-      label.innerText = `ФИО (${role})`;
-      input.placeholder = `Введите ФИО (${role.toLowerCase()})...`;
+      document.getElementById('participant-label').innerText = `ФИО (${role})`;
+      document.getElementById('participant-name').placeholder = `Введите ФИО (${role.toLowerCase()})...`;
     }
 
     function onInventoryChange(invVal) {
       if (typeof findEquipment === 'function') {
         const found = findEquipment(invVal);
-        if (found) {
-          document.getElementById('equipment-name').value = found.name;
-        }
+        if (found) document.getElementById('equipment-name').value = found.name;
       }
     }
 
-    function onScanSuccess(decodedText, decodedResult) {
+    function onScanSuccess(decodedText) {
       document.getElementById('inv-input').value = decodedText;
       onInventoryChange(decodedText);
     }
 
-    const html5QrcodeScanner = new Html5QrcodeScanner(
-      "reader", { fps: 10, qrbox: { width: 220, height: 220 } }
-    );
+    const html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: { width: 220, height: 220 } });
     html5QrcodeScanner.render(onScanSuccess);
 
-    /* === ЛОГИКА БАЗЫ ДАННЫХ === */
-    function openDbModal() {
-      renderDbTable();
-      document.getElementById('dbModal').style.display = 'flex';
-    }
-
-    function closeDbModal() {
-      document.getElementById('dbModal').style.display = 'none';
-    }
-
-    function setDbStatusFilter(filterType) {
-      currentStatusFilter = filterType;
-      document.getElementById('tab-all').className = 'filter-tab' + (filterType === 'all' ? ' active' : '');
-      document.getElementById('tab-free').className = 'filter-tab tab-free' + (filterType === 'free' ? ' active' : '');
-      document.getElementById('tab-busy').className = 'filter-tab tab-busy' + (filterType === 'busy' ? ' active' : '');
+    function openDbModal() { renderDbTable(); document.getElementById('dbModal').style.display = 'flex'; }
+    function closeDbModal() { document.getElementById('dbModal').style.display = 'none'; }
+    function setDbStatusFilter(type) {
+      currentStatusFilter = type;
+      document.getElementById('tab-all').className = 'filter-tab' + (type === 'all' ? ' active' : '');
+      document.getElementById('tab-free').className = 'filter-tab' + (type === 'free' ? ' active' : '');
+      document.getElementById('tab-busy').className = 'filter-tab' + (type === 'busy' ? ' active' : '');
       renderDbTable();
     }
 
     function returnEquipmentToOffice(inv) {
       if (window.EQUIPMENT_DB) {
-        let foundKey = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === inv);
-        if (foundKey) {
-          window.EQUIPMENT_DB[foundKey].status = 'В офисе';
-          renderDbTable();
-        }
+        let key = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === inv);
+        if (key) { window.EQUIPMENT_DB[key].status = 'В офисе'; renderDbTable(); }
       }
     }
 
@@ -777,37 +691,26 @@
       const tbody = document.getElementById('dbTableBody');
       tbody.innerHTML = '';
       if (!window.EQUIPMENT_DB) return;
-
-      const searchFilter = (filterText || document.getElementById('dbSearchInput').value).toLowerCase().trim();
+      const search = (filterText || document.getElementById('dbSearchInput').value).toLowerCase().trim();
 
       Object.values(window.EQUIPMENT_DB).forEach(item => {
         const rawStatus = item.status || 'В офисе';
         const isFree = rawStatus.toLowerCase().includes('свобод') || rawStatus.toLowerCase().includes('офис');
-        
         if (currentStatusFilter === 'free' && !isFree) return;
         if (currentStatusFilter === 'busy' && isFree) return;
 
         const text = `${item.inv} ${item.category} ${item.name} ${item.sn} ${rawStatus}`.toLowerCase();
-        
-        if (!searchFilter || text.includes(searchFilter)) {
-          const badgeClass = isFree ? 'free' : 'busy';
-          const returnBtnHtml = !isFree 
-            ? `<button class="return-btn" onclick="returnEquipmentToOffice('${item.inv}')">📥 Вернуть</button>` 
-            : '';
-
+        if (!search || text.includes(search)) {
+          const badge = isFree ? 'free' : 'busy';
+          const returnBtn = !isFree ? `<button class="return-btn" onclick="returnEquipmentToOffice('${item.inv}')">📥 Вернуть</button>` : '';
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td><b>${item.inv}</b></td>
             <td>${item.category}</td>
             <td>${item.name}</td>
             <td>${item.sn || '—'}</td>
-            <td><span class="badge-status ${badgeClass}">${rawStatus}</span></td>
-            <td>
-              <div class="action-btn-group">
-                <button class="select-btn" onclick="selectEquipment('${item.inv}')">Выбрать</button>
-                ${returnBtnHtml}
-              </div>
-            </td>
+            <td><span class="badge-status ${badge}">${rawStatus}</span></td>
+            <td><div style="display:flex;gap:6px;"><button class="select-btn" onclick="selectEquipment('${item.inv}')">Выбрать</button>${returnBtn}</div></td>
           `;
           tbody.appendChild(tr);
         }
@@ -815,71 +718,41 @@
     }
 
     function filterDbTable() { renderDbTable(); }
+    function selectEquipment(inv) { document.getElementById('inv-input').value = inv; onInventoryChange(inv); closeDbModal(); }
 
-    function selectEquipment(inv) {
-      document.getElementById('inv-input').value = inv;
-      onInventoryChange(inv);
-      closeDbModal();
-    }
-
-    /* === ЛОГИКА ИСТОРИИ НАКЛАДНЫХ === */
-    function getActsHistory() {
-      return JSON.parse(localStorage.getItem('artmasters_acts_history') || '[]');
-    }
-
-    function saveActToHistory(act) {
-      const history = getActsHistory();
-      history.unshift(act);
-      localStorage.setItem('artmasters_acts_history', JSON.stringify(history));
-    }
-
+    function getActsHistory() { return JSON.parse(localStorage.getItem('artmasters_acts_history') || '[]'); }
+    function saveActToHistory(act) { const h = getActsHistory(); h.unshift(act); localStorage.setItem('artmasters_acts_history', JSON.stringify(h)); }
     function deleteActFromHistory(actNum) {
-      if (confirm(`Вы уверены, что хотите удалить Акт № ${actNum}?`)) {
-        let history = getActsHistory();
-        history = history.filter(a => a.num !== actNum);
-        localStorage.setItem('artmasters_acts_history', JSON.stringify(history));
+      if (confirm(`Удалить Акт № ${actNum}?`)) {
+        let h = getActsHistory().filter(a => a.num !== actNum);
+        localStorage.setItem('artmasters_acts_history', JSON.stringify(h));
         renderHistoryTable();
       }
     }
 
-    function openHistoryModal() {
-      renderHistoryTable();
-      document.getElementById('historyModal').style.display = 'flex';
-    }
-
-    function closeHistoryModal() {
-      document.getElementById('historyModal').style.display = 'none';
-    }
+    function openHistoryModal() { renderHistoryTable(); document.getElementById('historyModal').style.display = 'flex'; }
+    function closeHistoryModal() { document.getElementById('historyModal').style.display = 'none'; }
 
     function renderHistoryTable() {
       const tbody = document.getElementById('historyTableBody');
       tbody.innerHTML = '';
-      const history = getActsHistory();
+      const h = getActsHistory();
       const filter = document.getElementById('historySearchInput').value.toLowerCase().trim();
+      if (h.length === 0) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;">История пуста</td></tr>'; return; }
 
-      if (history.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 20px;">История накладных пуста</td></tr>';
-        return;
-      }
-
-      history.forEach(act => {
+      h.forEach(act => {
         const searchStr = `${act.num} ${act.date} ${act.role || ''} ${act.participant} ${act.contact || ''} ${act.name} ${act.inv} ${act.manager}`.toLowerCase();
         if (!filter || searchStr.includes(filter)) {
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td><b>№ ${act.num}</b></td>
             <td>${act.date}</td>
-            <td><span class="badge-status free" style="background: rgba(124, 58, 237, 0.2); color: #a855f7; border-color: rgba(124, 58, 237, 0.4);">${act.role || 'Участник'}</span></td>
+            <td><span class="badge-status free">${act.role || 'Участник'}</span></td>
             <td>${act.participant}</td>
             <td>${act.contact || '—'}</td>
             <td>${act.name}</td>
             <td>${act.inv}</td>
-            <td>
-              <div class="action-btn-group">
-                <button class="select-btn" onclick="reprintAct('${act.num}')">🖨️ Печать</button>
-                <button class="delete-btn" onclick="deleteActFromHistory('${act.num}')">🗑️ Удалить</button>
-              </div>
-            </td>
+            <td><div style="display:flex;gap:6px;"><button class="select-btn" onclick="reprintAct('${act.num}')">🖨️ Печать</button><button class="delete-btn" onclick="deleteActFromHistory('${act.num}')">🗑️ Удалить</button></div></td>
           `;
           tbody.appendChild(tr);
         }
@@ -887,10 +760,8 @@
     }
 
     function reprintAct(actNum) {
-      const history = getActsHistory();
-      const act = history.find(a => a.num === actNum);
+      const act = getActsHistory().find(a => a.num === actNum);
       if (!act) return;
-
       const role = act.role || 'Участник';
       document.getElementById('print-act-num').innerText = act.num;
       document.getElementById('print-competence').innerText = act.comp;
@@ -906,19 +777,16 @@
       document.getElementById('print-manager-in').innerText = act.manager;
       document.getElementById('print-date-out').innerText = act.date;
       document.getElementById('print-date-in').innerText = act.returnDate;
-
       document.getElementById('print-recipient-role-grid1').innerText = role;
       document.getElementById('print-recipient-role-grid2').innerText = role;
       document.getElementById('print-competence-mgr1').innerText = act.participant !== '—' ? act.participant : '__________________________';
       document.getElementById('print-competence-mgr2').innerText = act.participant !== '—' ? act.participant : '__________________________';
-
       closeHistoryModal();
       window.print();
     }
 
-    /* === ГЕНЕРАЦИЯ И ПЕЧАТЬ === */
     function generateAndPrintAct() {
-      const todayFormatted = new Date().toLocaleDateString('ru-RU');
+      const today = new Date().toLocaleDateString('ru-RU');
       const inv = document.getElementById('inv-input').value || '—';
       const name = document.getElementById('equipment-name').value || '—';
       const comp = document.getElementById('competence-select').value;
@@ -928,29 +796,21 @@
       const contact = document.getElementById('contact-input').value || '—';
       const comment = document.getElementById('comment-input').value || '—';
 
-      // Автоматическая нумерация акта
-      const history = getActsHistory();
-      const nextNumInt = history.length + 1;
-      const actNum = `2026-${String(nextNumInt).padStart(3, '0')}`;
+      const h = getActsHistory();
+      const actNum = `2026-${String(h.length + 1).padStart(3, '0')}`;
 
-      // Смена статуса в базе
       if (inv !== '—' && window.EQUIPMENT_DB) {
-        let foundKey = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === inv);
-        if (foundKey) {
-          const contactInfo = contact !== '—' ? ` (${contact})` : '';
-          window.EQUIPMENT_DB[foundKey].status = `На площадке (${participant !== '—' ? participant : 'Занят'}${contactInfo})`;
+        let key = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === inv);
+        if (key) {
+          const cInfo = contact !== '—' ? ` (${contact})` : '';
+          window.EQUIPMENT_DB[key].status = `На площадке (${participant !== '—' ? participant : 'Занят'}${cInfo})`;
         }
       }
 
-      // Планируемая дата возврата
-      const rawReturnDate = document.getElementById('return-date-input').value;
-      let formattedReturnDate = '—';
-      if (rawReturnDate) {
-        const parts = rawReturnDate.split('-');
-        formattedReturnDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
-      }
+      const rawDate = document.getElementById('return-date-input').value;
+      let returnDate = '—';
+      if (rawDate) { const p = rawDate.split('-'); returnDate = `${p[2]}.${p[1]}.${p[0]}`; }
 
-      // Подстановка в Акт
       document.getElementById('print-act-num').innerText = actNum;
       document.getElementById('print-competence').innerText = comp;
       document.getElementById('print-inv').innerText = inv;
@@ -963,30 +823,15 @@
       document.getElementById('print-comment').innerText = comment;
       document.getElementById('print-manager-out').innerText = manager;
       document.getElementById('print-manager-in').innerText = manager;
-      document.getElementById('print-date-out').innerText = todayFormatted;
-      document.getElementById('print-date-in').innerText = formattedReturnDate;
-
+      document.getElementById('print-date-out').innerText = today;
+      document.getElementById('print-date-in').innerText = returnDate;
       document.getElementById('print-recipient-role-grid1').innerText = role;
       document.getElementById('print-recipient-role-grid2').innerText = role;
-      const recipientSigText = participant !== '—' ? participant : '__________________________';
-      document.getElementById('print-competence-mgr1').innerText = recipientSigText;
-      document.getElementById('print-competence-mgr2').innerText = recipientSigText;
+      const sigText = participant !== '—' ? participant : '__________________________';
+      document.getElementById('print-competence-mgr1').innerText = sigText;
+      document.getElementById('print-competence-mgr2').innerText = sigText;
 
-      // Сохраняем накладную в историю
-      saveActToHistory({
-        num: actNum,
-        date: todayFormatted,
-        returnDate: formattedReturnDate,
-        inv: inv,
-        name: name,
-        comp: comp,
-        manager: manager,
-        role: role,
-        participant: participant,
-        contact: contact,
-        comment: comment
-      });
-
+      saveActToHistory({ num: actNum, date: today, returnDate: returnDate, inv: inv, name: name, comp: comp, manager: manager, role: role, participant: participant, contact: contact, comment: comment });
       window.print();
     }
   </script>
