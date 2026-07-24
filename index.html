@@ -511,9 +511,15 @@
         </select>
       </div>
 
+      <!-- ОБНОВЛЕННОЕ ПОЛЕ: Сотрудник / Участник / Менеджер компетенции -->
       <div class="form-group">
-        <label for="participant-name">Сотрудник / Участник ФИО</label>
+        <label for="participant-name">Сотрудник / Участник / Менеджер компетенции ФИО</label>
         <input type="text" id="participant-name" placeholder="Введите ФИО...">
+      </div>
+
+      <div class="form-group">
+        <label for="comp-manager-name">Менеджер компетенции ФИО</label>
+        <input type="text" id="comp-manager-name" placeholder="Укажите ФИО Менеджера компетенции...">
       </div>
 
       <!-- ПОЛЕ ДАТЫ ВОЗВРАТА -->
@@ -578,7 +584,7 @@
         <button class="close-btn" onclick="closeHistoryModal()">&times;</button>
       </div>
       <div class="search-bar">
-        <input type="text" id="historySearchInput" placeholder="Поиск по № акта, ФИО или оборудованию..." oninput="renderHistoryTable()">
+        <input type="text" id="historySearchInput" placeholder="Поиск по № акта, ФИО, Менеджеру компетенции или оборудованию..." oninput="renderHistoryTable()">
       </div>
       <div class="table-wrapper">
         <table class="db-table">
@@ -587,9 +593,9 @@
               <th>№ Накладной</th>
               <th>Дата</th>
               <th>Получатель (ФИО)</th>
+              <th>Менеджер компетенции</th>
               <th>Оборудование</th>
               <th>Инв. №</th>
-              <th>Тех. менеджер</th>
               <th>Действие</th>
             </tr>
           </thead>
@@ -613,7 +619,7 @@
           <th style="width: 4%;">№</th>
           <th style="width: 32%;">Наименование</th>
           <th style="width: 14%;">Инвентарный номер</th>
-          <th style="width: 16%;">Участник / Сотрудник ФИО</th>
+          <th style="width: 16%;">Сотрудник / Участник / Менеджер компетенции ФИО</th>
           <th style="width: 6%;">Кол-во</th>
           <th style="width: 9%;">Дата выдачи</th>
           <th style="width: 8%;">Подпись</th>
@@ -649,7 +655,7 @@
     </div>
 
     <div class="signature-line">
-      С правилами выдачи ознакомлен, участник: <b><span id="print-participant-sig">__________________________</span></b> <span class="underline"></span>
+      С правилами выдачи ознакомлен, участник / сотрудник / менеджер компетенции: <b><span id="print-participant-sig">__________________________</span></b> <span class="underline"></span>
     </div>
 
     <table class="signatures-grid">
@@ -807,16 +813,16 @@
       }
 
       history.forEach(act => {
-        const searchStr = `${act.num} ${act.date} ${act.participant} ${act.name} ${act.inv} ${act.manager}`.toLowerCase();
+        const searchStr = `${act.num} ${act.date} ${act.participant} ${act.compManager || ''} ${act.name} ${act.inv} ${act.manager}`.toLowerCase();
         if (!filter || searchStr.includes(filter)) {
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td><b>№ ${act.num}</b></td>
             <td>${act.date}</td>
             <td>${act.participant}</td>
+            <td>${act.compManager || '—'}</td>
             <td>${act.name}</td>
             <td>${act.inv}</td>
-            <td>${act.manager}</td>
             <td><button class="select-btn" onclick="reprintAct('${act.num}')">🖨️ Печать</button></td>
           `;
           tbody.appendChild(tr);
@@ -841,6 +847,10 @@
       document.getElementById('print-date-out').innerText = act.date;
       document.getElementById('print-date-in').innerText = act.returnDate;
 
+      const compMgrText = act.compManager && act.compManager !== '—' ? act.compManager : '__________________________';
+      document.getElementById('print-competence-mgr1').innerText = compMgrText;
+      document.getElementById('print-competence-mgr2').innerText = compMgrText;
+
       closeHistoryModal();
       window.print();
     }
@@ -853,6 +863,7 @@
       const comp = document.getElementById('competence-select').value;
       const manager = document.getElementById('manager-select').value;
       const participant = document.getElementById('participant-name').value || '—';
+      const compManager = document.getElementById('comp-manager-name').value || '—';
       const comment = document.getElementById('comment-input').value || '—';
 
       // Автоматическая нумерация акта
@@ -889,6 +900,10 @@
       document.getElementById('print-date-out').innerText = todayFormatted;
       document.getElementById('print-date-in').innerText = formattedReturnDate;
 
+      const compMgrText = compManager !== '—' ? compManager : '__________________________';
+      document.getElementById('print-competence-mgr1').innerText = compMgrText;
+      document.getElementById('print-competence-mgr2').innerText = compMgrText;
+
       // Сохраняем накладную в историю
       saveActToHistory({
         num: actNum,
@@ -899,6 +914,7 @@
         comp: comp,
         manager: manager,
         participant: participant,
+        compManager: compManager,
         comment: comment
       });
 
