@@ -24,6 +24,8 @@
       --accent-brand-hover: #6d28d9;
       --accent-success: #10b981;
       --accent-success-hover: #059669;
+      --accent-danger: #ef4444;
+      --accent-danger-hover: #dc2626;
     }
 
     * {
@@ -384,6 +386,22 @@
       background: #059669;
     }
 
+    .delete-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      background: var(--accent-danger);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .delete-btn:hover {
+      background: var(--accent-danger-hover);
+    }
+
     .badge-status {
       display: inline-flex;
       align-items: center;
@@ -601,7 +619,7 @@
               <th>Получатель (ФИО)</th>
               <th>Оборудование</th>
               <th>Инв. №</th>
-              <th>Действие</th>
+              <th>Действия</th>
             </tr>
           </thead>
           <tbody id="historyTableBody"></tbody>
@@ -806,6 +824,15 @@
       localStorage.setItem('artmasters_acts_history', JSON.stringify(history));
     }
 
+    function deleteActFromHistory(actNum) {
+      if (confirm(`Вы уверены, что хотите удалить Акт № ${actNum}?`)) {
+        let history = getActsHistory();
+        history = history.filter(a => a.num !== actNum);
+        localStorage.setItem('artmasters_acts_history', JSON.stringify(history));
+        renderHistoryTable();
+      }
+    }
+
     function openHistoryModal() {
       renderHistoryTable();
       document.getElementById('historyModal').style.display = 'flex';
@@ -837,7 +864,12 @@
             <td>${act.participant}</td>
             <td>${act.name}</td>
             <td>${act.inv}</td>
-            <td><button class="select-btn" onclick="reprintAct('${act.num}')">🖨️ Печать</button></td>
+            <td>
+              <div class="action-btn-group">
+                <button class="select-btn" onclick="reprintAct('${act.num}')">🖨️ Печать</button>
+                <button class="delete-btn" onclick="deleteActFromHistory('${act.num}')">🗑️ Удалить</button>
+              </div>
+            </td>
           `;
           tbody.appendChild(tr);
         }
