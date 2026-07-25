@@ -163,6 +163,20 @@
       transition: all 0.25s ease;
     }
 
+    /* Стили для составного поля ввода телефона */
+    .phone-input-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .phone-country-select {
+      width: 110px !important;
+      flex-shrink: 0;
+      font-size: 13px;
+      padding: 14px 8px;
+      cursor: pointer;
+    }
+
     /* Белая иконка календаря */
     input[type="date"]::-webkit-calendar-picker-indicator {
       filter: invert(1);
@@ -530,9 +544,25 @@
         <input type="text" id="participant-name" placeholder="Введите ФИО участника...">
       </div>
 
+      <!-- Поле ввода номера телефона с выбором страны -->
       <div class="form-group">
         <label for="contact-input">Телефон / Telegram / MAX</label>
-        <input type="text" id="contact-input" placeholder="+7 (999) 000-00-00, @username, MAX...">
+        <div class="phone-input-group">
+          <select id="country-code-select" class="phone-country-select" onchange="onCountryCodeChange()">
+            <option value="+7">🇷🇺 +7</option>
+            <option value="+375">🇧🇾 +375</option>
+            <option value="+7_KZ">🇰🇿 +7</option>
+            <option value="+998">🇺🇿 +998</option>
+            <option value="+374">🇦🇲 +374</option>
+            <option value="+995">🇬🇪 +995</option>
+            <option value="+996">🇰🇬 +996</option>
+            <option value="+373">🇲🇩 +373</option>
+            <option value="+993">🇹🇲 +993</option>
+            <option value="+992">🇹🇯 +993</option>
+            <option value="other">🌐 Другой</option>
+          </select>
+          <input type="text" id="contact-input" placeholder="920 693 10 13 или @username..." oninput="formatPhoneNumber(this)">
+        </div>
       </div>
 
       <div class="form-group" id="return-date-group">
@@ -715,6 +745,65 @@
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
     document.getElementById('return-date-input').value = `${year}-${month}-${day}`;
+
+    // Форматирование телефона (+7 920 693 10 13)
+    function onCountryCodeChange() {
+      const input = document.getElementById('contact-input');
+      formatPhoneNumber(input);
+    }
+
+    function formatPhoneNumber(input) {
+      let val = input.value;
+      
+      // Если ввод начинается с @ или содержит символы никнейма (Telegram/MAX), не маскируем
+      if (val.trim().startsWith('@') || /[a-zA-Z]/.test(val)) {
+        return;
+      }
+
+      const digits = val.replace(/\D/g, '');
+      const codeSel = document.getElementById('country-code-select').value;
+      
+      if (!digits) {
+        input.value = '';
+        return;
+      }
+
+      let prefix = '+7';
+      if (codeSel === '+375') prefix = '+375';
+      else if (codeSel === '+998') prefix = '+998';
+      else if (codeSel === '+374') prefix = '+374';
+      else if (codeSel === '+995') prefix = '+995';
+      else if (codeSel === '+996') prefix = '+996';
+      else if (codeSel === '+373') prefix = '+373';
+      else if (codeSel === '+993') prefix = '+993';
+      else if (codeSel === '+992') prefix = '+992';
+      else if (codeSel === 'other') prefix = '';
+
+      // Если Россия / Казахстан (+7 XXX XXX XX XX)
+      if (codeSel === '+7' || codeSel === '+7_KZ') {
+        let cleanDigits = digits;
+        if (cleanDigits.startsWith('7') || cleanDigits.startsWith('8')) {
+          cleanDigits = cleanDigits.substring(1);
+        }
+
+        let formatted = '+7';
+        if (cleanDigits.length > 0) formatted += ' ' + cleanDigits.substring(0, 3);
+        if (cleanDigits.length >= 4) formatted += ' ' + cleanDigits.substring(3, 6);
+        if (cleanDigits.length >= 7) formatted += ' ' + cleanDigits.substring(6, 8);
+        if (cleanDigits.length >= 9) formatted += ' ' + cleanDigits.substring(8, 10);
+
+        input.value = formatted;
+      } else if (prefix) {
+        // Для других стран: Код + разбивка по 3 цифры
+        let parts = digits.match(/.{1,3}/g) || [];
+        input.value = prefix + (parts.length > 0 ? ' ' + parts.join(' ') : '');
+      }
+    }
+
+    function getFullContactValue() {
+      const inputVal = document.getElementById('contact-input').value.trim();
+      return inputVal || '—';
+    }
 
     function onRoleChange(role) {
       document.getElementById('participant-label').innerText = `ФИО (${role})`;
@@ -1008,7 +1097,7 @@
       const manager = document.getElementById('manager-select').value;
       const role = document.getElementById('recipient-role-select').value;
       const participant = document.getElementById('participant-name').value || '—';
-      const contact = document.getElementById('contact-input').value || '—';
+      const contact = getFullContactValue();
       const comment = document.getElementById('comment-input').value || '—';
 
       const h = getActsHistory();
