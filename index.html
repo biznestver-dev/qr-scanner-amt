@@ -643,7 +643,7 @@
   <!-- Печатный Акт Приема-Передачи -->
   <div id="act-print-area">
     <div class="act-header">
-      Основной чемпионат Артмастерс 2026
+      АНО «АртМастерс»
       <div style="font-size: 11pt; margin-top: 4px;"><b>Акт приема-передачи оборудования № <span id="print-act-num">2026-001</span></b></div>
       <div class="subtitle" id="print-subtitle-container">Компетенция — <span id="print-competence">моушн-дизайнер</span></div>
     </div>
@@ -930,7 +930,6 @@
       const role = act.role || 'Участник';
       document.getElementById('print-act-num').innerText = act.num;
       
-      // Настройка подзаголовка шапки в зависимости от роли
       const subtitleContainer = document.getElementById('print-subtitle-container');
       if (role === 'Сотрудник') {
         subtitleContainer.innerHTML = `Выдано сотруднику Артмастерс — <b>${act.participant}</b>`;
@@ -1025,7 +1024,6 @@
 
       document.getElementById('print-act-num').innerText = actNum;
 
-      // Динамическая подмена строки под заголовок Акта
       const subtitleContainer = document.getElementById('print-subtitle-container');
       if (role === 'Сотрудник') {
         subtitleContainer.innerHTML = `Выдано сотруднику Артмастерс — <b>${participant}</b>`;
