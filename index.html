@@ -645,7 +645,7 @@
     <div class="act-header">
       Основной чемпионат Артмастерс 2026
       <div style="font-size: 11pt; margin-top: 4px;"><b>Акт приема-передачи оборудования № <span id="print-act-num">2026-001</span></b></div>
-      <div class="subtitle">Компетенция — <span id="print-competence">моушн-дизайнер</span></div>
+      <div class="subtitle" id="print-subtitle-container">Компетенция — <span id="print-competence">моушн-дизайнер</span></div>
     </div>
     <table class="act-table">
       <thead>
@@ -929,7 +929,15 @@
       if (!act) return;
       const role = act.role || 'Участник';
       document.getElementById('print-act-num').innerText = act.num;
-      document.getElementById('print-competence').innerText = act.comp;
+      
+      // Настройка подзаголовка шапки в зависимости от роли
+      const subtitleContainer = document.getElementById('print-subtitle-container');
+      if (role === 'Сотрудник') {
+        subtitleContainer.innerHTML = `Выдано сотруднику Артмастерс — <b>${act.participant}</b>`;
+      } else {
+        subtitleContainer.innerHTML = `Компетенция — <b>${act.comp}</b>`;
+      }
+
       document.getElementById('print-header-role').innerText = `${role} ФИО`;
       document.getElementById('print-sig-role-label').innerText = role.toLowerCase();
       document.getElementById('print-manager-out').innerText = act.manager;
@@ -1016,7 +1024,15 @@
       }
 
       document.getElementById('print-act-num').innerText = actNum;
-      document.getElementById('print-competence').innerText = comp;
+
+      // Динамическая подмена строки под заголовок Акта
+      const subtitleContainer = document.getElementById('print-subtitle-container');
+      if (role === 'Сотрудник') {
+        subtitleContainer.innerHTML = `Выдано сотруднику Артмастерс — <b>${participant}</b>`;
+      } else {
+        subtitleContainer.innerHTML = `Компетенция — <b>${comp}</b>`;
+      }
+
       document.getElementById('print-header-role').innerText = `${role} ФИО`;
       document.getElementById('print-sig-role-label').innerText = role.toLowerCase();
       document.getElementById('print-manager-out').innerText = manager;
