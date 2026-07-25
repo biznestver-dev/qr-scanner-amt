@@ -187,6 +187,36 @@
       color: var(--text-primary);
     }
 
+    /* Список добавленного оборудования в форме */
+    .selected-items-list {
+      grid-column: 1 / -1;
+      background: rgba(15, 23, 42, 0.4);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 10px;
+    }
+
+    .selected-items-list h4 {
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+
+    .item-row:last-child { margin-bottom: 0; }
+
     /* Единые стильные кнопки — одинаковые по умолчанию, загораются при наведении */
     .btn-group {
       display: flex;
@@ -231,6 +261,16 @@
       box-shadow: 0 4px 12px var(--accent-glow);
     }
 
+    .btn-secondary {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid var(--glass-border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(51, 65, 85, 0.8);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
     /* Modal Design */
     .modal {
       display: none;
@@ -268,6 +308,12 @@
       font-size: 20px;
       font-weight: 700;
       color: var(--text-primary);
+    }
+
+    .modal-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
     .close-btn {
@@ -370,7 +416,7 @@
       border: 1px solid rgba(244, 63, 94, 0.3);
     }
 
-    .select-btn, .return-btn, .delete-btn {
+    .select-btn, .return-btn, .delete-btn, .export-btn {
       padding: 8px 14px;
       font-size: 12px;
       font-weight: 600;
@@ -378,11 +424,16 @@
       border: none;
       cursor: pointer;
       transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .select-btn { background: var(--accent-purple); color: white; }
     .return-btn { background: var(--status-free); color: white; }
     .delete-btn { background: var(--status-busy); color: white; }
+    .export-btn { background: #0284c7; color: white; }
+    .export-btn:hover { background: #0369a1; }
 
     #act-print-area { display: none; }
 
@@ -502,20 +553,33 @@
         <label for="comment-input">Комментарии</label>
         <textarea id="comment-input" rows="2" placeholder="Комплектация, состояние и т.д."></textarea>
       </div>
+
+      <!-- Список добавленных в текущий Акт позиций -->
+      <div class="selected-items-list full-width">
+        <h4>Выбранное оборудование для выдачи (<span id="items-count">0</span>)</h4>
+        <div id="selected-items-container">
+          <p style="font-size: 13px; color: var(--text-muted);">Сканируйте QR или введите инвентарный номер и нажмите «+ Добавить в акт»</p>
+        </div>
+      </div>
     </div>
 
     <div class="btn-group">
+      <button class="btn btn-secondary" onclick="addItemToCurrentAct()">➕ Добавить в акт</button>
       <button class="btn" onclick="generateAndPrintAct()">🖨️ Напечатать Акт</button>
       <button class="btn" onclick="openDbModal()">📋 База МТБ</button>
       <button class="btn" onclick="openHistoryModal()">📜 История накладных</button>
     </div>
   </div>
 
+  <!-- Модальное окно Базы МТБ -->
   <div id="dbModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
         <h3>База оборудования МТБ (Справочник)</h3>
-        <button class="close-btn" onclick="closeDbModal()">&times;</button>
+        <div class="modal-actions">
+          <button class="export-btn" onclick="exportDbToCSV()">📊 Экспорт CSV</button>
+          <button class="close-btn" onclick="closeDbModal()">&times;</button>
+        </div>
       </div>
       <div class="filter-tabs">
         <button class="filter-tab active" id="tab-all" onclick="setDbStatusFilter('all')">Все</button>
@@ -543,11 +607,15 @@
     </div>
   </div>
 
+  <!-- Модальное окно Истории Накладных -->
   <div id="historyModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
         <h3>Реестр выданных накладных (Актов)</h3>
-        <button class="close-btn" onclick="closeHistoryModal()">&times;</button>
+        <div class="modal-actions">
+          <button class="export-btn" onclick="exportActsToCSV()">📊 Экспорт CSV</button>
+          <button class="close-btn" onclick="closeHistoryModal()">&times;</button>
+        </div>
       </div>
       <div class="search-bar">
         <input type="text" id="historySearchInput" placeholder="Поиск по реестру..." oninput="renderHistoryTable()">
@@ -561,7 +629,7 @@
               <th>Роль</th>
               <th>Получатель (ФИО)</th>
               <th>Контакты</th>
-              <th>Оборудование</th>
+              <th>Оборудование (Кол-во)</th>
               <th>Инв. №</th>
               <th>Действия</th>
             </tr>
@@ -572,6 +640,7 @@
     </div>
   </div>
 
+  <!-- Печатный Акт Приема-Передачи -->
   <div id="act-print-area">
     <div class="act-header">
       Основной чемпионат Артмастерс 2026
@@ -594,20 +663,8 @@
           <th style="width: 11%;">Комментарии</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td id="print-name" style="text-align: left;">—</td>
-          <td id="print-inv">—</td>
-          <td id="print-participant">—</td>
-          <td id="print-contact">—</td>
-          <td>1</td>
-          <td id="print-date-out">—</td>
-          <td></td>
-          <td id="print-date-in">—</td>
-          <td></td>
-          <td id="print-comment" style="text-align: left;">—</td>
-        </tr>
+      <tbody id="print-table-tbody">
+        <!-- Сюда динамически подставляются строки оборудования -->
       </tbody>
     </table>
     <div class="rules-block">
@@ -639,7 +696,29 @@
 
   <script>
     let currentStatusFilter = 'all';
+    let currentActItems = [];
 
+    // Инициализация базы данных с поддержкой localStorage
+    function initEquipmentDb() {
+      const savedDb = localStorage.getItem('artmasters_equipment_db');
+      if (savedDb) {
+        try {
+          window.EQUIPMENT_DB = JSON.parse(savedDb);
+        } catch (e) {
+          console.error('Ошибка чтения базы из localStorage:', e);
+        }
+      }
+    }
+
+    function saveDbToLocalStorage() {
+      if (window.EQUIPMENT_DB) {
+        localStorage.setItem('artmasters_equipment_db', JSON.stringify(window.EQUIPMENT_DB));
+      }
+    }
+
+    initEquipmentDb();
+
+    // Установка дефолтной даты возврата
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -663,11 +742,71 @@
       onInventoryChange(decodedText);
     }
 
-    const html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: { width: 220, height: 220 } });
+    const html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
+      fps: 10, 
+      qrbox: { width: 220, height: 220 } 
+    });
     html5QrcodeScanner.render(onScanSuccess);
 
-    function openDbModal() { renderDbTable(); document.getElementById('dbModal').style.display = 'flex'; }
-    function closeDbModal() { document.getElementById('dbModal').style.display = 'none'; }
+    function addItemToCurrentAct() {
+      const inv = document.getElementById('inv-input').value.trim();
+      const name = document.getElementById('equipment-name').value.trim();
+
+      if (!inv || !name) {
+        alert('Укажите инвентарный номер и наименование оборудования!');
+        return;
+      }
+
+      if (currentActItems.some(item => item.inv === inv)) {
+        alert('Это оборудование уже добавлено в список!');
+        return;
+      }
+
+      currentActItems.push({ inv: inv, name: name });
+      
+      document.getElementById('inv-input').value = '';
+      document.getElementById('equipment-name').value = '';
+      
+      renderSelectedItems();
+    }
+
+    function removeItemFromAct(index) {
+      currentActItems.splice(index, 1);
+      renderSelectedItems();
+    }
+
+    function renderSelectedItems() {
+      const container = document.getElementById('selected-items-container');
+      document.getElementById('items-count').innerText = currentActItems.length;
+
+      if (currentActItems.length === 0) {
+        container.innerHTML = `<p style="font-size: 13px; color: var(--text-muted);">Сканируйте QR или введите инвентарный номер и нажмите «+ Добавить в акт»</p>`;
+        return;
+      }
+
+      container.innerHTML = '';
+      currentActItems.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'item-row';
+        div.innerHTML = `
+          <div>
+            <b style="font-family: 'JetBrains Mono'; font-size: 13px;">${item.inv}</b> — ${item.name}
+          </div>
+          <button class="delete-btn" onclick="removeItemFromAct(${index})">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function openDbModal() { 
+      renderDbTable(); 
+      document.getElementById('dbModal').style.display = 'flex'; 
+    }
+
+    function closeDbModal() { 
+      document.getElementById('dbModal').style.display = 'none'; 
+    }
+
     function setDbStatusFilter(type) {
       currentStatusFilter = type;
       document.getElementById('tab-all').className = 'filter-tab' + (type === 'all' ? ' active' : '');
@@ -679,7 +818,11 @@
     function returnEquipmentToOffice(inv) {
       if (window.EQUIPMENT_DB) {
         let key = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === inv);
-        if (key) { window.EQUIPMENT_DB[key].status = 'В офисе'; renderDbTable(); }
+        if (key) { 
+          window.EQUIPMENT_DB[key].status = 'В офисе'; 
+          saveDbToLocalStorage();
+          renderDbTable(); 
+        }
       }
     }
 
@@ -714,10 +857,23 @@
     }
 
     function filterDbTable() { renderDbTable(); }
-    function selectEquipment(inv) { document.getElementById('inv-input').value = inv; onInventoryChange(inv); closeDbModal(); }
 
-    function getActsHistory() { return JSON.parse(localStorage.getItem('artmasters_acts_history') || '[]'); }
-    function saveActToHistory(act) { const h = getActsHistory(); h.unshift(act); localStorage.setItem('artmasters_acts_history', JSON.stringify(h)); }
+    function selectEquipment(inv) { 
+      document.getElementById('inv-input').value = inv; 
+      onInventoryChange(inv); 
+      closeDbModal(); 
+    }
+
+    function getActsHistory() { 
+      return JSON.parse(localStorage.getItem('artmasters_acts_history') || '[]'); 
+    }
+
+    function saveActToHistory(act) { 
+      const h = getActsHistory(); 
+      h.unshift(act); 
+      localStorage.setItem('artmasters_acts_history', JSON.stringify(h)); 
+    }
+
     function deleteActFromHistory(actNum) {
       if (confirm(`Удалить Акт № ${actNum}?`)) {
         let h = getActsHistory().filter(a => a.num !== actNum);
@@ -726,18 +882,31 @@
       }
     }
 
-    function openHistoryModal() { renderHistoryTable(); document.getElementById('historyModal').style.display = 'flex'; }
-    function closeHistoryModal() { document.getElementById('historyModal').style.display = 'none'; }
+    function openHistoryModal() { 
+      renderHistoryTable(); 
+      document.getElementById('historyModal').style.display = 'flex'; 
+    }
+
+    function closeHistoryModal() { 
+      document.getElementById('historyModal').style.display = 'none'; 
+    }
 
     function renderHistoryTable() {
       const tbody = document.getElementById('historyTableBody');
       tbody.innerHTML = '';
       const h = getActsHistory();
       const filter = document.getElementById('historySearchInput').value.toLowerCase().trim();
-      if (h.length === 0) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;">История пуста</td></tr>'; return; }
+      if (h.length === 0) { 
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;">История пуста</td></tr>'; 
+        return; 
+      }
 
       h.forEach(act => {
-        const searchStr = `${act.num} ${act.date} ${act.role || ''} ${act.participant} ${act.contact || ''} ${act.name} ${act.inv} ${act.manager}`.toLowerCase();
+        const itemsList = act.items ? act.items.map(i => i.name).join(', ') : act.name;
+        const invsList = act.items ? act.items.map(i => i.inv).join(', ') : act.inv;
+        const countStr = act.items ? ` (${act.items.length} шт.)` : '';
+
+        const searchStr = `${act.num} ${act.date} ${act.role || ''} ${act.participant} ${act.contact || ''} ${itemsList} ${invsList} ${act.manager}`.toLowerCase();
         if (!filter || searchStr.includes(filter)) {
           const tr = document.createElement('tr');
           tr.innerHTML = `
@@ -746,8 +915,8 @@
             <td><span class="badge-status free">${act.role || 'Участник'}</span></td>
             <td>${act.participant}</td>
             <td>${act.contact || '—'}</td>
-            <td>${act.name}</td>
-            <td>${act.inv}</td>
+            <td>${itemsList}${countStr}</td>
+            <td>${invsList}</td>
             <td><div style="display:flex;gap:6px;"><button class="select-btn" onclick="reprintAct('${act.num}')">🖨️ Печать</button><button class="delete-btn" onclick="deleteActFromHistory('${act.num}')">🗑️ Удалить</button></div></td>
           `;
           tbody.appendChild(tr);
@@ -761,30 +930,66 @@
       const role = act.role || 'Участник';
       document.getElementById('print-act-num').innerText = act.num;
       document.getElementById('print-competence').innerText = act.comp;
-      document.getElementById('print-inv').innerText = act.inv;
-      document.getElementById('print-name').innerText = act.name;
       document.getElementById('print-header-role').innerText = `${role} ФИО`;
       document.getElementById('print-sig-role-label').innerText = role.toLowerCase();
-      document.getElementById('print-participant').innerText = act.participant;
-      document.getElementById('print-contact').innerText = act.contact || '—';
-      document.getElementById('print-participant-sig').innerText = act.participant !== '—' ? act.participant : '__________________________';
-      document.getElementById('print-comment').innerText = act.comment;
       document.getElementById('print-manager-out').innerText = act.manager;
       document.getElementById('print-manager-in').innerText = act.manager;
-      document.getElementById('print-date-out').innerText = act.date;
-      document.getElementById('print-date-in').innerText = act.returnDate;
       document.getElementById('print-recipient-role-grid1').innerText = role;
       document.getElementById('print-recipient-role-grid2').innerText = role;
-      document.getElementById('print-competence-mgr1').innerText = act.participant !== '—' ? act.participant : '__________________________';
-      document.getElementById('print-competence-mgr2').innerText = act.participant !== '—' ? act.participant : '__________________________';
+      const sigText = act.participant !== '—' ? act.participant : '__________________________';
+      document.getElementById('print-participant-sig').innerText = sigText;
+      document.getElementById('print-competence-mgr1').innerText = sigText;
+      document.getElementById('print-competence-mgr2').innerText = sigText;
+
+      const printTbody = document.getElementById('print-table-tbody');
+      printTbody.innerHTML = '';
+      
+      const itemsToPrint = act.items || [{ inv: act.inv, name: act.name }];
+      
+      itemsToPrint.forEach((item, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td style="text-align: left;">${item.name}</td>
+          <td>${item.inv}</td>
+          <td>${act.participant}</td>
+          <td>${act.contact || '—'}</td>
+          <td>1</td>
+          <td>${act.date}</td>
+          <td></td>
+          <td>${act.returnDate}</td>
+          <td></td>
+          <td style="text-align: left;">${act.comment}</td>
+        `;
+        printTbody.appendChild(tr);
+      });
+
       closeHistoryModal();
       window.print();
     }
 
+    function resetForm() {
+      document.getElementById('inv-input').value = '';
+      document.getElementById('equipment-name').value = '';
+      document.getElementById('participant-name').value = '';
+      document.getElementById('contact-input').value = '';
+      document.getElementById('comment-input').value = '';
+    }
+
     function generateAndPrintAct() {
+      const currentInv = document.getElementById('inv-input').value.trim();
+      const currentName = document.getElementById('equipment-name').value.trim();
+      
+      if (currentInv && currentName && !currentActItems.some(i => i.inv === currentInv)) {
+        currentActItems.push({ inv: currentInv, name: currentName });
+      }
+
+      if (currentActItems.length === 0) {
+        alert('Добавьте хотя бы одну позицию оборудования для печати Акта!');
+        return;
+      }
+
       const today = new Date().toLocaleDateString('ru-RU');
-      const inv = document.getElementById('inv-input').value || '—';
-      const name = document.getElementById('equipment-name').value || '—';
       const comp = document.getElementById('competence-select').value;
       const manager = document.getElementById('manager-select').value;
       const role = document.getElementById('recipient-role-select').value;
@@ -795,40 +1000,144 @@
       const h = getActsHistory();
       const actNum = `2026-${String(h.length + 1).padStart(3, '0')}`;
 
-      if (inv !== '—' && window.EQUIPMENT_DB) {
-        let key = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === inv);
-        if (key) {
-          const cInfo = contact !== '—' ? ` (${contact})` : '';
-          window.EQUIPMENT_DB[key].status = `На площадке (${participant !== '—' ? participant : 'Занят'}${cInfo})`;
-        }
-      }
-
       const rawDate = document.getElementById('return-date-input').value;
       let returnDate = '—';
       if (rawDate) { const p = rawDate.split('-'); returnDate = `${p[2]}.${p[1]}.${p[0]}`; }
 
+      if (window.EQUIPMENT_DB) {
+        currentActItems.forEach(item => {
+          let key = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === item.inv);
+          if (key) {
+            const cInfo = contact !== '—' ? ` (${contact})` : '';
+            window.EQUIPMENT_DB[key].status = `На площадке (${participant !== '—' ? participant : 'Занят'}${cInfo})`;
+          }
+        });
+        saveDbToLocalStorage();
+      }
+
       document.getElementById('print-act-num').innerText = actNum;
       document.getElementById('print-competence').innerText = comp;
-      document.getElementById('print-inv').innerText = inv;
-      document.getElementById('print-name').innerText = name;
       document.getElementById('print-header-role').innerText = `${role} ФИО`;
       document.getElementById('print-sig-role-label').innerText = role.toLowerCase();
-      document.getElementById('print-participant').innerText = participant;
-      document.getElementById('print-contact').innerText = contact;
-      document.getElementById('print-participant-sig').innerText = participant !== '—' ? participant : '__________________________';
-      document.getElementById('print-comment').innerText = comment;
       document.getElementById('print-manager-out').innerText = manager;
       document.getElementById('print-manager-in').innerText = manager;
-      document.getElementById('print-date-out').innerText = today;
-      document.getElementById('print-date-in').innerText = returnDate;
       document.getElementById('print-recipient-role-grid1').innerText = role;
       document.getElementById('print-recipient-role-grid2').innerText = role;
       const sigText = participant !== '—' ? participant : '__________________________';
+      document.getElementById('print-participant-sig').innerText = sigText;
       document.getElementById('print-competence-mgr1').innerText = sigText;
       document.getElementById('print-competence-mgr2').innerText = sigText;
 
-      saveActToHistory({ num: actNum, date: today, returnDate: returnDate, inv: inv, name: name, comp: comp, manager: manager, role: role, participant: participant, contact: contact, comment: comment });
+      const printTbody = document.getElementById('print-table-tbody');
+      printTbody.innerHTML = '';
+      
+      currentActItems.forEach((item, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td style="text-align: left;">${item.name}</td>
+          <td>${item.inv}</td>
+          <td>${participant}</td>
+          <td>${contact}</td>
+          <td>1</td>
+          <td>${today}</td>
+          <td></td>
+          <td>${returnDate}</td>
+          <td></td>
+          <td style="text-align: left;">${comment}</td>
+        `;
+        printTbody.appendChild(tr);
+      });
+
+      saveActToHistory({ 
+        num: actNum, 
+        date: today, 
+        returnDate: returnDate, 
+        items: currentActItems,
+        comp: comp, 
+        manager: manager, 
+        role: role, 
+        participant: participant, 
+        contact: contact, 
+        comment: comment 
+      });
+      
       window.print();
+
+      currentActItems = [];
+      renderSelectedItems();
+      resetForm();
+    }
+
+    function downloadCSV(filename, rows) {
+      let csvContent = "\uFEFF";
+      rows.forEach(row => {
+        let rowStr = row.map(val => `"${String(val).replace(/"/g, '""')}"`).join(';');
+        csvContent += rowStr + "\r\n";
+      });
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function exportDbToCSV() {
+      if (!window.EQUIPMENT_DB) {
+        alert("База оборудования пуста");
+        return;
+      }
+      const headers = ["Инвентарный №", "Категория", "Наименование / Модель", "Серийный №", "Статус"];
+      const rows = [headers];
+
+      Object.values(window.EQUIPMENT_DB).forEach(item => {
+        rows.push([
+          item.inv || "",
+          item.category || "",
+          item.name || "",
+          item.sn || "",
+          item.status || "В офисе"
+        ]);
+      });
+
+      downloadCSV(`MTB_Equipment_DB_${new Date().toISOString().slice(0,10)}.csv`, rows);
+    }
+
+    function exportActsToCSV() {
+      const history = getActsHistory();
+      if (history.length === 0) {
+        alert("Реестр актов пуст");
+        return;
+      }
+      const headers = ["№ Накладной", "Дата выдачи", "Планируемая дата возврата", "Компетенция", "Менеджер", "Роль", "Получатель (ФИО)", "Контакты", "Инвентарные №", "Наименования оборудования", "Кол-во предметов", "Комментарии"];
+      const rows = [headers];
+
+      history.forEach(act => {
+        const itemsList = act.items ? act.items.map(i => i.name).join(', ') : act.name;
+        const invsList = act.items ? act.items.map(i => i.inv).join(', ') : act.inv;
+        const itemCount = act.items ? act.items.length : 1;
+
+        rows.push([
+          act.num || "",
+          act.date || "",
+          act.returnDate || "",
+          act.comp || "",
+          act.manager || "",
+          act.role || "",
+          act.participant || "",
+          act.contact || "",
+          invsList || "",
+          itemsList || "",
+          itemCount,
+          act.comment || ""
+        ]);
+      });
+
+      downloadCSV(`Acts_Registry_${new Date().toISOString().slice(0,10)}.csv`, rows);
     }
   </script>
 </body>
