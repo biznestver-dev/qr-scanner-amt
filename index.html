@@ -482,7 +482,7 @@
       </div>
 
       <div class="form-group">
-        <label for="competence-select">Компетенция</label>
+        <label for="competence-select" id="competence-label">Компетенция</label>
         <select id="competence-select">
           <option value="моушн-дизайнер">моушн-дизайнер</option>
           <option value="веб-дизайнер (UX/UI)">веб-дизайнер (UX/UI)</option>
@@ -501,6 +501,7 @@
           <option value="геймдизайнер">геймдизайнер</option>
           <option value="сценограф">сценограф</option>
           <option value="оператор механики сцены">оператор механики сцены</option>
+          <option value="Офис" id="office-option" style="display: none;">Офис</option>
         </select>
       </div>
 
@@ -718,6 +719,22 @@
     function onRoleChange(role) {
       document.getElementById('participant-label').innerText = `ФИО (${role})`;
       document.getElementById('participant-name').placeholder = `Введите ФИО (${role.toLowerCase()})...`;
+
+      const compLabel = document.getElementById('competence-label');
+      const compSelect = document.getElementById('competence-select');
+      const officeOption = document.getElementById('office-option');
+
+      if (role === 'Сотрудник') {
+        compLabel.innerText = 'Компетенция / Подразделение';
+        officeOption.style.display = 'block';
+        compSelect.value = 'Офис';
+      } else {
+        compLabel.innerText = 'Компетенция';
+        officeOption.style.display = 'none';
+        if (compSelect.value === 'Офис') {
+          compSelect.selectedIndex = 0;
+        }
+      }
     }
 
     function onInventoryChange(invVal) {
