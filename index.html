@@ -498,23 +498,23 @@
       <div class="form-group">
         <label for="competence-select" id="competence-label">Компетенция</label>
         <select id="competence-select">
-          <option value="моушн-дизайнер">моушн-дизайнер</option>
-          <option value="веб-дизайнер (UX/UI)">веб-дизайнер (UX/UI)</option>
-          <option value="оператор кино и ТВ">оператор кино и ТВ</option>
-          <option value="звукорежиссёр (FOH)">звукорежиссёр (FOH)</option>
-          <option value="креативный продюсер">креативный продюсер</option>
-          <option value="художник-аниматор">художник-аниматор</option>
-          <option value="композитор популярной музыки">композитор популярной музыки</option>
-          <option value="драматург театра и кино">драматург театра и кино</option>
-          <option value="фотограф">фотограф</option>
-          <option value="графический дизайнер">графический дизайнер</option>
-          <option value="стилист">стилист</option>
-          <option value="художник по свету">художник по свету</option>
-          <option value="медиакомпозитор">медиакомпозитор</option>
-          <option value="промпт-инженер">промпт-инженер</option>
-          <option value="геймдизайнер">геймдизайнер</option>
-          <option value="сценограф">сценограф</option>
-          <option value="оператор механики сцены">оператор механики сцены</option>
+          <option value="моушн-дизайнер" class="comp-opt">моушн-дизайнер</option>
+          <option value="веб-дизайнер (UX/UI)" class="comp-opt">веб-дизайнер (UX/UI)</option>
+          <option value="оператор кино и ТВ" class="comp-opt">оператор кино и ТВ</option>
+          <option value="звукорежиссёр (FOH)" class="comp-opt">звукорежиссёр (FOH)</option>
+          <option value="креативный продюсер" class="comp-opt">креативный продюсер</option>
+          <option value="художник-аниматор" class="comp-opt">художник-аниматор</option>
+          <option value="композитор популярной музыки" class="comp-opt">композитор популярной музыки</option>
+          <option value="драматург театра и кино" class="comp-opt">драматург театра и кино</option>
+          <option value="фотограф" class="comp-opt">фотограф</option>
+          <option value="графический дизайнер" class="comp-opt">графический дизайнер</option>
+          <option value="стилист" class="comp-opt">стилист</option>
+          <option value="художник по свету" class="comp-opt">художник по свету</option>
+          <option value="медиакомпозитор" class="comp-opt">медиакомпозитор</option>
+          <option value="промпт-инженер" class="comp-opt">промпт-инженер</option>
+          <option value="геймдизайнер" class="comp-opt">геймдизайнер</option>
+          <option value="сценограф" class="comp-opt">сценограф</option>
+          <option value="оператор механики сцены" class="comp-opt">оператор механики сцены</option>
           <option value="Офис" id="office-option" style="display: none;">Офис</option>
         </select>
       </div>
@@ -755,7 +755,6 @@
     function formatPhoneNumber(input) {
       let val = input.value;
       
-      // Если ввод начинается с @ или содержит символы никнейма (Telegram/MAX), не маскируем
       if (val.trim().startsWith('@') || /[a-zA-Z]/.test(val)) {
         return;
       }
@@ -779,7 +778,6 @@
       else if (codeSel === '+992') prefix = '+992';
       else if (codeSel === 'other') prefix = '';
 
-      // Если Россия / Казахстан (+7 XXX XXX XX XX)
       if (codeSel === '+7' || codeSel === '+7_KZ') {
         let cleanDigits = digits;
         if (cleanDigits.startsWith('7') || cleanDigits.startsWith('8')) {
@@ -794,7 +792,6 @@
 
         input.value = formatted;
       } else if (prefix) {
-        // Для других стран: Код + разбивка по 3 цифры
         let parts = digits.match(/.{1,3}/g) || [];
         input.value = prefix + (parts.length > 0 ? ' ' + parts.join(' ') : '');
       }
@@ -812,13 +809,20 @@
       const compLabel = document.getElementById('competence-label');
       const compSelect = document.getElementById('competence-select');
       const officeOption = document.getElementById('office-option');
+      const compOptions = document.querySelectorAll('.comp-opt');
 
       if (role === 'Сотрудник') {
         compLabel.innerText = 'Офис';
+        // Скрываем все опции компетенций
+        compOptions.forEach(opt => opt.style.display = 'none');
+        // Показываем только вариант Офис
         officeOption.style.display = 'block';
         compSelect.value = 'Офис';
       } else {
         compLabel.innerText = 'Компетенция';
+        // Возвращаем показ всех компетенций
+        compOptions.forEach(opt => opt.style.display = 'block');
+        // Скрываем вариант Офис
         officeOption.style.display = 'none';
         if (compSelect.value === 'Офис') {
           compSelect.selectedIndex = 0;
