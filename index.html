@@ -461,8 +461,8 @@
       table.act-table th, table.act-table td { border: 1px solid #000; padding: 4px 6px; font-size: 8.5pt; text-align: center; }
       table.act-table th { background-color: #f2f2f2; font-weight: bold; }
       
-      /* Без рамки вокруг правил */
-      .rules-block { padding: 4px 0; font-size: 7.5pt; line-height: 1.25; margin-bottom: 8px; }
+      /* Без рамок вообще */
+      .rules-block { border: none !important; padding: 4px 0; font-size: 7.5pt; line-height: 1.25; margin-bottom: 8px; }
       .rules-block ul { margin: 3px 0 0 16px; padding: 0; }
       
       .signature-line { margin-top: 8px; font-size: 8.5pt; }
@@ -470,7 +470,7 @@
       .signatures-grid td { width: 50%; font-size: 8.5pt; padding: 3px 0; }
       .underline { display: inline-block; border-bottom: 1px solid #000; min-width: 180px; }
 
-      /* Разделитель страниц и стили ТБ (без внешней рамки) */
+      /* Разделитель страниц и стили ТБ */
       .page-break { page-break-before: always; }
       .safety-rules-wrapper { display: none; }
       .safety-rules-wrapper.active { display: block !important; }
@@ -746,17 +746,17 @@
     </div>
 
     <div class="signature-line">
-      С правилами выдачи ознакомлен (а), <span id="print-sig-role-label">участник</span>: <b><span id="print-participant-sig">__________________________</span></b> <span class="underline"></span>
+      С правилами выдачи ознакомлен (а), <span id="print-sig-role-label">участник</span>: <b><span id="print-participant-sig">__________________________</span></b> ______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span>
     </div>
 
     <table class="signatures-grid">
       <tr>
-        <td>Выдал технический менеджер: <b><span id="print-manager-out">Смутный Богдан Сергеевич</span></b> <span class="underline"></span></td>
-        <td>Принял технический менеджер: <b><span id="print-manager-in">Смутный Богдан Сергеевич</span></b> <span class="underline"></span></td>
+        <td>Выдал технический менеджер: <b><span id="print-manager-out">Смутный Богдан Сергеевич</span></b><br>______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span></td>
+        <td>Принял технический менеджер: <b><span id="print-manager-in">Смутный Богдан Сергеевич</span></b><br>______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span></td>
       </tr>
       <tr>
-        <td>Получил (а) <span id="print-recipient-role-grid1">Участник</span>: <b><span id="print-competence-mgr1">__________________________</span></b> <span class="underline"></span></td>
-        <td>Сдал (а) <span id="print-recipient-role-grid2">Участник</span>: <b><span id="print-competence-mgr2">__________________________</span></b> <span class="underline"></span></td>
+        <td><br>Получил (а) <span id="print-recipient-role-grid1">Участник</span>: <b><span id="print-competence-mgr1">__________________________</span></b><br>______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span></td>
+        <td><br>Сдал (а) <span id="print-recipient-role-grid2">Участник</span>: <b><span id="print-competence-mgr2">__________________________</span></b><br>______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span></td>
       </tr>
     </table>
 
@@ -769,7 +769,7 @@
         
         <div class="meta">
           <b>Организация:</b> АНО «АртМастерс»<br>
-          <b>Дата введения:</b> <span id="safety-date-intro">26 июля 2026 г.</span><br>
+          <b>Дата введения:</b> <span id="safety-date-intro">27 июля 2026 г.</span><br>
           <b>Ответственный:</b> Технический директор - Зломанов Олег Викторович
         </div>
 
@@ -827,13 +827,13 @@
               <b>Инструктаж провел:</b><br>
               Технический директор АНО «Артмастерс»<br>
               Зломанов Олег Викторович<br><br>
-              ______________________ (подпись) / «___» ___________ 2026 г.
+              ______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span>
             </td>
             <td>
               <b>С правилами техники безопасности ознакомлен(а), обязуюсь выполнять:</b><br>
               <span id="safety-employee-title">Сотрудник АНО «Артмастерс»</span><br>
               <span id="safety-employee-name">__________________________</span><br><br>
-              ______________________ (подпись) / «___» ___________ 2026 г.
+              ______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span>
             </td>
           </tr>
         </table>
@@ -911,7 +911,31 @@
     let currentStatusFilter = 'all';
     let currentActItems = [];
 
-    // Вспомогательная функция красивого форматирования даты
+    // Преобразование даты в формат «_27_» _июля_ 2026 г.[cite: 3]
+    function getUnderlineDateStr(dateStr) {
+      let d = new Date();
+      if (dateStr) {
+        if (dateStr.includes('.')) {
+          const parts = dateStr.split('.');
+          if (parts.length === 3) d = new Date(parts[2], parts[1] - 1, parts[0]);
+        } else {
+          d = new Date(dateStr);
+        }
+      }
+      if (isNaN(d.getTime())) d = new Date();
+
+      const months = [
+        "января", "февраля", "марта", "апреля", "мая", "июня",
+        "июля", "августа", "сентября", "октября", "ноября", "декабря"
+      ];
+
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = months[d.getMonth()];
+      const year = d.getFullYear();
+
+      return `«_<u>${day}</u>_» _<u>${month}</u>_ ${year} г.`;
+    }
+
     function getFormattedDate(dateObj = new Date()) {
       const months = [
         "января", "февраля", "марта", "апреля", "мая", "июня",
@@ -1013,7 +1037,6 @@
         officeOption.style.display = 'block';
         compSelect.value = 'Офис';
 
-        // Заменяем текстовое поле на выпадающий список сотрудников
         let selectHtml = `<select id="participant-name" onchange="onEmployeeSelect(this.value)">
           <option value="">-- Выберите сотрудника --</option>`;
         EMPLOYEES_LIST.forEach(emp => {
@@ -1030,7 +1053,6 @@
           compSelect.selectedIndex = 0;
         }
 
-        // Обычный инпут ввода ФИО для участников
         container.innerHTML = `<input type="text" id="participant-name" placeholder="Введите ФИО (${role.toLowerCase()})...">`;
       }
     }
@@ -1039,7 +1061,6 @@
       if (!empName) return;
       const emp = EMPLOYEES_LIST.find(e => e.name === empName);
       if (emp) {
-        // Установка телефона
         if (emp.phone) {
           document.getElementById('country-code-select').value = '+7';
           document.getElementById('contact-input').value = emp.phone;
@@ -1048,7 +1069,6 @@
           document.getElementById('contact-input').value = '';
         }
 
-        // Установка должности в комментарии
         if (emp.role) {
           document.getElementById('comment-input').value = emp.role;
         }
@@ -1268,8 +1288,9 @@
       const isEmployee = role === 'Сотрудник';
       
       const emp = EMPLOYEES_LIST.find(e => e.name === act.participant);
-      const empRoleStr = emp && emp.role ? `${emp.role} АНО «Артмастерс»` : 'Сотрудник АНО «Артмастерс»';
+      const empRoleStr = emp && emp.role ? `${emp.role}` : 'Сотрудник';
       
+      const underlineDateStr = getUnderlineDateStr(act.date);
       const currentDateFormatted = act.dateIntro || (act.date ? `${act.date} г.` : getFormattedDate());
 
       const subtitleText = isEmployee 
@@ -1280,101 +1301,93 @@
 
       const itemsToPrint = act.items || [{ inv: act.inv, name: act.name }];
       const itemsRowsHtml = itemsToPrint.map((item, idx) => `
-        <tr>
-          <td style="text-align:center;">${idx + 1}</td>
-          <td style="text-align:left;">${item.name}</td>
-          <td style="text-align:center;">${item.inv}</td>
-          <td style="text-align:center;">${act.participant}</td>
-          <td style="text-align:center;">${act.contact || '—'}</td>
-          <td style="text-align:center;">1</td>
-          <td style="text-align:center;">${act.date}</td>
-          <td></td>
-          <td style="text-align:center;">${act.returnDate}</td>
-          <td></td>
-          <td style="text-align:left;">${act.comment}</td>
+        <tr style="mso-yfti-irow:1;mso-yfti-lastrow:yes">
+          <td style="border:solid black 1.0pt;border-top:none;padding:3.75pt 4.5pt;"><p class="MsoNormal" align="center" style="text-align:center;"><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black;">${idx + 1}</span></p></td>
+          <td style="border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:3.75pt 4.5pt;"><p class="MsoNormal"><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black;">${item.name}</span></p></td>
+          <td style="border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:3.75pt 4.5pt;"><p class="MsoNormal" align="center" style="text-align:center;"><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black;">${item.inv}</span></p></td>
+          <td style="border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:3.75pt 4.5pt;"><p class="MsoNormal" align="center" style="text-align:center;"><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black;">${act.participant}</span></p></td>
+          <td style="border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:3.75pt 4.5pt;"><p class="MsoNormal" align="center" style="text-align:center;"><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black;">${act.contact || '—'}</span></p></td>
+          <td style="border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:3.75pt 4.5pt;"><p class="MsoNormal" align="center" style="text-align:center;"><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black;">1</span></p></td>
+          <td style="border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:3.75pt 4.5pt;"><p class="MsoNormal" align="center" style="text-align:center;"><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black;">${act.date}</span></p></td>
+          <td style="border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:3.75pt 4.5pt;"></td>
+          <td style="border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:3.75pt 4.5pt;"><p class="MsoNormal" align="center" style="text-align:center;"><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black;">${act.returnDate}</span></p></td>
+          <td style="border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:3.75pt 4.5pt;"></td>
+          <td style="border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:3.75pt 4.5pt;"><p class="MsoNormal"><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black;">${act.comment}</span></p></td>
         </tr>
       `).join('');
 
       let safetyRulesHtml = '';
       if (isEmployee) {
         safetyRulesHtml = `
-          <br style="page-break-before: always; clear: both;" />
-          <div style="font-size: 8.5pt; line-height: 1.25; margin-top: 15px; padding-top: 10px;">
-            <h3 style="text-align: center; font-size: 10pt; font-weight: bold; margin-bottom: 6px;">ПРАВИЛА ТЕХНИКИ БЕЗОПАСНОСТИ ПРИ РАБОТЕ С КОМПЬЮТЕРНОЙ ТЕХНИКОЙ</h3>
-            <div style="margin-bottom: 6px; font-size: 8.5pt;">
-              <b>Организация:</b> АНО «АртМастерс»<br>
-              <b>Дата введения:</b> ${currentDateFormatted}<br>
-              <b>Ответственный:</b> Технический директор - Зломанов Олег Викторович
-            </div>
-            <h4 style="font-size:8.5pt; margin-top:6px; margin-bottom:2px;">1. Общие положения</h4>
-            <p style="margin:2px 0;">1.1. Правила обязательны для всех сотрудников офиса, стажёров, подрядчиков и иных лиц, использующих компьютерную технику (ПК, ноутбуки, мониторы, периферию, док-станции, сетевые фильтры).</p>
-            <p style="margin:2px 0;">1.2. Цель правил — предотвратить повреждение техники, исключить риск поражения электрическим током, снизить риски для здоровья при длительной работе за компьютером.</p>
-            <p style="margin:2px 0;">1.3. Допуск к работе возможен только после прохождения вводного инструктажа по охране труда и ознакомления с этими правилами под подпись.</p>
-            
-            <h4 style="font-size:8.5pt; margin-top:6px; margin-bottom:2px;">2. Подготовка рабочего места</h4>
-            <p style="margin:2px 0;">2.1. Перед началом работы осмотрите технику: нет ли видимых повреждений корпуса, экрана, кабелей, разъёмов.</p>
-            <p style="margin:2px 0;">2.2. Проверьте исправность розетки и сетевого фильтра; не используйте повреждённые удлинители и самодельные переходники.</p>
-            <p style="margin:2px 0;">2.3. Разместите кабели так, чтобы они не мешали проходу; используйте кабель-менеджмент (стяжки, каналы) — это критично для безопасности в активных зонах офиса.</p>
-            <p style="margin:2px 0;">2.4. Настройте эргономику:</p>
-            <ul style="margin: 2px 0 3px 20px; padding: 0;">
-              <li>расстояние от глаз до экрана — 50–70 см;</li>
-              <li>верхняя треть экрана — на уровне глаз или чуть ниже;</li>
-              <li>спина опирается на спинку кресла, локти под углом ~90°, стопы на полу или на подставке.</li>
-            </ul>
-            <p style="margin:2px 0;">2.5. Проверьте освещение: на экране не должно быть сильных бликов; при необходимости отрегулируйте жалюзи или яркость монитора.</p>
-
-            <h4 style="font-size:8.5pt; margin-top:6px; margin-bottom:2px;">3. Работа с техникой</h4>
-            <p style="margin:2px 0;">3.1. Включение: сначала сетевой фильтр/ИБП, затем периферия, затем ПК/ноутбук.</p>
-            <p style="margin:2px 0;">3.2. Не допускайте попадания жидкостей на технику; не ставьте рядом напитки, не работайте мокрыми руками.</p>
-            <p style="margin:2px 0;">3.3. Не вскрывайте корпуса устройств и не производите самостоятельный ремонт. При неисправности — сразу сообщите ИТ-отделу (канал #it-help в Slack/Teams) или ответственному.</p>
-            <p style="margin:2px 0;">3.4. Не перекрывайте вентиляционные отверстия; не кладите на технику бумаги, папки и иные предметы.</p>
-            <p style="margin:2px 0;">3.5. Не подключайте и не отключайте кабели при включённом питании, кроме случаев «горячей» замены (USB, наушники и т. п.), разрешённых производителем.</p>
-            <p style="margin:2px 0;">3.6. Используйте только штатные и сертифицированные блоки питания и зарядные устройства.</p>
-            <p style="margin:2px 0;">3.7. Не используйте технику при явных признаках неисправности (странный запах, шум, перегрев, мерцание экрана).</p>
-
-            <h4 style="font-size:8.5pt; margin-top:6px; margin-bottom:2px;">4. Режим труда и профилактика утомления</h4>
-            <p style="margin:2px 0;">4.1. Делайте перерывы каждые 50–60 минут: 10–15 минут на разминку и гимнастику для глаз.</p>
-            <p style="margin:2px 0;">4.2. Во время перерыва отводите взгляд от экрана, смотрите вдаль, моргайте чаще, чтобы снизить риск «синдрома сухого глаза».</p>
-            <p style="margin:2px 0;">4.3. При длительной работе чередуйте задачи: часть времени — за экраном, часть — на обсуждение, проверку распечаток, ходьбу по офису.</p>
-
-            <h4 style="font-size:8.5pt; margin-top:6px; margin-bottom:2px;">5. Действия при нештатных ситуациях</h4>
-            <p style="margin:2px 0;">5.1. При появлении запаха гари, искрения, необычного шума, перегрева — немедленно отключите питание на сетевом фильтре/автомате и сообщите ответственному. Не пытайтесь устранять неисправность самостоятельно.</p>
-            <p style="margin:2px 0;">5.2. При поражении электрическим током: не прикасайтесь к пострадавшему до снятия напряжения; вызовите скорую помощь (112); окажите первую помощь по инструкции.</p>
-            <p style="margin:2px 0;">5.3. При сбое ПО или потере данных: не выполняйте произвольных действий; зафиксируйте симптомы (ошибка, время, что делали) и обратитесь в ИТ-поддержку.</p>
-            <p style="margin:2px 0;">5.4. При возгорании техники: обесточьте, используйте огнетушитель (если обучены и безопасно), эвакуируйтесь по плану и сообщите охране/администратору.</p>
-
-            <h4 style="font-size:8.5pt; margin-top:6px; margin-bottom:2px;">6. Завершение работы</h4>
-            <p style="margin:2px 0;">6.1. Корректно завершите все программы, сохраните данные.</p>
-            <p style="margin:2px 0;">6.2. Выключите технику в порядке, обратном включению: ПК/ноутбук → периферия → сетевой фильтр/ИБП.</p>
-            <p style="margin:2px 0;">6.3. Осмотрите рабочее место: кабели не натянуты, техника не перегрета, нет посторонних предметов на устройствах.</p>
-            <p style="margin:2px 0;">6.4. Если техника передаётся другому сотруднику (например, сменный режим), передайте её по краткой проверке и отметьте в журнале/чате ИТ-поддержки.</p>
-
-            <h4 style="font-size:8.5pt; margin-top:6px; margin-bottom:2px;">7. Ответственность и контроль</h4>
-            <p style="margin:2px 0;">7.1. Контроль соблюдения правил возлагается на руководителей подразделений и технического директора.</p>
-            <p style="margin:2px 0;">7.2. Нарушение правил может служить основанием для отстранения от работы и привлечения к дисциплинарной ответственности.</p>
-            <p style="margin:2px 0;">7.3. Факт ознакомления подтверждается подписью в журнале инструктажа либо в электронной форме (через чек-лист).</p>
-
-            <table style="width: 100%; margin-top: 12px; border-collapse: collapse;">
-              <tr>
-                <td style="width: 50%; font-size: 8.5pt; vertical-align: top; padding-right: 10px; border:none;">
-                  <b>Инструктаж провел:</b><br>
-                  Технический директор АНО «Артмастерс»<br>
-                  Зломанов Олег Викторович<br><br>
-                  ______________________ (подпись) / «___» ___________ 2026 г.
-                </td>
-                <td style="width: 50%; font-size: 8.5pt; vertical-align: top; border:none;">
-                  <b>С правилами техники безопасности ознакомлен(а), обязуюсь выполнять:</b><br>
-                  <span>${empRoleStr}</span><br>
-                  <span>${sigText}</span><br><br>
-                  ______________________ (подпись) / «___» ___________ 2026 г.
-                </td>
-              </tr>
-            </table>
+          <br clear=all style="page-break-before:always">
+          <h3 align=center style="margin-bottom:4.5pt;text-align:center;"><span style="font-size:10.0pt;font-family:'Arial',sans-serif;color:black">ПРАВИЛА ТЕХНИКИ БЕЗОПАСНОСТИ ПРИ РАБОТЕ С КОМПЬЮТЕРНОЙ ТЕХНИКОЙ</span></h3>
+          <div style="margin-bottom:4.5pt">
+            <p class=MsoNormal><b><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">Организация:</span></b><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black"> АНО «АртМастерс»<br><b>Дата введения:</b> ${currentDateFormatted}<br><b>Ответственный:</b> Технический директор - Зломанов Олег Викторович</span></p>
           </div>
+          <h4 style="margin-top:4.5pt;margin-bottom:1.5pt;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">1. Общие положения</span></h4>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">1.1. Правила обязательны для всех сотрудников офиса, стажёров, подрядчиков и иных лиц, использующих компьютерную технику (ПК, ноутбуки, мониторы, периферию, док-станции, сетевые фильтры).</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">1.2. Цель правил — предотвратить повреждение техники, исключить риск поражения электрическим током, снизить риски для здоровья при длительной работе за компьютером.</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">1.3. Допуск к работе возможен только после прохождения вводного инструктажа по охране труда и ознакомления с этими правилами под подпись.</span></p>
+          
+          <h4 style="margin-top:4.5pt;margin-bottom:1.5pt;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">2. Подготовка рабочего места</span></h4>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">2.1. Перед началом работы осмотрите технику: нет ли видимых повреждений корпуса, экрана, кабелей, разъёмов.</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">2.2. Проверьте исправность розетки и сетевого фильтра; не используйте повреждённые удлинители и самодельные переходники.</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">2.3. Разместите кабели так, чтобы они не мешали проходу; используйте кабель-менеджмент (стяжки, каналы) — это критично для безопасности в активных зонах офиса.</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">2.4. Настройте эргономику:</span></p>
+          <p class=MsoNormal style="margin-left:51.0pt;text-indent:-18.0pt;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;расстояние от глаз до экрана — 50–70 см;</span></p>
+          <p class=MsoNormal style="margin-left:51.0pt;text-indent:-18.0pt;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;верхняя треть экрана — на уровне глаз или чуть ниже;</span></p>
+          <p class=MsoNormal style="margin-left:51.0pt;text-indent:-18.0pt;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;спина опирается на спинку кресла, локти под углом ~90°, стопы на полу или на подставке.</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">2.5. Проверьте освещение: на экране не должно быть сильных бликов; при необходимости отрегулируйте жалюзи или яркость монитора.</span></p>
+
+          <h4 style="margin-top:4.5pt;margin-bottom:1.5pt;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">3. Работа с техникой</span></h4>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">3.1. Включение: сначала сетевой фильтр/ИБП, затем периферия, затем ПК/ноутбук.</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">3.2. Не допускайте попадания жидкостей на технику; не ставьте рядом напитки, не работайте мокрыми руками.</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">3.3. Не вскрывайте корпуса устройств и не производите самостоятельный ремонт. При неисправности — сразу сообщите ИТ-отделу (канал #it-help в Slack/Teams) или ответственному.</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">3.4. Не перекрывайте вентиляционные отверстия; не кладите на технику бумаги, папки и иные предметы.</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">3.5. Не подключайте и не отключайте кабели при включённом питании, кроме случаев «горячей» замены (USB, наушники и т. п.), разрешённых производителем.</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">3.6. Используйте только штатные и сертифицированные блоки питания и зарядные устройства.</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">3.7. Не используйте технику при явных признаках неисправности (странный запах, шум, перегрев, мерцание экрана).</span></p>
+
+          <h4 style="margin-top:4.5pt;margin-bottom:1.5pt;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">4. Режим труда и профилактика утомления</span></h4>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">4.1. Делайте перерывы каждые 50–60 минут: 10–15 минут на разминку и гимнастику для глаз.</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">4.2. Во время перерыва отводите взгляд от экрана, смотрите вдаль, моргайте чаще, чтобы снизить риск «синдрома сухого глаза».</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">4.3. При длительной работе чередуйте задачи: часть времени — за экраном, часть — на обсуждение, проверку распечаток, ходьбу по офису.</span></p>
+
+          <h4 style="margin-top:4.5pt;margin-bottom:1.5pt;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">5. Действия при нештатных ситуациях</span></h4>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">5.1. При появлении запаха гари, искрения, необычного шума, перегрева — немедленно отключите питание на сетевом фильтре/автомате и сообщите ответственному. Не пытайтесь устранять неисправность самостоятельно.</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">5.2. При поражении электрическим током: не прикасайтесь к пострадавшему до снятия напряжения; вызовите скорую помощь (112); окажите первую помощь по инструкции.</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">5.3. При сбое ПО или потере данных: не выполняйте произвольных действий; зафиксируйте симптомы (ошибка, время, что делали) и обратитесь в ИТ-поддержку.</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">5.4. При возгорании техники: обесточьте, используйте огнетушитель (если обучены и безопасно), эвакуируйтесь по плану и сообщите охране/администратору.</span></p>
+
+          <h4 style="margin-top:4.5pt;margin-bottom:1.5pt;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">6. Завершение работы</span></h4>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">6.1. Корректно завершите все программы, сохраните данные.</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">6.2. Выключите технику в порядке, обратном включению: ПК/ноутбук → периферия → сетевой фильтр/ИБП.</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">6.3. Осмотрите рабочее место: кабели не натянуты, техника не перегрета, нет посторонних предметов на устройствах.</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">6.4. Если техника передаётся другому сотруднику (например, сменный режим), передайте её по краткой проверке и отметьте в журнале/чате ИТ-поддержки.</span></p>
+
+          <h4 style="margin-top:4.5pt;margin-bottom:1.5pt;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">7. Ответственность и контроль</span></h4>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">7.1. Контроль соблюдения правил возлагается на руководителей подразделений и технического директора.</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">7.2. Нарушение правил может служить основанием для отстранения от работы и привлечения к дисциплинарной ответственности.</span></p>
+          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">7.3. Факт ознакомления подтверждается подписью в журнале инструктажа либо в электронной форме (через чек-лист).</span></p>
+
+          <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width="100%" style="width:100.0%;border-collapse:collapse;">
+            <tr>
+              <td width="50%" valign=top style="width:50.0%;padding:.75pt 7.5pt .75pt .75pt;">
+                <p class=MsoNormal style="margin-top:9.0pt;"><b><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">Инструктаж провел:</span></b><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black"><br>
+                Технический директор АНО «Артмастерс»<br>Зломанов Олег Викторович<br><br>
+                ______________________ (подпись) / </span><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black">${underlineDateStr}</span></p>
+              </td>
+              <td width="50%" valign=top style="width:50.0%;padding:.75pt .75pt .75pt .75pt;">
+                <p class=MsoNormal style="margin-top:9.0pt;"><b><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">С правилами техники безопасности ознакомлен(а), обязуюсь выполнять:</span></b><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black"><br>
+                ${empRoleStr} АНО «Артмастерс»<br>${sigText}<br><br>
+                ______________________ (подпись) / </span><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black">${underlineDateStr}</span></p>
+              </td>
+            </tr>
+          </table>
         `;
       }
 
-      // Формирование файла MS Word (.doc)
+      // Формирование точного документа Word по образу исходного файла
       const wordDocContent = `<html xmlns:o='urn:schemas-microsoft-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
 <head>
   <meta charset='utf-8'>
@@ -1392,79 +1405,91 @@
     @page Section1 {
       size: 841.8pt 595.3pt; /* A4 Landscape */
       mso-page-orientation: landscape;
-      margin: 1.5cm 1.5cm 1.5cm 1.5cm;
+      margin: 42.55pt 42.55pt 42.55pt 42.55pt;
       mso-header-margin: 36.0pt;
       mso-footer-margin: 36.0pt;
       mso-paper-source: 0;
     }
     div.Section1 { page: Section1; }
     body { font-family: 'Arial', sans-serif; font-size: 9pt; color: #000; }
-    .act-header { text-align: center; font-weight: bold; font-size: 13pt; margin-bottom: 10px; }
-    .act-header .subtitle { font-size: 10.5pt; margin-top: 3px; font-weight: normal; }
-    table.act-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-    table.act-table th, table.act-table td { border: 1px solid #000; padding: 5px 6px; font-size: 9pt; }
-    table.act-table th { background-color: #f2f2f2; font-weight: bold; text-align: center; }
+    p.MsoNormal { margin:0cm; font-size:9pt; font-family:"Arial",sans-serif; }
     
-    /* Убрана рамка вокруг раздела внимания */
-    .rules-block { padding: 4px 0; font-size: 8pt; line-height: 1.25; margin-bottom: 10px; }
-    .rules-block ul { margin: 3px 0 0 18px; padding: 0; }
+    /* Отсутствие любых рамок */
+    .rules-block { border: none !important; padding: 0; font-size: 8pt; line-height: 1.25; margin-bottom: 7.5pt; }
     
-    .signature-line { margin-top: 10px; font-size: 9pt; }
-    .signatures-grid { width: 100%; margin-top: 10px; border-collapse: collapse; }
-    .signatures-grid td { width: 50%; font-size: 9pt; padding: 4px 0; border: none; }
-    .underline { display: inline-block; border-bottom: 1px solid #000; min-width: 180px; }
+    table.MsoNormalTable { border-collapse: collapse; }
   </style>
 </head>
-<body>
+<body lang=RU style='tab-interval:35.4pt;'>
   <div class="Section1">
-    <div class="act-header">
-      АНО «АртМастерс»
-      <div style="font-size: 11pt; margin-top: 4px;"><b>Акт приема-передачи оборудования № ${act.num}</b></div>
-      <div class="subtitle">${subtitleText}</div>
+    <div style="margin-bottom:7.5pt;">
+      <p class=MsoNormal align=center style="text-align:center;"><b><span style="font-size:13.0pt;">АНО «АртМастерс»</span></b></p>
+      <div style="margin-top:3.0pt;">
+        <p class=MsoNormal align=center style="text-align:center;"><b><span style="font-size:11.0pt;">Акт приема-передачи оборудования № ${act.num}</span></b></p>
+      </div>
+      <div style="margin-top:2.25pt;">
+        <p class=MsoNormal align=center style="text-align:center;"><span style="font-size:10.5pt;">${subtitleText}</span></p>
+      </div>
     </div>
-    <table class="act-table">
+
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width="100%" style="width:100.0%;">
       <thead>
-        <tr>
-          <th style="width: 4%;">№</th>
-          <th style="width: 26%;">Наименование</th>
-          <th style="width: 13%;">Инвентарный номер</th>
-          <th style="width: 16%;">${role} ФИО</th>
-          <th style="width: 15%;">Телефон / Telegram / MAX</th>
-          <th style="width: 5%;">Кол-во</th>
-          <th style="width: 8%;">Дата выдачи</th>
-          <th style="width: 7%;">Подпись</th>
-          <th style="width: 8%;">Дата возврата</th>
-          <th style="width: 7%;">Подпись</th>
-          <th style="width: 11%;">Комментарии</th>
+        <tr style="mso-yfti-irow:0;mso-yfti-firstrow:yes">
+          <td width="4%" style="width:4.0%;border:solid black 1.0pt;background:#F2F2F2;padding:3.75pt 4.5pt;"><p class=MsoNormal align=center style="text-align:center;"><b>№</b></p></td>
+          <td width="26%" style="width:26.0%;border:solid black 1.0pt;border-left:none;background:#F2F2F2;padding:3.75pt 4.5pt;"><p class=MsoNormal align=center style="text-align:center;"><b>Наименование</b></p></td>
+          <td width="13%" style="width:13.0%;border:solid black 1.0pt;border-left:none;background:#F2F2F2;padding:3.75pt 4.5pt;"><p class=MsoNormal align=center style="text-align:center;"><b>Инвентарный номер</b></p></td>
+          <td width="16%" style="width:16.0%;border:solid black 1.0pt;border-left:none;background:#F2F2F2;padding:3.75pt 4.5pt;"><p class=MsoNormal align=center style="text-align:center;"><b>${role} ФИО</b></p></td>
+          <td width="15%" style="width:15.0%;border:solid black 1.0pt;border-left:none;background:#F2F2F2;padding:3.75pt 4.5pt;"><p class=MsoNormal align=center style="text-align:center;"><b>Телефон / Telegram / MAX</b></p></td>
+          <td width="5%" style="width:5.0%;border:solid black 1.0pt;border-left:none;background:#F2F2F2;padding:3.75pt 4.5pt;"><p class=MsoNormal align=center style="text-align:center;"><b>Кол-во</b></p></td>
+          <td width="8%" style="width:8.0%;border:solid black 1.0pt;border-left:none;background:#F2F2F2;padding:3.75pt 4.5pt;"><p class=MsoNormal align=center style="text-align:center;"><b>Дата выдачи</b></p></td>
+          <td width="7%" style="width:7.0%;border:solid black 1.0pt;border-left:none;background:#F2F2F2;padding:3.75pt 4.5pt;"><p class=MsoNormal align=center style="text-align:center;"><b>Подпись</b></p></td>
+          <td width="8%" style="width:8.0%;border:solid black 1.0pt;border-left:none;background:#F2F2F2;padding:3.75pt 4.5pt;"><p class=MsoNormal align=center style="text-align:center;"><b>Дата возврата</b></p></td>
+          <td width="7%" style="width:7.0%;border:solid black 1.0pt;border-left:none;background:#F2F2F2;padding:3.75pt 4.5pt;"><p class=MsoNormal align=center style="text-align:center;"><b>Подпись</b></p></td>
+          <td width="11%" style="width:11.0%;border:solid black 1.0pt;border-left:none;background:#F2F2F2;padding:3.75pt 4.5pt;"><p class=MsoNormal align=center style="text-align:center;"><b>Комментарии</b></p></td>
         </tr>
       </thead>
       <tbody>
         ${itemsRowsHtml}
       </tbody>
     </table>
-    <div class="rules-block">
-      <b>Просим обратить внимание:</b>
-      <ul>
-        <li>На технику, жёсткий диск и упаковку не допускается наклеивать какие‑либо стикеры, бирки, надписи или иные маркировочные материалы.</li>
-        <li>В случае необходимости идентификации содержимого диска/накопителя следует создать отдельную папку с фамилией ответственного сотрудника.</li>
-        <li>Перед переносом информации диски должны быть отформатированы в exFAT.</li>
-        <li>Оборудование и диски сдаются с полностью отснятым/рабочим материалом — ничего не удаляется.</li>
-      </ul>
+
+    <div style="margin-bottom:7.5pt; margin-top:7.5pt;">
+      <p class=MsoNormal><b><span style="font-size:8.0pt;">Просим обратить внимание:</span></b></p>
+      <p class=MsoNormal><span style="font-size:8.0pt;">На технику, жёсткий диск и упаковку не допускается наклеивать какие‑либо стикеры, бирки, надписи или иные маркировочные материалы.</span></p>
+      <p class=MsoNormal><span style="font-size:8.0pt;">В случае необходимости идентификации содержимого диска/накопителя следует создать отдельную папку с фамилией ответственного сотрудника.</span></p>
+      <p class=MsoNormal><span style="font-size:8.0pt;">Перед переносом информации диски должны быть отформатированы в exFAT.</span></p>
+      <p class=MsoNormal><span style="font-size:8.0pt;">Оборудование и диски сдаются с полностью отснятым/рабочим материалом — ничего не удаляется.</span></p>
     </div>
-    <div class="signature-line">
-      С правилами выдачи ознакомлен (а), ${role.toLowerCase()}: <b>${sigText}</b> ______________________ (подпись) / «___» ___________ 2026 г.
+
+    <div style="margin-top:7.5pt;">
+      <p class=MsoNormal><span style="font-size:9.0pt;">С правилами выдачи ознакомлен (а), ${role.toLowerCase()}: <b>${sigText}</b> &nbsp;&nbsp;&nbsp;______________________ (подпись) / ${underlineDateStr}</span></p>
     </div>
-    <br>
-    <table class="signatures-grid">
+
+    <p class=MsoNormal>&nbsp;</p>
+
+    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width="100%" style="width:100.0%;">
       <tr>
-        <td>Выдал технический менеджер: <b>${act.manager}</b><br>______________________ (подпись) / «___» ___________ 2026 г.</td>
-        <td>Принял технический менеджер: <b>${act.manager}</b><br>______________________ (подпись) / «___» ___________ 2026 г.</td>
+        <td width="50%" style="width:50.0%;padding:3.0pt 0cm;">
+          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;">Выдал технический менеджер: <b>${act.manager}</b></span></p>
+          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>______________________ (подпись) / ${underlineDateStr}</span></p>
+        </td>
+        <td width="50%" style="width:50.0%;padding:3.0pt 0cm;">
+          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;">Принял технический менеджер: <b>${act.manager}</b></span></p>
+          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>______________________ (подпись) / ${underlineDateStr}</span></p>
+        </td>
       </tr>
       <tr>
-        <td><br>Получил (а) ${role}: <b>${sigText}</b><br>______________________ (подпись) / «___» ___________ 2026 г.</td>
-        <td><br>Сдал (а) ${role}: <b>${sigText}</b><br>______________________ (подпись) / «___» ___________ 2026 г.</td>
+        <td width="50%" style="width:50.0%;padding:3.0pt 0cm;">
+          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>Получил (а) ${role}: <b>${sigText}</b></span></p>
+          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>______________________ (подпись) / ${underlineDateStr}</span></p>
+        </td>
+        <td width="50%" style="width:50.0%;padding:3.0pt 0cm;">
+          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>Сдал (а) ${role}: <b>${sigText}</b></span></p>
+          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>______________________ (подпись) / ${underlineDateStr}</span></p>
+        </td>
       </tr>
     </table>
+
     ${safetyRulesHtml}
   </div>
 </body>
@@ -1486,7 +1511,13 @@
       const role = act.role || 'Участник';
       document.getElementById('print-act-num').innerText = act.num;
 
+      const underlineDateStr = getUnderlineDateStr(act.date);
       const currentDateFormatted = act.dateIntro || (act.date ? `${act.date} г.` : getFormattedDate());
+
+      // Обновляем все зачёркнутые даты подписей на печатной странице
+      document.querySelectorAll('.print-underline-date').forEach(el => {
+        el.innerHTML = underlineDateStr;
+      });
 
       const safetyWrapper = document.getElementById('safety-rules-wrapper');
       if (role === 'Сотрудник') {
@@ -1571,7 +1602,12 @@
 
       const today = new Date().toLocaleDateString('ru-RU');
       const todayFormatted = getFormattedDate();
-      
+      const underlineDateStr = getUnderlineDateStr(today);
+
+      document.querySelectorAll('.print-underline-date').forEach(el => {
+        el.innerHTML = underlineDateStr;
+      });
+
       const comp = document.getElementById('competence-select').value;
       const manager = document.getElementById('manager-select').value;
       const role = document.getElementById('recipient-role-select').value;
