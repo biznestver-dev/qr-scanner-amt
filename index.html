@@ -1249,7 +1249,7 @@
             <td>
               <div style="display:flex;gap:6px;">
                 <button class="select-btn" onclick="reprintAct('${act.num}')">🖨️ Печать</button>
-                <button class="export-btn" onclick="downloadAct('${act.num}')">📥 Скачать</button>
+                <button class="export-btn" onclick="downloadAct('${act.num}')">📥 Скачать Word</button>
                 <button class="delete-btn" onclick="deleteActFromHistory('${act.num}')">🗑️ Удалить</button>
               </div>
             </td>
@@ -1297,67 +1297,74 @@
       let safetyRulesHtml = '';
       if (isEmployee) {
         safetyRulesHtml = `
-          <div style="page-break-before: always;"></div>
-          <div style="font-size: 7.2pt; line-height: 1.2; margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 15px;">
-            <h3 style="text-align: center; font-size: 9pt; font-weight: bold; margin-bottom: 4px;">ПРАВИЛА ТЕХНИКИ БЕЗОПАСНОСТИ ПРИ РАБОТЕ С КОМПЬЮТЕРНОЙ ТЕХНИКОЙ</h3>
-            <div style="margin-bottom: 4px; font-size: 7.5pt;">
+          <br style="page-break-before: always; clear: both;" />
+          <div style="font-size: 8.5pt; line-height: 1.25; margin-top: 15px; padding-top: 10px;">
+            <h3 style="text-align: center; font-size: 10pt; font-weight: bold; margin-bottom: 6px;">ПРАВИЛА ТЕХНИКИ БЕЗОПАСНОСТИ ПРИ РАБОТЕ С КОМПЬЮТЕРНОЙ ТЕХНИКОЙ</h3>
+            <div style="margin-bottom: 6px; font-size: 8.5pt;">
               <b>Организация:</b> АНО «АртМастерс»<br>
               <b>Дата введения:</b> ${currentDateFormatted}<br>
               <b>Ответственный:</b> Технический директор - Зломанов Олег Викторович
             </div>
-            <h4>1. Общие положения</h4>
-            <p>1.1. Правила обязательны для всех сотрудников офиса, стажёров, подрядчиков и иных лиц, использующих компьютерную технику (ПК, ноутбуки, мониторы, периферию, док-станции, сетевые фильтры).</p>
-            <p>1.2. Цель правил — предотвратить повреждение техники, исключить риск поражения электрическим током, снизить риски для здоровья при длительной работе за компьютером.</p>
-            <p>1.3. Допуск к работе возможен только после прохождения вводного инструктажа по охране труда и ознакомления с этими правилами под подпись.</p>
-            <h4>2. Подготовка рабочего места</h4>
-            <p>2.1. Перед началом работы осмотрите технику: нет ли видимых повреждений корпуса, экрана, кабелей, разъёмов.</p>
-            <p>2.2. Проверьте исправность розетки и сетевого фильтра; не используйте повреждённые удлинители и самодельные переходники.</p>
-            <p>2.3. Разместите кабели так, чтобы они не мешали проходу; используйте кабель-менеджмент (стяжки, каналы) — это критично для безопасности в активных зонах офиса.</p>
-            <p>2.4. Настройте эргономику:</p>
-            <ul style="margin: 2px 0 3px 16px; padding: 0;">
+            <h4 style="font-size:8.5pt; margin-top:6px; margin-bottom:2px;">1. Общие положения</h4>
+            <p style="margin:2px 0;">1.1. Правила обязательны для всех сотрудников офиса, стажёров, подрядчиков и иных лиц, использующих компьютерную технику (ПК, ноутбуки, мониторы, периферию, док-станции, сетевые фильтры).</p>
+            <p style="margin:2px 0;">1.2. Цель правил — предотвратить повреждение техники, исключить риск поражения электрическим током, снизить риски для здоровья при длительной работе за компьютером.</p>
+            <p style="margin:2px 0;">1.3. Допуск к работе возможен только после прохождения вводного инструктажа по охране труда и ознакомления с этими правилами под подпись.</p>
+            
+            <h4 style="font-size:8.5pt; margin-top:6px; margin-bottom:2px;">2. Подготовка рабочего места</h4>
+            <p style="margin:2px 0;">2.1. Перед началом работы осмотрите технику: нет ли видимых повреждений корпуса, экрана, кабелей, разъёмов.</p>
+            <p style="margin:2px 0;">2.2. Проверьте исправность розетки и сетевого фильтра; не используйте повреждённые удлинители и самодельные переходники.</p>
+            <p style="margin:2px 0;">2.3. Разместите кабели так, чтобы они не мешали проходу; используйте кабель-менеджмент (стяжки, каналы) — это критично для безопасности в активных зонах офиса.</p>
+            <p style="margin:2px 0;">2.4. Настройте эргономику:</p>
+            <ul style="margin: 2px 0 3px 20px; padding: 0;">
               <li>расстояние от глаз до экрана — 50–70 см;</li>
               <li>верхняя треть экрана — на уровне глаз или чуть ниже;</li>
               <li>спина опирается на спинку кресла, локти под углом ~90°, стопы на полу или на подставке.</li>
             </ul>
-            <p>2.5. Проверьте освещение: на экране не должно быть сильных бликов; при необходимости отрегулируйте жалюзи или яркость монитора.</p>
-            <h4>3. Работа с техникой</h4>
-            <p>3.1. Включение: сначала сетевой фильтр/ИБП, затем периферия, затем ПК/ноутбук.</p>
-            <p>3.2. Не допускайте попадания жидкостей на технику; не ставьте рядом напитки, не работайте мокрыми руками.</p>
-            <p>3.3. Не вскрывайте корпуса устройств и не производите самостоятельный ремонт. При неисправности — сразу сообщите ИТ-отделу (канал #it-help в Slack/Teams) или ответственному.</p>
-            <p>3.4. Не перекрывайте вентиляционные отверстия; не кладите на технику бумаги, папки и иные предметы.</p>
-            <p>3.5. Не подключайте и не отключайте кабели при включённом питании, кроме случаев «горячей» замены (USB, наушники и т. п.), разрешённых производителем.</p>
-            <p>3.6. Используйте только штатные и сертифицированные блоки питания и зарядные устройства.</p>
-            <p>3.7. Не используйте технику при явных признаках неисправности (странный запах, шум, перегрев, мерцание экрана).</p>
-            <h4>4. Режим труда и профилактика утомления</h4>
-            <p>4.1. Делайте перерывы каждые 50–60 минут: 10–15 минут на разминку и гимнастику для глаз.</p>
-            <p>4.2. Во время перерыва отводите взгляд от экрана, смотрите вдаль, моргайте чаще, чтобы снизить риск «синдрома сухого глаза».</p>
-            <p>4.3. При длительной работе чередуйте задачи: часть времени — за экраном, часть — на обсуждение, проверку распечаток, ходьбу по офису.</p>
-            <h4>5. Действия при нештатных ситуациях</h4>
-            <p>5.1. При появлении запаха гари, искрения, необычного шума, перегрева — немедленно отключите питание на сетевом фильтре/автомате и сообщите ответственному. Не пытайтесь устранять неисправность самостоятельно.</p>
-            <p>5.2. При поражении электрическим током: не прикасайтесь к пострадавшему до снятия напряжения; вызовите скорую помощь (112); окажите первую помощь по инструкции.</p>
-            <p>5.3. При сбое ПО или потере данных: не выполняйте произвольных действий; зафиксируйте симптомы (ошибка, время, что делали) и обратитесь в ИТ-поддержку.</p>
-            <p>5.4. При возгорании техники: обесточьте, используйте огнетушитель (если обучены и безопасно), эвакуируйтесь по плану и сообщите охране/администратору.</p>
-            <h4>6. Завершение работы</h4>
-            <p>6.1. Корректно завершите все программы, сохраните данные.</p>
-            <p>6.2. Выключите технику в порядке, обратном включению: ПК/ноутбук → периферия → сетевой фильтр/ИБП.</p>
-            <p>6.3. Осмотрите рабочее место: кабели не натянуты, техника не перегрета, нет посторонних предметов на устройствах.</p>
-            <p>6.4. Если техника передаётся другому сотруднику (например, сменный режим), передайте её по краткой проверке и отметьте в журнале/чате ИТ-поддержки.</p>
-            <h4>7. Ответственность и контроль</h4>
-            <p>7.1. Контроль соблюдения правил возлагается на руководителей подразделений и технического директора.</p>
-            <p>7.2. Нарушение правил может служить основанием для отстранения от работы и привлечения к дисциплинарной ответственности.</p>
-            <p>7.3. Факт ознакомления подтверждается подписью в журнале инструктажа либо в электронной форме (через чек-лист).</p>
-            <table style="width: 100%; margin-top: 8px; border-collapse: collapse;">
+            <p style="margin:2px 0;">2.5. Проверьте освещение: на экране не должно быть сильных бликов; при необходимости отрегулируйте жалюзи или яркость монитора.</p>
+
+            <h4 style="font-size:8.5pt; margin-top:6px; margin-bottom:2px;">3. Работа с техникой</h4>
+            <p style="margin:2px 0;">3.1. Включение: сначала сетевой фильтр/ИБП, затем периферия, затем ПК/ноутбук.</p>
+            <p style="margin:2px 0;">3.2. Не допускайте попадания жидкостей на технику; не ставьте рядом напитки, не работайте мокрыми руками.</p>
+            <p style="margin:2px 0;">3.3. Не вскрывайте корпуса устройств и не производите самостоятельный ремонт. При неисправности — сразу сообщите ИТ-отделу (канал #it-help в Slack/Teams) или ответственному.</p>
+            <p style="margin:2px 0;">3.4. Не перекрывайте вентиляционные отверстия; не кладите на технику бумаги, папки и иные предметы.</p>
+            <p style="margin:2px 0;">3.5. Не подключайте и не отключайте кабели при включённом питании, кроме случаев «горячей» замены (USB, наушники и т. п.), разрешённых производителем.</p>
+            <p style="margin:2px 0;">3.6. Используйте только штатные и сертифицированные блоки питания и зарядные устройства.</p>
+            <p style="margin:2px 0;">3.7. Не используйте технику при явных признаках неисправности (странный запах, шум, перегрев, мерцание экрана).</p>
+
+            <h4 style="font-size:8.5pt; margin-top:6px; margin-bottom:2px;">4. Режим труда и профилактика утомления</h4>
+            <p style="margin:2px 0;">4.1. Делайте перерывы каждые 50–60 минут: 10–15 минут на разминку и гимнастику для глаз.</p>
+            <p style="margin:2px 0;">4.2. Во время перерыва отводите взгляд от экрана, смотрите вдаль, моргайте чаще, чтобы снизить риск «синдрома сухого глаза».</p>
+            <p style="margin:2px 0;">4.3. При длительной работе чередуйте задачи: часть времени — за экраном, часть — на обсуждение, проверку распечаток, ходьбу по офису.</p>
+
+            <h4 style="font-size:8.5pt; margin-top:6px; margin-bottom:2px;">5. Действия при нештатных ситуациях</h4>
+            <p style="margin:2px 0;">5.1. При появлении запаха гари, искрения, необычного шума, перегрева — немедленно отключите питание на сетевом фильтре/автомате и сообщите ответственному. Не пытайтесь устранять неисправность самостоятельно.</p>
+            <p style="margin:2px 0;">5.2. При поражении электрическим током: не прикасайтесь к пострадавшему до снятия напряжения; вызовите скорую помощь (112); окажите первую помощь по инструкции.</p>
+            <p style="margin:2px 0;">5.3. При сбое ПО или потере данных: не выполняйте произвольных действий; зафиксируйте симптомы (ошибка, время, что делали) и обратитесь в ИТ-поддержку.</p>
+            <p style="margin:2px 0;">5.4. При возгорании техники: обесточьте, используйте огнетушитель (если обучены и безопасно), эвакуируйтесь по плану и сообщите охране/администратору.</p>
+
+            <h4 style="font-size:8.5pt; margin-top:6px; margin-bottom:2px;">6. Завершение работы</h4>
+            <p style="margin:2px 0;">6.1. Корректно завершите все программы, сохраните данные.</p>
+            <p style="margin:2px 0;">6.2. Выключите технику в порядке, обратном включению: ПК/ноутбук → периферия → сетевой фильтр/ИБП.</p>
+            <p style="margin:2px 0;">6.3. Осмотрите рабочее место: кабели не натянуты, техника не перегрета, нет посторонних предметов на устройствах.</p>
+            <p style="margin:2px 0;">6.4. Если техника передаётся другому сотруднику (например, сменный режим), передайте её по краткой проверке и отметьте в журнале/чате ИТ-поддержки.</p>
+
+            <h4 style="font-size:8.5pt; margin-top:6px; margin-bottom:2px;">7. Ответственность и контроль</h4>
+            <p style="margin:2px 0;">7.1. Контроль соблюдения правил возлагается на руководителей подразделений и технического директора.</p>
+            <p style="margin:2px 0;">7.2. Нарушение правил может служить основанием для отстранения от работы и привлечения к дисциплинарной ответственности.</p>
+            <p style="margin:2px 0;">7.3. Факт ознакомления подтверждается подписью в журнале инструктажа либо в электронной форме (через чек-лист).</p>
+
+            <table style="width: 100%; margin-top: 12px; border-collapse: collapse;">
               <tr>
-                <td style="width: 50%; font-size: 7.5pt; vertical-align: top; padding-right: 10px;">
+                <td style="width: 50%; font-size: 8.5pt; vertical-align: top; padding-right: 10px; border:none;">
                   <b>Инструктаж провел:</b><br>
                   Технический директор АНО «Артмастерс»<br>
-                  Зломанов Олег Викторович<br>
+                  Зломанов Олег Викторович<br><br>
                   ______________________ (подпись) / «___» ___________ 2026 г.
                 </td>
-                <td style="width: 50%; font-size: 7.5pt; vertical-align: top;">
+                <td style="width: 50%; font-size: 8.5pt; vertical-align: top; border:none;">
                   <b>С правилами техники безопасности ознакомлен(а), обязуюсь выполнять:</b><br>
                   <span>${empRoleStr}</span><br>
-                  <span>${sigText}</span><br>
+                  <span>${sigText}</span><br><br>
                   ______________________ (подпись) / «___» ___________ 2026 г.
                 </td>
               </tr>
@@ -1366,86 +1373,103 @@
         `;
       }
 
-      const htmlDoc = `<!DOCTYPE html>
-<html lang="ru">
+      // Формирование файла MS Word (.doc) через специфический HTML-контейнер
+      const wordDocContent = `<html xmlns:o='urn:schemas-microsoft-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
 <head>
-  <meta charset="UTF-8">
+  <meta charset='utf-8'>
   <title>Акт № ${act.num}</title>
+  <!--[if gte mso 9]>
+  <xml>
+    <w:WordDocument>
+      <w:View>Print</w:View>
+      <w:Zoom>100</w:Zoom>
+      <w:DoNotOptimizeForCustomX态 />
+    </w:WordDocument>
+  </xml>
+  <![endif]-->
   <style>
-    @page { size: A4 landscape; margin: 5mm 6mm; }
-    body { font-family: Arial, sans-serif; font-size: 8.5pt; color: #000; margin: 0; padding: 15px; }
-    .act-header { text-align: center; font-weight: bold; font-size: 12pt; margin-bottom: 10px; }
+    @page Section1 {
+      size: 841.8pt 595.3pt; /* A4 Landscape */
+      mso-page-orientation: landscape;
+      margin: 1.5cm 1.5cm 1.5cm 1.5cm;
+      mso-header-margin: 36.0pt;
+      mso-footer-margin: 36.0pt;
+      mso-paper-source: 0;
+    }
+    div.Section1 { page: Section1; }
+    body { font-family: 'Arial', sans-serif; font-size: 9pt; color: #000; }
+    .act-header { text-align: center; font-weight: bold; font-size: 13pt; margin-bottom: 10px; }
     .act-header .subtitle { font-size: 10.5pt; margin-top: 3px; font-weight: normal; }
-    table.act-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-    table.act-table th, table.act-table td { border: 1px solid #000; padding: 4px 6px; font-size: 8.5pt; }
-    table.act-table th { background-color: #f2f2f2; font-weight: bold; }
-    .rules-block { border: 1px solid #000; padding: 6px 10px; font-size: 7.5pt; line-height: 1.25; margin-bottom: 8px; }
-    .rules-block ul { margin: 3px 0 0 16px; padding: 0; }
-    .signature-line { margin-top: 8px; font-size: 8.5pt; }
-    .signatures-grid { width: 100%; margin-top: 8px; border-collapse: collapse; }
-    .signatures-grid td { width: 50%; font-size: 8.5pt; padding: 3px 0; }
+    table.act-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+    table.act-table th, table.act-table td { border: 1px solid #000; padding: 5px 6px; font-size: 9pt; }
+    table.act-table th { background-color: #f2f2f2; font-weight: bold; text-align: center; }
+    .rules-block { border: 1px solid #000; padding: 6px 10px; font-size: 8pt; line-height: 1.25; margin-bottom: 10px; }
+    .rules-block ul { margin: 3px 0 0 18px; padding: 0; }
+    .signature-line { margin-top: 10px; font-size: 9pt; }
+    .signatures-grid { width: 100%; margin-top: 10px; border-collapse: collapse; }
+    .signatures-grid td { width: 50%; font-size: 9pt; padding: 4px 0; border: none; }
     .underline { display: inline-block; border-bottom: 1px solid #000; min-width: 180px; }
-    h4 { font-size: 7.5pt; font-weight: bold; margin-top: 4px; margin-bottom: 2px; }
-    p { margin-bottom: 2px; }
   </style>
 </head>
 <body>
-  <div class="act-header">
-    АНО «АртМастерс»
-    <div style="font-size: 11pt; margin-top: 4px;"><b>Акт приема-передачи оборудования № ${act.num}</b></div>
-    <div class="subtitle">${subtitleText}</div>
-  </div>
-  <table class="act-table">
-    <thead>
+  <div class="Section1">
+    <div class="act-header">
+      АНО «АртМастерс»
+      <div style="font-size: 11pt; margin-top: 4px;"><b>Акт приема-передачи оборудования № ${act.num}</b></div>
+      <div class="subtitle">${subtitleText}</div>
+    </div>
+    <table class="act-table">
+      <thead>
+        <tr>
+          <th style="width: 4%;">№</th>
+          <th style="width: 26%;">Наименование</th>
+          <th style="width: 13%;">Инвентарный номер</th>
+          <th style="width: 16%;">${role} ФИО</th>
+          <th style="width: 15%;">Телефон / Telegram / MAX</th>
+          <th style="width: 5%;">Кол-во</th>
+          <th style="width: 8%;">Дата выдачи</th>
+          <th style="width: 7%;">Подпись</th>
+          <th style="width: 8%;">Дата возврата</th>
+          <th style="width: 7%;">Подпись</th>
+          <th style="width: 11%;">Комментарии</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${itemsRowsHtml}
+      </tbody>
+    </table>
+    <div class="rules-block">
+      <b>Просим обратить внимание:</b>
+      <ul>
+        <li>На технику, жёсткий диск и упаковку не допускается наклеивать какие‑либо стикеры, бирки, надписи или иные маркировочные материалы.</li>
+        <li>В случае необходимости идентификации содержимого диска/накопителя следует создать отдельную папку с фамилией ответственного сотрудника.</li>
+        <li>Перед переносом информации диски должны быть отформатированы в exFAT.</li>
+        <li>Оборудование и диски сдаются с полностью отснятым/рабочим материалом — ничего не удаляется.</li>
+      </ul>
+    </div>
+    <div class="signature-line">
+      С правилами выдачи ознакомлен (а), ${role.toLowerCase()}: <b>${sigText}</b> <span class="underline"></span>
+    </div>
+    <table class="signatures-grid">
       <tr>
-        <th style="width: 4%;">№</th>
-        <th style="width: 26%;">Наименование</th>
-        <th style="width: 13%;">Инвентарный номер</th>
-        <th style="width: 16%;">${role} ФИО</th>
-        <th style="width: 15%;">Телефон / Telegram / MAX</th>
-        <th style="width: 5%;">Кол-во</th>
-        <th style="width: 8%;">Дата выдачи</th>
-        <th style="width: 7%;">Подпись</th>
-        <th style="width: 8%;">Дата возврата</th>
-        <th style="width: 7%;">Подпись</th>
-        <th style="width: 11%;">Комментарии</th>
+        <td>Выдал технический менеджер: <b>${act.manager}</b> <span class="underline"></span></td>
+        <td>Принял технический менеджер: <b>${act.manager}</b> <span class="underline"></span></td>
       </tr>
-    </thead>
-    <tbody>
-      ${itemsRowsHtml}
-    </tbody>
-  </table>
-  <div class="rules-block">
-    <b>Просим обратить внимание:</b>
-    <ul>
-      <li>На технику, жёсткий диск и упаковку не допускается наклеивать какие‑либо стикеры, бирки, надписи или иные маркировочные материалы.</li>
-      <li>В случае необходимости идентификации содержимого диска/накопителя следует создать отдельную папку с фамилией ответственного сотрудника.</li>
-      <li>Перед переносом информации диски должны быть отформатированы в exFAT.</li>
-      <li>Оборудование и диски сдаются с полностью отснятым/рабочим материалом — ничего не удаляется.</li>
-    </ul>
+      <tr>
+        <td>Получил (а) ${role}: <b>${sigText}</b> <span class="underline"></span></td>
+        <td>Сдал (а) ${role}: <b>${sigText}</b> <span class="underline"></span></td>
+      </tr>
+    </table>
+    ${safetyRulesHtml}
   </div>
-  <div class="signature-line">
-    С правилами выдачи ознакомлен (а), ${role.toLowerCase()}: <b>${sigText}</b> <span class="underline"></span>
-  </div>
-  <table class="signatures-grid">
-    <tr>
-      <td>Выдал технический менеджер: <b>${act.manager}</b> <span class="underline"></span></td>
-      <td>Принял технический менеджер: <b>${act.manager}</b> <span class="underline"></span></td>
-    </tr>
-    <tr>
-      <td>Получил (а) ${role}: <b>${sigText}</b> <span class="underline"></span></td>
-      <td>Сдал (а) ${role}: <b>${sigText}</b> <span class="underline"></span></td>
-    </tr>
-  </table>
-  ${safetyRulesHtml}
 </body>
 </html>`;
 
-      const blob = new Blob([htmlDoc], { type: 'text/html;charset=utf-8;' });
+      const blob = new Blob(['\ufeff', wordDocContent], { type: 'application/msword;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.setAttribute('href', url);
-      link.setAttribute('download', `Act_${act.num}.html`);
+      link.setAttribute('download', `Act_${act.num}.doc`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
