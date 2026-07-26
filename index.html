@@ -469,14 +469,12 @@
       .signatures-grid td { width: 50%; font-size: 8.5pt; padding: 3px 0; }
       .underline { display: inline-block; border-bottom: 1px solid #000; min-width: 180px; }
 
-      /* Разделитель страниц и стили ТБ */
+      /* Разделитель страниц и стили ТБ (без внешней рамки) */
       .page-break { page-break-before: always; }
       .safety-rules-wrapper { display: none; }
       .safety-rules-wrapper.active { display: block !important; }
 
       .safety-rules-block {
-        border: 1px solid #000;
-        padding: 8px 12px;
         font-size: 7.2pt;
         line-height: 1.2;
         margin-top: 5px;
@@ -601,7 +599,7 @@
             <option value="+374">🇦🇲 +374</option>
             <option value="+995">🇬🇪 +995</option>
             <option value="+996">🇰🇬 +996</option>
-            <option value="+373">🇲🇩 +373</option>
+            <option value="+373">🇲どもの +373</option>
             <option value="+993">🇹🇲 +993</option>
             <option value="+992">🇹🇯 +993</option>
             <option value="other">🌐 Другой</option>
@@ -831,7 +829,7 @@
             <td>
               <b>С правилами техники безопасности ознакомлен(а), обязуюсь выполнять:</b><br>
               <span id="safety-employee-title">Сотрудник АНО «Артмастерс»</span><br>
-              <b><span id="safety-employee-name">__________________________</span></b><br>
+              <span id="safety-employee-name">__________________________</span><br>
               ______________________ (подпись) / «___» ___________ 2026 г.
             </td>
           </tr>
@@ -867,7 +865,7 @@
 
     initEquipmentDb();
 
-    // Установка дефолтной даты возврата
+    // Установка дефольной даты возврата
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
