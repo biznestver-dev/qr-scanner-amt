@@ -611,9 +611,15 @@
         </div>
       </div>
 
+      <!-- Дата возврата с переключателем прочерка -->
       <div class="form-group" id="return-date-group">
         <label for="return-date-input">Планируемая дата возврата</label>
-        <input type="date" id="return-date-input">
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <input type="date" id="return-date-input" style="flex: 1;">
+          <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-secondary); cursor: pointer; white-space: nowrap; margin-bottom: 0;">
+            <input type="checkbox" id="no-return-date-checkbox" onchange="toggleNoReturnDate(this.checked)" style="width: 16px; height: 16px; cursor: pointer;"> — (Прочерк)
+          </label>
+        </div>
       </div>
 
       <div class="form-group full-width">
@@ -911,10 +917,30 @@
     let currentStatusFilter = 'all';
     let currentActItems = [];
 
-    // Преобразование даты в формат «_27_» _июля_ 2026 г.[cite: 3]
+    // Блокировка/разблокировка даты возврата при выборе чекбокса "Прочерк"
+    function toggleNoReturnDate(checked) {
+      const dateInput = document.getElementById('return-date-input');
+      if (checked) {
+        dateInput.value = '';
+        dateInput.disabled = true;
+      } else {
+        dateInput.disabled = false;
+        setDefaultReturnDate();
+      }
+    }
+
+    function setDefaultReturnDate() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      document.getElementById('return-date-input').value = `${year}-${month}-${day}`;
+    }
+
+    // Преобразование даты в формат «_27_» _июля_ 2026 г.
     function getUnderlineDateStr(dateStr) {
       let d = new Date();
-      if (dateStr) {
+      if (dateStr && dateStr !== '—') {
         if (dateStr.includes('.')) {
           const parts = dateStr.split('.');
           if (parts.length === 3) d = new Date(parts[2], parts[1] - 1, parts[0]);
@@ -962,13 +988,7 @@
     }
 
     initEquipmentDb();
-
-    // Установка дефолтной даты возврата
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    document.getElementById('return-date-input').value = `${year}-${month}-${day}`;
+    setDefaultReturnDate();
 
     function onCountryCodeChange() {
       const input = document.getElementById('contact-input');
@@ -1387,7 +1407,7 @@
         `;
       }
 
-      // Формирование точного документа Word по образу исходного файла
+      // Формирование файла Word (.doc)
       const wordDocContent = `<html xmlns:o='urn:schemas-microsoft-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
 <head>
   <meta charset='utf-8'>
@@ -1413,10 +1433,7 @@
     div.Section1 { page: Section1; }
     body { font-family: 'Arial', sans-serif; font-size: 9pt; color: #000; }
     p.MsoNormal { margin:0cm; font-size:9pt; font-family:"Arial",sans-serif; }
-    
-    /* Отсутствие любых рамок */
     .rules-block { border: none !important; padding: 0; font-size: 8pt; line-height: 1.25; margin-bottom: 7.5pt; }
-    
     table.MsoNormalTable { border-collapse: collapse; }
   </style>
 </head>
@@ -1514,7 +1531,6 @@
       const underlineDateStr = getUnderlineDateStr(act.date);
       const currentDateFormatted = act.dateIntro || (act.date ? `${act.date} г.` : getFormattedDate());
 
-      // Обновляем все зачёркнутые даты подписей на печатной странице
       document.querySelectorAll('.print-underline-date').forEach(el => {
         el.innerHTML = underlineDateStr;
       });
@@ -1585,6 +1601,12 @@
 
       document.getElementById('contact-input').value = '';
       document.getElementById('comment-input').value = '';
+      
+      const noReturnBox = document.getElementById('no-return-date-checkbox');
+      if (noReturnBox) {
+        noReturnBox.checked = false;
+        toggleNoReturnDate(false);
+      }
     }
 
     function generateAndPrintAct() {
@@ -1630,9 +1652,13 @@
       const h = getActsHistory();
       const actNum = `2026-${String(h.length + 1).padStart(3, '0')}`;
 
+      const noReturnChecked = document.getElementById('no-return-date-checkbox').checked;
       const rawDate = document.getElementById('return-date-input').value;
       let returnDate = '—';
-      if (rawDate) { const p = rawDate.split('-'); returnDate = `${p[2]}.${p[1]}.${p[0]}`; }
+      if (!noReturnChecked && rawDate) {
+        const p = rawDate.split('-');
+        returnDate = `${p[2]}.${p[1]}.${p[0]}`;
+      }
 
       if (window.EQUIPMENT_DB) {
         currentActItems.forEach(item => {
