@@ -469,7 +469,7 @@
       .signatures-grid td { width: 50%; font-size: 8.5pt; padding: 3px 0; }
       .underline { display: inline-block; border-bottom: 1px solid #000; min-width: 180px; }
 
-      /* Разделитель страниц и стили ТБ (без внешней рамки) */
+      /* Разделитель страниц и стили ТБ */
       .page-break { page-break-before: always; }
       .safety-rules-wrapper { display: none; }
       .safety-rules-wrapper.active { display: block !important; }
@@ -584,7 +584,9 @@
 
       <div class="form-group">
         <label for="participant-name" id="participant-label">ФИО Участника</label>
-        <input type="text" id="participant-name" placeholder="Введите ФИО участника...">
+        <div id="participant-container">
+          <input type="text" id="participant-name" placeholder="Введите ФИО участника...">
+        </div>
       </div>
 
       <!-- Поле ввода номера телефона с выбором страны -->
@@ -599,7 +601,7 @@
             <option value="+374">🇦🇲 +374</option>
             <option value="+995">🇬🇪 +995</option>
             <option value="+996">🇰🇬 +996</option>
-            <option value="+373">🇲どもの +373</option>
+            <option value="+373">🇲🇩 +373</option>
             <option value="+993">🇹🇲 +993</option>
             <option value="+992">🇹🇯 +993</option>
             <option value="other">🌐 Другой</option>
@@ -842,10 +844,72 @@
   <script src="app.js"></script>
 
   <script>
+    // Справочник всех сотрудников АНО «АртМастерс»
+    const EMPLOYEES_LIST = [
+      { name: "Агапов Даниил", role: "Веб-дизайнер", phone: "+79534307790" },
+      { name: "Баранова Татьяна Николаевна", role: "Ведущий специалист документационного обеспечения", phone: "+79605811818" },
+      { name: "Бекетова Алла Александровна", role: "Администратор", phone: "+79283104564" },
+      { name: "Белоусов Алексей Алексеевич", role: "Системный администратор", phone: "+79265668913" },
+      { name: "Белоусова Анастасия Константиновна", role: "Офис-менеджер, ассистент технического отдела", phone: "+79262363012" },
+      { name: "Буланов Кирилл Сергеевич", role: "Контент-менеджер соцсетей", phone: "+79150183176" },
+      { name: "Василенко Анна Владимировна", role: "Заместитель директора по работе с органами государственной власти и развитию", phone: "+79260422211" },
+      { name: "Василец Светлана Михайловна", role: "Руководитель департамента методики и экспертизы", phone: "+79162611880" },
+      { name: "Васина Светлана Сергеевна", role: "Старший специалист казначейства", phone: "+79055404903" },
+      { name: "Володин Борислав Борисович", role: "Директор", phone: "+79857697535" },
+      { name: "Гаврилова Анастасия Евгеньевна", role: "Менеджер образовательных программ и проектов", phone: "+79147592882" },
+      { name: "Глазкова Юлия Александровна", role: "Советник Директора по правовым вопросам, Генеральный директор Ассоциации «АртМастерс»", phone: "+79684541151" },
+      { name: "Даминов Булат Ильдарович", role: "Видеомонтажер", phone: "+79274985730" },
+      { name: "Дашкина Зульфия", role: "Менеджер по спецпроектам", phone: "+79254432518" },
+      { name: "Деликова Алина", role: "Сотрудник", phone: "+79689757153" },
+      { name: "Ермак Виолетта Юрьевна", role: "Заместитель руководителя департамента по работе с регионами", phone: "" },
+      { name: "Ермоленко Наталия Александровна", role: "Главный редактор по работе с участниками", phone: "+79161567039" },
+      { name: "Жижневская Ксения Владимировна", role: "Шеф-редактор", phone: "+79055099087" },
+      { name: "Зёма Елизавета Алексеевна", role: "Специалист первичного контроля", phone: "+79261873271" },
+      { name: "Зломанов Олег Викторович", role: "Административно-технический директор", phone: "+79206931013" },
+      { name: "Иванова Александра Ивановна", role: "Линейный продюсер по направлению «Кино»", phone: "+79888800577" },
+      { name: "Иванова Вероника Ивановна", role: "Секретарь", phone: "+79245486320" },
+      { name: "Казакова Лариса Анастольевна", role: "Руководитель производственного департамента", phone: "+79161245600" },
+      { name: "Казаченко Владимир Анатольевич", role: "Исполнительный директор", phone: "+79138200218" },
+      { name: "Капура Елена Николаевна", role: "Руководитель департамента образовательных программ", phone: "+79851968561" },
+      { name: "Караулова Татьяна", role: "Специалист информационно-аналитического отдела", phone: "+79267076336" },
+      { name: "Кирьяненко Татьяна Викторовна", role: "Руководитель финансово-юридического департамента", phone: "+79167256902" },
+      { name: "Кличко Анастасия Витальевна", role: "Линейный продюсер по направлению «Театр»", phone: "+79647087343" },
+      { name: "Колпаков Никита Александрович", role: "Продюсер внутреннего медиапроизводства", phone: "+79164300216" },
+      { name: "Криштоб Арина Петровна", role: "Дизайнер", phone: "+79035681699" },
+      { name: "Кудасова Екатерина Владимировна", role: "Юрист", phone: "+79521662000" },
+      { name: "Левченко Екатерина Анатольевна", role: "Линейный продюсер", phone: "+79168430171" },
+      { name: "Лукьянчикова Евгения Васильевна", role: "Секретарь-координатор Экспертного совета", phone: "+79606859282" },
+      { name: "Лютикова Маргарита Ефимовна", role: "Старший менеджер компетенций", phone: "+79601291238" },
+      { name: "Малашенко Александр Сергеевич", role: "Фотограф", phone: "+79773060506" },
+      { name: "Матвеева Виктория Игоревна", role: "Специалист операционного отдела", phone: "+79832227633" },
+      { name: "Минаева Ольга Анатольевна", role: "Главный бухгалтер", phone: "+79037692342" },
+      { name: "Московкина Ксения", role: "Сотрудник", phone: "+79267256262" },
+      { name: "Невзорова Александра Кирилловна", role: "Заместитель руководителя департамента по работе с партнёрами", phone: "+79262499722" },
+      { name: "Новикова Анастасия Владимировна", role: "Старший продюсер", phone: "+79629964020" },
+      { name: "Омельченко Елена Евгеньевна", role: "Руководитель операционного отдела", phone: "+79851442930" },
+      { name: "Орлов Денис Игоревич", role: "Специалист по договорной работе и отчетности", phone: "+79778099594" },
+      { name: "Осипова Аксинья Сергеевна", role: "Специалист-модератор", phone: "+79998579335" },
+      { name: "Плотникова Елена Вадимовна", role: "Арт-директор", phone: "+79153154720" },
+      { name: "Полякова Дарья Александровна", role: "Редактор по работе с участниками", phone: "+79096688887" },
+      { name: "Посякина Татьяна Александровна", role: "Ведущий специалист операционного отдела", phone: "+79167867799" },
+      { name: "Пригарин Алексей Вячеславович", role: "Финансовый директор", phone: "+79037240052" },
+      { name: "Разыграев Андрей Викторович", role: "Креативный директор", phone: "+79255890909" },
+      { name: "Саламатова Екатерина Константиновна", role: "Руководитель информационно-аналитического отдела, председатель счетной комиссии", phone: "+79124535791" },
+      { name: "Сафин Матвей Эдуардович", role: "Видеооператор", phone: "+79995668275" },
+      { name: "Селецкая Валерия Валентиновна", role: "Заместитель руководителя департамента образовательных программ", phone: "+79147552035" },
+      { name: "Сиверс Юлия Александровна", role: "Ведущий специалист отдела методики", phone: "+79858815399" },
+      { name: "Сидоренко Артём Валерьевич", role: "Старший технический менеджер", phone: "+79772772750" },
+      { name: "Сиропова Евгения Владимировна", role: "Старший координатор", phone: "+79046281466" },
+      { name: "Смутный Богдан Сергеевич", role: "Технический менеджер", phone: "+79601805290" },
+      { name: "Талеб Лина Сид-Ахмедовна", role: "Менеджер по работе с органами государственной власти", phone: "+79632225826" },
+      { name: "Тетеря Валерия Сергеевна", role: "Помощник редактора по работе с участниками", phone: "+79104074291" },
+      { name: "Чикунова Анна Алексеевна", role: "Редактор по работе с участниками", phone: "+79851360339" },
+      { name: "Чурилина Екатерина Владимировна", role: "Руководитель отдела методики и конкурсной документации", phone: "+79031408395" }
+    ];
+
     let currentStatusFilter = 'all';
     let currentActItems = [];
 
-    // Инициализация базы данных с поддержкой localStorage
     function initEquipmentDb() {
       const savedDb = localStorage.getItem('artmasters_equipment_db');
       if (savedDb) {
@@ -865,14 +929,13 @@
 
     initEquipmentDb();
 
-    // Установка дефольной даты возврата
+    // Установка дефолтной даты возврата
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
     document.getElementById('return-date-input').value = `${year}-${month}-${day}`;
 
-    // Форматирование телефона (+7 920 693 10 13)
     function onCountryCodeChange() {
       const input = document.getElementById('contact-input');
       formatPhoneNumber(input);
@@ -880,10 +943,7 @@
 
     function formatPhoneNumber(input) {
       let val = input.value;
-      
-      if (val.trim().startsWith('@') || /[a-zA-Z]/.test(val)) {
-        return;
-      }
+      if (val.trim().startsWith('@') || /[a-zA-Z]/.test(val)) return;
 
       const digits = val.replace(/\D/g, '');
       const codeSel = document.getElementById('country-code-select').value;
@@ -930,7 +990,7 @@
 
     function onRoleChange(role) {
       document.getElementById('participant-label').innerText = `ФИО (${role})`;
-      document.getElementById('participant-name').placeholder = `Введите ФИО (${role.toLowerCase()})...`;
+      const container = document.getElementById('participant-container');
 
       const compLabel = document.getElementById('competence-label');
       const compSelect = document.getElementById('competence-select');
@@ -939,21 +999,55 @@
 
       if (role === 'Сотрудник') {
         compLabel.innerText = 'Офис';
-        // Скрываем все опции компетенций
         compOptions.forEach(opt => opt.style.display = 'none');
-        // Показываем только вариант Офис
         officeOption.style.display = 'block';
         compSelect.value = 'Офис';
+
+        // Заменяем текстовое поле на выпадающий список сотрудников
+        let selectHtml = `<select id="participant-name" onchange="onEmployeeSelect(this.value)">
+          <option value="">-- Выберите сотрудника --</option>`;
+        EMPLOYEES_LIST.forEach(emp => {
+          selectHtml += `<option value="${emp.name}">${emp.name}</option>`;
+        });
+        selectHtml += `</select>`;
+        container.innerHTML = selectHtml;
+
       } else {
         compLabel.innerText = 'Компетенция';
-        // Возвращаем показ всех компетенций
         compOptions.forEach(opt => opt.style.display = 'block');
-        // Скрываем вариант Офис
         officeOption.style.display = 'none';
         if (compSelect.value === 'Офис') {
           compSelect.selectedIndex = 0;
         }
+
+        // Обычный инпут ввода ФИО для участников
+        container.innerHTML = `<input type="text" id="participant-name" placeholder="Введите ФИО (${role.toLowerCase()})...">`;
       }
+    }
+
+    function onEmployeeSelect(empName) {
+      if (!empName) return;
+      const emp = EMPLOYEES_LIST.find(e => e.name === empName);
+      if (emp) {
+        // Установка телефона
+        if (emp.phone) {
+          document.getElementById('country-code-select').value = '+7';
+          document.getElementById('contact-input').value = emp.phone;
+          formatPhoneNumber(document.getElementById('contact-input'));
+        } else {
+          document.getElementById('contact-input').value = '';
+        }
+
+        // Установка должности в комментарии
+        if (emp.role) {
+          document.getElementById('comment-input').value = emp.role;
+        }
+      }
+    }
+
+    function getParticipantValue() {
+      const el = document.getElementById('participant-name');
+      return el ? el.value.trim() : '';
     }
 
     function onInventoryChange(invVal) {
@@ -1156,10 +1250,12 @@
       const role = act.role || 'Участник';
       document.getElementById('print-act-num').innerText = act.num;
 
-      // Управление отображением правил ТБ для сотрудников
       const safetyWrapper = document.getElementById('safety-rules-wrapper');
       if (role === 'Сотрудник') {
         safetyWrapper.classList.add('active');
+        const emp = EMPLOYEES_LIST.find(e => e.name === act.participant);
+        const empRoleStr = emp && emp.role ? `${emp.role} АНО «Артмастерс»` : 'Сотрудник АНО «Артмастерс»';
+        document.getElementById('safety-employee-title').innerText = empRoleStr;
         document.getElementById('safety-employee-name').innerText = act.participant !== '—' ? act.participant : '__________________________';
       } else {
         safetyWrapper.classList.remove('active');
@@ -1213,7 +1309,10 @@
     function resetForm() {
       document.getElementById('inv-input').value = '';
       document.getElementById('equipment-name').value = '';
-      document.getElementById('participant-name').value = '';
+      
+      const pName = document.getElementById('participant-name');
+      if (pName) pName.value = '';
+
       document.getElementById('contact-input').value = '';
       document.getElementById('comment-input').value = '';
     }
@@ -1235,14 +1334,16 @@
       const comp = document.getElementById('competence-select').value;
       const manager = document.getElementById('manager-select').value;
       const role = document.getElementById('recipient-role-select').value;
-      const participant = document.getElementById('participant-name').value || '—';
+      const participant = getParticipantValue() || '—';
       const contact = getFullContactValue();
       const comment = document.getElementById('comment-input').value || '—';
 
-      // Переключаем класс видимости ТБ при создании нового акта
       const safetyWrapper = document.getElementById('safety-rules-wrapper');
       if (role === 'Сотрудник') {
         safetyWrapper.classList.add('active');
+        const emp = EMPLOYEES_LIST.find(e => e.name === participant);
+        const empRoleStr = emp && emp.role ? `${emp.role} АНО «Артмастерс»` : 'Сотрудник АНО «Артмастерс»';
+        document.getElementById('safety-employee-title').innerText = empRoleStr;
         document.getElementById('safety-employee-name').innerText = participant !== '—' ? participant : '__________________________';
       } else {
         safetyWrapper.classList.remove('active');
