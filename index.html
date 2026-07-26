@@ -601,7 +601,7 @@
             <option value="+374">🇦🇲 +374</option>
             <option value="+995">🇬🇪 +995</option>
             <option value="+996">🇰🇬 +996</option>
-            <option value="+373">🇲🇲 +373</option>
+            <option value="+373">🇲🇩 +373</option>
             <option value="+993">🇹🇲 +993</option>
             <option value="+992">🇹🇯 +993</option>
             <option value="other">🌐 Другой</option>
@@ -768,7 +768,7 @@
         
         <div class="meta">
           <b>Организация:</b> АНО «АртМастерс»<br>
-          <b>Дата введения:</b> 26 июля 2026 г.<br>
+          <b>Дата введения:</b> <span id="safety-date-intro">26 июля 2026 г.</span><br>
           <b>Ответственный:</b> Технический директор - Зломанов Олег Викторович
         </div>
 
@@ -909,6 +909,15 @@
 
     let currentStatusFilter = 'all';
     let currentActItems = [];
+
+    // Вспомогательная функция красивого форматирования даты
+    function getFormattedDate(dateObj = new Date()) {
+      const months = [
+        "января", "февраля", "марта", "апреля", "мая", "июня",
+        "июля", "августа", "сентября", "октября", "ноября", "декабря"
+      ];
+      return `${dateObj.getDate()} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()} г.`;
+    }
 
     function initEquipmentDb() {
       const savedDb = localStorage.getItem('artmasters_equipment_db');
@@ -1260,6 +1269,8 @@
       const emp = EMPLOYEES_LIST.find(e => e.name === act.participant);
       const empRoleStr = emp && emp.role ? `${emp.role} АНО «Артмастерс»` : 'Сотрудник АНО «Артмастерс»';
       
+      const currentDateFormatted = act.dateIntro || (act.date ? `${act.date} г.` : getFormattedDate());
+
       const subtitleText = isEmployee 
         ? `Выдано сотруднику Артмастерс — <b>${act.participant}</b>` 
         : `Компетенция — <b>${act.comp}</b>`;
@@ -1291,7 +1302,7 @@
             <h3 style="text-align: center; font-size: 9pt; font-weight: bold; margin-bottom: 4px;">ПРАВИЛА ТЕХНИКИ БЕЗОПАСНОСТИ ПРИ РАБОТЕ С КОМПЬЮТЕРНОЙ ТЕХНИКОЙ</h3>
             <div style="margin-bottom: 4px; font-size: 7.5pt;">
               <b>Организация:</b> АНО «АртМастерс»<br>
-              <b>Дата введения:</b> 26 июля 2026 г.<br>
+              <b>Дата введения:</b> ${currentDateFormatted}<br>
               <b>Ответственный:</b> Технический директор - Зломанов Олег Викторович
             </div>
             <h4>1. Общие положения</h4>
@@ -1446,6 +1457,8 @@
       const role = act.role || 'Участник';
       document.getElementById('print-act-num').innerText = act.num;
 
+      const currentDateFormatted = act.dateIntro || (act.date ? `${act.date} г.` : getFormattedDate());
+
       const safetyWrapper = document.getElementById('safety-rules-wrapper');
       if (role === 'Сотрудник') {
         safetyWrapper.classList.add('active');
@@ -1453,6 +1466,7 @@
         const empRoleStr = emp && emp.role ? `${emp.role} АНО «Артмастерс»` : 'Сотрудник АНО «Артмастерс»';
         document.getElementById('safety-employee-title').innerText = empRoleStr;
         document.getElementById('safety-employee-name').innerText = act.participant !== '—' ? act.participant : '__________________________';
+        document.getElementById('safety-date-intro').innerText = currentDateFormatted;
       } else {
         safetyWrapper.classList.remove('active');
       }
@@ -1491,7 +1505,7 @@
           <td>1</td>
           <td>${act.date}</td>
           <td></td>
-          <td>${returnDate || act.returnDate}</td>
+          <td>${act.returnDate}</td>
           <td></td>
           <td style="text-align: left;">${act.comment}</td>
         `;
@@ -1527,6 +1541,8 @@
       }
 
       const today = new Date().toLocaleDateString('ru-RU');
+      const todayFormatted = getFormattedDate();
+      
       const comp = document.getElementById('competence-select').value;
       const manager = document.getElementById('manager-select').value;
       const role = document.getElementById('recipient-role-select').value;
@@ -1541,6 +1557,7 @@
         const empRoleStr = emp && emp.role ? `${emp.role} АНО «Артмастерс»` : 'Сотрудник АНО «Артмастерс»';
         document.getElementById('safety-employee-title').innerText = empRoleStr;
         document.getElementById('safety-employee-name').innerText = participant !== '—' ? participant : '__________________________';
+        document.getElementById('safety-date-intro').innerText = todayFormatted;
       } else {
         safetyWrapper.classList.remove('active');
       }
@@ -1607,6 +1624,7 @@
       saveActToHistory({ 
         num: actNum, 
         date: today, 
+        dateIntro: todayFormatted,
         returnDate: returnDate, 
         items: currentActItems,
         comp: comp, 
