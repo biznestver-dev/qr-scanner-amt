@@ -231,7 +231,7 @@
 
     .item-row:last-child { margin-bottom: 0; }
 
-    /* Единые стильные кнопки — одинаковые по умолчанию, загораются при наведении */
+    /* Единые стильные кнопки */
     .btn-group {
       display: flex;
       gap: 14px;
@@ -460,12 +460,45 @@
       table.act-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
       table.act-table th, table.act-table td { border: 1px solid #000; padding: 4px 6px; font-size: 8.5pt; text-align: center; }
       table.act-table th { background-color: #f2f2f2; font-weight: bold; }
-      .rules-block { border: 1px solid #000; padding: 6px 10px; font-size: 7.5pt; line-height: 1.25; margin-bottom: 10px; }
+      
+      .rules-block { border: 1px solid #000; padding: 6px 10px; font-size: 7.5pt; line-height: 1.25; margin-bottom: 8px; }
       .rules-block ul { margin: 3px 0 0 16px; padding: 0; }
+      
       .signature-line { margin-top: 8px; font-size: 8.5pt; }
-      .signatures-grid { width: 100%; margin-top: 10px; border-collapse: collapse; }
-      .signatures-grid td { width: 50%; font-size: 8.5pt; padding: 4px 0; }
+      .signatures-grid { width: 100%; margin-top: 8px; border-collapse: collapse; }
+      .signatures-grid td { width: 50%; font-size: 8.5pt; padding: 3px 0; }
       .underline { display: inline-block; border-bottom: 1px solid #000; min-width: 180px; }
+
+      /* Разделитель страниц и стили ТБ */
+      .page-break { page-break-before: always; }
+      .safety-rules-wrapper { display: none; }
+      .safety-rules-wrapper.active { display: block !important; }
+
+      .safety-rules-block {
+        border: 1px solid #000;
+        padding: 8px 12px;
+        font-size: 7.5pt;
+        line-height: 1.25;
+        margin-top: 10px;
+      }
+      .safety-rules-block h3 {
+        text-align: center;
+        font-size: 9.5pt;
+        font-weight: bold;
+        margin-bottom: 6px;
+      }
+      .safety-rules-block .meta {
+        margin-bottom: 6px;
+        font-size: 8pt;
+      }
+      .safety-rules-block h4 {
+        font-size: 8pt;
+        font-weight: bold;
+        margin-top: 5px;
+        margin-bottom: 2px;
+      }
+      .safety-rules-block p { margin-bottom: 3px; }
+      .safety-rules-block ul { margin: 2px 0 4px 16px; padding: 0; }
     }
   </style>
 </head>
@@ -575,7 +608,7 @@
         <textarea id="comment-input" rows="2" placeholder="Комплектация, состояние и т.д."></textarea>
       </div>
 
-      <!-- Список добавленных в текущий Акт позиций -->
+      <!-- Список добавленного в текущий Акт оборудования -->
       <div class="selected-items-list full-width">
         <h4>Выбранное оборудование для выдачи (<span id="items-count">0</span>)</h4>
         <div id="selected-items-container">
@@ -688,6 +721,7 @@
         <!-- Сюда динамически подставляются строки оборудования -->
       </tbody>
     </table>
+    
     <div class="rules-block">
       <b>Просим обратить внимание:</b>
       <ul>
@@ -697,9 +731,11 @@
         <li>Оборудование и диски сдаются с полностью отснятым/рабочим материалом — ничего не удаляется.</li>
       </ul>
     </div>
+
     <div class="signature-line">
       С правилами выдачи ознакомлен (а), <span id="print-sig-role-label">участник</span>: <b><span id="print-participant-sig">__________________________</span></b> <span class="underline"></span>
     </div>
+
     <table class="signatures-grid">
       <tr>
         <td>Выдал технический менеджер: <b><span id="print-manager-out">Смутный Богдан Сергеевич</span></b> <span class="underline"></span></td>
@@ -710,6 +746,58 @@
         <td>Сдал (а) <span id="print-recipient-role-grid2">Участник</span>: <b><span id="print-competence-mgr2">__________________________</span></b> <span class="underline"></span></td>
       </tr>
     </table>
+
+    <!-- ОБЕРТКА ТЕХНИКИ БЕЗОПАСНОСТИ: ПО УМОЛЧАНИЮ СКРЫТА, ПОКАЗЫВАЕТСЯ ТОЛЬКО ДЛЯ СОТРУДНИКА -->
+    <div id="safety-rules-wrapper" class="safety-rules-wrapper">
+      <div class="page-break"></div>
+
+      <div class="safety-rules-block">
+        <h3>ПРАВИЛА ТЕХНИКИ БЕЗОПАСНОСТИ ПРИ РАБОТЕ С КОМПЬЮТЕРНОЙ ТЕХНИКОЙ</h3>
+        
+        <div class="meta">
+          <b>Проект:</b> Артмастерс<br>
+          <b>Дата введения:</b> 26 июля 2026 г.<br>
+          <b>Ответственный:</b> Технический директор - Зломанов Олег Викторович
+        </div>
+
+        <h4>1. Общие положения</h4>
+        <p>1.1. Правила обязательны для всех сотрудников офиса, стажёров, подрядчиков и иных лиц, использующих компьютерную технику (ПК, ноутбуки, мониторы, периферию, док-станции, сетевые фильтры).</p>
+        <p>1.2. Цель правил — предотвратить повреждение техники, исключить риск поражения электрическим током, снизить риски для здоровья при длительной работе за компьютером.</p>
+        <p>1.3. Допуск к работе возможен только после прохождения вводного инструктажа по охране труда и ознакомления с этими правилами под подпись.</p>
+
+        <h4>2. Подготовка рабочего места</h4>
+        <p>2.1. Перед началом работы осмотрите технику: нет ли видимых повреждений корпуса, экрана, кабелей, разъёмов.</p>
+        <p>2.2. Проверьте исправность розетки и сетевого фильтра; не используйте повреждённые удлинители и самодельные переходники.</p>
+        <p>2.3. Разместите кабели так, чтобы они не мешали проходу; используйте кабель-менеджмент (стяжки, каналы) — это критично для безопасности в активных зонах офиса.</p>
+        <p>2.4. Настройте эргономику:</p>
+        <ul>
+          <li>расстояние от глаз до экрана — 50–70 см;</li>
+          <li>верхняя треть экрана — на уровне глаз или чуть ниже;</li>
+          <li>спина опирается на спинку кресла, локти под углом ~90°, стопы на полу или на подставке.</li>
+        </ul>
+        <p>2.5. Проверьте освещение: на экране не должно быть сильных бликов; при необходимости отрегулируйте жалюзи или яркость монитора.</p>
+
+        <h4>3. Работа с техникой</h4>
+        <p>3.1. Включение: сначала сетевой фильтр/ИБП, затем периферия, затем ПК/ноутбук.</p>
+        <p>3.2. Не допускайте попадания жидкостей на технику; не ставьте рядом напитки, не работайте мокрыми руками.</p>
+        <p>3.3. Не вскрывайте корпуса устройств и не производите самостоятельный ремонт. При неисправности — сразу сообщите ИТ-отделу (канал #it-help в Slack/Teams) или ответственному.</p>
+        <p>3.4. Не перекрывайте вентиляционные отверстия; не кладите на технику бумагу, папки и иные предметы.</p>
+        <p>3.5. Не подключайте и не отключайте кабели при включённом питания, кроме случаев «горячей» замены (USB, наушники и т. п.), разрешённых производителем.</p>
+        <p>3.6. Используйте только штатные и сертифицированные блоки питания и зарядные устройства.</p>
+        <p>3.7. Не используйте технику при явных признаках неисправности (странный запах, шум, перегрев, мерцание экрана).</p>
+
+        <h4>4. Режим труда и профилактика утомления</h4>
+        <p>4.1. Делайте перерывы каждые 50–60 минут: 10–15 минут на разминку и гимнастику для глаз.</p>
+        <p>4.2. Во время перерыва отводите взгляд от экрана, смотрите вдаль, моргайте чаще, чтобы снизить риск «синдрома сухого глаза».</p>
+        <p>4.3. При длительной работе чередуйте задачи: часть времени — за экраном, часть — на обсуждение, проверку распечаток, ходьбу по офису.</p>
+
+        <h4>5. Действия при нештатных ситуациях</h4>
+        <p>5.1. При появлении запаха гари, искрения, необычного шума, перегрева — немедленно отключите питание на сетевом фильтре/автомате и сообщите ответственному. Не пытайтесь устранять неисправность самостоятельно.</p>
+        <p>5.2. При поражении электрическим током: не прикасайтесь к пострадавшему до снятия напряжения; вызовите скорую помощь (112); окажите первую помощь по инструкции.</p>
+        <p>5.3. При сбое ПО или потере данных: не выполняйте произвольных действий; зафиксируйте симптомы (ошибка, время, что делали) и обратитесь в ИТ-поддержку.</p>
+        <p>5.4. При возгорании техники: обесточьте, используйте огнетушитель (если обучены и безопасно), эвакуируйтесь по плану и сообщите охране/администратору.</p>
+      </div>
+    </div>
   </div>
 
   <script src="equipment.js"></script>
@@ -1029,6 +1117,14 @@
       if (!act) return;
       const role = act.role || 'Участник';
       document.getElementById('print-act-num').innerText = act.num;
+
+      // Управление отображением правил ТБ для сотрудников
+      const safetyWrapper = document.getElementById('safety-rules-wrapper');
+      if (role === 'Сотрудник') {
+        safetyWrapper.classList.add('active');
+      } else {
+        safetyWrapper.classList.remove('active');
+      }
       
       const subtitleContainer = document.getElementById('print-subtitle-container');
       if (role === 'Сотрудник') {
@@ -1103,6 +1199,14 @@
       const participant = document.getElementById('participant-name').value || '—';
       const contact = getFullContactValue();
       const comment = document.getElementById('comment-input').value || '—';
+
+      // Переключаем класс видимости ТБ при создании нового акта
+      const safetyWrapper = document.getElementById('safety-rules-wrapper');
+      if (role === 'Сотрудник') {
+        safetyWrapper.classList.add('active');
+      } else {
+        safetyWrapper.classList.remove('active');
+      }
 
       const h = getActsHistory();
       const actNum = `2026-${String(h.length + 1).padStart(3, '0')}`;
