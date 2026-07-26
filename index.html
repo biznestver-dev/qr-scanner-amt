@@ -461,7 +461,8 @@
       table.act-table th, table.act-table td { border: 1px solid #000; padding: 4px 6px; font-size: 8.5pt; text-align: center; }
       table.act-table th { background-color: #f2f2f2; font-weight: bold; }
       
-      .rules-block { border: 1px solid #000; padding: 6px 10px; font-size: 7.5pt; line-height: 1.25; margin-bottom: 8px; }
+      /* Без рамки вокруг правил */
+      .rules-block { padding: 4px 0; font-size: 7.5pt; line-height: 1.25; margin-bottom: 8px; }
       .rules-block ul { margin: 3px 0 0 16px; padding: 0; }
       
       .signature-line { margin-top: 8px; font-size: 8.5pt; }
@@ -825,13 +826,13 @@
             <td>
               <b>Инструктаж провел:</b><br>
               Технический директор АНО «Артмастерс»<br>
-              Зломанов Олег Викторович<br>
+              Зломанов Олег Викторович<br><br>
               ______________________ (подпись) / «___» ___________ 2026 г.
             </td>
             <td>
               <b>С правилами техники безопасности ознакомлен(а), обязуюсь выполнять:</b><br>
               <span id="safety-employee-title">Сотрудник АНО «Артмастерс»</span><br>
-              <span id="safety-employee-name">__________________________</span><br>
+              <span id="safety-employee-name">__________________________</span><br><br>
               ______________________ (подпись) / «___» ___________ 2026 г.
             </td>
           </tr>
@@ -1373,7 +1374,7 @@
         `;
       }
 
-      // Формирование файла MS Word (.doc) через специфический HTML-контейнер
+      // Формирование файла MS Word (.doc)
       const wordDocContent = `<html xmlns:o='urn:schemas-microsoft-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
 <head>
   <meta charset='utf-8'>
@@ -1403,8 +1404,11 @@
     table.act-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
     table.act-table th, table.act-table td { border: 1px solid #000; padding: 5px 6px; font-size: 9pt; }
     table.act-table th { background-color: #f2f2f2; font-weight: bold; text-align: center; }
-    .rules-block { border: 1px solid #000; padding: 6px 10px; font-size: 8pt; line-height: 1.25; margin-bottom: 10px; }
+    
+    /* Убрана рамка вокруг раздела внимания */
+    .rules-block { padding: 4px 0; font-size: 8pt; line-height: 1.25; margin-bottom: 10px; }
     .rules-block ul { margin: 3px 0 0 18px; padding: 0; }
+    
     .signature-line { margin-top: 10px; font-size: 9pt; }
     .signatures-grid { width: 100%; margin-top: 10px; border-collapse: collapse; }
     .signatures-grid td { width: 50%; font-size: 9pt; padding: 4px 0; border: none; }
@@ -1448,16 +1452,17 @@
       </ul>
     </div>
     <div class="signature-line">
-      С правилами выдачи ознакомлен (а), ${role.toLowerCase()}: <b>${sigText}</b> <span class="underline"></span>
+      С правилами выдачи ознакомлен (а), ${role.toLowerCase()}: <b>${sigText}</b> ______________________ (подпись) / «___» ___________ 2026 г.
     </div>
+    <br>
     <table class="signatures-grid">
       <tr>
-        <td>Выдал технический менеджер: <b>${act.manager}</b> <span class="underline"></span></td>
-        <td>Принял технический менеджер: <b>${act.manager}</b> <span class="underline"></span></td>
+        <td>Выдал технический менеджер: <b>${act.manager}</b><br>______________________ (подпись) / «___» ___________ 2026 г.</td>
+        <td>Принял технический менеджер: <b>${act.manager}</b><br>______________________ (подпись) / «___» ___________ 2026 г.</td>
       </tr>
       <tr>
-        <td>Получил (а) ${role}: <b>${sigText}</b> <span class="underline"></span></td>
-        <td>Сдал (а) ${role}: <b>${sigText}</b> <span class="underline"></span></td>
+        <td><br>Получил (а) ${role}: <b>${sigText}</b><br>______________________ (подпись) / «___» ___________ 2026 г.</td>
+        <td><br>Сдал (а) ${role}: <b>${sigText}</b><br>______________________ (подпись) / «___» ___________ 2026 г.</td>
       </tr>
     </table>
     ${safetyRulesHtml}
