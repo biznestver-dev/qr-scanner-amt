@@ -930,6 +930,15 @@
     let currentStatusFilter = 'all';
     let currentActItems = [];
 
+    // Получение должности получателя (для сотрудников берётся реальная должность)
+    function getRecipientRoleTitle(role, participantName) {
+      if (role === 'Сотрудник' && participantName) {
+        const emp = EMPLOYEES_LIST.find(e => e.name === participantName);
+        if (emp && emp.role) return emp.role;
+      }
+      return role || 'Участник';
+    }
+
     // Блокировка/разблокировка даты возврата при выборе чекбокса "Прочерк"
     function toggleNoReturnDate(checked) {
       const dateInput = document.getElementById('return-date-input');
@@ -1320,8 +1329,7 @@
       const role = act.role || 'Участник';
       const isEmployee = role === 'Сотрудник';
       
-      const emp = EMPLOYEES_LIST.find(e => e.name === act.participant);
-      const empRoleStr = emp && emp.role ? `${emp.role}` : 'Сотрудник';
+      const recipientTitle = getRecipientRoleTitle(role, act.participant);
       const managerTitleStr = getManagerTitle(act.manager);
       
       const underlineDateStr = getUnderlineDateStr(act.date);
@@ -1413,7 +1421,7 @@
               </td>
               <td width="50%" valign=top style="width:50.0%;padding:.75pt .75pt .75pt .75pt;">
                 <p class=MsoNormal style="margin-top:9.0pt;"><b><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">С правилами техники безопасности ознакомлен(а), обязуюсь выполнять:</span></b><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black"><br>
-                ${empRoleStr} АНО «Артмастерс»<br>${sigText}<br><br>
+                ${recipientTitle} АНО «Артмастерс»<br>${sigText}<br><br>
                 ______________________ (подпись) / </span><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black">${underlineDateStr}</span></p>
               </td>
             </tr>
@@ -1511,11 +1519,11 @@
       </tr>
       <tr>
         <td width="50%" style="width:50.0%;padding:3.0pt 0cm;">
-          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>Получил (а) ${role}: <b>${sigText}</b></span></p>
+          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>Получил (а) ${recipientTitle}: <b>${sigText}</b></span></p>
           <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>______________________ (подпись) / ${underlineDateStr}</span></p>
         </td>
         <td width="50%" style="width:50.0%;padding:3.0pt 0cm;">
-          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>Сдал (а) ${role}: <b>${sigText}</b></span></p>
+          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>Сдал (а) ${recipientTitle}: <b>${sigText}</b></span></p>
           <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>______________________ (подпись) / ${underlineDateStr}</span></p>
         </td>
       </tr>
@@ -1553,6 +1561,10 @@
       document.getElementById('print-manager-title-out').innerText = `Выдал ${managerTitleStr.toLowerCase()}`;
       document.getElementById('print-manager-title-in').innerText = `Принял ${managerTitleStr.toLowerCase()}`;
 
+      const recipientTitle = getRecipientRoleTitle(role, act.participant);
+      document.getElementById('print-recipient-role-grid1').innerText = recipientTitle;
+      document.getElementById('print-recipient-role-grid2').innerText = recipientTitle;
+
       const safetyWrapper = document.getElementById('safety-rules-wrapper');
       if (role === 'Сотрудник') {
         safetyWrapper.classList.add('active');
@@ -1576,8 +1588,6 @@
       document.getElementById('print-sig-role-label').innerText = role.toLowerCase();
       document.getElementById('print-manager-out').innerText = act.manager;
       document.getElementById('print-manager-in').innerText = act.manager;
-      document.getElementById('print-recipient-role-grid1').innerText = role;
-      document.getElementById('print-recipient-role-grid2').innerText = role;
       const sigText = act.participant !== '—' ? act.participant : '__________________________';
       document.getElementById('print-participant-sig').innerText = sigText;
       document.getElementById('print-competence-mgr1').innerText = sigText;
@@ -1659,6 +1669,10 @@
       document.getElementById('print-manager-title-out').innerText = `Выдал ${managerTitleStr.toLowerCase()}`;
       document.getElementById('print-manager-title-in').innerText = `Принял ${managerTitleStr.toLowerCase()}`;
 
+      const recipientTitle = getRecipientRoleTitle(role, participant);
+      document.getElementById('print-recipient-role-grid1').innerText = recipientTitle;
+      document.getElementById('print-recipient-role-grid2').innerText = recipientTitle;
+
       const safetyWrapper = document.getElementById('safety-rules-wrapper');
       if (role === 'Сотрудник') {
         safetyWrapper.classList.add('active');
@@ -1706,8 +1720,6 @@
       document.getElementById('print-sig-role-label').innerText = role.toLowerCase();
       document.getElementById('print-manager-out').innerText = manager;
       document.getElementById('print-manager-in').innerText = manager;
-      document.getElementById('print-recipient-role-grid1').innerText = role;
-      document.getElementById('print-recipient-role-grid2').innerText = role;
       const sigText = participant !== '—' ? participant : '__________________________';
       document.getElementById('print-participant-sig').innerText = sigText;
       document.getElementById('print-competence-mgr1').innerText = sigText;
