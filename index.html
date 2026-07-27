@@ -564,7 +564,7 @@
       </div>
 
       <div class="form-group">
-        <label for="manager-select">Технический менеджер</label>
+        <label for="manager-select">Административно-технический отдел</label>
         <select id="manager-select">
           <option value="Зломанов Олег Викторович">Зломанов Олег Викторович</option>
           <option value="Смутный Богдан Сергеевич">Смутный Богдан Сергеевич</option>
@@ -598,7 +598,7 @@
             <option value="+7">🇷🇺 +7</option>
             <option value="+375">🇧🇾 +375</option>
             <option value="+7_KZ">🇰🇿 +7</option>
-            <option value="+998">🇺🇿 +998</option>
+            <option value="+998">🇺ℤ +998</option>
             <option value="+374">🇦🇲 +374</option>
             <option value="+995">🇬🇪 +995</option>
             <option value="+996">🇰🇬 +996</option>
@@ -757,8 +757,8 @@
 
     <table class="signatures-grid">
       <tr>
-        <td><span id="print-manager-title-out">Выдал технический менеджер</span>: <b><span id="print-manager-out">Смутный Богдан Сергеевич</span></b><br>______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span></td>
-        <td><span id="print-manager-title-in">Принял технический менеджер</span>: <b><span id="print-manager-in">Смутный Богдан Сергеевич</span></b><br>______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span></td>
+        <td><span id="print-manager-title-out">Выдал административно-технический отдел</span>: <b><span id="print-manager-out">Смутный Богдан Сергеевич</span></b><br>______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span></td>
+        <td><span id="print-manager-title-in">Принял административно-технический отдел</span>: <b><span id="print-manager-in">Смутный Богдан Сергеевич</span></b><br>______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span></td>
       </tr>
       <tr>
         <td><br>Получил (а) <span id="print-recipient-role-grid1">Участник</span>: <b><span id="print-competence-mgr1">__________________________</span></b><br>______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span></td>
@@ -851,7 +851,7 @@
   <script src="app.js"></script>
 
   <script>
-    // Должности для техменеджеров
+    // Должности для представителей административно-технического отдела
     const MANAGER_TITLES = {
       "Зломанов Олег Викторович": "Административно-технический директор",
       "Белоусов Алексей Алексеевич": "Системный администратор",
@@ -861,7 +861,7 @@
     };
 
     function getManagerTitle(mgrName) {
-      return MANAGER_TITLES[mgrName] || "Технический менеджер";
+      return MANAGER_TITLES[mgrName] || "Административно-технический отдел";
     }
 
     // Справочник всех сотрудников АНО «АртМастерс»
@@ -1509,11 +1509,11 @@
     <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width="100%" style="width:100.0%;">
       <tr>
         <td width="50%" style="width:50.0%;padding:3.0pt 0cm;">
-          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;">Выдал ${managerTitleStr}: <b>${act.manager}</b></span></p>
+          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;">Выдал административно-технический отдел: <b>${act.manager}</b></span></p>
           <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>______________________ (подпись) / ${underlineDateStr}</span></p>
         </td>
         <td width="50%" style="width:50.0%;padding:3.0pt 0cm;">
-          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;">Принял ${managerTitleStr}: <b>${act.manager}</b></span></p>
+          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;">Принял административно-технический отдел: <b>${act.manager}</b></span></p>
           <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>______________________ (подпись) / ${underlineDateStr}</span></p>
         </td>
       </tr>
@@ -1557,9 +1557,8 @@
         el.innerHTML = underlineDateStr;
       });
 
-      const managerTitleStr = getManagerTitle(act.manager);
-      document.getElementById('print-manager-title-out').innerText = `Выдал ${managerTitleStr.toLowerCase()}`;
-      document.getElementById('print-manager-title-in').innerText = `Принял ${managerTitleStr.toLowerCase()}`;
+      document.getElementById('print-manager-title-out').innerText = 'Выдал административно-технический отдел';
+      document.getElementById('print-manager-title-in').innerText = 'Принял административно-технический отдел';
 
       const recipientTitle = getRecipientRoleTitle(role, act.participant);
       document.getElementById('print-recipient-role-grid1').innerText = recipientTitle;
@@ -1665,9 +1664,8 @@
       const contact = getFullContactValue();
       const comment = document.getElementById('comment-input').value || '—';
 
-      const managerTitleStr = getManagerTitle(manager);
-      document.getElementById('print-manager-title-out').innerText = `Выдал ${managerTitleStr.toLowerCase()}`;
-      document.getElementById('print-manager-title-in').innerText = `Принял ${managerTitleStr.toLowerCase()}`;
+      document.getElementById('print-manager-title-out').innerText = 'Выдал административно-технический отдел';
+      document.getElementById('print-manager-title-in').innerText = 'Принял административно-технический отдел';
 
       const recipientTitle = getRecipientRoleTitle(role, participant);
       document.getElementById('print-recipient-role-grid1').innerText = recipientTitle;
@@ -1811,7 +1809,7 @@
         alert("Реестр актов пуст");
         return;
       }
-      const headers = ["№ Накладной", "Дата выдачи", "Планируемая дата возврата", "Компетенция", "Менеджер", "Роль", "Получатель (ФИО)", "Контакты", "Инвентарные №", "Наименования оборудования", "Кол-во предметов", "Комментарии"];
+      const headers = ["№ Накладной", "Дата выдачи", "Планируемая дата возврата", "Компетенция", "Отдел", "Роль", "Получатель (ФИО)", "Контакты", "Инвентарные №", "Наименования оборудования", "Кол-во предметов", "Комментарии"];
       const rows = [headers];
 
       history.forEach(act => {
