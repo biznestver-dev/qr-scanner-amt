@@ -598,7 +598,7 @@
             <option value="+7">🇷🇺 +7</option>
             <option value="+375">🇧🇾 +375</option>
             <option value="+7_KZ">🇰🇿 +7</option>
-            <option value="+998">🇺ℤ +998</option>
+            <option value="+998">🇺🇿 +998</option>
             <option value="+374">🇦🇲 +374</option>
             <option value="+995">🇬🇪 +995</option>
             <option value="+996">🇰🇬 +996</option>
@@ -757,8 +757,8 @@
 
     <table class="signatures-grid">
       <tr>
-        <td><span id="print-manager-title-out">Выдал административно-технический отдел</span>: <b><span id="print-manager-out">Смутный Богдан Сергеевич</span></b><br>______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span></td>
-        <td><span id="print-manager-title-in">Принял административно-технический отдел</span>: <b><span id="print-manager-in">Смутный Богдан Сергеевич</span></b><br>______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span></td>
+        <td><span id="print-manager-title-out">Выдал технический менеджер</span>: <b><span id="print-manager-out">Смутный Богдан Сергеевич</span></b><br>______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span></td>
+        <td><span id="print-manager-title-in">Принял технический менеджер</span>: <b><span id="print-manager-in">Смутный Богдан Сергеевич</span></b><br>______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span></td>
       </tr>
       <tr>
         <td><br>Получил (а) <span id="print-recipient-role-grid1">Участник</span>: <b><span id="print-competence-mgr1">__________________________</span></b><br>______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span></td>
@@ -1494,7 +1494,7 @@
 
     <div style="margin-bottom:7.5pt; margin-top:7.5pt;">
       <p class=MsoNormal><b><span style="font-size:8.0pt;">Просим обратить внимание:</span></b></p>
-      <p class=MsoNormal><span style="font-size:8.0pt;">На технику, жёсткий диск и упаковку не допускается наклеивать какие‑либо стикеры, бирки, надписи или иные маркировочные материалы.</span></p>
+      <p class=MsoNormal><span style="font-size:8.0pt;">На технику, чёрный диск и упаковку не допускается наклеивать какие‑либо стикеры, бирки, надписи или иные маркировочные материалы.</span></p>
       <p class=MsoNormal><span style="font-size:8.0pt;">В случае необходимости идентификации содержимого диска/накопителя следует создать отдельную папку с фамилией ответственного сотрудника.</span></p>
       <p class=MsoNormal><span style="font-size:8.0pt;">Перед переносом информации диски должны быть отформатированы в exFAT.</span></p>
       <p class=MsoNormal><span style="font-size:8.0pt;">Оборудование и диски сдаются с полностью отснятым/рабочим материалом — ничего не удаляется.</span></p>
@@ -1509,11 +1509,11 @@
     <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width="100%" style="width:100.0%;">
       <tr>
         <td width="50%" style="width:50.0%;padding:3.0pt 0cm;">
-          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;">Выдал административно-технический отдел: <b>${act.manager}</b></span></p>
+          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;">Выдал ${managerTitleStr.toLowerCase()}: <b>${act.manager}</b></span></p>
           <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>______________________ (подпись) / ${underlineDateStr}</span></p>
         </td>
         <td width="50%" style="width:50.0%;padding:3.0pt 0cm;">
-          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;">Принял административно-технический отдел: <b>${act.manager}</b></span></p>
+          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;">Принял ${managerTitleStr.toLowerCase()}: <b>${act.manager}</b></span></p>
           <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>______________________ (подпись) / ${underlineDateStr}</span></p>
         </td>
       </tr>
@@ -1557,8 +1557,9 @@
         el.innerHTML = underlineDateStr;
       });
 
-      document.getElementById('print-manager-title-out').innerText = 'Выдал административно-технический отдел';
-      document.getElementById('print-manager-title-in').innerText = 'Принял административно-технический отдел';
+      const managerTitleStr = getManagerTitle(act.manager);
+      document.getElementById('print-manager-title-out').innerText = `Выдал ${managerTitleStr.toLowerCase()}`;
+      document.getElementById('print-manager-title-in').innerText = `Принял ${managerTitleStr.toLowerCase()}`;
 
       const recipientTitle = getRecipientRoleTitle(role, act.participant);
       document.getElementById('print-recipient-role-grid1').innerText = recipientTitle;
@@ -1664,8 +1665,9 @@
       const contact = getFullContactValue();
       const comment = document.getElementById('comment-input').value || '—';
 
-      document.getElementById('print-manager-title-out').innerText = 'Выдал административно-технический отдел';
-      document.getElementById('print-manager-title-in').innerText = 'Принял административно-технический отдел';
+      const managerTitleStr = getManagerTitle(manager);
+      document.getElementById('print-manager-title-out').innerText = `Выдал ${managerTitleStr.toLowerCase()}`;
+      document.getElementById('print-manager-title-in').innerText = `Принял ${managerTitleStr.toLowerCase()}`;
 
       const recipientTitle = getRecipientRoleTitle(role, participant);
       document.getElementById('print-recipient-role-grid1').innerText = recipientTitle;
