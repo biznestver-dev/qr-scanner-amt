@@ -757,8 +757,8 @@
 
     <table class="signatures-grid">
       <tr>
-        <td>Выдал технический менеджер: <b><span id="print-manager-out">Смутный Богдан Сергеевич</span></b><br>______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span></td>
-        <td>Принял технический менеджер: <b><span id="print-manager-in">Смутный Богдан Сергеевич</span></b><br>______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span></td>
+        <td><span id="print-manager-title-out">Выдал технический менеджер</span>: <b><span id="print-manager-out">Смутный Богдан Сергеевич</span></b><br>______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span></td>
+        <td><span id="print-manager-title-in">Принял технический менеджер</span>: <b><span id="print-manager-in">Смутный Богдан Сергеевич</span></b><br>______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span></td>
       </tr>
       <tr>
         <td><br>Получил (а) <span id="print-recipient-role-grid1">Участник</span>: <b><span id="print-competence-mgr1">__________________________</span></b><br>______________________ (подпись) / <span class="print-underline-date">«_<u>27_</u>» _<u>июля_</u> 2026 г.</span></td>
@@ -851,6 +851,19 @@
   <script src="app.js"></script>
 
   <script>
+    // Должности для техменеджеров
+    const MANAGER_TITLES = {
+      "Зломанов Олег Викторович": "Административно-технический директор",
+      "Белоусов Алексей Алексеевич": "Системный администратор",
+      "Смутный Богдан Сергеевич": "Технический менеджер",
+      "Сидоренко Артем Валерьевич": "Старший технический менеджер",
+      "Белоусова Анастасия Константиновна": "Офис-менеджер, ассистент технического отдела"
+    };
+
+    function getManagerTitle(mgrName) {
+      return MANAGER_TITLES[mgrName] || "Технический менеджер";
+    }
+
     // Справочник всех сотрудников АНО «АртМастерс»
     const EMPLOYEES_LIST = [
       { name: "Агапов Даниил", role: "Веб-дизайнер", phone: "+79534307790" },
@@ -1309,6 +1322,7 @@
       
       const emp = EMPLOYEES_LIST.find(e => e.name === act.participant);
       const empRoleStr = emp && emp.role ? `${emp.role}` : 'Сотрудник';
+      const managerTitleStr = getManagerTitle(act.manager);
       
       const underlineDateStr = getUnderlineDateStr(act.date);
       const currentDateFormatted = act.dateIntro || (act.date ? `${act.date} г.` : getFormattedDate());
@@ -1487,11 +1501,11 @@
     <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width="100%" style="width:100.0%;">
       <tr>
         <td width="50%" style="width:50.0%;padding:3.0pt 0cm;">
-          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;">Выдал технический менеджер: <b>${act.manager}</b></span></p>
+          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;">Выдал ${managerTitleStr}: <b>${act.manager}</b></span></p>
           <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>______________________ (подпись) / ${underlineDateStr}</span></p>
         </td>
         <td width="50%" style="width:50.0%;padding:3.0pt 0cm;">
-          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;">Принял технический менеджер: <b>${act.manager}</b></span></p>
+          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;">Принял ${managerTitleStr}: <b>${act.manager}</b></span></p>
           <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>______________________ (подпись) / ${underlineDateStr}</span></p>
         </td>
       </tr>
@@ -1534,6 +1548,10 @@
       document.querySelectorAll('.print-underline-date').forEach(el => {
         el.innerHTML = underlineDateStr;
       });
+
+      const managerTitleStr = getManagerTitle(act.manager);
+      document.getElementById('print-manager-title-out').innerText = `Выдал ${managerTitleStr.toLowerCase()}`;
+      document.getElementById('print-manager-title-in').innerText = `Принял ${managerTitleStr.toLowerCase()}`;
 
       const safetyWrapper = document.getElementById('safety-rules-wrapper');
       if (role === 'Сотрудник') {
@@ -1636,6 +1654,10 @@
       const participant = getParticipantValue() || '—';
       const contact = getFullContactValue();
       const comment = document.getElementById('comment-input').value || '—';
+
+      const managerTitleStr = getManagerTitle(manager);
+      document.getElementById('print-manager-title-out').innerText = `Выдал ${managerTitleStr.toLowerCase()}`;
+      document.getElementById('print-manager-title-in').innerText = `Принял ${managerTitleStr.toLowerCase()}`;
 
       const safetyWrapper = document.getElementById('safety-rules-wrapper');
       if (role === 'Сотрудник') {
