@@ -750,16 +750,16 @@
     </div>
 
     <div class="signature-line">
-      С правилами выдачи ознакомлен (а), <span id="print-sig-role-label">участник</span>: <b><span id="print-participant-sig">__________________________</span></b> ______________________ (подпись) / <span class="print-underline-date-issue">«_<u>28_</u>» _<u>июля_</u> 2026 г.</span>
+      С правилами выдачи ознакомлен (а), <span id="print-sig-role-label">участник</span>: <b><span id="print-participant-sig">__________________________</span></b> ______________________ (подпись) / <span class="print-underline-date-issue">«<u>&nbsp;28&nbsp;</u>» <u>&nbsp;июля&nbsp;</u> 2026 г.</span>
     </div>
 
     <table class="signatures-grid">
       <tr>
-        <td><span id="print-manager-title-out">Выдал технический менеджер</span>: <b><span id="print-manager-out">Смутный Богдан Сергеевич</span></b><br>______________________ (подпись) / <span class="print-underline-date-issue">«_<u>28_</u>» _<u>июля_</u> 2026 г.</span></td>
+        <td><span id="print-manager-title-out">Выдал технический менеджер</span>: <b><span id="print-manager-out">Смутный Богдан Сергеевич</span></b><br>______________________ (подпись) / <span class="print-underline-date-issue">«<u>&nbsp;28&nbsp;</u>» <u>&nbsp;июля&nbsp;</u> 2026 г.</span></td>
         <td><span id="print-manager-title-in">Принял технический менеджер</span>: <b><span id="print-manager-in">Смутный Богдан Сергеевич</span></b><br>______________________ (подпись) / <span class="print-underline-date-return">«___» ___________ 20___ г.</span></td>
       </tr>
       <tr>
-        <td><br>Получил (а) <span id="print-recipient-role-grid1">Участник</span>: <b><span id="print-competence-mgr1">__________________________</span></b><br>______________________ (подпись) / <span class="print-underline-date-issue">«_<u>28_</u>» _<u>июля_</u> 2026 г.</span></td>
+        <td><br>Получил (а) <span id="print-recipient-role-grid1">Участник</span>: <b><span id="print-competence-mgr1">__________________________</span></b><br>______________________ (подпись) / <span class="print-underline-date-issue">«<u>&nbsp;28&nbsp;</u>» <u>&nbsp;июля&nbsp;</u> 2026 г.</span></td>
         <td><br>Сдал (а) <span id="print-recipient-role-grid2">Участник</span>: <b><span id="print-competence-mgr2">__________________________</span></b><br>______________________ (подпись) / <span class="print-underline-date-return">«___» ___________ 20___ г.</span></td>
       </tr>
     </table>
@@ -831,13 +831,13 @@
               <b>Инструктаж провел:</b><br>
               Технический директор АНО «Артмастерс»<br>
               Зломанов Олег Викторович<br><br>
-              ______________________ (подпись) / <span class="print-underline-date-issue">«_<u>28_</u>» _<u>июля_</u> 2026 г.</span>
+              ______________________ (подпись) / <span class="print-underline-date-issue">«<u>&nbsp;28&nbsp;</u>» <u>&nbsp;июля&nbsp;</u> 2026 г.</span>
             </td>
             <td>
               <b>С правилами техники безопасности ознакомлен(а), обязуюсь выполнять:</b><br>
               <span id="safety-employee-title">Сотрудник АНО «Артмастерс»</span><br>
               <span id="safety-employee-name">__________________________</span><br><br>
-              ______________________ (подпись) / <span class="print-underline-date-issue">«_<u>28_</u>» _<u>июля_</u> 2026 г.</span>
+              ______________________ (подпись) / <span class="print-underline-date-issue">«<u>&nbsp;28&nbsp;</u>» <u>&nbsp;июля&nbsp;</u> 2026 г.</span>
             </td>
           </tr>
         </table>
@@ -957,7 +957,7 @@
       document.getElementById('return-date-input').value = `${year}-${month}-${day}`;
     }
 
-    // Преобразование даты в формат «_28_» _июля_ 2026 г.
+    // Преобразование даты в чистый формат «28» июля 2026 г. с ровным подчёркиванием
     function getUnderlineDateStr(dateStr) {
       if (!dateStr || dateStr === '—') {
         return `«___» ___________ 20___ г.`;
@@ -984,7 +984,7 @@
       const month = months[d.getMonth()];
       const year = d.getFullYear();
 
-      return `«_<u>${day}</u>_» _<u>${month}</u>_ ${year} г.`;
+      return `«<u>&nbsp;${day}&nbsp;</u>» <u>&nbsp;${month}&nbsp;</u> ${year} г.`;
     }
 
     function getFormattedDate(dateObj = new Date()) {
