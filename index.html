@@ -19,12 +19,12 @@
       --glass-border: rgba(255, 255, 255, 0.1);
       --glass-hover: rgba(25, 34, 60, 0.85);
       
-      --am-purple: #7000ff;
-      --am-magenta: #e000ff;
+      --am-purple: #3b26a6;
+      --am-magenta: #ff0043;
       --am-cyan: #00f0ff;
       
-      --accent-gradient: linear-gradient(135deg, #7000ff 0%, #e000ff 50%, #00f0ff 100%);
-      --accent-glow: rgba(112, 0, 255, 0.4);
+      --accent-gradient: linear-gradient(135deg, #ff0043 0%, #7000ff 50%, #3b26a6 100%);
+      --accent-glow: rgba(255, 0, 67, 0.35);
       --cyan-glow: rgba(0, 240, 255, 0.3);
       
       --text-primary: #ffffff;
@@ -97,18 +97,19 @@
     }
 
     .app-logo {
-      width: 52px;
-      height: 52px;
-      background: var(--accent-gradient);
-      border-radius: 16px;
+      width: 54px;
+      height: 54px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 900;
-      font-size: 26px;
-      color: #fff;
-      box-shadow: 0 0 30px var(--accent-glow);
-      letter-spacing: -0.05em;
+      flex-shrink: 0;
+    }
+
+    .app-logo svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      filter: drop-shadow(0 0 16px rgba(255, 0, 67, 0.4));
     }
 
     .app-title-text h2 {
@@ -549,7 +550,14 @@
   <div class="container">
     <div class="app-header">
       <div class="app-title">
-        <div class="app-logo">A</div>
+        <div class="app-logo">
+          <!-- Официльный логотип ArtMasters SVG -->
+          <svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M142.5 450.5C52.5 410.5 25.5 305.5 65.5 215.5C105.5 125.5 210.5 98.5 300.5 138.5C390.5 178.5 486.5 244.5 446.5 334.5C406.5 424.5 232.5 490.5 142.5 450.5Z" fill="#FF0043"/>
+            <path d="M178.5 385.5C123.5 360.5 106.5 295.5 131.5 240.5C156.5 185.5 221.5 168.5 276.5 193.5C331.5 218.5 383.5 260.5 358.5 315.5C333.5 370.5 233.5 410.5 178.5 385.5Z" fill="#FFFFFF"/>
+            <path d="M205.5 340.5C185.5 331.5 178.5 307.5 187.5 287.5C196.5 267.5 220.5 260.5 240.5 269.5C260.5 278.5 282.5 292.5 273.5 312.5C264.5 332.5 225.5 349.5 205.5 340.5Z" fill="#3B26A6"/>
+          </svg>
+        </div>
         <div class="app-title-text">
           <h2>Учет оборудования (МТБ)</h2>
           <p>ArtMasters</p>
@@ -629,7 +637,7 @@
             <option value="+7">🇷🇺 +7</option>
             <option value="+375">🇧🇾 +375</option>
             <option value="+7_KZ">🇰🇿 +7</option>
-            <option value="+998">🇺ZB +998</option>
+            <option value="+998">🇺🇿 +998</option>
             <option value="+374">🇦🇲 +374</option>
             <option value="+995">🇬🇪 +995</option>
             <option value="+996">🇰🇬 +996</option>
