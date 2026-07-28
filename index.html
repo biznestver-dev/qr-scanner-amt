@@ -9,28 +9,32 @@
   <!-- Шрифт Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      --bg-gradient: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 60%, #020617 100%);
-      --glass-bg: rgba(30, 41, 59, 0.7);
-      --glass-border: rgba(255, 255, 255, 0.08);
-      --glass-hover: rgba(51, 65, 85, 0.8);
+      /* Фирменная палитра ArtMasters */
+      --bg-gradient: radial-gradient(circle at 50% -20%, #1a0836 0%, #090c15 50%, #04060a 100%);
+      --glass-bg: rgba(15, 21, 38, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-hover: rgba(25, 34, 60, 0.85);
       
-      --accent-purple: #8b5cf6;
-      --accent-cyan: #06b6d4;
-      --accent-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-      --accent-glow: rgba(168, 85, 247, 0.45);
+      --am-purple: #7000ff;
+      --am-magenta: #e000ff;
+      --am-cyan: #00f0ff;
       
-      --text-primary: #f8fafc;
+      --accent-gradient: linear-gradient(135deg, #7000ff 0%, #e000ff 50%, #00f0ff 100%);
+      --accent-glow: rgba(112, 0, 255, 0.4);
+      --cyan-glow: rgba(0, 240, 255, 0.3);
+      
+      --text-primary: #ffffff;
       --text-secondary: #94a3b8;
       --text-muted: #64748b;
       
       --status-free: #10b981;
-      --status-free-bg: rgba(16, 185, 129, 0.12);
-      --status-busy: #f43f5e;
-      --status-busy-bg: rgba(244, 63, 94, 0.12);
+      --status-free-bg: rgba(16, 185, 129, 0.15);
+      --status-busy: #ff2a6d;
+      --status-busy-bg: rgba(255, 42, 109, 0.15);
     }
 
     * {
@@ -53,14 +57,27 @@
 
     .container {
       width: 100%;
-      max-width: 920px;
+      max-width: 940px;
       background: var(--glass-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       border: 1px solid var(--glass-border);
-      border-radius: 24px;
-      padding: 36px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 80px rgba(99, 102, 241, 0.1);
+      border-radius: 28px;
+      padding: 40px;
+      box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.8), 0 0 100px rgba(112, 0, 255, 0.15);
+      position: relative;
+    }
+
+    /* Фоновый декоративный блик ArtMasters */
+    .container::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: 15%;
+      right: 15%;
+      height: 2px;
+      background: var(--accent-gradient);
+      border-radius: 2px;
     }
 
     /* Header Design */
@@ -68,63 +85,68 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 32px;
-      padding-bottom: 20px;
+      margin-bottom: 36px;
+      padding-bottom: 24px;
       border-bottom: 1px solid var(--glass-border);
     }
 
     .app-title {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 18px;
     }
 
     .app-logo {
-      width: 48px;
-      height: 48px;
+      width: 52px;
+      height: 52px;
       background: var(--accent-gradient);
-      border-radius: 14px;
+      border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 800;
-      font-size: 22px;
+      font-weight: 900;
+      font-size: 26px;
       color: #fff;
-      box-shadow: 0 0 20px var(--accent-glow);
+      box-shadow: 0 0 30px var(--accent-glow);
+      letter-spacing: -0.05em;
     }
 
     .app-title-text h2 {
-      font-size: 22px;
-      font-weight: 700;
+      font-size: 24px;
+      font-weight: 800;
       letter-spacing: -0.02em;
-      background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
     }
 
     .app-title-text p {
       font-size: 13px;
-      color: var(--text-secondary);
+      color: var(--am-cyan);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
       margin-top: 2px;
     }
 
     /* Scanner styling */
     #reader {
       width: 100%;
-      max-width: 460px;
-      margin: 0 auto 28px auto;
+      max-width: 480px;
+      margin: 0 auto 32px auto;
       border-radius: 20px;
       overflow: hidden;
-      border: 1px dashed var(--glass-border);
-      background: rgba(15, 23, 42, 0.6);
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+      border: 1px dashed rgba(0, 240, 255, 0.3);
+      background: rgba(9, 12, 21, 0.8);
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.6), 0 0 20px rgba(0, 240, 255, 0.05);
     }
 
     /* Form Layout */
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      gap: 22px;
     }
 
     @media (max-width: 680px) {
@@ -143,20 +165,20 @@
     }
 
     label {
-      font-size: 12px;
-      font-weight: 700;
+      font-size: 11px;
+      font-weight: 800;
       color: var(--text-secondary);
       margin-bottom: 8px;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
     }
 
     input[type="text"], input[type="date"], select, textarea {
       width: 100%;
-      padding: 14px 16px;
-      background: rgba(15, 23, 42, 0.6);
+      padding: 15px 18px;
+      background: rgba(9, 12, 21, 0.7);
       border: 1px solid var(--glass-border);
-      border-radius: 12px;
+      border-radius: 14px;
       color: var(--text-primary);
       font-size: 14px;
       font-family: inherit;
@@ -166,14 +188,14 @@
     /* Стили для составного поля ввода телефона */
     .phone-input-group {
       display: flex;
-      gap: 8px;
+      gap: 10px;
     }
 
     .phone-country-select {
-      width: 110px !important;
+      width: 115px !important;
       flex-shrink: 0;
       font-size: 13px;
-      padding: 14px 8px;
+      padding: 15px 10px;
       cursor: pointer;
     }
 
@@ -185,8 +207,8 @@
 
     input[type="text"]:focus, input[type="date"]:focus, select:focus, textarea:focus {
       outline: none;
-      border-color: var(--accent-purple);
-      background: rgba(15, 23, 42, 0.85);
+      border-color: var(--am-magenta);
+      background: rgba(15, 21, 38, 0.95);
       box-shadow: 0 0 0 4px var(--accent-glow);
     }
 
@@ -194,48 +216,50 @@
       font-family: 'JetBrains Mono', monospace;
       font-weight: 600;
       letter-spacing: 0.05em;
+      color: var(--am-cyan);
     }
 
     select option {
-      background-color: #0f172a;
+      background-color: #090c15;
       color: var(--text-primary);
     }
 
     /* Список добавленного оборудования в форме */
     .selected-items-list {
       grid-column: 1 / -1;
-      background: rgba(15, 23, 42, 0.4);
+      background: rgba(9, 12, 21, 0.5);
       border: 1px solid var(--glass-border);
-      border-radius: 14px;
-      padding: 16px;
+      border-radius: 16px;
+      padding: 20px;
       margin-top: 10px;
     }
 
     .selected-items-list h4 {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-secondary);
       text-transform: uppercase;
-      margin-bottom: 10px;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
     }
 
     .item-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 14px;
-      background: rgba(30, 41, 59, 0.6);
+      padding: 12px 16px;
+      background: rgba(25, 34, 60, 0.5);
       border: 1px solid var(--glass-border);
-      border-radius: 10px;
-      margin-bottom: 8px;
+      border-radius: 12px;
+      margin-bottom: 10px;
     }
 
     .item-row:last-child { margin-bottom: 0; }
 
-    /* Единые стильные кнопки */
+    /* Единые стильные кнопки ArtMasters */
     .btn-group {
       display: flex;
       gap: 14px;
-      margin-top: 28px;
+      margin-top: 32px;
     }
 
     @media (max-width: 600px) {
@@ -246,33 +270,37 @@
 
     .btn {
       flex: 1;
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%);
+      background: rgba(112, 0, 255, 0.15);
       color: var(--text-primary);
       padding: 16px 20px;
-      border: 1px solid var(--glass-border);
+      border: 1px solid rgba(112, 0, 255, 0.4);
       border-radius: 14px;
       cursor: pointer;
-      font-size: 14px;
-      font-weight: 700;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
       transition: all 0.25s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow: hidden;
     }
 
     .btn:hover {
       background: var(--accent-gradient);
       color: white;
+      border-color: transparent;
       transform: translateY(-2px);
-      box-shadow: 0 12px 28px -4px var(--accent-glow);
-      filter: brightness(1.15);
+      box-shadow: 0 10px 30px var(--accent-glow);
     }
 
     .btn:active {
       transform: translateY(0);
-      box-shadow: 0 4px 12px var(--accent-glow);
+      box-shadow: 0 4px 15px var(--accent-glow);
     }
 
     /* Modal Design */
@@ -280,8 +308,8 @@
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(2, 6, 23, 0.85);
-      backdrop-filter: blur(12px);
+      background: rgba(4, 6, 10, 0.9);
+      backdrop-filter: blur(16px);
       z-index: 1000;
       justify-content: center;
       align-items: center;
@@ -289,29 +317,31 @@
     }
 
     .modal-content {
-      background: #0f172a;
+      background: #090c15;
       border: 1px solid var(--glass-border);
       width: 100%;
       max-width: 1080px;
       max-height: 88vh;
-      border-radius: 24px;
-      padding: 28px;
+      border-radius: 28px;
+      padding: 32px;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), 0 0 80px rgba(112, 0, 255, 0.2);
     }
 
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
     .modal-header h3 {
       font-size: 20px;
-      font-weight: 700;
+      font-weight: 800;
       color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
     }
 
     .modal-actions {
@@ -326,9 +356,9 @@
       border: none;
       background: rgba(255,255,255,0.05);
       color: var(--text-secondary);
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -343,16 +373,18 @@
     .filter-tabs {
       display: flex;
       gap: 10px;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .filter-tab {
-      padding: 10px 18px;
-      font-size: 13px;
-      font-weight: 600;
+      padding: 10px 20px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
       border-radius: 10px;
       border: 1px solid var(--glass-border);
-      background: rgba(30, 41, 59, 0.5);
+      background: rgba(25, 34, 60, 0.4);
       color: var(--text-secondary);
       cursor: pointer;
       transition: all 0.2s;
@@ -362,17 +394,18 @@
       background: var(--accent-gradient);
       color: #fff;
       border-color: transparent;
+      box-shadow: 0 0 20px var(--accent-glow);
     }
 
     .search-bar {
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .table-wrapper {
       overflow-y: auto;
       flex: 1;
       border: 1px solid var(--glass-border);
-      border-radius: 14px;
+      border-radius: 16px;
     }
 
     table.db-table {
@@ -383,47 +416,47 @@
     }
 
     table.db-table th, table.db-table td {
-      padding: 14px 16px;
+      padding: 16px 18px;
       border-bottom: 1px solid var(--glass-border);
     }
 
     table.db-table th {
-      background: #1e293b;
+      background: #0f1526;
       color: var(--text-secondary);
       position: sticky;
       top: 0;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.08em;
     }
 
     .badge-status {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 20px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .badge-status.free {
       background: var(--status-free-bg);
       color: var(--status-free);
-      border: 1px solid rgba(16, 185, 129, 0.3);
+      border: 1px solid rgba(16, 185, 129, 0.4);
     }
 
     .badge-status.busy {
       background: var(--status-busy-bg);
       color: var(--status-busy);
-      border: 1px solid rgba(244, 63, 94, 0.3);
+      border: 1px solid rgba(255, 42, 109, 0.4);
     }
 
     .select-btn, .return-btn, .delete-btn, .export-btn {
       padding: 8px 14px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
       border-radius: 8px;
       border: none;
       cursor: pointer;
@@ -433,11 +466,11 @@
       gap: 6px;
     }
 
-    .select-btn { background: var(--accent-purple); color: white; }
+    .select-btn { background: var(--am-purple); color: white; }
     .return-btn { background: var(--status-free); color: white; }
     .delete-btn { background: var(--status-busy); color: white; }
-    .export-btn { background: #0284c7; color: white; }
-    .export-btn:hover { background: #0369a1; }
+    .export-btn { background: #00b4d8; color: white; }
+    .export-btn:hover { background: #0077b6; }
 
     #act-print-area { display: none; }
 
@@ -461,7 +494,6 @@
       table.act-table th, table.act-table td { border: 1px solid #000; padding: 4px 6px; font-size: 8.5pt; text-align: center; }
       table.act-table th { background-color: #f2f2f2; font-weight: bold; }
       
-      /* Без рамок вообще */
       .rules-block { border: none !important; padding: 4px 0; font-size: 7.5pt; line-height: 1.25; margin-bottom: 8px; }
       .rules-block ul { margin: 3px 0 0 16px; padding: 0; }
       
@@ -470,7 +502,6 @@
       .signatures-grid td { width: 50%; font-size: 8.5pt; padding: 3px 0; }
       .underline { display: inline-block; border-bottom: 1px solid #000; min-width: 180px; }
 
-      /* Разделитель страниц и стили ТБ */
       .page-break { page-break-before: always; }
       .safety-rules-wrapper { display: none; }
       .safety-rules-wrapper.active { display: block !important; }
@@ -598,7 +629,7 @@
             <option value="+7">🇷🇺 +7</option>
             <option value="+375">🇧🇾 +375</option>
             <option value="+7_KZ">🇰🇿 +7</option>
-            <option value="+998">🇺🇿 +998</option>
+            <option value="+998">🇺ZB +998</option>
             <option value="+374">🇦🇲 +374</option>
             <option value="+995">🇬🇪 +995</option>
             <option value="+996">🇰🇬 +996</option>
@@ -1185,7 +1216,7 @@
         div.className = 'item-row';
         div.innerHTML = `
           <div>
-            <b style="font-family: 'JetBrains Mono'; font-size: 13px;">${item.inv}</b> — ${item.name}
+            <b style="font-family: 'JetBrains Mono'; font-size: 13px; color: var(--am-cyan);">${item.inv}</b> — ${item.name}
           </div>
           <button class="delete-btn" onclick="removeItemFromAct(${index})">✕</button>
         `;
@@ -1239,7 +1270,7 @@
           const returnBtn = !isFree ? `<button class="return-btn" onclick="returnEquipmentToOffice('${item.inv}')">📥 Вернуть</button>` : '';
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            <td><b>${item.inv}</b></td>
+            <td><b style="color: var(--am-cyan);">${item.inv}</b></td>
             <td>${item.category}</td>
             <td>${item.name}</td>
             <td>${item.sn || '—'}</td>
