@@ -551,7 +551,7 @@
     <div class="app-header">
       <div class="app-title">
         <div class="app-logo">
-          <!-- Официльный логотип ArtMasters SVG -->
+          <!-- Официальный логотип ArtMasters SVG -->
           <svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M142.5 450.5C52.5 410.5 25.5 305.5 65.5 215.5C105.5 125.5 210.5 98.5 300.5 138.5C390.5 178.5 486.5 244.5 446.5 334.5C406.5 424.5 232.5 490.5 142.5 450.5Z" fill="#FF0043"/>
             <path d="M178.5 385.5C123.5 360.5 106.5 295.5 131.5 240.5C156.5 185.5 221.5 168.5 276.5 193.5C331.5 218.5 383.5 260.5 358.5 315.5C333.5 370.5 233.5 410.5 178.5 385.5Z" fill="#FFFFFF"/>
@@ -976,6 +976,21 @@
       return role || 'Участник';
     }
 
+    // Вспомогательная функция для красивого формирования текста подзаголовка в шапке
+    function getActSubtitleText(role, participant, comp) {
+      if (role === 'Сотрудник') {
+        const emp = EMPLOYEES_LIST.find(e => e.name === participant);
+        if (emp && emp.role) {
+          return `Выдано сотруднику Артмастерс: <b>${emp.role} — ${participant}</b>`;
+        }
+        return `Выдано сотруднику Артмастерс — <b>${participant}</b>`;
+      } else if (role === 'Менеджер компетенции') {
+        return `Менеджер компетенции — <b>${comp}</b>`;
+      } else {
+        return `Участник компетенции — <b>${comp}</b>`;
+      }
+    }
+
     // Блокировка/разблокировка даты возврата при выборе чекбокса "Прочерк"
     function toggleNoReturnDate(checked) {
       const dateInput = document.getElementById('return-date-input');
@@ -996,7 +1011,7 @@
       document.getElementById('return-date-input').value = `${year}-${month}-${day}`;
     }
 
-    // Форматирование даты: если заполнено — просто текст «28» июля 2026 г., если пусто — шаблон «___» ___________ 20___ г.
+    // Форматирование даты
     function getUnderlineDateStr(dateStr) {
       if (!dateStr || dateStr === '—') {
         return `«___» ___________ 20___ г.`;
@@ -1152,10 +1167,7 @@
         } else {
           document.getElementById('contact-input').value = '';
         }
-
-        if (emp.role) {
-          document.getElementById('comment-input').value = emp.role;
-        }
+        // Должность не вставляется в комментарии
       }
     }
 
@@ -1378,10 +1390,7 @@
       const underlineDateStrReturn = getUnderlineDateStr(act.returnDate);
       const currentDateFormatted = act.dateIntro || (act.date ? `${act.date} г.` : getFormattedDate());
 
-      const subtitleText = isEmployee 
-        ? `Выдано сотруднику Артмастерс — <b>${act.participant}</b>` 
-        : `Компетенция — <b>${act.comp}</b>`;
-
+      const subtitleText = getActSubtitleText(role, act.participant, act.comp);
       const sigText = act.participant !== '—' ? act.participant : '__________________________';
 
       const itemsToPrint = act.items || [{ inv: act.inv, name: act.name }];
@@ -1470,7 +1479,6 @@
         `;
       }
 
-      // Формирование файла Word (.doc)
       const wordDocContent = `<html xmlns:o='urn:schemas-microsoft-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
 <head>
   <meta charset='utf-8'>
@@ -1622,11 +1630,7 @@
       }
       
       const subtitleContainer = document.getElementById('print-subtitle-container');
-      if (role === 'Сотрудник') {
-        subtitleContainer.innerHTML = `Выдано сотруднику Артмастерс — <b>${act.participant}</b>`;
-      } else {
-        subtitleContainer.innerHTML = `Компетенция — <b>${act.comp}</b>`;
-      }
+      subtitleContainer.innerHTML = getActSubtitleText(role, act.participant, act.comp);
 
       document.getElementById('print-header-role').innerText = `${role} ФИО`;
       document.getElementById('print-sig-role-label').innerText = role.toLowerCase();
@@ -1758,11 +1762,7 @@
       document.getElementById('print-act-num').innerText = actNum;
 
       const subtitleContainer = document.getElementById('print-subtitle-container');
-      if (role === 'Сотрудник') {
-        subtitleContainer.innerHTML = `Выдано сотруднику Артмастерс — <b>${participant}</b>`;
-      } else {
-        subtitleContainer.innerHTML = `Компетенция — <b>${comp}</b>`;
-      }
+      subtitleContainer.innerHTML = getActSubtitleText(role, participant, comp);
 
       document.getElementById('print-header-role').innerText = `${role} ФИО`;
       document.getElementById('print-sig-role-label').innerText = role.toLowerCase();
