@@ -1150,6 +1150,26 @@
       { name: "Чурилина Екатерина Владимировна", role: "Руководитель отдела методики и конкурсной документации", phone: "+79031408395" }
     ];
 
+    // ЕДИНАЯ ФУНКЦИЯ ФОРМАТИРОВАНИЯ СТРОКИ ТЕЛЕФОНА ПО МАСКЕ "+7 900 000 00 00"
+    function formatPhoneNumberStr(rawPhone) {
+      if (!rawPhone) return '';
+      const digits = String(rawPhone).replace(/\D/g, '');
+      if (!digits) return rawPhone;
+
+      let cleanDigits = digits;
+      if (cleanDigits.startsWith('7') || cleanDigits.startsWith('8')) {
+        cleanDigits = cleanDigits.substring(1);
+      }
+
+      let formatted = '+7';
+      if (cleanDigits.length > 0) formatted += ' ' + cleanDigits.substring(0, 3);
+      if (cleanDigits.length >= 4) formatted += ' ' + cleanDigits.substring(3, 6);
+      if (cleanDigits.length >= 7) formatted += ' ' + cleanDigits.substring(6, 8);
+      if (cleanDigits.length >= 9) formatted += ' ' + cleanDigits.substring(8, 10);
+
+      return formatted;
+    }
+
     let currentStatusFilter = 'all';
     let currentActItems = [];
 
@@ -1282,18 +1302,7 @@
       else if (codeSel === 'other') prefix = '';
 
       if (codeSel === '+7' || codeSel === '+7_KZ') {
-        let cleanDigits = digits;
-        if (cleanDigits.startsWith('7') || cleanDigits.startsWith('8')) {
-          cleanDigits = cleanDigits.substring(1);
-        }
-
-        let formatted = '+7';
-        if (cleanDigits.length > 0) formatted += ' ' + cleanDigits.substring(0, 3);
-        if (cleanDigits.length >= 4) formatted += ' ' + cleanDigits.substring(3, 6);
-        if (cleanDigits.length >= 7) formatted += ' ' + cleanDigits.substring(6, 8);
-        if (cleanDigits.length >= 9) formatted += ' ' + cleanDigits.substring(8, 10);
-
-        input.value = formatted;
+        input.value = formatPhoneNumberStr(val);
       } else if (prefix) {
         let parts = digits.match(/.{1,3}/g) || [];
         input.value = prefix + (parts.length > 0 ? ' ' + parts.join(' ') : '');
@@ -1346,8 +1355,7 @@
       if (emp) {
         if (emp.phone) {
           document.getElementById('country-code-select').value = '+7';
-          document.getElementById('contact-input').value = emp.phone;
-          formatPhoneNumber(document.getElementById('contact-input'));
+          document.getElementById('contact-input').value = formatPhoneNumberStr(emp.phone);
         } else {
           document.getElementById('contact-input').value = '';
         }
@@ -1859,8 +1867,8 @@
 
     // --- ЛОГИКА ВЫЗЫВНОГО ЛИСТА (CALL SHEET) ---
     let callSheetData = {
-      techDirStr: "Зломанов Олег Викторович (Административно-технический директор, +79206931013)",
-      stageMgrStr: "Жижневская Ксения Владимировна (Шеф-редактор, +79055099087)",
+      techDirStr: "Зломанов Олег Викторович (Административно-технический директор, +7 920 693 10 13)",
+      stageMgrStr: "Жижневская Ксения Владимировна (Шеф-редактор, +7 905 509 90 87)",
       milestones: [
         { time: '08:00', event: 'Заезд автотранспорта, сбор технической группы' },
         { time: '09:00', event: 'Начало монтажных работ и разворачивание сетей' },
@@ -1914,14 +1922,14 @@
     function onTechDirSelect(val) {
       const emp = EMPLOYEES_LIST.find(e => e.name === val);
       const title = MANAGER_TITLES[val] || (emp ? emp.role : "Административно-технический отдел");
-      const phone = emp && emp.phone ? `, ${emp.phone}` : '';
+      const phone = emp && emp.phone ? `, ${formatPhoneNumberStr(emp.phone)}` : '';
       callSheetData.techDirStr = `${val} (${title}${phone})`;
     }
 
     function onStageMgrSelect(empName) {
       const emp = EMPLOYEES_LIST.find(e => e.name === empName);
       if (emp) {
-        const phoneStr = emp.phone ? `, ${emp.phone}` : '';
+        const phoneStr = emp.phone ? `, ${formatPhoneNumberStr(emp.phone)}` : '';
         callSheetData.stageMgrStr = `${emp.name} (${emp.role}${phoneStr})`;
       } else {
         callSheetData.stageMgrStr = empName;
@@ -1987,11 +1995,13 @@
           nameFieldHtml = `<input type="text" value="${c.name}" style="width: 190px;" placeholder="ФИО сотрудника" onchange="callSheetData.crew[${idx}].name = this.value">`;
         }
 
+        const formattedPhone = formatPhoneNumberStr(c.phone);
+
         div.innerHTML = `
           <input type="text" value="${c.time}" style="width: 85px; font-family: 'JetBrains Mono';" onchange="callSheetData.crew[${idx}].time = this.value">
           <input type="text" value="${c.dept}" style="width: 140px;" placeholder="Департамент/Роль" onchange="callSheetData.crew[${idx}].dept = this.value">
           ${nameFieldHtml}
-          <input type="text" value="${c.phone}" style="width: 160px;" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this); callSheetData.crew[${idx}].phone = this.value">
+          <input type="text" value="${formattedPhone}" style="width: 160px;" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this); callSheetData.crew[${idx}].phone = this.value">
           <input type="text" value="${c.task}" style="flex: 1; min-width: 180px;" placeholder="Задача на смене" onchange="callSheetData.crew[${idx}].task = this.value">
           <button class="delete-btn" onclick="removeCsCrew(${idx})">✕</button>
         `;
@@ -2003,7 +2013,7 @@
       const emp = EMPLOYEES_LIST.find(e => e.name === val);
       callSheetData.crew[idx].name = val;
       callSheetData.crew[idx].dept = MANAGER_TITLES[val] || "Тех. отдел";
-      callSheetData.crew[idx].phone = emp && emp.phone ? emp.phone : '';
+      callSheetData.crew[idx].phone = emp && emp.phone ? formatPhoneNumberStr(emp.phone) : '';
       renderCsCrew();
     }
 
@@ -2012,7 +2022,7 @@
       if (emp) {
         callSheetData.crew[idx].name = emp.name;
         callSheetData.crew[idx].dept = emp.role;
-        callSheetData.crew[idx].phone = emp.phone || '';
+        callSheetData.crew[idx].phone = emp.phone ? formatPhoneNumberStr(emp.phone) : '';
       }
       renderCsCrew();
     }
@@ -2028,7 +2038,7 @@
         time: '08:00',
         dept: MANAGER_TITLES[name] || 'Тех. отдел',
         name: name,
-        phone: emp && emp.phone ? emp.phone : '',
+        phone: emp && emp.phone ? formatPhoneNumberStr(emp.phone) : '',
         task: 'Координация площадки'
       });
       renderCsCrew();
@@ -2042,7 +2052,7 @@
         time: '09:00',
         dept: emp.role,
         name: emp.name,
-        phone: emp.phone || '',
+        phone: emp.phone ? formatPhoneNumberStr(emp.phone) : '',
         task: ''
       });
       renderCsCrew();
@@ -2093,11 +2103,12 @@
       crewTbody.innerHTML = '';
       callSheetData.crew.forEach(c => {
         const tr = document.createElement('tr');
+        const printPhone = formatPhoneNumberStr(c.phone);
         tr.innerHTML = `
           <td style="font-weight: bold; color: #b91c1c;">${c.time}</td>
           <td style="text-align: left; font-weight: bold;">${c.dept}</td>
           <td style="text-align: left;">${c.name}</td>
-          <td>${c.phone}</td>
+          <td>${printPhone}</td>
           <td style="text-align: left;">${c.task}</td>
         `;
         crewTbody.appendChild(tr);
@@ -2126,7 +2137,7 @@
       });
 
       callSheetData.crew.forEach(c => {
-        rows.push(["Персонал", c.time, c.dept, c.name, c.phone, c.task]);
+        rows.push(["Персонал", c.time, c.dept, c.name, formatPhoneNumberStr(c.phone), c.task]);
       });
 
       downloadCSV(`CallSheet_${proj.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.csv`, rows);
