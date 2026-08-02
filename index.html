@@ -259,8 +259,9 @@
     /* Единые стильные кнопки ArtMasters */
     .btn-group {
       display: flex;
-      gap: 14px;
+      gap: 12px;
       margin-top: 32px;
+      flex-wrap: wrap;
     }
 
     @media (max-width: 600px) {
@@ -271,24 +272,26 @@
 
     .btn {
       flex: 1;
+      min-width: 170px;
       background: rgba(112, 0, 255, 0.15);
       color: var(--text-primary);
-      padding: 16px 20px;
+      padding: 16px 18px;
       border: 1px solid rgba(112, 0, 255, 0.4);
       border-radius: 14px;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 8px;
       transition: all 0.25s ease;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
       position: relative;
       overflow: hidden;
+      white-space: nowrap;
     }
 
     .btn:hover {
@@ -302,6 +305,16 @@
     .btn:active {
       transform: translateY(0);
       box-shadow: 0 4px 15px var(--accent-glow);
+    }
+
+    .btn-callsheet {
+      background: rgba(0, 240, 255, 0.12);
+      border-color: rgba(0, 240, 255, 0.4);
+      color: var(--am-cyan);
+    }
+    .btn-callsheet:hover {
+      background: linear-gradient(135deg, #00f0ff 0%, #7000ff 100%);
+      color: #fff;
     }
 
     /* Modal Design */
@@ -454,7 +467,7 @@
       border: 1px solid rgba(255, 42, 109, 0.4);
     }
 
-    .select-btn, .return-btn, .delete-btn, .export-btn {
+    .select-btn, .return-btn, .delete-btn, .export-btn, .add-row-btn {
       padding: 8px 14px;
       font-size: 12px;
       font-weight: 700;
@@ -472,8 +485,30 @@
     .delete-btn { background: var(--status-busy); color: white; }
     .export-btn { background: #00b4d8; color: white; }
     .export-btn:hover { background: #0077b6; }
+    .add-row-btn { background: rgba(0, 240, 255, 0.2); color: var(--am-cyan); border: 1px solid rgba(0, 240, 255, 0.4); }
+    .add-row-btn:hover { background: var(--am-cyan); color: #000; }
 
-    #act-print-area { display: none; }
+    /* Стили конструктора Вызывного Листа */
+    .cs-section {
+      background: rgba(9, 12, 21, 0.6);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+    .cs-section-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--am-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #act-print-area, #callsheet-print-area { display: none; }
 
     /* Print Styles */
     @media print {
@@ -488,7 +523,10 @@
         zoom: 82% !important;
       }
       .container, .modal, #reader, .form-group, .btn-group, .app-header { display: none !important; }
-      #act-print-area { display: block !important; width: 100% !important; color: #000 !important; }
+      
+      #act-print-area.active-print { display: block !important; width: 100% !important; color: #000 !important; }
+      #callsheet-print-area.active-print { display: block !important; width: 100% !important; color: #000 !important; }
+
       .act-header { text-align: center; font-weight: bold; font-size: 12pt; margin-bottom: 10px; }
       .act-header .subtitle { font-size: 10.5pt; margin-top: 3px; }
       table.act-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
@@ -501,7 +539,6 @@
       .signature-line { margin-top: 8px; font-size: 8.5pt; }
       .signatures-grid { width: 100%; margin-top: 8px; border-collapse: collapse; }
       .signatures-grid td { width: 50%; font-size: 8.5pt; padding: 3px 0; }
-      .underline { display: inline-block; border-bottom: 1px solid #000; min-width: 180px; }
 
       .page-break { page-break-before: always; }
       .safety-rules-wrapper { display: none; }
@@ -542,6 +579,10 @@
         vertical-align: top;
         padding-right: 10px;
       }
+
+      /* Вызывной лист - печатная верстка */
+      .cs-print-header { border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 10px; }
+      .cs-print-title { font-size: 14pt; font-weight: bold; text-transform: uppercase; }
     }
   </style>
 </head>
@@ -637,7 +678,7 @@
             <option value="+7">🇷🇺 +7</option>
             <option value="+375">🇧🇾 +375</option>
             <option value="+7_KZ">🇰🇿 +7</option>
-            <option value="+998">🇺🇿 +998</option>
+            <option value="+998">🇺ℤ +998</option>
             <option value="+374">🇦🇲 +374</option>
             <option value="+995">🇬🇪 +995</option>
             <option value="+996">🇰🇬 +996</option>
@@ -666,7 +707,7 @@
         <textarea id="comment-input" rows="2" placeholder="Комплектация, состояние и т.д."></textarea>
       </div>
 
-      <!-- Список добавленного в текущий Акт оборудования -->
+      <!-- Список добавленного оборудования в форме -->
       <div class="selected-items-list full-width">
         <h4>Выбранное оборудование для выдачи (<span id="items-count">0</span>)</h4>
         <div id="selected-items-container">
@@ -678,8 +719,83 @@
     <div class="btn-group">
       <button class="btn" onclick="addItemToCurrentAct()"><span style="font-weight: 800;">+</span> Добавить в акт</button>
       <button class="btn" onclick="generateAndPrintAct()">🖨️ Напечатать Акт</button>
+      <button class="btn btn-callsheet" onclick="openCallSheetModal()">📋 Вызывной лист</button>
       <button class="btn" onclick="openDbModal()">📋 База МТБ</button>
       <button class="btn" onclick="openHistoryModal()">📜 История накладных</button>
+    </div>
+  </div>
+
+  <!-- Модальное окно Вызывного Листа (Call Sheet) -->
+  <div id="callSheetModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Конструктор Вызывного Листа (Call Sheet)</h3>
+        <div class="modal-actions">
+          <button class="export-btn" onclick="exportCallSheetToCSV()">📊 Экспорт CSV</button>
+          <button class="close-btn" onclick="closeCallSheetModal()">&times;</button>
+        </div>
+      </div>
+      
+      <div class="table-wrapper" style="padding: 10px;">
+        <div class="cs-section">
+          <div class="cs-section-title">Основная информация о смене</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Название проекта / Мероприятия</label>
+              <input type="text" id="cs-project-name" value="ArtMasters — Смена / Застройка">
+            </div>
+            <div class="form-group">
+              <label>Дата смены</label>
+              <input type="date" id="cs-date">
+            </div>
+            <div class="form-group">
+              <label>Номер смены / День монтажа</label>
+              <input type="text" id="cs-shift-num" value="Смена №1 (Застройка)">
+            </div>
+            <div class="form-group">
+              <label>Локация / Павильон</label>
+              <input type="text" id="cs-location" value="Заповедное Посольство / Площадка №1">
+            </div>
+            <div class="form-group full-width">
+              <label>Точный адрес / КПП / Маршрут</label>
+              <input type="text" id="cs-address" value="г. Москва, ул. Варварка, д. 6 (КПП №2)">
+            </div>
+            <div class="form-group">
+              <label>Технический директор</label>
+              <input type="text" id="cs-tech-dir" value="Зломанов Олег Викторович (+7 920 693-10-13)">
+            </div>
+            <div class="form-group">
+              <label>Выпускающий / Постановщик</label>
+              <input type="text" id="cs-stage-mgr" value="Смутный Богдан Сергеевич (+7 960 180-52-90)">
+            </div>
+          </div>
+        </div>
+
+        <div class="cs-section">
+          <div class="cs-section-title">
+            <span>Тайминг смены (Milestones)</span>
+            <button class="add-row-btn" onclick="addCsMilestoneRow()">+ Добавить пункт</button>
+          </div>
+          <div id="cs-milestones-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+
+        <div class="cs-section">
+          <div class="cs-section-title">
+            <span>Вызов персонала и команды</span>
+            <button class="add-row-btn" onclick="addCsCrewRow()">+ Добавить сотрудника</button>
+          </div>
+          <div id="cs-crew-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+
+        <div class="cs-section">
+          <div class="cs-section-title">Важные примечания и Дресс-код</div>
+          <textarea id="cs-notes" rows="3">Форма одежды: Total Black. На площадке обязательно наличие защитной обуви на застройке.</textarea>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 18px;">
+        <button class="btn" onclick="printCallSheet()" style="background: var(--accent-gradient); min-width: 240px;">🖨️ Распечатать / Сохранить PDF</button>
+      </div>
     </div>
   </div>
 
@@ -752,6 +868,61 @@
     </div>
   </div>
 
+  <!-- Печатная зона Вызывного листа (Call Sheet) -->
+  <div id="callsheet-print-area">
+    <div class="cs-print-header">
+      <div style="float: right; font-size: 10pt; font-weight: bold; color: #555;">CALL SHEET / ВЫЗЫВНОЙ ЛИСТ</div>
+      <div class="cs-print-title" id="csp-project-name">ArtMasters — Смена</div>
+      <div style="font-size: 10pt; margin-top: 4px;">
+        <b>Дата:</b> <span id="csp-date"></span> | 
+        <b>Статус:</b> <span id="csp-shift-num"></span>
+      </div>
+    </div>
+
+    <table class="act-table" style="margin-bottom: 12px;">
+      <tr>
+        <td style="width: 15%; font-weight: bold; background: #f2f2f2; text-align: left;">Локация / Адрес:</td>
+        <td style="text-align: left;" id="csp-location-full"></td>
+        <td style="width: 15%; font-weight: bold; background: #f2f2f2; text-align: left;">Тех. Директор:</td>
+        <td style="text-align: left;" id="csp-tech-dir"></td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; background: #f2f2f2; text-align: left;">Постановщик:</td>
+        <td style="text-align: left;" id="csp-stage-mgr"></td>
+        <td style="font-weight: bold; background: #f2f2f2; text-align: left;">Контакты штаба:</td>
+        <td style="text-align: left;">Рация: Канал 1 / Штаб МТБ</td>
+      </tr>
+    </table>
+
+    <div style="font-weight: bold; font-size: 10pt; margin-bottom: 4px; text-transform: uppercase;">1. Общий тайминг смены (Milestones)</div>
+    <table class="act-table" style="margin-bottom: 14px;">
+      <thead>
+        <tr>
+          <th style="width: 20%;">Время</th>
+          <th>Событие / Этап работ</th>
+        </tr>
+      </thead>
+      <tbody id="csp-milestones-tbody"></tbody>
+    </table>
+
+    <div style="font-weight: bold; font-size: 10pt; margin-bottom: 4px; text-transform: uppercase;">2. Вызов персонала и департаментов</div>
+    <table class="act-table" style="margin-bottom: 14px;">
+      <thead>
+        <tr>
+          <th style="width: 12%;">Время вызова</th>
+          <th style="width: 20%;">Департамент / Должность</th>
+          <th style="width: 22%;">ФИО</th>
+          <th style="width: 18%;">Телефон</th>
+          <th>Зона / Задача на смене</th>
+        </tr>
+      </thead>
+      <tbody id="csp-crew-tbody"></tbody>
+    </table>
+
+    <div style="font-weight: bold; font-size: 10pt; margin-bottom: 4px; text-transform: uppercase;">3. Важные примечания и регламент</div>
+    <div style="border: 1px solid #000; padding: 6px 8px; font-size: 8.5pt; line-height: 1.3;" id="csp-notes"></div>
+  </div>
+
   <!-- Печатный Акт Приема-Передачи -->
   <div id="act-print-area">
     <div class="act-header">
@@ -773,9 +944,7 @@
           <th style="width: 16%;">Комментарии</th>
         </tr>
       </thead>
-      <tbody id="print-table-tbody">
-        <!-- Сюда динамически подставляются строки оборудования -->
-      </tbody>
+      <tbody id="print-table-tbody"></tbody>
     </table>
     
     <div class="rules-block">
@@ -967,7 +1136,7 @@
     let currentStatusFilter = 'all';
     let currentActItems = [];
 
-    // Получение должности получателя (для сотрудников берётся реальная должность)
+    // Получение должности получателя
     function getRecipientRoleTitle(role, participantName) {
       if (role === 'Сотрудник' && participantName) {
         const emp = EMPLOYEES_LIST.find(e => e.name === participantName);
@@ -976,7 +1145,7 @@
       return role || 'Участник';
     }
 
-    // Вспомогательная функция для красивого формирования текста подзаголовка в шапке
+    // Вспомогательная функция подзаголовка
     function getActSubtitleText(role, participant, comp) {
       if (role === 'Сотрудник') {
         const emp = EMPLOYEES_LIST.find(e => e.name === participant);
@@ -991,7 +1160,6 @@
       }
     }
 
-    // Блокировка/разблокировка даты возврата при выборе чекбокса "Прочерк"
     function toggleNoReturnDate(checked) {
       const dateInput = document.getElementById('return-date-input');
       if (checked) {
@@ -1011,7 +1179,6 @@
       document.getElementById('return-date-input').value = `${year}-${month}-${day}`;
     }
 
-    // Форматирование даты
     function getUnderlineDateStr(dateStr) {
       if (!dateStr || dateStr === '—') {
         return `«___» ___________ 20___ г.`;
@@ -1167,7 +1334,6 @@
         } else {
           document.getElementById('contact-input').value = '';
         }
-        // Должность не вставляется в комментарии
       }
     }
 
@@ -1366,7 +1532,6 @@
             <td>
               <div style="display:flex;gap:6px;">
                 <button class="select-btn" onclick="reprintAct('${act.num}')">🖨️ Печать</button>
-                <button class="export-btn" onclick="downloadAct('${act.num}')">📥 Скачать Word</button>
                 <button class="delete-btn" onclick="deleteActFromHistory('${act.num}')">🗑️ Удалить</button>
               </div>
             </td>
@@ -1374,221 +1539,6 @@
           tbody.appendChild(tr);
         }
       });
-    }
-
-    function downloadAct(actNum) {
-      const act = getActsHistory().find(a => a.num === actNum);
-      if (!act) return;
-
-      const role = act.role || 'Участник';
-      const isEmployee = role === 'Сотрудник';
-      
-      const recipientTitle = getRecipientRoleTitle(role, act.participant);
-      const managerTitleStr = getManagerTitle(act.manager);
-      
-      const underlineDateStrIssue = getUnderlineDateStr(act.date);
-      const underlineDateStrReturn = getUnderlineDateStr(act.returnDate);
-      const currentDateFormatted = act.dateIntro || (act.date ? `${act.date} г.` : getFormattedDate());
-
-      const subtitleText = getActSubtitleText(role, act.participant, act.comp);
-      const sigText = act.participant !== '—' ? act.participant : '__________________________';
-
-      const itemsToPrint = act.items || [{ inv: act.inv, name: act.name }];
-      const itemsRowsHtml = itemsToPrint.map((item, idx) => `
-        <tr style="mso-yfti-irow:1;mso-yfti-lastrow:yes">
-          <td style="border:solid black 1.0pt;border-top:none;padding:3.75pt 4.5pt;"><p class="MsoNormal" align="center" style="text-align:center;"><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black;">${idx + 1}</span></p></td>
-          <td style="border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:3.75pt 4.5pt;"><p class="MsoNormal"><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black;">${item.name}</span></p></td>
-          <td style="border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:3.75pt 4.5pt;"><p class="MsoNormal" align="center" style="text-align:center;"><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black;">${item.inv}</span></p></td>
-          <td style="border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:3.75pt 4.5pt;"><p class="MsoNormal" align="center" style="text-align:center;"><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black;">${act.participant}</span></p></td>
-          <td style="border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:3.75pt 4.5pt;"><p class="MsoNormal" align="center" style="text-align:center;"><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black;">${act.contact || '—'}</span></p></td>
-          <td style="border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:3.75pt 4.5pt;"><p class="MsoNormal" align="center" style="text-align:center;"><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black;">1</span></p></td>
-          <td style="border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:3.75pt 4.5pt;"><p class="MsoNormal" align="center" style="text-align:center;"><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black;">${act.date}</span></p></td>
-          <td style="border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:3.75pt 4.5pt;"><p class="MsoNormal" align="center" style="text-align:center;"><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black;">${act.returnDate}</span></p></td>
-          <td style="border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:3.75pt 4.5pt;"><p class="MsoNormal"><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black;">${act.comment}</span></p></td>
-        </tr>
-      `).join('');
-
-      let safetyRulesHtml = '';
-      if (isEmployee) {
-        safetyRulesHtml = `
-          <br clear=all style="page-break-before:always">
-          <h3 align=center style="margin-bottom:4.5pt;text-align:center;"><span style="font-size:10.0pt;font-family:'Arial',sans-serif;color:black">ПРАВИЛА ТЕХНИКИ БЕЗОПАСНОСТИ ПРИ РАБОТЕ С КОМПЬЮТЕРНОЙ ТЕХНИКОЙ</span></h3>
-          <div style="margin-bottom:4.5pt">
-            <p class=MsoNormal><b><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">Организация:</span></b><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black"> АНО «АртМастерс»<br><b>Дата введения:</b> ${currentDateFormatted}<br><b>Ответственный:</b> Технический директор - Зломанов Олег Викторович</span></p>
-          </div>
-          <h4 style="margin-top:4.5pt;margin-bottom:1.5pt;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">1. Общие положения</span></h4>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">1.1. Правила обязательны для всех сотрудников офиса, стажёров, подрядчиков и иных лиц, использующих компьютерную технику (ПК, ноутбуки, мониторы, периферию, док-станции, сетевые фильтры).</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">1.2. Цель правил — предотвратить повреждение техники, исключить риск поражения электрическим током, снизить риски для здоровья при длительной работе за компьютером.</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">1.3. Допуск к работе возможен только после прохождения вводного инструктажа по охране труда и ознакомления с этими правилами под подпись.</span></p>
-          
-          <h4 style="margin-top:4.5pt;margin-bottom:1.5pt;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">2. Подготовка рабочего места</span></h4>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">2.1. Перед началом работы осмотрите технику: нет ли видимых повреждений корпуса, экрана, кабелей, разъёмов.</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">2.2. Проверьте исправность розетки и сетевого фильтра; не используйте повреждённые удлинители и самодельные переходники.</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">2.3. Разместите кабели так, чтобы они не мешали проходу; используйте кабель-менеджмент (стяжки, каналы) — это критично для безопасности в активных зонах офиса.</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">2.4. Настройте эргономику:</span></p>
-          <p class=MsoNormal style="margin-left:51.0pt;text-indent:-18.0pt;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;расстояние от глаз до экрана — 50–70 см;</span></p>
-          <p class=MsoNormal style="margin-left:51.0pt;text-indent:-18.0pt;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;верхняя треть экрана — на уровне глаз или чуть ниже;</span></p>
-          <p class=MsoNormal style="margin-left:51.0pt;text-indent:-18.0pt;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;спина опирается на спинку кресла, локти под углом ~90°, стопы на полу или на подставке.</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">2.5. Проверьте освещение: на экране не должно быть сильных бликов; при необходимости отрегулируйте жалюзи или яркость монитора.</span></p>
-
-          <h4 style="margin-top:4.5pt;margin-bottom:1.5pt;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">3. Работа с техникой</span></h4>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">3.1. Включение: сначала сетевой фильтр/ИБП, затем периферия, затем ПК/ноутбук.</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">3.2. Не допускайте попадания жидкостей на технику; не ставьте рядом напитки, не работайте мокрыми руками.</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">3.3. Не вскрывайте корпуса устройств и не производите самостоятельный ремонт. При неисправности — сразу сообщите ИТ-отделу (канал #it-help в Slack/Teams) или ответственному.</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">3.4. Не перекрывайте вентиляционные отверстия; не кладите на технику бумаги, папки и иные предметы.</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">3.5. Не подключайте и не отключайте кабели при включённом питании, кроме случаев «горячей» замены (USB, наушники и т. п.), разрешённых производителем.</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">3.6. Используйте только штатные и сертифицированные блоки питания и зарядные устройства.</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">3.7. Не используйте технику при явных признаках неисправности (странный запах, шум, перегрев, мерцание экрана).</span></p>
-
-          <h4 style="margin-top:4.5pt;margin-bottom:1.5pt;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">4. Режим труда и профилактика утомления</span></h4>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">4.1. Делайте перерывы каждые 50–60 минут: 10–15 минут на разминку и гимнастику для глаз.</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">4.2. Во время перерыва отводите взгляд от экрана, смотрите вдаль, моргайте чаще, чтобы снизить риск «синдрома сухого глаза».</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">4.3. При длительной работе чередуйте задачи: часть времени — за экраном, часть — на обсуждение, проверку распечаток, ходьбу по офису.</span></p>
-
-          <h4 style="margin-top:4.5pt;margin-bottom:1.5pt;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">5. Действия при нештатных ситуациях</span></h4>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">5.1. При появлении запаха гари, искрения, необычного шума, перегрева — немедленно отключите питание на сетевом фильтре/автомате и сообщите ответственному. Не пытайтесь устранять неисправность самостоятельно.</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">5.2. При поражении электрическим током: не прикасайтесь к пострадавшему до снятия напряжения; вызовите скорую помощь (112); окажите первую помощь по инструкции.</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">5.3. При сбое ПО или потере данных: не выполняйте произвольных действий; зафиксируйте симптомы (ошибка, время, что делали) и обратитесь в ИТ-поддержку.</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">5.4. При возгорании техники: обесточьте, используйте огнетушитель (если обучены и безопасно), эвакуируйтесь по плану и сообщите охране/администратору.</span></p>
-
-          <h4 style="margin-top:4.5pt;margin-bottom:1.5pt;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">6. Завершение работы</span></h4>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">6.1. Корректно завершите все программы, сохраните данные.</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">6.2. Выключите технику в порядке, обратном включению: ПК/ноутбук → периферия → сетевой фильтр/ИБП.</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">6.3. Осмотрите рабочее место: кабели не натянуты, техника не перегрета, нет посторонних предметов на устройствах.</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">6.4. Если техника передаётся другому сотруднику (например, сменный режим), передайте её по краткой проверке и отметьте в журнале/чате ИТ-поддержки.</span></p>
-
-          <h4 style="margin-top:4.5pt;margin-bottom:1.5pt;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">7. Ответственность и контроль</span></h4>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">7.1. Контроль соблюдения правил возлагается на руководителей подразделений и технического директора.</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">7.2. Нарушение правил может служить основанием для отстранения от работы и привлечения к дисциплинарной ответственности.</span></p>
-          <p style="margin:1.5pt 0;"><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">7.3. Факт ознакомления подтверждается подписью в журнале инструктажа либо в электронной форме (через чек-лист).</span></p>
-
-          <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width="100%" style="width:100.0%;border-collapse:collapse;">
-            <tr>
-              <td width="50%" valign=top style="width:50.0%;padding:.75pt 7.5pt .75pt .75pt;">
-                <p class=MsoNormal style="margin-top:9.0pt;"><b><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">Инструктаж провел:</span></b><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black"><br>
-                Технический директор АНО «Артмастерс»<br>Зломанов Олег Викторович<br><br>
-                ______________________ (подпись) / </span><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black">${underlineDateStrIssue}</span></p>
-              </td>
-              <td width="50%" valign=top style="width:50.0%;padding:.75pt .75pt .75pt .75pt;">
-                <p class=MsoNormal style="margin-top:9.0pt;"><b><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black">С правилами техники безопасности ознакомлен(а), обязуюсь выполнять:</span></b><span style="font-size:8.5pt;font-family:'Arial',sans-serif;color:black"><br>
-                ${recipientTitle} АНО «Артмастерс»<br>${sigText}<br><br>
-                ______________________ (подпись) / </span><span style="font-size:9.0pt;font-family:'Arial',sans-serif;color:black">${underlineDateStrIssue}</span></p>
-              </td>
-            </tr>
-          </table>
-        `;
-      }
-
-      const wordDocContent = `<html xmlns:o='urn:schemas-microsoft-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-<head>
-  <meta charset='utf-8'>
-  <title>Акт № ${act.num}</title>
-  <!--[if gte mso 9]>
-  <xml>
-    <w:WordDocument>
-      <w:View>Print</w:View>
-      <w:Zoom>100</w:Zoom>
-      <w:DoNotOptimizeForCustomX态 />
-    </w:WordDocument>
-  </xml>
-  <![endif]-->
-  <style>
-    @page Section1 {
-      size: 841.8pt 595.3pt; /* A4 Landscape */
-      mso-page-orientation: landscape;
-      margin: 42.55pt 42.55pt 42.55pt 42.55pt;
-      mso-header-margin: 36.0pt;
-      mso-footer-margin: 36.0pt;
-      mso-paper-source: 0;
-    }
-    div.Section1 { page: Section1; }
-    body { font-family: 'Arial', sans-serif; font-size: 9pt; color: #000; }
-    p.MsoNormal { margin:0cm; font-size:9pt; font-family:"Arial",sans-serif; }
-    .rules-block { border: none !important; padding: 0; font-size: 8pt; line-height: 1.25; margin-bottom: 7.5pt; }
-    table.MsoNormalTable { border-collapse: collapse; }
-  </style>
-</head>
-<body lang=RU style='tab-interval:35.4pt;'>
-  <div class="Section1">
-    <div style="margin-bottom:7.5pt;">
-      <p class=MsoNormal align=center style="text-align:center;"><b><span style="font-size:13.0pt;">АНО «АртМастерс»</span></b></p>
-      <div style="margin-top:3.0pt;">
-        <p class=MsoNormal align=center style="text-align:center;"><b><span style="font-size:11.0pt;">Акт приема-передачи оборудования № ${act.num}</span></b></p>
-      </div>
-      <div style="margin-top:2.25pt;">
-        <p class=MsoNormal align=center style="text-align:center;"><span style="font-size:10.5pt;">${subtitleText}</span></p>
-      </div>
-    </div>
-
-    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width="100%" style="width:100.0%;">
-      <thead>
-        <tr style="mso-yfti-irow:0;mso-yfti-firstrow:yes">
-          <td width="4%" style="width:4.0%;border:solid black 1.0pt;background:#F2F2F2;padding:3.75pt 4.5pt;"><p class=MsoNormal align=center style="text-align:center;"><b>№</b></p></td>
-          <td width="30%" style="width:30.0%;border:solid black 1.0pt;border-left:none;background:#F2F2F2;padding:3.75pt 4.5pt;"><p class=MsoNormal align=center style="text-align:center;"><b>Наименование</b></p></td>
-          <td width="14%" style="width:14.0%;border:solid black 1.0pt;border-left:none;background:#F2F2F2;padding:3.75pt 4.5pt;"><p class=MsoNormal align=center style="text-align:center;"><b>Инвентарный номер</b></p></td>
-          <td width="18%" style="width:18.0%;border:solid black 1.0pt;border-left:none;background:#F2F2F2;padding:3.75pt 4.5pt;"><p class=MsoNormal align=center style="text-align:center;"><b>${role} ФИО</b></p></td>
-          <td width="15%" style="width:15.0%;border:solid black 1.0pt;border-left:none;background:#F2F2F2;padding:3.75pt 4.5pt;"><p class=MsoNormal align=center style="text-align:center;"><b>Телефон / Telegram / MAX</b></p></td>
-          <td width="5%" style="width:5.0%;border:solid black 1.0pt;border-left:none;background:#F2F2F2;padding:3.75pt 4.5pt;"><p class=MsoNormal align=center style="text-align:center;"><b>Кол-во</b></p></td>
-          <td width="9%" style="width:9.0%;border:solid black 1.0pt;border-left:none;background:#F2F2F2;padding:3.75pt 4.5pt;"><p class=MsoNormal align=center style="text-align:center;"><b>Дата выдачи</b></p></td>
-          <td width="9%" style="width:9.0%;border:solid black 1.0pt;border-left:none;background:#F2F2F2;padding:3.75pt 4.5pt;"><p class=MsoNormal align=center style="text-align:center;"><b>Дата возврата</b></p></td>
-          <td width="16%" style="width:16.0%;border:solid black 1.0pt;border-left:none;background:#F2F2F2;padding:3.75pt 4.5pt;"><p class=MsoNormal align=center style="text-align:center;"><b>Комментарии</b></p></td>
-        </tr>
-      </thead>
-      <tbody>
-        ${itemsRowsHtml}
-      </tbody>
-    </table>
-
-    <div style="margin-bottom:7.5pt; margin-top:7.5pt;">
-      <p class=MsoNormal><b><span style="font-size:8.0pt;">Просим обратить внимание:</span></b></p>
-      <p class=MsoNormal><span style="font-size:8.0pt;">На технику, чёрный диск и упаковку не допускается наклеивать какие‑либо стикеры, бирки, надписи или иные маркировочные материалы.</span></p>
-      <p class=MsoNormal><span style="font-size:8.0pt;">В случае необходимости идентификации содержимого диска/накопителя следует создать отдельную папку с фамилией ответственного сотрудника.</span></p>
-      <p class=MsoNormal><span style="font-size:8.0pt;">Перед переносом информации диски должны быть отформатированы в exFAT.</span></p>
-      <p class=MsoNormal><span style="font-size:8.0pt;">Оборудование и диски сдаются с полностью отснятым/рабочим материалом — ничего не удаляется.</span></p>
-    </div>
-
-    <div style="margin-top:7.5pt;">
-      <p class=MsoNormal><span style="font-size:9.0pt;">С правилами выдачи ознакомлен (а), ${role.toLowerCase()}: <b>${sigText}</b> &nbsp;&nbsp;&nbsp;______________________ (подпись) / ${underlineDateStrIssue}</span></p>
-    </div>
-
-    <p class=MsoNormal>&nbsp;</p>
-
-    <table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width="100%" style="width:100.0%;">
-      <tr>
-        <td width="50%" style="width:50.0%;padding:3.0pt 0cm;">
-          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;">Выдал ${managerTitleStr.toLowerCase()}: <b>${act.manager}</b></span></p>
-          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>______________________ (подпись) / ${underlineDateStrIssue}</span></p>
-        </td>
-        <td width="50%" style="width:50.0%;padding:3.0pt 0cm;">
-          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;">Принял ${managerTitleStr.toLowerCase()}: <b>${act.manager}</b></span></p>
-          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>______________________ (подпись) / ${underlineDateStrReturn}</span></p>
-        </td>
-      </tr>
-      <tr>
-        <td width="50%" style="width:50.0%;padding:3.0pt 0cm;">
-          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>Получил (а) ${recipientTitle}: <b>${sigText}</b></span></p>
-          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>______________________ (подпись) / ${underlineDateStrIssue}</span></p>
-        </td>
-        <td width="50%" style="width:50.0%;padding:3.0pt 0cm;">
-          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>Сдал (а) ${recipientTitle}: <b>${sigText}</b></span></p>
-          <p class=MsoNormal style="margin-top:7.5pt;"><span style="font-size:9.0pt;"><br>______________________ (подпись) / ${underlineDateStrReturn}</span></p>
-        </td>
-      </tr>
-    </table>
-
-    ${safetyRulesHtml}
-  </div>
-</body>
-</html>`;
-
-      const blob = new Blob(['\ufeff', wordDocContent], { type: 'application/msword;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.setAttribute('href', url);
-      link.setAttribute('download', `Act_${act.num}.doc`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
     }
 
     function reprintAct(actNum) {
@@ -1661,6 +1611,9 @@
         `;
         printTbody.appendChild(tr);
       });
+
+      document.getElementById('callsheet-print-area').classList.remove('active-print');
+      document.getElementById('act-print-area').classList.add('active-print');
 
       closeHistoryModal();
       window.print();
@@ -1806,6 +1759,9 @@
         comment: comment 
       });
       
+      document.getElementById('callsheet-print-area').classList.remove('active-print');
+      document.getElementById('act-print-area').classList.add('active-print');
+
       window.print();
 
       currentActItems = [];
@@ -1882,6 +1838,153 @@
       });
 
       downloadCSV(`Acts_Registry_${new Date().toISOString().slice(0,10)}.csv`, rows);
+    }
+
+    // --- ЛОГИКА ВЫЗЫВНОГО ЛИСТА (CALL SHEET) ---
+    let callSheetData = {
+      milestones: [
+        { time: '08:00', event: 'Заезд автотранспорта, сбор технической группы' },
+        { time: '09:00', event: 'Начало монтажных работ и разворачивание сетей' },
+        { time: '13:00', event: 'Обед' },
+        { time: '18:00', event: 'Технический прогон и саундчек' },
+        { time: '21:00', event: 'Завершение работ, передача площадки охране' }
+      ],
+      crew: [
+        { time: '08:00', dept: 'Звук', name: 'Иванов Иван', phone: '+7 900 000-00-01', task: 'Монтаж FOH, размотка мультикора' },
+        { time: '08:30', dept: 'Свет', name: 'Петров Петр', phone: '+7 900 000-00-02', task: 'Развеска приборов, юстировка' },
+        { time: '09:00', dept: 'Видео', name: 'Сидоров Сергей', phone: '+7 900 000-00-03', task: 'Сетап LED-экрана, пультовая' }
+      ]
+    };
+
+    function openCallSheetModal() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('cs-date').value = today;
+      renderCsMilestones();
+      renderCsCrew();
+      document.getElementById('callSheetModal').style.display = 'flex';
+    }
+
+    function closeCallSheetModal() {
+      document.getElementById('callSheetModal').style.display = 'none';
+    }
+
+    function renderCsMilestones() {
+      const container = document.getElementById('cs-milestones-container');
+      container.innerHTML = '';
+      callSheetData.milestones.forEach((m, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display:flex; gap:10px; align-items:center;';
+        div.innerHTML = `
+          <input type="text" value="${m.time}" style="width: 100px; font-family: 'JetBrains Mono';" onchange="callSheetData.milestones[${idx}].time = this.value">
+          <input type="text" value="${m.event}" style="flex: 1;" onchange="callSheetData.milestones[${idx}].event = this.value">
+          <button class="delete-btn" onclick="removeCsMilestone(${idx})">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addCsMilestoneRow() {
+      callSheetData.milestones.push({ time: '12:00', event: 'Новый этап работ' });
+      renderCsMilestones();
+    }
+
+    function removeCsMilestone(idx) {
+      callSheetData.milestones.splice(idx, 1);
+      renderCsMilestones();
+    }
+
+    function renderCsCrew() {
+      const container = document.getElementById('cs-crew-container');
+      container.innerHTML = '';
+      callSheetData.crew.forEach((c, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display:flex; gap:10px; align-items:center; flex-wrap:wrap;';
+        div.innerHTML = `
+          <input type="text" value="${c.time}" style="width: 90px; font-family: 'JetBrains Mono';" onchange="callSheetData.crew[${idx}].time = this.value">
+          <input type="text" value="${c.dept}" style="width: 130px;" placeholder="Департамент" onchange="callSheetData.crew[${idx}].dept = this.value">
+          <input type="text" value="${c.name}" style="width: 180px;" placeholder="ФИО" onchange="callSheetData.crew[${idx}].name = this.value">
+          <input type="text" value="${c.phone}" style="width: 150px;" placeholder="Телефон" onchange="callSheetData.crew[${idx}].phone = this.value">
+          <input type="text" value="${c.task}" style="flex: 1; min-width: 200px;" placeholder="Задача" onchange="callSheetData.crew[${idx}].task = this.value">
+          <button class="delete-btn" onclick="removeCsCrew(${idx})">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addCsCrewRow() {
+      callSheetData.crew.push({ time: '09:00', dept: 'Департамент', name: '', phone: '', task: '' });
+      renderCsCrew();
+    }
+
+    function removeCsCrew(idx) {
+      callSheetData.crew.splice(idx, 1);
+      renderCsCrew();
+    }
+
+    function printCallSheet() {
+      document.getElementById('csp-project-name').innerText = document.getElementById('cs-project-name').value;
+      const rawDate = document.getElementById('cs-date').value;
+      let formattedDate = rawDate;
+      if (rawDate) {
+        const p = rawDate.split('-');
+        formattedDate = `${p[2]}.${p[1]}.${p[0]}`;
+      }
+      document.getElementById('csp-date').innerText = formattedDate;
+      document.getElementById('csp-shift-num').innerText = document.getElementById('cs-shift-num').value;
+      document.getElementById('csp-location-full').innerText = `${document.getElementById('cs-location').value} (${document.getElementById('cs-address').value})`;
+      document.getElementById('csp-tech-dir').innerText = document.getElementById('cs-tech-dir').value;
+      document.getElementById('csp-stage-mgr').innerText = document.getElementById('cs-stage-mgr').value;
+      document.getElementById('csp-notes').innerText = document.getElementById('cs-notes').value;
+
+      const msTbody = document.getElementById('csp-milestones-tbody');
+      msTbody.innerHTML = '';
+      callSheetData.milestones.forEach(m => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td style="font-weight: bold; font-family: 'JetBrains Mono';">${m.time}</td><td style="text-align: left;">${m.event}</td>`;
+        msTbody.appendChild(tr);
+      });
+
+      const crewTbody = document.getElementById('csp-crew-tbody');
+      crewTbody.innerHTML = '';
+      callSheetData.crew.forEach(c => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight: bold; color: #b91c1c;">${c.time}</td>
+          <td style="text-align: left; font-weight: bold;">${c.dept}</td>
+          <td style="text-align: left;">${c.name}</td>
+          <td>${c.phone}</td>
+          <td style="text-align: left;">${c.task}</td>
+        `;
+        crewTbody.appendChild(tr);
+      });
+
+      document.getElementById('act-print-area').classList.remove('active-print');
+      document.getElementById('callsheet-print-area').classList.add('active-print');
+
+      closeCallSheetModal();
+      window.print();
+    }
+
+    function exportCallSheetToCSV() {
+      const proj = document.getElementById('cs-project-name').value;
+      const headers = ["Тип", "Время / Параметр", "Департамент / Наименование", "ФИО / Событие", "Телефон", "Задача"];
+      const rows = [
+        ["ПРОЕКТ", proj, "", "", "", ""],
+        ["ДАТА", document.getElementById('cs-date').value, "", "", "", ""],
+        ["ЛОКАЦИЯ", document.getElementById('cs-location').value, "", "", "", ""],
+        [],
+        headers
+      ];
+
+      callSheetData.milestones.forEach(m => {
+        rows.push(["Тайминг", m.time, "Этап", m.event, "", ""]);
+      });
+
+      callSheetData.crew.forEach(c => {
+        rows.push(["Персонал", c.time, c.dept, c.name, c.phone, c.task]);
+      });
+
+      downloadCSV(`CallSheet_${proj.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.csv`, rows);
     }
   </script>
 </body>
