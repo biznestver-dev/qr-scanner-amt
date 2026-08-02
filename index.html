@@ -723,6 +723,7 @@
       <button class="btn" onclick="addItemToCurrentAct()"><span style="font-weight: 800;">+</span> Добавить в акт</button>
       <button class="btn" onclick="generateAndPrintAct()">🖨️ Напечатать Акт</button>
       <button class="btn btn-callsheet" onclick="openCallSheetModal()">📋 Вызывной лист</button>
+      <button class="btn btn-callsheet" onclick="openCallSheetHistoryModal()">📜 Архив вызывных</button>
       <button class="btn" onclick="openDbModal()">📋 База МТБ</button>
       <button class="btn" onclick="openHistoryModal()">📜 История накладных</button>
     </div>
@@ -833,6 +834,36 @@
 
       <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 18px;">
         <button class="btn" onclick="printCallSheet()" style="background: var(--accent-gradient); min-width: 240px;">🖨️ Распечатать / Сохранить PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно Архива Вызывных Листов -->
+  <div id="csHistoryModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Архив вызывных листов (Реестр)</h3>
+        <div class="modal-actions">
+          <button class="close-btn" onclick="closeCallSheetHistoryModal()">&times;</button>
+        </div>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="csHistorySearchInput" placeholder="Поиск по архиву вызывных..." oninput="renderCallSheetHistoryTable()">
+      </div>
+      <div class="table-wrapper">
+        <table class="db-table">
+          <thead>
+            <tr>
+              <th>Проект</th>
+              <th>Дата</th>
+              <th>Смена</th>
+              <th>Локация</th>
+              <th>Тех. Директор</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody id="csHistoryTableBody"></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -1420,7 +1451,6 @@
       }
     }
 
-    // --- ОБРАБОТЧИК АВТОМАТИЧЕСКОГО СКАНИРОВАНИЯ С АВТОДОБАВЛЕНИЕМ В СПИСОК ---
     function onScanSuccess(decodedText) {
       const scannedInv = decodedText.trim();
       document.getElementById('inv-input').value = scannedInv;
@@ -1444,13 +1474,11 @@
 
       document.getElementById('equipment-name').value = equipName;
 
-      // Автоматическое добавление в текущий список Акта
       if (scannedInv && equipName) {
         if (!currentActItems.some(item => item.inv === scannedInv)) {
           currentActItems.push({ inv: scannedInv, name: equipName });
           renderSelectedItems();
           
-          // Визуальное уведомление и очистка инпута для следующего скана
           document.getElementById('inv-input').value = '';
           document.getElementById('equipment-name').value = '';
         } else {
@@ -2008,7 +2036,7 @@
       downloadCSV(`Acts_Registry_${new Date().toISOString().slice(0,10)}.csv`, rows);
     }
 
-    // --- ЛОГИКА ВЫЗЫВНОГО ЛИСТА (CALL SHEET) ---
+    // --- ЛОГИКА ВЫЗЫВНОГО ЛИСТА (CALL SHEET) С АРХИВАЦИЕЙ ---
     let callSheetData = {
       techDirStr: "Зломанов Олег Викторович (Административно-технический директор, +7 920 693 10 13)",
       stageMgrStr: "Жижневская Ксения Владимировна (Шеф-редактор, +7 905 509 90 87)",
@@ -2032,6 +2060,135 @@
         { model: 'Газель NEXT', plate: 'А 123 АА 777', driver: 'Иванов Алексей', phone: '+7 999 111 22 33', task: 'Доставка звукового оборудования' }
       ]
     };
+
+    function getCallSheetHistory() {
+      return JSON.parse(localStorage.getItem('artmasters_callsheet_history') || '[]');
+    }
+
+    function saveCallSheetToHistory(cs) {
+      const h = getCallSheetHistory();
+      h.unshift(cs);
+      localStorage.setItem('artmasters_callsheet_history', JSON.stringify(h));
+    }
+
+    function deleteCallSheetFromHistory(id) {
+      if (confirm(`Удалить Вызывной лист из архива?`)) {
+        let h = getCallSheetHistory().filter(c => c.id !== id);
+        localStorage.setItem('artmasters_callsheet_history', JSON.stringify(h));
+        renderCallSheetHistoryTable();
+      }
+    }
+
+    function openCallSheetHistoryModal() {
+      renderCallSheetHistoryTable();
+      document.getElementById('csHistoryModal').style.display = 'flex';
+    }
+
+    function closeCallSheetHistoryModal() {
+      document.getElementById('csHistoryModal').style.display = 'none';
+    }
+
+    function renderCallSheetHistoryTable() {
+      const tbody = document.getElementById('csHistoryTableBody');
+      tbody.innerHTML = '';
+      const h = getCallSheetHistory();
+      const filter = document.getElementById('csHistorySearchInput').value.toLowerCase().trim();
+
+      if (h.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;">Архив вызывных пуст</td></tr>';
+        return;
+      }
+
+      h.forEach(cs => {
+        const searchStr = `${cs.projectName} ${cs.date} ${cs.shiftNum} ${cs.location} ${cs.techDirStr}`.toLowerCase();
+        if (!filter || searchStr.includes(filter)) {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><b>${cs.projectName}</b></td>
+            <td>${cs.date}</td>
+            <td><span class="badge-status free">${cs.shiftNum}</span></td>
+            <td>${cs.location}</td>
+            <td>${cs.techDirStr}</td>
+            <td>
+              <div style="display:flex;gap:6px;">
+                <button class="select-btn" onclick="reprintCallSheet('${cs.id}')">🖨️ Печать</button>
+                <button class="delete-btn" onclick="deleteCallSheetFromHistory('${cs.id}')">🗑️ Удалить</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+    }
+
+    function reprintCallSheet(csId) {
+      const cs = getCallSheetHistory().find(c => c.id === csId);
+      if (!cs) return;
+
+      document.getElementById('csp-project-name').innerText = cs.projectName;
+      document.getElementById('csp-date').innerText = cs.date;
+      document.getElementById('csp-shift-num').innerText = cs.shiftNum;
+      document.getElementById('csp-location-full').innerText = `${cs.location} (${cs.address})`;
+      document.getElementById('csp-tech-dir').innerText = cs.techDirStr;
+      document.getElementById('csp-stage-mgr').innerText = cs.stageMgrStr;
+      document.getElementById('csp-notes').innerText = cs.notes;
+
+      const msTbody = document.getElementById('csp-milestones-tbody');
+      msTbody.innerHTML = '';
+      cs.milestones.forEach(m => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td style="font-weight: bold; font-family: 'JetBrains Mono';">${m.time}</td><td style="text-align: left;">${m.event}</td>`;
+        msTbody.appendChild(tr);
+      });
+
+      const crewTbody = document.getElementById('csp-crew-tbody');
+      crewTbody.innerHTML = '';
+      cs.crew.forEach(c => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight: bold; color: #b91c1c;">${c.time}</td>
+          <td style="text-align: left; font-weight: bold;">${c.dept}</td>
+          <td style="text-align: left;">${c.name}</td>
+          <td>${formatPhoneNumberStr(c.phone)}</td>
+          <td style="text-align: left;">${c.task}</td>
+        `;
+        crewTbody.appendChild(tr);
+      });
+
+      const eqTbody = document.getElementById('csp-equipment-tbody');
+      eqTbody.innerHTML = '';
+      cs.equipment.forEach((eq, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td style="text-align: left; font-weight: bold;">${eq.name}</td>
+          <td style="font-family: 'JetBrains Mono';">${eq.inv || '—'}</td>
+          <td>${eq.sn || '—'}</td>
+          <td>${eq.count || '1'}</td>
+        `;
+        eqTbody.appendChild(tr);
+      });
+
+      const trTbody = document.getElementById('csp-transport-tbody');
+      trTbody.innerHTML = '';
+      cs.transport.forEach(trItem => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight: bold;">${trItem.model}</td>
+          <td style="font-family: 'JetBrains Mono'; font-weight: bold;">${trItem.plate}</td>
+          <td style="text-align: left;">${trItem.driver}</td>
+          <td>${formatPhoneNumberStr(trItem.phone)}</td>
+          <td style="text-align: left;">${trItem.task}</td>
+        `;
+        trTbody.appendChild(tr);
+      });
+
+      document.getElementById('act-print-area').classList.remove('active-print');
+      document.getElementById('callsheet-print-area').classList.add('active-print');
+
+      closeCallSheetHistoryModal();
+      window.print();
+    }
 
     function initTechDirSelect() {
       const select = document.getElementById('cs-tech-dir-select');
@@ -2282,19 +2439,25 @@
     }
 
     function printCallSheet() {
-      document.getElementById('csp-project-name').innerText = document.getElementById('cs-project-name').value;
+      const projName = document.getElementById('cs-project-name').value;
       const rawDate = document.getElementById('cs-date').value;
       let formattedDate = rawDate;
       if (rawDate) {
         const p = rawDate.split('-');
         formattedDate = `${p[2]}.${p[1]}.${p[0]}`;
       }
+      const shiftNum = document.getElementById('cs-shift-num').value;
+      const locationVal = document.getElementById('cs-location').value;
+      const addressVal = document.getElementById('cs-address').value;
+      const notesVal = document.getElementById('cs-notes').value;
+
+      document.getElementById('csp-project-name').innerText = projName;
       document.getElementById('csp-date').innerText = formattedDate;
-      document.getElementById('csp-shift-num').innerText = document.getElementById('cs-shift-num').value;
-      document.getElementById('csp-location-full').innerText = `${document.getElementById('cs-location').value} (${document.getElementById('cs-address').value})`;
+      document.getElementById('csp-shift-num').innerText = shiftNum;
+      document.getElementById('csp-location-full').innerText = `${locationVal} (${addressVal})`;
       document.getElementById('csp-tech-dir').innerText = callSheetData.techDirStr;
       document.getElementById('csp-stage-mgr').innerText = callSheetData.stageMgrStr;
-      document.getElementById('csp-notes').innerText = document.getElementById('cs-notes').value;
+      document.getElementById('csp-notes').innerText = notesVal;
 
       const msTbody = document.getElementById('csp-milestones-tbody');
       msTbody.innerHTML = '';
@@ -2346,6 +2509,23 @@
           <td style="text-align: left;">${trItem.task}</td>
         `;
         trTbody.appendChild(tr);
+      });
+
+      // СОХРАНЕНИЕ В АРХИВ ВЫЗЫВНЫХ
+      saveCallSheetToHistory({
+        id: 'CS-' + Date.now(),
+        projectName: projName,
+        date: formattedDate,
+        shiftNum: shiftNum,
+        location: locationVal,
+        address: addressVal,
+        techDirStr: callSheetData.techDirStr,
+        stageMgrStr: callSheetData.stageMgrStr,
+        notes: notesVal,
+        milestones: callSheetData.milestones,
+        crew: callSheetData.crew,
+        equipment: callSheetData.equipment,
+        transport: callSheetData.transport
       });
 
       document.getElementById('act-print-area').classList.remove('active-print');
