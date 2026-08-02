@@ -739,7 +739,7 @@
       </div>
       
       <div class="table-wrapper" style="padding: 10px;">
-        <!-- БЛОК 1: Основная информация о смене + Ответственные лица -->
+        <!-- БЛОК 1: Основная информация о смене -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>Основная информация о смене</span>
@@ -766,7 +766,7 @@
               <input type="text" id="cs-address" value="г. Москва, ул. Варварка, д. 6 (КПП №2)">
             </div>
             
-            <!-- Динамический выбор Руководителя Тех. Отдела -->
+            <!-- Выбор Руководителя Тех. Отдела -->
             <div class="form-group">
               <label>Административно-технический отдел (Тех. Директор)</label>
               <select id="cs-tech-dir-select" onchange="onTechDirSelect(this.value)">
@@ -774,27 +774,29 @@
               </select>
             </div>
 
-            <!-- Динамический выбор Выпускающего / Продюсера -->
+            <!-- Выбор Выпускающего / Продюсера -->
             <div class="form-group">
               <label>Выпускающий / Продюсер смены</label>
               <select id="cs-stage-mgr-select" onchange="onStageMgrSelect(this.value)">
-                <!-- Динамически заполняется из EMPLOYEES_LIST -->
+                <!-- Динамически заполняется -->
               </select>
             </div>
           </div>
         </div>
 
+        <!-- БЛОК 2: Тайминг смены -->
         <div class="cs-section">
           <div class="cs-section-title">
-            <span>Тайминг смены</span>
+            <span>1. Тайминг смены</span>
             <button class="add-row-btn" onclick="addCsMilestoneRow()">+ Добавить пункт</button>
           </div>
           <div id="cs-milestones-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
 
+        <!-- БЛОК 3: Вызов персонала -->
         <div class="cs-section">
           <div class="cs-section-title">
-            <span>Вызов персонала и команды</span>
+            <span>2. Вызов персонала и команды</span>
             <div style="display: flex; gap: 8px;">
               <button class="add-row-btn" onclick="addCsCrewMemberFromAto()" style="background: rgba(59, 38, 166, 0.4); color: #fff;">+ Из Тех. отдела</button>
               <button class="add-row-btn" onclick="addCsCrewMemberFromEmployees()">+ Из Сотрудников</button>
@@ -804,9 +806,30 @@
           <div id="cs-crew-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
 
+        <!-- БЛОК 4: Ввозимое / вывозимое оборудование -->
         <div class="cs-section">
-          <div class="cs-section-title">Важные примечания и Дресс-код</div>
-          <textarea id="cs-notes" rows="3">Форма одежды: Total Black. На площадке обязательно наличие защитной обуви на застройке.</textarea>
+          <div class="cs-section-title">
+            <span>3. Важные примечания и Дресс-код</span>
+          </div>
+          <textarea id="cs-notes" rows="2">Форма одежды: Total Black. На площадке обязательно наличие защитной обуви на застройке.</textarea>
+        </div>
+
+        <!-- БЛОК 5: Перечень оборудования -->
+        <div class="cs-section">
+          <div class="cs-section-title">
+            <span>4. Перечень ввозимого и вывозимого оборудования</span>
+            <button class="add-row-btn" onclick="addCsEquipmentRow()">+ Добавить оборудование</button>
+          </div>
+          <div id="cs-equipment-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+
+        <!-- БЛОК 6: Автотранспорт -->
+        <div class="cs-section">
+          <div class="cs-section-title">
+            <span>5. Автотранспорт</span>
+            <button class="add-row-btn" onclick="addCsTransportRow()">+ Добавить автомобиль</button>
+          </div>
+          <div id="cs-transport-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
       </div>
 
@@ -937,7 +960,35 @@
     </table>
 
     <div style="font-weight: bold; font-size: 10pt; margin-bottom: 4px; text-transform: uppercase;">3. Важные примечания и регламент</div>
-    <div style="border: 1px solid #000; padding: 6px 8px; font-size: 8.5pt; line-height: 1.3;" id="csp-notes"></div>
+    <div style="border: 1px solid #000; padding: 6px 8px; font-size: 8.5pt; line-height: 1.3; margin-bottom: 14px;" id="csp-notes"></div>
+
+    <div style="font-weight: bold; font-size: 10pt; margin-bottom: 4px; text-transform: uppercase;">4. Перечень ввозимого и вывозимого оборудования</div>
+    <table class="act-table" style="margin-bottom: 14px;">
+      <thead>
+        <tr>
+          <th style="width: 5%;">№</th>
+          <th style="width: 45%;">Наименование / Модель</th>
+          <th style="width: 20%;">Инвентарный №</th>
+          <th style="width: 20%;">Серийный №</th>
+          <th style="width: 10%;">Кол-во</th>
+        </tr>
+      </thead>
+      <tbody id="csp-equipment-tbody"></tbody>
+    </table>
+
+    <div style="font-weight: bold; font-size: 10pt; margin-bottom: 4px; text-transform: uppercase;">5. Автотранспорт</div>
+    <table class="act-table" style="margin-bottom: 14px;">
+      <thead>
+        <tr>
+          <th style="width: 20%;">Марка / Модель</th>
+          <th style="width: 15%;">Гос. номер</th>
+          <th style="width: 25%;">Водитель (ФИО)</th>
+          <th style="width: 20%;">Телефон</th>
+          <th>Цель / Задача</th>
+        </tr>
+      </thead>
+      <tbody id="csp-transport-tbody"></tbody>
+    </table>
   </div>
 
   <!-- Печатный Акт Приема-Передачи -->
@@ -1880,6 +1931,13 @@
         { type: 'manual', time: '08:00', dept: 'Звук', name: 'Иванов Иван', phone: '+7 900 000 00 01', task: 'Монтаж FOH, размотка мультикора' },
         { type: 'manual', time: '08:30', dept: 'Свет', name: 'Петров Петр', phone: '+7 900 000 00 02', task: 'Развеска приборов, юстировка' },
         { type: 'manual', time: '09:00', dept: 'Видео', name: 'Сидоров Сергей', phone: '+7 900 000 00 03', task: 'Сетап LED-экрана, пультовая' }
+      ],
+      equipment: [
+        { name: 'Микшерный пульт Yamaha QL5', inv: 'AM-00123', sn: 'SN987654', count: '1' },
+        { name: 'Комплект радиосистем Shure ULXD', inv: 'AM-00456', sn: 'SN123456', count: '4' }
+      ],
+      transport: [
+        { model: 'Газель NEXT', plate: 'А 123 АА 777', driver: 'Иванов Алексей', phone: '+7 999 111 22 33', task: 'Доставка звукового оборудования' }
       ]
     };
 
@@ -1943,6 +2001,8 @@
       initStageMgrSelect();
       renderCsMilestones();
       renderCsCrew();
+      renderCsEquipment();
+      renderCsTransport();
       document.getElementById('callSheetModal').style.display = 'flex';
     }
 
@@ -1950,6 +2010,7 @@
       document.getElementById('callSheetModal').style.display = 'none';
     }
 
+    // 1. ТАЙМИНГ СМЕНЫ
     function renderCsMilestones() {
       const container = document.getElementById('cs-milestones-container');
       container.innerHTML = '';
@@ -1975,7 +2036,7 @@
       renderCsMilestones();
     }
 
-    // РЕНДЕР ТАБЛИЦЫ ПЕРСОНАЛА И КОМАНДЫ
+    // 2. ВЫЗОВ ПЕРСОНАЛА И КОМАНДЫ
     function renderCsCrew() {
       const container = document.getElementById('cs-crew-container');
       container.innerHTML = '';
@@ -2027,7 +2088,6 @@
       renderCsCrew();
     }
 
-    // 1. Добавление сотрудника Тех. отдела
     function addCsCrewMemberFromAto() {
       const atoList = ["Зломанов Олег Викторович", "Смутный Богдан Сергеевич", "Белоусов Алексей Алексеевич", "Белоусова Анастасия Константиновна", "Сидоренко Артем Валерьевич"];
       const name = atoList[0];
@@ -2044,7 +2104,6 @@
       renderCsCrew();
     }
 
-    // 2. Добавление любого Сотрудника АНО
     function addCsCrewMemberFromEmployees() {
       const emp = EMPLOYEES_LIST[0];
       callSheetData.crew.push({
@@ -2058,7 +2117,6 @@
       renderCsCrew();
     }
 
-    // 3. Ручное добавление с автоформатом телефона +7 900 000 00 00
     function addCsCrewRow() {
       callSheetData.crew.push({ 
         type: 'manual', 
@@ -2076,6 +2134,66 @@
       renderCsCrew();
     }
 
+    // 4. ПЕРЕЧЕНЬ ВВОЗИМОГО И ВЫВОЗИМОГО ОБОРУДОВАНИЯ
+    function renderCsEquipment() {
+      const container = document.getElementById('cs-equipment-container');
+      container.innerHTML = '';
+      callSheetData.equipment.forEach((eq, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display:flex; gap:10px; align-items:center; flex-wrap:wrap;';
+        div.innerHTML = `
+          <input type="text" value="${eq.name}" style="flex: 2; min-width: 200px;" placeholder="Наименование / Модель" onchange="callSheetData.equipment[${idx}].name = this.value">
+          <input type="text" value="${eq.inv}" style="width: 140px; font-family: 'JetBrains Mono';" placeholder="Инв. №" onchange="callSheetData.equipment[${idx}].inv = this.value">
+          <input type="text" value="${eq.sn}" style="width: 140px;" placeholder="Серийный №" onchange="callSheetData.equipment[${idx}].sn = this.value">
+          <input type="text" value="${eq.count}" style="width: 70px; text-align: center;" placeholder="Кол-во" onchange="callSheetData.equipment[${idx}].count = this.value">
+          <button class="delete-btn" onclick="removeCsEquipment(${idx})">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addCsEquipmentRow() {
+      callSheetData.equipment.push({ name: '', inv: '', sn: '', count: '1' });
+      renderCsEquipment();
+    }
+
+    function removeCsEquipment(idx) {
+      callSheetData.equipment.splice(idx, 1);
+      renderCsEquipment();
+    }
+
+    // 5. АВТОТРАНСПОРТ
+    function renderCsTransport() {
+      const container = document.getElementById('cs-transport-container');
+      container.innerHTML = '';
+      callSheetData.transport.forEach((tr, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display:flex; gap:10px; align-items:center; flex-wrap:wrap;';
+        const formattedPhone = formatPhoneNumberStr(tr.phone);
+
+        div.innerHTML = `
+          <input type="text" value="${tr.model}" style="width: 140px;" placeholder="Марка / Модель" onchange="callSheetData.transport[${idx}].model = this.value">
+          <input type="text" value="${tr.plate}" style="width: 120px; font-family: 'JetBrains Mono';" placeholder="Гос. номер" onchange="callSheetData.transport[${idx}].plate = this.value">
+          <input type="text" value="${tr.driver}" style="width: 180px;" placeholder="ФИО Водителя" onchange="callSheetData.transport[${idx}].driver = this.value">
+          <input type="text" value="${formattedPhone}" style="width: 160px;" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this); callSheetData.transport[${idx}].phone = this.value">
+          <input type="text" value="${tr.task}" style="flex: 1; min-width: 160px;" placeholder="Цель / Задача" onchange="callSheetData.transport[${idx}].task = this.value">
+          <button class="delete-btn" onclick="removeCsTransport(${idx})">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addCsTransportRow() {
+      callSheetData.transport.push({ model: '', plate: '', driver: '', phone: '', task: '' });
+      renderCsTransport();
+    }
+
+    function removeCsTransport(idx) {
+      callSheetData.transport.splice(idx, 1);
+      renderCsTransport();
+    }
+
+    // ГЕНЕРАЦИЯ ПЕЧАТИ ВЫЗЫВНОГО ЛИСТА
     function printCallSheet() {
       document.getElementById('csp-project-name').innerText = document.getElementById('cs-project-name').value;
       const rawDate = document.getElementById('cs-date').value;
@@ -2091,6 +2209,7 @@
       document.getElementById('csp-stage-mgr').innerText = callSheetData.stageMgrStr;
       document.getElementById('csp-notes').innerText = document.getElementById('cs-notes').value;
 
+      // 1. Тайминг
       const msTbody = document.getElementById('csp-milestones-tbody');
       msTbody.innerHTML = '';
       callSheetData.milestones.forEach(m => {
@@ -2099,6 +2218,7 @@
         msTbody.appendChild(tr);
       });
 
+      // 2. Персонал
       const crewTbody = document.getElementById('csp-crew-tbody');
       crewTbody.innerHTML = '';
       callSheetData.crew.forEach(c => {
@@ -2114,6 +2234,37 @@
         crewTbody.appendChild(tr);
       });
 
+      // 4. Оборудование
+      const eqTbody = document.getElementById('csp-equipment-tbody');
+      eqTbody.innerHTML = '';
+      callSheetData.equipment.forEach((eq, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td style="text-align: left; font-weight: bold;">${eq.name}</td>
+          <td style="font-family: 'JetBrains Mono';">${eq.inv || '—'}</td>
+          <td>${eq.sn || '—'}</td>
+          <td>${eq.count || '1'}</td>
+        `;
+        eqTbody.appendChild(tr);
+      });
+
+      // 5. Автотранспорт
+      const trTbody = document.getElementById('csp-transport-tbody');
+      trTbody.innerHTML = '';
+      callSheetData.transport.forEach(trItem => {
+        const tr = document.createElement('tr');
+        const printPhone = formatPhoneNumberStr(trItem.phone);
+        tr.innerHTML = `
+          <td style="font-weight: bold;">${trItem.model}</td>
+          <td style="font-family: 'JetBrains Mono'; font-weight: bold;">${trItem.plate}</td>
+          <td style="text-align: left;">${trItem.driver}</td>
+          <td>${printPhone}</td>
+          <td style="text-align: left;">${trItem.task}</td>
+        `;
+        trTbody.appendChild(tr);
+      });
+
       document.getElementById('act-print-area').classList.remove('active-print');
       document.getElementById('callsheet-print-area').classList.add('active-print');
 
@@ -2123,7 +2274,7 @@
 
     function exportCallSheetToCSV() {
       const proj = document.getElementById('cs-project-name').value;
-      const headers = ["Тип", "Время / Параметр", "Департамент / Наименование", "ФИО / Событие", "Телефон", "Задача"];
+      const headers = ["Тип", "Параметр 1", "Параметр 2", "Параметр 3", "Телефон / Серийник", "Задача / Кол-во"];
       const rows = [
         ["ПРОЕКТ", proj, "", "", "", ""],
         ["ДАТА", document.getElementById('cs-date').value, "", "", "", ""],
@@ -2138,6 +2289,14 @@
 
       callSheetData.crew.forEach(c => {
         rows.push(["Персонал", c.time, c.dept, c.name, formatPhoneNumberStr(c.phone), c.task]);
+      });
+
+      callSheetData.equipment.forEach(e => {
+        rows.push(["Оборудование", e.name, e.inv, e.sn, "", e.count]);
+      });
+
+      callSheetData.transport.forEach(t => {
+        rows.push(["Транспорт", t.model, t.plate, t.driver, formatPhoneNumberStr(t.phone), t.task]);
       });
 
       downloadCSV(`CallSheet_${proj.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.csv`, rows);
