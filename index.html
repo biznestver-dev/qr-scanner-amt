@@ -806,7 +806,7 @@
           <div id="cs-crew-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
 
-        <!-- БЛОК 4: Ввозимое / вывозимое оборудование -->
+        <!-- БЛОК 4: Примечания -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>3. Важные примечания и Дресс-код</span>
@@ -818,7 +818,10 @@
         <div class="cs-section">
           <div class="cs-section-title">
             <span>4. Перечень ввозимого и вывозимого оборудования</span>
-            <button class="add-row-btn" onclick="addCsEquipmentRow()">+ Добавить оборудование</button>
+            <div style="display: flex; gap: 8px;">
+              <button class="add-row-btn" onclick="importCurrentActItemsToCallSheet()" style="background: rgba(0, 240, 255, 0.3); color: #fff;">📥 + Импорт из Акта</button>
+              <button class="add-row-btn" onclick="addCsEquipmentRow()">+ Вручную</button>
+            </div>
           </div>
           <div id="cs-equipment-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
@@ -1463,6 +1466,7 @@
       renderSelectedItems();
     }
 
+    // РЕНДЕР ТЕКУЩЕГО СПИСКА ОБОРУДОВАНИЯ В АК ТЕ
     function renderSelectedItems() {
       const container = document.getElementById('selected-items-container');
       document.getElementById('items-count').innerText = currentActItems.length;
@@ -1480,10 +1484,70 @@
           <div>
             <b style="font-family: 'JetBrains Mono'; font-size: 13px; color: var(--am-cyan);">${item.inv}</b> — ${item.name}
           </div>
-          <button class="delete-btn" onclick="removeItemFromAct(${index})">✕</button>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button class="add-row-btn" onclick="addSingleItemToCallSheet('${item.inv}', '${item.name.replace(/'/g, "\\'")}')" style="font-size: 11px; padding: 4px 8px;">+ В вызывной</button>
+            <button class="delete-btn" onclick="removeItemFromAct(${index})">✕</button>
+          </div>
         `;
         container.appendChild(div);
       });
+    }
+
+    // 1. Добавить 1 конкретную позицию из Акта в Вызывной
+    function addSingleItemToCallSheet(inv, name) {
+      if (callSheetData.equipment.some(e => e.inv === inv)) {
+        alert(`Оборудование ${inv} уже есть в Вызывном листе!`);
+        return;
+      }
+      
+      let sn = '';
+      if (window.EQUIPMENT_DB) {
+        let key = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === inv);
+        if (key && window.EQUIPMENT_DB[key].sn) {
+          sn = window.EQUIPMENT_DB[key].sn;
+        }
+      }
+
+      callSheetData.equipment.push({
+        name: name,
+        inv: inv,
+        sn: sn || '—',
+        count: '1'
+      });
+
+      alert(`Позиция "${name}" (${inv}) добавлена в Вызывной лист!`);
+    }
+
+    // 2. Добавить ВСЕ позиции Акта в Вызывной лист одним кликом
+    function importCurrentActItemsToCallSheet() {
+      if (currentActItems.length === 0) {
+        alert('В текущем Акте нет добавленного оборудования для импорта!');
+        return;
+      }
+
+      let addedCount = 0;
+      currentActItems.forEach(item => {
+        if (!callSheetData.equipment.some(e => e.inv === item.inv)) {
+          let sn = '';
+          if (window.EQUIPMENT_DB) {
+            let key = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === item.inv);
+            if (key && window.EQUIPMENT_DB[key].sn) {
+              sn = window.EQUIPMENT_DB[key].sn;
+            }
+          }
+
+          callSheetData.equipment.push({
+            name: item.name,
+            inv: item.inv,
+            sn: sn || '—',
+            count: '1'
+          });
+          addedCount++;
+        }
+      });
+
+      renderCsEquipment();
+      alert(`Успешно импортировано ${addedCount} позиций из текущего Акта!`);
     }
 
     function openDbModal() { 
