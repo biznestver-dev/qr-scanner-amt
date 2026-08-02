@@ -188,21 +188,28 @@
       gap: 10px;
     }
 
-    .db-quick-btn {
-      background: rgba(59, 38, 166, 0.5);
-      border: 1px solid rgba(0, 240, 255, 0.3);
-      color: var(--am-cyan);
+    /* Единый фиксированный размер для обеих кнопок */
+    .db-quick-btn, .add-quick-btn {
+      height: 52px;
+      min-width: 140px;
       padding: 0 16px;
       border-radius: 14px;
       cursor: pointer;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
       text-transform: uppercase;
       white-space: nowrap;
       transition: all 0.2s;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 6px;
+    }
+
+    .db-quick-btn {
+      background: rgba(59, 38, 166, 0.5);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      color: var(--am-cyan);
     }
 
     .db-quick-btn:hover {
@@ -215,17 +222,6 @@
       background: var(--accent-gradient);
       border: none;
       color: #fff;
-      padding: 0 18px;
-      border-radius: 14px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      white-space: nowrap;
-      transition: all 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
       box-shadow: 0 4px 15px var(--accent-glow);
     }
 
