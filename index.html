@@ -68,7 +68,6 @@
       position: relative;
     }
 
-    /* Фоновый декоративный блик ArtMasters */
     .container::before {
       content: '';
       position: absolute;
@@ -80,7 +79,6 @@
       border-radius: 2px;
     }
 
-    /* Header Design */
     .app-header {
       display: flex;
       align-items: center;
@@ -131,7 +129,6 @@
       margin-top: 2px;
     }
 
-    /* Scanner styling */
     #reader {
       width: 100%;
       max-width: 480px;
@@ -143,7 +140,6 @@
       box-shadow: inset 0 2px 8px rgba(0,0,0,0.6), 0 0 20px rgba(0, 240, 255, 0.05);
     }
 
-    /* Form Layout */
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -186,7 +182,6 @@
       transition: all 0.25s ease;
     }
 
-    /* Стили для составного поля ввода телефона */
     .phone-input-group {
       display: flex;
       gap: 10px;
@@ -200,7 +195,6 @@
       cursor: pointer;
     }
 
-    /* Белая иконка календаря */
     input[type="date"]::-webkit-calendar-picker-indicator {
       filter: invert(1);
       cursor: pointer;
@@ -225,7 +219,6 @@
       color: var(--text-primary);
     }
 
-    /* Список добавленного оборудования в форме */
     .selected-items-list {
       grid-column: 1 / -1;
       background: rgba(9, 12, 21, 0.5);
@@ -256,7 +249,6 @@
 
     .item-row:last-child { margin-bottom: 0; }
 
-    /* Единые стильные кнопки ArtMasters */
     .btn-group {
       display: flex;
       gap: 12px;
@@ -317,7 +309,6 @@
       color: #fff;
     }
 
-    /* Modal Design */
     .modal {
       display: none;
       position: fixed;
@@ -488,7 +479,6 @@
     .add-row-btn { background: rgba(0, 240, 255, 0.2); color: var(--am-cyan); border: 1px solid rgba(0, 240, 255, 0.4); }
     .add-row-btn:hover { background: var(--am-cyan); color: #000; }
 
-    /* Стили конструктора Вызывного Листа */
     .cs-section {
       background: rgba(9, 12, 21, 0.6);
       border: 1px solid var(--glass-border);
@@ -512,7 +502,6 @@
 
     #act-print-area, #callsheet-print-area { display: none; }
 
-    /* Print Styles */
     @media print {
       @page { size: A4 landscape !important; margin: 5mm 6mm !important; }
       html, body {
@@ -582,7 +571,6 @@
         padding-right: 10px;
       }
 
-      /* Вызывной лист - печатная верстка */
       .cs-print-header { border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 10px; }
       .cs-print-title { font-size: 14pt; font-weight: bold; text-transform: uppercase; }
     }
@@ -594,7 +582,6 @@
     <div class="app-header">
       <div class="app-title">
         <div class="app-logo">
-          <!-- Официальный логотип ArtMasters SVG -->
           <svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M142.5 450.5C52.5 410.5 25.5 305.5 65.5 215.5C105.5 125.5 210.5 98.5 300.5 138.5C390.5 178.5 486.5 244.5 446.5 334.5C406.5 424.5 232.5 490.5 142.5 450.5Z" fill="#FF0043"/>
             <path d="M178.5 385.5C123.5 360.5 106.5 295.5 131.5 240.5C156.5 185.5 221.5 168.5 276.5 193.5C331.5 218.5 383.5 260.5 358.5 315.5C333.5 370.5 233.5 410.5 178.5 385.5Z" fill="#FFFFFF"/>
@@ -608,7 +595,6 @@
       </div>
     </div>
 
-    <!-- Область камеры сканера -->
     <div id="reader"></div>
 
     <div class="form-grid">
@@ -673,7 +659,6 @@
         </div>
       </div>
 
-      <!-- Поле ввода номера телефона с выбором страны -->
       <div class="form-group">
         <label for="contact-input">Телефон / Telegram / MAX</label>
         <div class="phone-input-group">
@@ -694,7 +679,6 @@
         </div>
       </div>
 
-      <!-- Дата возврата с переключателем прочерка -->
       <div class="form-group" id="return-date-group">
         <label for="return-date-input">Планируемая дата возврата</label>
         <div style="display: flex; gap: 10px; align-items: center;">
@@ -710,7 +694,6 @@
         <textarea id="comment-input" rows="2" placeholder="Комплектация, состояние и т.д."></textarea>
       </div>
 
-      <!-- Список добавленного оборудования в форме -->
       <div class="selected-items-list full-width">
         <h4>Выбранное оборудование для выдачи (<span id="items-count">0</span>)</h4>
         <div id="selected-items-container">
@@ -760,12 +743,33 @@
               <input type="text" id="cs-shift-num" value="Смена №1 (Застройка)">
             </div>
             <div class="form-group">
+              <label>Город</label>
+              <input type="text" id="cs-city" value="г. Москва">
+            </div>
+            <div class="form-group">
               <label>Локация / Павильон</label>
               <input type="text" id="cs-location" value="Заповедное Посольство / Площадка №1">
             </div>
-            <div class="form-group full-width">
+            <div class="form-group">
               <label>Точный адрес / КПП / Маршрут</label>
-              <input type="text" id="cs-address" value="г. Москва, ул. Варварка, д. 6 (КПП №2)">
+              <input type="text" id="cs-address" value="ул. Варварка, д. 6 (КПП №2)">
+            </div>
+
+            <!-- Поле Получателя / Категории -->
+            <div class="form-group">
+              <label>Категория / Роль получателя</label>
+              <select id="cs-recipient-role-select" onchange="onCsRecipientRoleChange(this.value)">
+                <option value="Участник">Участник</option>
+                <option value="Сотрудник">Сотрудник</option>
+                <option value="Менеджер компетенции">Менеджер компетенции</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="cs-recipient-name" id="cs-recipient-label">Получатель (ФИО)</label>
+              <div id="cs-recipient-container">
+                <input type="text" id="cs-recipient-name" placeholder="Введите ФИО получателя...">
+              </div>
             </div>
             
             <div class="form-group">
@@ -856,9 +860,9 @@
             <tr>
               <th>Проект</th>
               <th>Дата</th>
-              <th>Смена</th>
+              <th>Город</th>
               <th>Локация</th>
-              <th>Тех. Директор</th>
+              <th>Получатель</th>
               <th>Действия</th>
             </tr>
           </thead>
@@ -950,16 +954,16 @@
 
     <table class="act-table" style="margin-bottom: 12px;">
       <tr>
-        <td style="width: 15%; font-weight: bold; background: #f2f2f2; text-align: left;">Локация / Адрес:</td>
+        <td style="width: 15%; font-weight: bold; background: #f2f2f2; text-align: left;">Город / Локация:</td>
         <td style="text-align: left;" id="csp-location-full"></td>
         <td style="width: 15%; font-weight: bold; background: #f2f2f2; text-align: left;">Тех. Директор / АТО:</td>
         <td style="text-align: left;" id="csp-tech-dir"></td>
       </tr>
       <tr>
+        <td style="font-weight: bold; background: #f2f2f2; text-align: left;">Получатель / Роль:</td>
+        <td style="text-align: left;" id="csp-recipient-full"></td>
         <td style="font-weight: bold; background: #f2f2f2; text-align: left;">Выпускающий / Продюсер:</td>
         <td style="text-align: left;" id="csp-stage-mgr"></td>
-        <td style="font-weight: bold; background: #f2f2f2; text-align: left;">Контакты штаба:</td>
-        <td style="text-align: left;">Рация: Канал 1 / Штаб МТБ</td>
       </tr>
     </table>
 
@@ -1069,7 +1073,6 @@
       </tr>
     </table>
 
-    <!-- ОБЕРТКА ТЕХНИКИ БЕЗОПАСНОСТИ: ПО УМОЛЧАНИЮ СКРЫТА, ПОКАЗЫВАЕТСЯ ТОЛЬКО ДЛЯ СОТРУДНИКА -->
     <div id="safety-rules-wrapper" class="safety-rules-wrapper">
       <div class="page-break"></div>
 
@@ -1154,7 +1157,6 @@
   <script src="app.js"></script>
 
   <script>
-    // Должности для представителей административно-технического отдела
     const MANAGER_TITLES = {
       "Зломанов Олег Викторович": "Административно-технический директор",
       "Белоусов Алексей Алексеевич": "Системный администратор",
@@ -1167,7 +1169,6 @@
       return MANAGER_TITLES[mgrName] || "Административно-технический отдел";
     }
 
-    // Справочник всех сотрудников АНО «АртМастерс»
     const EMPLOYEES_LIST = [
       { name: "Агапов Даниил", role: "Веб-дизайнер", phone: "+79534307790" },
       { name: "Баранова Татьяна Николаевна", role: "Ведущий специалист документационного обеспечения", phone: "+79605811818" },
@@ -2036,8 +2037,11 @@
       downloadCSV(`Acts_Registry_${new Date().toISOString().slice(0,10)}.csv`, rows);
     }
 
-    // --- ЛОГИКА ВЫЗЫВНОГО ЛИСТА (CALL SHEET) С АРХИВАЦИЕЙ ---
+    // --- ЛОГИКА ВЫЗЫВНОГО ЛИСТА (CALL SHEET) ---
     let callSheetData = {
+      city: "г. Москва",
+      recipientRole: "Участник",
+      recipientName: "—",
       techDirStr: "Зломанов Олег Викторович (Административно-технический директор, +7 920 693 10 13)",
       stageMgrStr: "Жижневская Ксения Владимировна (Шеф-редактор, +7 905 509 90 87)",
       milestones: [
@@ -2060,6 +2064,24 @@
         { model: 'Газель NEXT', plate: 'А 123 АА 777', driver: 'Иванов Алексей', phone: '+7 999 111 22 33', task: 'Доставка звукового оборудования' }
       ]
     };
+
+    function onCsRecipientRoleChange(role) {
+      callSheetData.recipientRole = role;
+      document.getElementById('cs-recipient-label').innerText = `Получатель ФИО (${role})`;
+      const container = document.getElementById('cs-recipient-container');
+
+      if (role === 'Сотрудник') {
+        let selectHtml = `<select id="cs-recipient-name" onchange="callSheetData.recipientName = this.value">
+          <option value="">-- Выберите сотрудника --</option>`;
+        EMPLOYEES_LIST.forEach(emp => {
+          selectHtml += `<option value="${emp.name}">${emp.name} — ${emp.role}</option>`;
+        });
+        selectHtml += `</select>`;
+        container.innerHTML = selectHtml;
+      } else {
+        container.innerHTML = `<input type="text" id="cs-recipient-name" placeholder="Введите ФИО (${role.toLowerCase()})..." onchange="callSheetData.recipientName = this.value">`;
+      }
+    }
 
     function getCallSheetHistory() {
       return JSON.parse(localStorage.getItem('artmasters_callsheet_history') || '[]');
@@ -2100,15 +2122,15 @@
       }
 
       h.forEach(cs => {
-        const searchStr = `${cs.projectName} ${cs.date} ${cs.shiftNum} ${cs.location} ${cs.techDirStr}`.toLowerCase();
+        const searchStr = `${cs.projectName} ${cs.date} ${cs.city || ''} ${cs.location} ${cs.recipientName || ''}`.toLowerCase();
         if (!filter || searchStr.includes(filter)) {
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td><b>${cs.projectName}</b></td>
             <td>${cs.date}</td>
-            <td><span class="badge-status free">${cs.shiftNum}</span></td>
+            <td>${cs.city || 'г. Москва'}</td>
             <td>${cs.location}</td>
-            <td>${cs.techDirStr}</td>
+            <td>${cs.recipientRole || '—'}: ${cs.recipientName || '—'}</td>
             <td>
               <div style="display:flex;gap:6px;">
                 <button class="select-btn" onclick="reprintCallSheet('${cs.id}')">🖨️ Печать</button>
@@ -2128,9 +2150,10 @@
       document.getElementById('csp-project-name').innerText = cs.projectName;
       document.getElementById('csp-date').innerText = cs.date;
       document.getElementById('csp-shift-num').innerText = cs.shiftNum;
-      document.getElementById('csp-location-full').innerText = `${cs.location} (${cs.address})`;
+      document.getElementById('csp-location-full').innerText = `${cs.city || 'г. Москва'}, ${cs.location} (${cs.address})`;
       document.getElementById('csp-tech-dir').innerText = cs.techDirStr;
       document.getElementById('csp-stage-mgr').innerText = cs.stageMgrStr;
+      document.getElementById('csp-recipient-full').innerText = `${cs.recipientRole || 'Участник'}: ${cs.recipientName || '—'}`;
       document.getElementById('csp-notes').innerText = cs.notes;
 
       const msTbody = document.getElementById('csp-milestones-tbody');
@@ -2447,16 +2470,26 @@
         formattedDate = `${p[2]}.${p[1]}.${p[0]}`;
       }
       const shiftNum = document.getElementById('cs-shift-num').value;
+      const cityVal = document.getElementById('cs-city').value;
       const locationVal = document.getElementById('cs-location').value;
       const addressVal = document.getElementById('cs-address').value;
       const notesVal = document.getElementById('cs-notes').value;
 
+      const recRole = document.getElementById('cs-recipient-role-select').value;
+      const recNameEl = document.getElementById('cs-recipient-name');
+      const recName = recNameEl ? recNameEl.value : '—';
+
+      callSheetData.city = cityVal;
+      callSheetData.recipientRole = recRole;
+      callSheetData.recipientName = recName;
+
       document.getElementById('csp-project-name').innerText = projName;
       document.getElementById('csp-date').innerText = formattedDate;
       document.getElementById('csp-shift-num').innerText = shiftNum;
-      document.getElementById('csp-location-full').innerText = `${locationVal} (${addressVal})`;
+      document.getElementById('csp-location-full').innerText = `${cityVal}, ${locationVal} (${addressVal})`;
       document.getElementById('csp-tech-dir').innerText = callSheetData.techDirStr;
       document.getElementById('csp-stage-mgr').innerText = callSheetData.stageMgrStr;
+      document.getElementById('csp-recipient-full').innerText = `${recRole}: ${recName}`;
       document.getElementById('csp-notes').innerText = notesVal;
 
       const msTbody = document.getElementById('csp-milestones-tbody');
@@ -2511,14 +2544,16 @@
         trTbody.appendChild(tr);
       });
 
-      // СОХРАНЕНИЕ В АРХИВ ВЫЗЫВНЫХ
       saveCallSheetToHistory({
         id: 'CS-' + Date.now(),
         projectName: projName,
         date: formattedDate,
         shiftNum: shiftNum,
+        city: cityVal,
         location: locationVal,
         address: addressVal,
+        recipientRole: recRole,
+        recipientName: recName,
         techDirStr: callSheetData.techDirStr,
         stageMgrStr: callSheetData.stageMgrStr,
         notes: notesVal,
@@ -2541,7 +2576,9 @@
       const rows = [
         ["ПРОЕКТ", proj, "", "", "", ""],
         ["ДАТА", document.getElementById('cs-date').value, "", "", "", ""],
+        ["ГОРОД", document.getElementById('cs-city').value, "", "", "", ""],
         ["ЛОКАЦИЯ", document.getElementById('cs-location').value, "", "", "", ""],
+        ["ПОЛУЧАТЕЛЬ", `${document.getElementById('cs-recipient-role-select').value}: ${callSheetData.recipientName}`, "", "", "", ""],
         [],
         headers
       ];
