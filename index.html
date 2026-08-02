@@ -755,7 +755,7 @@
               <input type="text" id="cs-address" value="ул. Варварка, д. 6 (КПП №2)">
             </div>
 
-            <!-- МЕНЕДЖЕР КОМПЕТЕНЦИИ (ФИО и Телефон) -->
+            <!-- МЕНЕДЖЕР КОМПЕТЕНЦИИ -->
             <div class="form-group">
               <label>Менеджер компетенции (ФИО)</label>
               <input type="text" id="cs-comp-mgr-name" placeholder="Введите ФИО менеджера компетенции...">
@@ -766,7 +766,7 @@
               <input type="text" id="cs-comp-mgr-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)">
             </div>
             
-            <!-- РУКОВОДСТВО АРТМАСТЕРС С ДИНАМИЧЕСКИМИ ДОЛЖНОСТЯМИ -->
+            <!-- РУКОВОДСТВО АРТМАСТЕРС -->
             <div class="form-group">
               <label id="cs-tech-dir-label">Технический директор (АртМастерс)</label>
               <select id="cs-tech-dir-select" onchange="onTechDirSelect(this.value)"></select>
@@ -777,15 +777,25 @@
               <select id="cs-stage-mgr-select" onchange="onStageMgrSelect(this.value)"></select>
             </div>
 
-            <!-- ОТВЕТСТВЕННЫЕ ОТ ПЛОЩАДКИ -->
+            <!-- ОТВЕТСТВЕННЫЕ ОТ ПЛОЩАДКИ (РАЗДЕЛЬНО) -->
             <div class="form-group">
-              <label>От Площадки: Технический директор (ФИО, Телефон)</label>
-              <input type="text" id="cs-venue-tech-dir" placeholder="Петров П.П. / +7 900 000 00 00">
+              <label>От Площадки: Технический директор (ФИО)</label>
+              <input type="text" id="cs-venue-tech-dir-name" placeholder="Петров П.П.">
             </div>
 
             <div class="form-group">
-              <label>От Площадки: Менеджер / Администратор (ФИО, Телефон)</label>
-              <input type="text" id="cs-venue-mgr" placeholder="Сидоров С.С. / +7 900 000 00 00">
+              <label>От Площадки: Технический директор (Телефон)</label>
+              <input type="text" id="cs-venue-tech-dir-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)">
+            </div>
+
+            <div class="form-group">
+              <label>От Площадки: Менеджер / Администратор (ФИО)</label>
+              <input type="text" id="cs-venue-mgr-name" placeholder="Сидоров С.С.">
+            </div>
+
+            <div class="form-group">
+              <label>От Площадки: Менеджер / Администратор (Телефон)</label>
+              <input type="text" id="cs-venue-mgr-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)">
             </div>
           </div>
         </div>
@@ -958,24 +968,31 @@
       </div>
     </div>
 
+    <!-- ТАБЛИЦА ШАПКИ СТРОГО С РАЗДЕЛЬНЫМИ СТРОКАМИ И СТОЛБЦАМИ -->
     <table class="act-table" style="margin-bottom: 12px;">
       <tr>
-        <td style="width: 15%; font-weight: bold; background: #f2f2f2; text-align: left;">Город / Локация:</td>
-        <td style="text-align: left;" id="csp-location-full"></td>
-        <td style="width: 15%; font-weight: bold; background: #f2f2f2; text-align: left;" id="csp-tech-dir-label-print">Тех. Директор (АртМастерс):</td>
+        <td style="width: 16%; font-weight: bold; background: #f2f2f2; text-align: left;">Город:</td>
+        <td style="text-align: left;" id="csp-print-city"></td>
+        <td style="width: 18%; font-weight: bold; background: #f2f2f2; text-align: left;" id="csp-tech-dir-label-print">Тех. Директор (АртМастерс):</td>
         <td style="text-align: left;" id="csp-tech-dir"></td>
       </tr>
       <tr>
-        <td style="font-weight: bold; background: #f2f2f2; text-align: left;">Менеджер компетенции:</td>
-        <td style="text-align: left;" id="csp-comp-mgr-full"></td>
+        <td style="font-weight: bold; background: #f2f2f2; text-align: left;">Локация / Павильон:</td>
+        <td style="text-align: left;" id="csp-print-location"></td>
         <td style="font-weight: bold; background: #f2f2f2; text-align: left;" id="csp-stage-mgr-label-print">Продюсер / Выпускающий:</td>
         <td style="text-align: left;" id="csp-stage-mgr"></td>
       </tr>
       <tr>
-        <td style="font-weight: bold; background: #f2f2f2; text-align: left;">Контакты Площадки:</td>
-        <td style="text-align: left;" id="csp-venue-contacts"></td>
-        <td style="font-weight: bold; background: #f2f2f2; text-align: left;">Контакты штаба:</td>
-        <td style="text-align: left;">Рация: Канал 1 / Штаб МТБ</td>
+        <td style="font-weight: bold; background: #f2f2f2; text-align: left;">Точный адрес:</td>
+        <td style="text-align: left;" id="csp-print-address"></td>
+        <td style="font-weight: bold; background: #f2f2f2; text-align: left;">От Площадки (ТД):</td>
+        <td style="text-align: left;" id="csp-venue-td-print"></td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; background: #f2f2f2; text-align: left;">Менеджер компетенции:</td>
+        <td style="text-align: left;" id="csp-comp-mgr-full"></td>
+        <td style="font-weight: bold; background: #f2f2f2; text-align: left;">От Площадки (Менеджер):</td>
+        <td style="text-align: left;" id="csp-venue-mgr-print"></td>
       </tr>
     </table>
 
@@ -2058,8 +2075,10 @@
       techDirStr: "Зломанов Олег Викторович (+7 920 693 10 13)",
       stageMgrRoleTitle: "Шеф-редактор",
       stageMgrStr: "Жижневская Ксения Владимировна (+7 905 509 90 87)",
-      venueTechDir: "",
-      venueMgr: "",
+      venueTechDirName: "",
+      venueTechDirPhone: "",
+      venueMgrName: "",
+      venueMgrPhone: "",
       milestones: [
         { time: '08:00', event: 'Заезд автотранспорта, сбор технической группы' },
         { time: '09:00', event: 'Начало монтажных работ и разворачивание сетей' },
@@ -2148,8 +2167,11 @@
       document.getElementById('csp-project-name').innerText = cs.projectName;
       document.getElementById('csp-date').innerText = cs.date;
       document.getElementById('csp-shift-num').innerText = cs.shiftNum;
-      document.getElementById('csp-location-full').innerText = `${cs.city || 'г. Москва'}, ${cs.location} (${cs.address})`;
       
+      document.getElementById('csp-print-city').innerText = cs.city || 'г. Москва';
+      document.getElementById('csp-print-location').innerText = cs.location || '—';
+      document.getElementById('csp-print-address').innerText = cs.address || '—';
+
       document.getElementById('csp-tech-dir-label-print').innerText = `${cs.techDirRoleTitle || 'Тех. Директор'}:`;
       document.getElementById('csp-tech-dir').innerText = cs.techDirStr;
       
@@ -2160,14 +2182,11 @@
       const phoneStr = phoneFormatted ? ` (${phoneFormatted})` : '';
       document.getElementById('csp-comp-mgr-full').innerText = `${cs.compMgrName || '—'}${phoneStr}`;
       
-      let venueContactsStr = '—';
-      if (cs.venueTechDir || cs.venueMgr) {
-        let vArr = [];
-        if (cs.venueTechDir) vArr.push(`ТД: ${cs.venueTechDir}`);
-        if (cs.venueMgr) vArr.push(`Менеджер: ${cs.venueMgr}`);
-        venueContactsStr = vArr.join(' | ');
-      }
-      document.getElementById('csp-venue-contacts').innerText = venueContactsStr;
+      const venueTDPhoneF = formatPhoneNumberStr(cs.venueTechDirPhone);
+      document.getElementById('csp-venue-td-print').innerText = cs.venueTechDirName ? `${cs.venueTechDirName}${venueTDPhoneF ? ' / ' + venueTDPhoneF : ''}` : '—';
+
+      const venueMgrPhoneF = formatPhoneNumberStr(cs.venueMgrPhone);
+      document.getElementById('csp-venue-mgr-print').innerText = cs.venueMgrName ? `${cs.venueMgrName}${venueMgrPhoneF ? ' / ' + venueMgrPhoneF : ''}` : '—';
 
       document.getElementById('csp-notes').innerText = cs.notes;
 
@@ -2502,20 +2521,27 @@
       const compMgrNameVal = document.getElementById('cs-comp-mgr-name').value.trim();
       const compMgrPhoneVal = document.getElementById('cs-comp-mgr-phone').value.trim();
 
-      const venueTechDirVal = document.getElementById('cs-venue-tech-dir').value.trim();
-      const venueMgrVal = document.getElementById('cs-venue-mgr').value.trim();
+      const venueTDName = document.getElementById('cs-venue-tech-dir-name').value.trim();
+      const venueTDPhone = document.getElementById('cs-venue-tech-dir-phone').value.trim();
+      const venueMgrName = document.getElementById('cs-venue-mgr-name').value.trim();
+      const venueMgrPhone = document.getElementById('cs-venue-mgr-phone').value.trim();
 
       callSheetData.city = cityVal;
       callSheetData.compMgrName = compMgrNameVal;
       callSheetData.compMgrPhone = compMgrPhoneVal;
-      callSheetData.venueTechDir = venueTechDirVal;
-      callSheetData.venueMgr = venueMgrVal;
+      callSheetData.venueTechDirName = venueTDName;
+      callSheetData.venueTechDirPhone = venueTDPhone;
+      callSheetData.venueMgrName = venueMgrName;
+      callSheetData.venueMgrPhone = venueMgrPhone;
 
       document.getElementById('csp-project-name').innerText = projName;
       document.getElementById('csp-date').innerText = formattedDate;
       document.getElementById('csp-shift-num').innerText = shiftNum;
-      document.getElementById('csp-location-full').innerText = `${cityVal}, ${locationVal} (${addressVal})`;
       
+      document.getElementById('csp-print-city').innerText = cityVal;
+      document.getElementById('csp-print-location').innerText = locationVal;
+      document.getElementById('csp-print-address').innerText = addressVal;
+
       document.getElementById('csp-tech-dir-label-print').innerText = `${callSheetData.techDirRoleTitle || 'Тех. Директор'}:`;
       document.getElementById('csp-tech-dir').innerText = callSheetData.techDirStr;
       
@@ -2526,14 +2552,11 @@
       const phoneStr = phoneFormatted ? ` (${phoneFormatted})` : '';
       document.getElementById('csp-comp-mgr-full').innerText = `${compMgrNameVal || '—'}${phoneStr}`;
       
-      let venueContactsStr = '—';
-      if (venueTechDirVal || venueMgrVal) {
-        let vArr = [];
-        if (venueTechDirVal) vArr.push(`ТД: ${venueTechDirVal}`);
-        if (venueMgrVal) vArr.push(`Менеджер: ${venueMgrVal}`);
-        venueContactsStr = vArr.join(' | ');
-      }
-      document.getElementById('csp-venue-contacts').innerText = venueContactsStr;
+      const venueTDPhoneF = formatPhoneNumberStr(venueTDPhone);
+      document.getElementById('csp-venue-td-print').innerText = venueTDName ? `${venueTDName}${venueTDPhoneF ? ' / ' + venueTDPhoneF : ''}` : '—';
+
+      const venueMgrPhoneF = formatPhoneNumberStr(venueMgrPhone);
+      document.getElementById('csp-venue-mgr-print').innerText = venueMgrName ? `${venueMgrName}${venueMgrPhoneF ? ' / ' + venueMgrPhoneF : ''}` : '—';
 
       document.getElementById('csp-notes').innerText = notesVal;
 
@@ -2603,8 +2626,10 @@
         techDirStr: callSheetData.techDirStr,
         stageMgrRoleTitle: callSheetData.stageMgrRoleTitle,
         stageMgrStr: callSheetData.stageMgrStr,
-        venueTechDir: venueTechDirVal,
-        venueMgr: venueMgrVal,
+        venueTechDirName: venueTDName,
+        venueTechDirPhone: venueTDPhone,
+        venueMgrName: venueMgrName,
+        venueMgrPhone: venueMgrPhone,
         notes: notesVal,
         milestones: callSheetData.milestones,
         crew: callSheetData.crew,
@@ -2627,8 +2652,10 @@
         ["ДАТА", document.getElementById('cs-date').value, "", "", "", ""],
         ["ГОРОД", document.getElementById('cs-city').value, "", "", "", ""],
         ["ЛОКАЦИЯ", document.getElementById('cs-location').value, "", "", "", ""],
+        ["АДРЕС", document.getElementById('cs-address').value, "", "", "", ""],
         ["МЕНЕДЖЕР КОМПЕТЕНЦИИ", `${callSheetData.compMgrName} (${callSheetData.compMgrPhone})`, "", "", "", ""],
-        ["ОТВЕТСТВЕННЫЕ", `${callSheetData.techDirRoleTitle}: ${callSheetData.techDirStr}`, `${callSheetData.stageMgrRoleTitle}: ${callSheetData.stageMgrStr}`, "", "", ""],
+        ["ОТВЕТСТВЕННЫЕ АРТМАСТЕРС", `${callSheetData.techDirRoleTitle}: ${callSheetData.techDirStr}`, `${callSheetData.stageMgrRoleTitle}: ${callSheetData.stageMgrStr}`, "", "", ""],
+        ["ОТВЕТСТВЕННЫЕ ПЛОЩАДКА", `ТД: ${callSheetData.venueTechDirName} (${callSheetData.venueTechDirPhone})`, `Менеджер: ${callSheetData.venueMgrName} (${callSheetData.venueMgrPhone})`, "", "", ""],
         [],
         headers
       ];
