@@ -608,6 +608,7 @@
       </div>
     </div>
 
+    <!-- Область камеры сканера -->
     <div id="reader"></div>
 
     <div class="form-grid">
@@ -766,20 +767,14 @@
               <input type="text" id="cs-address" value="г. Москва, ул. Варварка, д. 6 (КПП №2)">
             </div>
             
-            <!-- Выбор Руководителя Тех. Отдела -->
             <div class="form-group">
               <label>Административно-технический отдел (Тех. Директор)</label>
-              <select id="cs-tech-dir-select" onchange="onTechDirSelect(this.value)">
-                <!-- Динамически заполняется -->
-              </select>
+              <select id="cs-tech-dir-select" onchange="onTechDirSelect(this.value)"></select>
             </div>
 
-            <!-- Выбор Выпускающего / Продюсера -->
             <div class="form-group">
               <label>Выпускающий / Продюсер смены</label>
-              <select id="cs-stage-mgr-select" onchange="onStageMgrSelect(this.value)">
-                <!-- Динамически заполняется -->
-              </select>
+              <select id="cs-stage-mgr-select" onchange="onStageMgrSelect(this.value)"></select>
             </div>
           </div>
         </div>
@@ -1204,7 +1199,6 @@
       { name: "Чурилина Екатерина Владимировна", role: "Руководитель отдела методики и конкурсной документации", phone: "+79031408395" }
     ];
 
-    // ЕДИНАЯ ФУНКЦИЯ ФОРМАТИРОВАНИЯ СТРОКИ ТЕЛЕФОНА ПО МАСКЕ "+7 900 000 00 00"
     function formatPhoneNumberStr(rawPhone) {
       if (!rawPhone) return '';
       const digits = String(rawPhone).replace(/\D/g, '');
@@ -1227,7 +1221,6 @@
     let currentStatusFilter = 'all';
     let currentActItems = [];
 
-    // Получение должности получателя
     function getRecipientRoleTitle(role, participantName) {
       if (role === 'Сотрудник' && participantName) {
         const emp = EMPLOYEES_LIST.find(e => e.name === participantName);
@@ -1236,7 +1229,6 @@
       return role || 'Участник';
     }
 
-    // Вспомогательная функция подзаголовка
     function getActSubtitleText(role, participant, comp) {
       if (role === 'Сотрудник') {
         const emp = EMPLOYEES_LIST.find(e => e.name === participant);
@@ -1428,9 +1420,43 @@
       }
     }
 
+    // --- ОБРАБОТЧИК АВТОМАТИЧЕСКОГО СКАНИРОВАНИЯ С АВТОДОБАВЛЕНИЕМ В СПИСОК ---
     function onScanSuccess(decodedText) {
-      document.getElementById('inv-input').value = decodedText;
-      onInventoryChange(decodedText);
+      const scannedInv = decodedText.trim();
+      document.getElementById('inv-input').value = scannedInv;
+      
+      let equipName = 'Оборудование';
+      if (typeof findEquipment === 'function') {
+        const found = findEquipment(scannedInv);
+        if (found) {
+          equipName = found.name;
+        }
+      }
+
+      if (!equipName || equipName === 'Оборудование') {
+        if (window.EQUIPMENT_DB) {
+          let key = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === scannedInv);
+          if (key && window.EQUIPMENT_DB[key].name) {
+            equipName = window.EQUIPMENT_DB[key].name;
+          }
+        }
+      }
+
+      document.getElementById('equipment-name').value = equipName;
+
+      // Автоматическое добавление в текущий список Акта
+      if (scannedInv && equipName) {
+        if (!currentActItems.some(item => item.inv === scannedInv)) {
+          currentActItems.push({ inv: scannedInv, name: equipName });
+          renderSelectedItems();
+          
+          // Визуальное уведомление и очистка инпута для следующего скана
+          document.getElementById('inv-input').value = '';
+          document.getElementById('equipment-name').value = '';
+        } else {
+          alert(`Позиция с инвентарным номером ${scannedInv} уже добавлена!`);
+        }
+      }
     }
 
     const html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
@@ -1466,7 +1492,6 @@
       renderSelectedItems();
     }
 
-    // РЕНДЕР ТЕКУЩЕГО СПИСКА ОБОРУДОВАНИЯ В АК ТЕ
     function renderSelectedItems() {
       const container = document.getElementById('selected-items-container');
       document.getElementById('items-count').innerText = currentActItems.length;
@@ -1493,7 +1518,6 @@
       });
     }
 
-    // 1. Добавить 1 конкретную позицию из Акта в Вызывной
     function addSingleItemToCallSheet(inv, name) {
       if (callSheetData.equipment.some(e => e.inv === inv)) {
         alert(`Оборудование ${inv} уже есть в Вызывном листе!`);
@@ -1518,7 +1542,6 @@
       alert(`Позиция "${name}" (${inv}) добавлена в Вызывной лист!`);
     }
 
-    // 2. Добавить ВСЕ позиции Акта в Вызывной лист одним кликом
     function importCurrentActItemsToCallSheet() {
       if (currentActItems.length === 0) {
         alert('В текущем Акте нет добавленного оборудования для импорта!');
@@ -1601,7 +1624,12 @@
             <td>${item.name}</td>
             <td>${item.sn || '—'}</td>
             <td><span class="badge-status ${badge}">${rawStatus}</span></td>
-            <td><div style="display:flex;gap:6px;"><button class="select-btn" onclick="selectEquipment('${item.inv}')">Выбрать</button>${returnBtn}</div></td>
+            <td>
+              <div style="display:flex;gap:6px;">
+                <button class="select-btn" onclick="selectEquipment('${item.inv}')">Выбрать</button>
+                ${returnBtn}
+              </div>
+            </td>
           `;
           tbody.appendChild(tr);
         }
@@ -2074,7 +2102,6 @@
       document.getElementById('callSheetModal').style.display = 'none';
     }
 
-    // 1. ТАЙМИНГ СМЕНЫ
     function renderCsMilestones() {
       const container = document.getElementById('cs-milestones-container');
       container.innerHTML = '';
@@ -2100,7 +2127,6 @@
       renderCsMilestones();
     }
 
-    // 2. ВЫЗОВ ПЕРСОНАЛА И КОМАНДЫ
     function renderCsCrew() {
       const container = document.getElementById('cs-crew-container');
       container.innerHTML = '';
@@ -2198,7 +2224,6 @@
       renderCsCrew();
     }
 
-    // 4. ПЕРЕЧЕНЬ ВВОЗИМОГО И ВЫВОЗИМОГО ОБОРУДОВАНИЯ
     function renderCsEquipment() {
       const container = document.getElementById('cs-equipment-container');
       container.innerHTML = '';
@@ -2226,7 +2251,6 @@
       renderCsEquipment();
     }
 
-    // 5. АВТОТРАНСПОРТ
     function renderCsTransport() {
       const container = document.getElementById('cs-transport-container');
       container.innerHTML = '';
@@ -2257,7 +2281,6 @@
       renderCsTransport();
     }
 
-    // ГЕНЕРАЦИЯ ПЕЧАТИ ВЫЗЫВНОГО ЛИСТА
     function printCallSheet() {
       document.getElementById('csp-project-name').innerText = document.getElementById('cs-project-name').value;
       const rawDate = document.getElementById('cs-date').value;
@@ -2273,7 +2296,6 @@
       document.getElementById('csp-stage-mgr').innerText = callSheetData.stageMgrStr;
       document.getElementById('csp-notes').innerText = document.getElementById('cs-notes').value;
 
-      // 1. Тайминг
       const msTbody = document.getElementById('csp-milestones-tbody');
       msTbody.innerHTML = '';
       callSheetData.milestones.forEach(m => {
@@ -2282,7 +2304,6 @@
         msTbody.appendChild(tr);
       });
 
-      // 2. Персонал
       const crewTbody = document.getElementById('csp-crew-tbody');
       crewTbody.innerHTML = '';
       callSheetData.crew.forEach(c => {
@@ -2298,7 +2319,6 @@
         crewTbody.appendChild(tr);
       });
 
-      // 4. Оборудование
       const eqTbody = document.getElementById('csp-equipment-tbody');
       eqTbody.innerHTML = '';
       callSheetData.equipment.forEach((eq, idx) => {
@@ -2313,7 +2333,6 @@
         eqTbody.appendChild(tr);
       });
 
-      // 5. Автотранспорт
       const trTbody = document.getElementById('csp-transport-tbody');
       trTbody.innerHTML = '';
       callSheetData.transport.forEach(trItem => {
