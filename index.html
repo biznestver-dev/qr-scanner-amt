@@ -678,7 +678,7 @@
             <option value="+7">🇷🇺 +7</option>
             <option value="+375">🇧🇾 +375</option>
             <option value="+7_KZ">🇰🇿 +7</option>
-            <option value="+998">🇺ℤ +998</option>
+            <option value="+998">🇺🇿 +998</option>
             <option value="+374">🇦🇲 +374</option>
             <option value="+995">🇬🇪 +995</option>
             <option value="+996">🇰🇬 +996</option>
@@ -761,19 +761,27 @@
               <input type="text" id="cs-address" value="г. Москва, ул. Варварка, д. 6 (КПП №2)">
             </div>
             <div class="form-group">
-              <label>Технический директор</label>
-              <input type="text" id="cs-tech-dir" value="Зломанов Олег Викторович (+7 920 693-10-13)">
+              <label>Административно-технический отдел (Тех. Директор)</label>
+              <select id="cs-tech-dir-select" onchange="onTechDirSelect(this.value)">
+                <option value="Зломанов Олег Викторович">Зломанов Олег Викторович (Административно-технический директор)</option>
+                <option value="Смутный Богдан Сергеевич">Смутный Богдан Сергеевич (Технический менеджер)</option>
+                <option value="Белоусов Алексей Алексеевич">Белоусов Алексей Алексеевич (Системный администратор)</option>
+                <option value="Белоусова Анастасия Константиновна">Белоусова Анастасия Константиновна (Офис-менеджер)</option>
+                <option value="Сидоренко Артем Валерьевич">Сидоренко Артем Валерьевич (Старший технический менеджер)</option>
+              </select>
             </div>
             <div class="form-group">
-              <label>Выпускающий / Постановщик</label>
-              <input type="text" id="cs-stage-mgr" value="Смутный Богдан Сергеевич (+7 960 180-52-90)">
+              <label>Выпускающий / Продюсер смены</label>
+              <select id="cs-stage-mgr-select" onchange="onStageMgrSelect(this.value)">
+                <!-- Заполняется динамически из EMPLOYEES_LIST -->
+              </select>
             </div>
           </div>
         </div>
 
         <div class="cs-section">
           <div class="cs-section-title">
-            <span>Тайминг смены (Milestones)</span>
+            <span>Тайминг смены</span>
             <button class="add-row-btn" onclick="addCsMilestoneRow()">+ Добавить пункт</button>
           </div>
           <div id="cs-milestones-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
@@ -887,14 +895,14 @@
         <td style="text-align: left;" id="csp-tech-dir"></td>
       </tr>
       <tr>
-        <td style="font-weight: bold; background: #f2f2f2; text-align: left;">Постановщик:</td>
+        <td style="font-weight: bold; background: #f2f2f2; text-align: left;">Выпускающий / Продюсер:</td>
         <td style="text-align: left;" id="csp-stage-mgr"></td>
         <td style="font-weight: bold; background: #f2f2f2; text-align: left;">Контакты штаба:</td>
         <td style="text-align: left;">Рация: Канал 1 / Штаб МТБ</td>
       </tr>
     </table>
 
-    <div style="font-weight: bold; font-size: 10pt; margin-bottom: 4px; text-transform: uppercase;">1. Общий тайминг смены (Milestones)</div>
+    <div style="font-weight: bold; font-size: 10pt; margin-bottom: 4px; text-transform: uppercase;">1. Общий тайминг смены</div>
     <table class="act-table" style="margin-bottom: 14px;">
       <thead>
         <tr>
@@ -1842,6 +1850,8 @@
 
     // --- ЛОГИКА ВЫЗЫВНОГО ЛИСТА (CALL SHEET) ---
     let callSheetData = {
+      techDirStr: "Зломанов Олег Викторович (+79206931013)",
+      stageMgrStr: "Жижневская Ксения Владимировна (Шеф-редактор, +79055099087)",
       milestones: [
         { time: '08:00', event: 'Заезд автотранспорта, сбор технической группы' },
         { time: '09:00', event: 'Начало монтажных работ и разворачивание сетей' },
@@ -1856,9 +1866,46 @@
       ]
     };
 
+    function initStageMgrSelect() {
+      const select = document.getElementById('cs-stage-mgr-select');
+      select.innerHTML = '';
+      EMPLOYEES_LIST.forEach(emp => {
+        const option = document.createElement('option');
+        option.value = emp.name;
+        option.innerText = `${emp.name} (${emp.role})`;
+        if (emp.name === "Жижневская Ксения Владимировна") option.selected = true;
+        select.appendChild(option);
+      });
+      onStageMgrSelect(select.value);
+    }
+
+    function onTechDirSelect(val) {
+      const mgrTitles = {
+        "Зломанов Олег Викторович": "+79206931013",
+        "Смутный Богдан Сергеевич": "+79601805290",
+        "Белоусов Алексей Алексеевич": "+79265668913",
+        "Белоусова Анастасия Константиновна": "+79262363012",
+        "Сидоренко Артем Валерьевич": "+79772772750"
+      };
+      const title = MANAGER_TITLES[val] || "Административно-технический отдел";
+      const phone = mgrTitles[val] ? `, ${mgrTitles[val]}` : '';
+      callSheetData.techDirStr = `${val} (${title}${phone})`;
+    }
+
+    function onStageMgrSelect(empName) {
+      const emp = EMPLOYEES_LIST.find(e => e.name === empName);
+      if (emp) {
+        const phoneStr = emp.phone ? `, ${emp.phone}` : '';
+        callSheetData.stageMgrStr = `${emp.name} (${emp.role}${phoneStr})`;
+      } else {
+        callSheetData.stageMgrStr = empName;
+      }
+    }
+
     function openCallSheetModal() {
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('cs-date').value = today;
+      initStageMgrSelect();
       renderCsMilestones();
       renderCsCrew();
       document.getElementById('callSheetModal').style.display = 'flex';
@@ -1932,8 +1979,8 @@
       document.getElementById('csp-date').innerText = formattedDate;
       document.getElementById('csp-shift-num').innerText = document.getElementById('cs-shift-num').value;
       document.getElementById('csp-location-full').innerText = `${document.getElementById('cs-location').value} (${document.getElementById('cs-address').value})`;
-      document.getElementById('csp-tech-dir').innerText = document.getElementById('cs-tech-dir').value;
-      document.getElementById('csp-stage-mgr').innerText = document.getElementById('cs-stage-mgr').value;
+      document.getElementById('csp-tech-dir').innerText = callSheetData.techDirStr;
+      document.getElementById('csp-stage-mgr').innerText = callSheetData.stageMgrStr;
       document.getElementById('csp-notes').innerText = document.getElementById('cs-notes').value;
 
       const msTbody = document.getElementById('csp-milestones-tbody');
