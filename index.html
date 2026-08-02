@@ -182,6 +182,35 @@
       transition: all 0.25s ease;
     }
 
+    /* Интегрированная строка инвентарного номера с кнопкой Базы МТБ */
+    .inv-input-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .db-quick-btn {
+      background: rgba(59, 38, 166, 0.5);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      color: var(--am-cyan);
+      padding: 0 16px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      white-space: nowrap;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .db-quick-btn:hover {
+      background: var(--am-purple);
+      color: #fff;
+      border-color: var(--am-cyan);
+    }
+
     .phone-input-group {
       display: flex;
       gap: 10px;
@@ -598,9 +627,13 @@
     <div id="reader"></div>
 
     <div class="form-grid">
+      <!-- Инвентарный номер с интегрированной кнопкой Базы МТБ -->
       <div class="form-group">
         <label for="inv-input">Инвентарный номер (QR / Штрихкод)</label>
-        <input type="text" id="inv-input" placeholder="Сканируйте или введите..." oninput="onInventoryChange(this.value)">
+        <div class="inv-input-group">
+          <input type="text" id="inv-input" placeholder="Сканируйте или введите..." oninput="onInventoryChange(this.value)">
+          <button class="db-quick-btn" onclick="openDbModal()">📋 База МТБ</button>
+        </div>
       </div>
 
       <div class="form-group">
@@ -707,7 +740,6 @@
       <button class="btn" onclick="generateAndPrintAct()">🖨️ Напечатать Акт</button>
       <button class="btn btn-callsheet" onclick="openCallSheetModal()">📋 Вызывной лист</button>
       <button class="btn btn-callsheet" onclick="openCallSheetHistoryModal()">📜 Архив вызывных</button>
-      <button class="btn" onclick="openDbModal()">📋 База МТБ</button>
       <button class="btn" onclick="openHistoryModal()">📜 История накладных</button>
     </div>
   </div>
