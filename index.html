@@ -585,7 +585,7 @@
           <svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M142.5 450.5C52.5 410.5 25.5 305.5 65.5 215.5C105.5 125.5 210.5 98.5 300.5 138.5C390.5 178.5 486.5 244.5 446.5 334.5C406.5 424.5 232.5 490.5 142.5 450.5Z" fill="#FF0043"/>
             <path d="M178.5 385.5C123.5 360.5 106.5 295.5 131.5 240.5C156.5 185.5 221.5 168.5 276.5 193.5C331.5 218.5 383.5 260.5 358.5 315.5C333.5 370.5 233.5 410.5 178.5 385.5Z" fill="#FFFFFF"/>
-            <path d="M205.5 340.5C185.5 331.5 178.5 307.5 187.5 287.5C196.5 267.5 220.5 260.5 240.5 269.5C260.5 278.5 282.5 292.5 273.5 312.5C264.5 332.5 225.5 349.5 205.5 340.5Z" fill="#3B26A6"/>
+            <path d="M205.5 340.5C185.5 331.5 178.5 307.5 187.5 287.5C196.5 267.5 220.5 260.5 240.5 269.5C264.5 332.5 225.5 349.5 205.5 340.5Z" fill="#3B26A6"/>
           </svg>
         </div>
         <div class="app-title-text">
@@ -755,9 +755,9 @@
               <input type="text" id="cs-address" value="ул. Варварка, д. 6 (КПП №2)">
             </div>
 
-            <!-- Поле Получателя / Категории -->
+            <!-- ПОЛУЧАТЕЛЬ ОТ АРТМАСТЕРС -->
             <div class="form-group">
-              <label>Категория / Роль получателя</label>
+              <label>Категория / Роль получателя (АртМастерс)</label>
               <select id="cs-recipient-role-select" onchange="onCsRecipientRoleChange(this.value)">
                 <option value="Участник">Участник</option>
                 <option value="Сотрудник">Сотрудник</option>
@@ -772,14 +772,26 @@
               </div>
             </div>
             
+            <!-- РУКОВОДСТВО АРТМАСТЕРС С ДИНАМИЧЕСКИМИ ДОЛЖНОСТЯМИ -->
             <div class="form-group">
-              <label>Административно-технический отдел (Тех. Директор)</label>
+              <label id="cs-tech-dir-label">Технический директор (АртМастерс)</label>
               <select id="cs-tech-dir-select" onchange="onTechDirSelect(this.value)"></select>
             </div>
 
             <div class="form-group">
-              <label>Выпускающий / Продюсер смены</label>
+              <label id="cs-stage-mgr-label">Продюсер / Шеф-редактор / Выпускающий</label>
               <select id="cs-stage-mgr-select" onchange="onStageMgrSelect(this.value)"></select>
+            </div>
+
+            <!-- ОТВЕТСТВЕННЫЕ ОТ ПЛОЩАДКИ -->
+            <div class="form-group">
+              <label>От Площадки: Технический директор (ФИО, Телефон)</label>
+              <input type="text" id="cs-venue-tech-dir" placeholder="Петров П.П. / +7 900 000 00 00">
+            </div>
+
+            <div class="form-group">
+              <label>От Площадки: Менеджер / Администратор (ФИО, Телефон)</label>
+              <input type="text" id="cs-venue-mgr" placeholder="Сидоров С.С. / +7 900 000 00 00">
             </div>
           </div>
         </div>
@@ -956,14 +968,20 @@
       <tr>
         <td style="width: 15%; font-weight: bold; background: #f2f2f2; text-align: left;">Город / Локация:</td>
         <td style="text-align: left;" id="csp-location-full"></td>
-        <td style="width: 15%; font-weight: bold; background: #f2f2f2; text-align: left;">Тех. Директор / АТО:</td>
+        <td style="width: 15%; font-weight: bold; background: #f2f2f2; text-align: left;" id="csp-tech-dir-label-print">Тех. Директор (АртМастерс):</td>
         <td style="text-align: left;" id="csp-tech-dir"></td>
       </tr>
       <tr>
         <td style="font-weight: bold; background: #f2f2f2; text-align: left;">Получатель / Роль:</td>
         <td style="text-align: left;" id="csp-recipient-full"></td>
-        <td style="font-weight: bold; background: #f2f2f2; text-align: left;">Выпускающий / Продюсер:</td>
+        <td style="font-weight: bold; background: #f2f2f2; text-align: left;" id="csp-stage-mgr-label-print">Продюсер / Выпускающий:</td>
         <td style="text-align: left;" id="csp-stage-mgr"></td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; background: #f2f2f2; text-align: left;">Контакты Площадки:</td>
+        <td style="text-align: left;" id="csp-venue-contacts"></td>
+        <td style="font-weight: bold; background: #f2f2f2; text-align: left;">Контакты штаба:</td>
+        <td style="text-align: left;">Рация: Канал 1 / Штаб МТБ</td>
       </tr>
     </table>
 
@@ -2037,13 +2055,17 @@
       downloadCSV(`Acts_Registry_${new Date().toISOString().slice(0,10)}.csv`, rows);
     }
 
-    // --- ЛОГИКА ВЫЗЫВНОГО ЛИСТА (CALL SHEET) ---
+    // --- ЛОГИКА ВЫЗЫВНОГО ЛИСТА (CALL SHEET) С ДИНАМИЧЕСКИМИ ДОЛЖНОСТЯМИ ---
     let callSheetData = {
       city: "г. Москва",
       recipientRole: "Участник",
       recipientName: "—",
-      techDirStr: "Зломанов Олег Викторович (Административно-технический директор, +7 920 693 10 13)",
-      stageMgrStr: "Жижневская Ксения Владимировна (Шеф-редактор, +7 905 509 90 87)",
+      techDirRoleTitle: "Технический директор (АртМастерс)",
+      techDirStr: "Зломанов Олег Викторович (+7 920 693 10 13)",
+      stageMgrRoleTitle: "Шеф-редактор",
+      stageMgrStr: "Жижневская Ксения Владимировна (+7 905 509 90 87)",
+      venueTechDir: "",
+      venueMgr: "",
       milestones: [
         { time: '08:00', event: 'Заезд автотранспорта, сбор технической группы' },
         { time: '09:00', event: 'Начало монтажных работ и разворачивание сетей' },
@@ -2151,9 +2173,24 @@
       document.getElementById('csp-date').innerText = cs.date;
       document.getElementById('csp-shift-num').innerText = cs.shiftNum;
       document.getElementById('csp-location-full').innerText = `${cs.city || 'г. Москва'}, ${cs.location} (${cs.address})`;
+      
+      document.getElementById('csp-tech-dir-label-print').innerText = `${cs.techDirRoleTitle || 'Тех. Директор'}:`;
       document.getElementById('csp-tech-dir').innerText = cs.techDirStr;
+      
+      document.getElementById('csp-stage-mgr-label-print').innerText = `${cs.stageMgrRoleTitle || 'Продюсер / Выпускающий'}:`;
       document.getElementById('csp-stage-mgr').innerText = cs.stageMgrStr;
+      
       document.getElementById('csp-recipient-full').innerText = `${cs.recipientRole || 'Участник'}: ${cs.recipientName || '—'}`;
+      
+      let venueContactsStr = '—';
+      if (cs.venueTechDir || cs.venueMgr) {
+        let vArr = [];
+        if (cs.venueTechDir) vArr.push(`ТД: ${cs.venueTechDir}`);
+        if (cs.venueMgr) vArr.push(`Менеджер: ${cs.venueMgr}`);
+        venueContactsStr = vArr.join(' | ');
+      }
+      document.getElementById('csp-venue-contacts').innerText = venueContactsStr;
+
       document.getElementById('csp-notes').innerText = cs.notes;
 
       const msTbody = document.getElementById('csp-milestones-tbody');
@@ -2251,17 +2288,26 @@
 
     function onTechDirSelect(val) {
       const emp = EMPLOYEES_LIST.find(e => e.name === val);
-      const title = MANAGER_TITLES[val] || (emp ? emp.role : "Административно-технический отдел");
+      const title = MANAGER_TITLES[val] || (emp ? emp.role : "Технический директор");
       const phone = emp && emp.phone ? `, ${formatPhoneNumberStr(emp.phone)}` : '';
-      callSheetData.techDirStr = `${val} (${title}${phone})`;
+      callSheetData.techDirRoleTitle = title;
+      callSheetData.techDirStr = `${val}${phone}`;
+      
+      const labelEl = document.getElementById('cs-tech-dir-label');
+      if (labelEl) labelEl.innerText = `${title} (АртМастерс)`;
     }
 
     function onStageMgrSelect(empName) {
       const emp = EMPLOYEES_LIST.find(e => e.name === empName);
       if (emp) {
         const phoneStr = emp.phone ? `, ${formatPhoneNumberStr(emp.phone)}` : '';
-        callSheetData.stageMgrStr = `${emp.name} (${emp.role}${phoneStr})`;
+        callSheetData.stageMgrRoleTitle = emp.role || "Продюсер / Шеф-редактор";
+        callSheetData.stageMgrStr = `${emp.name}${phoneStr}`;
+        
+        const labelEl = document.getElementById('cs-stage-mgr-label');
+        if (labelEl) labelEl.innerText = `${emp.role} (АртМастерс)`;
       } else {
+        callSheetData.stageMgrRoleTitle = "Продюсер / Шеф-редактор";
         callSheetData.stageMgrStr = empName;
       }
     }
@@ -2479,17 +2525,37 @@
       const recNameEl = document.getElementById('cs-recipient-name');
       const recName = recNameEl ? recNameEl.value : '—';
 
+      const venueTechDirVal = document.getElementById('cs-venue-tech-dir').value.trim();
+      const venueMgrVal = document.getElementById('cs-venue-mgr').value.trim();
+
       callSheetData.city = cityVal;
       callSheetData.recipientRole = recRole;
       callSheetData.recipientName = recName;
+      callSheetData.venueTechDir = venueTechDirVal;
+      callSheetData.venueMgr = venueMgrVal;
 
       document.getElementById('csp-project-name').innerText = projName;
       document.getElementById('csp-date').innerText = formattedDate;
       document.getElementById('csp-shift-num').innerText = shiftNum;
       document.getElementById('csp-location-full').innerText = `${cityVal}, ${locationVal} (${addressVal})`;
+      
+      document.getElementById('csp-tech-dir-label-print').innerText = `${callSheetData.techDirRoleTitle || 'Тех. Директор'}:`;
       document.getElementById('csp-tech-dir').innerText = callSheetData.techDirStr;
+      
+      document.getElementById('csp-stage-mgr-label-print').innerText = `${callSheetData.stageMgrRoleTitle || 'Продюсер / Выпускающий'}:`;
       document.getElementById('csp-stage-mgr').innerText = callSheetData.stageMgrStr;
+      
       document.getElementById('csp-recipient-full').innerText = `${recRole}: ${recName}`;
+      
+      let venueContactsStr = '—';
+      if (venueTechDirVal || venueMgrVal) {
+        let vArr = [];
+        if (venueTechDirVal) vArr.push(`ТД: ${venueTechDirVal}`);
+        if (venueMgrVal) vArr.push(`Менеджер: ${venueMgrVal}`);
+        venueContactsStr = vArr.join(' | ');
+      }
+      document.getElementById('csp-venue-contacts').innerText = venueContactsStr;
+
       document.getElementById('csp-notes').innerText = notesVal;
 
       const msTbody = document.getElementById('csp-milestones-tbody');
@@ -2554,8 +2620,12 @@
         address: addressVal,
         recipientRole: recRole,
         recipientName: recName,
+        techDirRoleTitle: callSheetData.techDirRoleTitle,
         techDirStr: callSheetData.techDirStr,
+        stageMgrRoleTitle: callSheetData.stageMgrRoleTitle,
         stageMgrStr: callSheetData.stageMgrStr,
+        venueTechDir: venueTechDirVal,
+        venueMgr: venueMgrVal,
         notes: notesVal,
         milestones: callSheetData.milestones,
         crew: callSheetData.crew,
@@ -2579,6 +2649,7 @@
         ["ГОРОД", document.getElementById('cs-city').value, "", "", "", ""],
         ["ЛОКАЦИЯ", document.getElementById('cs-location').value, "", "", "", ""],
         ["ПОЛУЧАТЕЛЬ", `${document.getElementById('cs-recipient-role-select').value}: ${callSheetData.recipientName}`, "", "", "", ""],
+        ["ОТВЕТСТВЕННЫЕ", `${callSheetData.techDirRoleTitle}: ${callSheetData.techDirStr}`, `${callSheetData.stageMgrRoleTitle}: ${callSheetData.stageMgrStr}`, "", "", ""],
         [],
         headers
       ];
