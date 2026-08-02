@@ -727,11 +727,11 @@
     </div>
   </div>
 
-  <!-- Модальное окно Вызывного Листа (Call Sheet) -->
+  <!-- Модальное окно Вызывного Листа -->
   <div id="callSheetModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>Конструктор Вызывного Листа (Call Sheet)</h3>
+        <h3>КОНСТРУКТОР ВЫЗЫВНОГО ЛИСТА</h3>
         <div class="modal-actions">
           <button class="export-btn" onclick="exportCallSheetToCSV()">📊 Экспорт CSV</button>
           <button class="close-btn" onclick="closeCallSheetModal()">&times;</button>
@@ -743,10 +743,6 @@
         <div class="cs-section">
           <div class="cs-section-title">
             <span>Основная информация о смене</span>
-            <div style="display: flex; gap: 8px;">
-              <button class="add-row-btn" onclick="addTechDirToMainBlock()" style="background: rgba(59, 38, 166, 0.4); color: #fff;">+ Из Тех. отдела</button>
-              <button class="add-row-btn" onclick="addEmployeeToMainBlock()">+ Из Сотрудников</button>
-            </div>
           </div>
           <div class="form-grid">
             <div class="form-group">
@@ -799,7 +795,11 @@
         <div class="cs-section">
           <div class="cs-section-title">
             <span>Вызов персонала и команды</span>
-            <button class="add-row-btn" onclick="addCsCrewRow()">+ Добавить сотрудника</button>
+            <div style="display: flex; gap: 8px;">
+              <button class="add-row-btn" onclick="addCsCrewMemberFromAto()" style="background: rgba(59, 38, 166, 0.4); color: #fff;">+ Из Тех. отдела</button>
+              <button class="add-row-btn" onclick="addCsCrewMemberFromEmployees()">+ Из Сотрудников</button>
+              <button class="add-row-btn" onclick="addCsCrewRow()">+ Вручную</button>
+            </div>
           </div>
           <div id="cs-crew-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
@@ -1624,7 +1624,7 @@
           <td>1</td>
           <td>${act.date}</td>
           <td>${act.returnDate}</td>
-          <td style="text-align: left;">${act.comment}</td>
+          <td style="text-align: left;">${comment}</td>
         `;
         printTbody.appendChild(tr);
       });
@@ -1911,18 +1911,6 @@
       onStageMgrSelect(select.value);
     }
 
-    // Кнопка "+ Из Тех. отдела" для первого блока
-    function addTechDirToMainBlock() {
-      const select = document.getElementById('cs-tech-dir-select');
-      select.focus();
-    }
-
-    // Кнопка "+ Из Сотрудников" для первого блока
-    function addEmployeeToMainBlock() {
-      const select = document.getElementById('cs-stage-mgr-select');
-      select.focus();
-    }
-
     function onTechDirSelect(val) {
       const emp = EMPLOYEES_LIST.find(e => e.name === val);
       const title = MANAGER_TITLES[val] || (emp ? emp.role : "Административно-технический отдел");
@@ -1995,6 +1983,35 @@
         `;
         container.appendChild(div);
       });
+    }
+
+    // Добавление сотрудника АТО в список смены
+    function addCsCrewMemberFromAto() {
+      const name = "Зломанов Олег Викторович";
+      const emp = EMPLOYEES_LIST.find(e => e.name === name);
+      const role = MANAGER_TITLES[name] || "Административно-технический отдел";
+      
+      callSheetData.crew.push({
+        time: '08:00',
+        dept: 'Тех. отдел',
+        name: `${name} (${role})`,
+        phone: emp && emp.phone ? emp.phone : '',
+        task: 'Координация застройки и оборудования'
+      });
+      renderCsCrew();
+    }
+
+    // Добавление произвольного сотрудника АНО в список смены
+    function addCsCrewMemberFromEmployees() {
+      const emp = EMPLOYEES_LIST[0];
+      callSheetData.crew.push({
+        time: '09:00',
+        dept: emp.role,
+        name: emp.name,
+        phone: emp.phone || '',
+        task: ''
+      });
+      renderCsCrew();
     }
 
     function addCsCrewRow() {
