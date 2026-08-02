@@ -585,7 +585,7 @@
           <svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M142.5 450.5C52.5 410.5 25.5 305.5 65.5 215.5C105.5 125.5 210.5 98.5 300.5 138.5C390.5 178.5 486.5 244.5 446.5 334.5C406.5 424.5 232.5 490.5 142.5 450.5Z" fill="#FF0043"/>
             <path d="M178.5 385.5C123.5 360.5 106.5 295.5 131.5 240.5C156.5 185.5 221.5 168.5 276.5 193.5C331.5 218.5 383.5 260.5 358.5 315.5C333.5 370.5 233.5 410.5 178.5 385.5Z" fill="#FFFFFF"/>
-            <path d="M205.5 340.5C185.5 331.5 178.5 307.5 187.5 287.5C196.5 267.5 220.5 260.5 240.5 269.5C264.5 332.5 225.5 349.5 205.5 340.5Z" fill="#3B26A6"/>
+            <path d="M205.5 340.5C185.5 331.5 178.5 307.5 187.5 287.5C196.5 267.5 220.5 260.5 240.5 269.5C260.5 278.5 282.5 292.5 273.5 312.5C264.5 332.5 225.5 349.5 205.5 340.5Z" fill="#3B26A6"/>
           </svg>
         </div>
         <div class="app-title-text">
@@ -755,21 +755,15 @@
               <input type="text" id="cs-address" value="ул. Варварка, д. 6 (КПП №2)">
             </div>
 
-            <!-- ПОЛУЧАТЕЛЬ ОТ АРТМАСТЕРС -->
+            <!-- МЕНЕДЖЕР КОМПЕТЕНЦИИ (ФИО и Телефон) -->
             <div class="form-group">
-              <label>Категория / Роль получателя (АртМастерс)</label>
-              <select id="cs-recipient-role-select" onchange="onCsRecipientRoleChange(this.value)">
-                <option value="Участник">Участник</option>
-                <option value="Сотрудник">Сотрудник</option>
-                <option value="Менеджер компетенции">Менеджер компетенции</option>
-              </select>
+              <label>Менеджер компетенции (ФИО)</label>
+              <input type="text" id="cs-comp-mgr-name" placeholder="Введите ФИО менеджера компетенции...">
             </div>
 
             <div class="form-group">
-              <label for="cs-recipient-name" id="cs-recipient-label">Получатель (ФИО)</label>
-              <div id="cs-recipient-container">
-                <input type="text" id="cs-recipient-name" placeholder="Введите ФИО получателя...">
-              </div>
+              <label>Телефон менеджера компетенции</label>
+              <input type="text" id="cs-comp-mgr-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)">
             </div>
             
             <!-- РУКОВОДСТВО АРТМАСТЕРС С ДИНАМИЧЕСКИМИ ДОЛЖНОСТЯМИ -->
@@ -874,7 +868,7 @@
               <th>Дата</th>
               <th>Город</th>
               <th>Локация</th>
-              <th>Получатель</th>
+              <th>Менеджер компетенции</th>
               <th>Действия</th>
             </tr>
           </thead>
@@ -972,8 +966,8 @@
         <td style="text-align: left;" id="csp-tech-dir"></td>
       </tr>
       <tr>
-        <td style="font-weight: bold; background: #f2f2f2; text-align: left;">Получатель / Роль:</td>
-        <td style="text-align: left;" id="csp-recipient-full"></td>
+        <td style="font-weight: bold; background: #f2f2f2; text-align: left;">Менеджер компетенции:</td>
+        <td style="text-align: left;" id="csp-comp-mgr-full"></td>
         <td style="font-weight: bold; background: #f2f2f2; text-align: left;" id="csp-stage-mgr-label-print">Продюсер / Выпускающий:</td>
         <td style="text-align: left;" id="csp-stage-mgr"></td>
       </tr>
@@ -2055,11 +2049,11 @@
       downloadCSV(`Acts_Registry_${new Date().toISOString().slice(0,10)}.csv`, rows);
     }
 
-    // --- ЛОГИКА ВЫЗЫВНОГО ЛИСТА (CALL SHEET) С ДИНАМИЧЕСКИМИ ДОЛЖНОСТЯМИ ---
+    // --- ЛОГИКА ВЫЗЫВНОГО ЛИСТА (CALL SHEET) ---
     let callSheetData = {
       city: "г. Москва",
-      recipientRole: "Участник",
-      recipientName: "—",
+      compMgrName: "—",
+      compMgrPhone: "—",
       techDirRoleTitle: "Технический директор (АртМастерс)",
       techDirStr: "Зломанов Олег Викторович (+7 920 693 10 13)",
       stageMgrRoleTitle: "Шеф-редактор",
@@ -2086,24 +2080,6 @@
         { model: 'Газель NEXT', plate: 'А 123 АА 777', driver: 'Иванов Алексей', phone: '+7 999 111 22 33', task: 'Доставка звукового оборудования' }
       ]
     };
-
-    function onCsRecipientRoleChange(role) {
-      callSheetData.recipientRole = role;
-      document.getElementById('cs-recipient-label').innerText = `Получатель ФИО (${role})`;
-      const container = document.getElementById('cs-recipient-container');
-
-      if (role === 'Сотрудник') {
-        let selectHtml = `<select id="cs-recipient-name" onchange="callSheetData.recipientName = this.value">
-          <option value="">-- Выберите сотрудника --</option>`;
-        EMPLOYEES_LIST.forEach(emp => {
-          selectHtml += `<option value="${emp.name}">${emp.name} — ${emp.role}</option>`;
-        });
-        selectHtml += `</select>`;
-        container.innerHTML = selectHtml;
-      } else {
-        container.innerHTML = `<input type="text" id="cs-recipient-name" placeholder="Введите ФИО (${role.toLowerCase()})..." onchange="callSheetData.recipientName = this.value">`;
-      }
-    }
 
     function getCallSheetHistory() {
       return JSON.parse(localStorage.getItem('artmasters_callsheet_history') || '[]');
@@ -2144,7 +2120,7 @@
       }
 
       h.forEach(cs => {
-        const searchStr = `${cs.projectName} ${cs.date} ${cs.city || ''} ${cs.location} ${cs.recipientName || ''}`.toLowerCase();
+        const searchStr = `${cs.projectName} ${cs.date} ${cs.city || ''} ${cs.location} ${cs.compMgrName || ''}`.toLowerCase();
         if (!filter || searchStr.includes(filter)) {
           const tr = document.createElement('tr');
           tr.innerHTML = `
@@ -2152,7 +2128,7 @@
             <td>${cs.date}</td>
             <td>${cs.city || 'г. Москва'}</td>
             <td>${cs.location}</td>
-            <td>${cs.recipientRole || '—'}: ${cs.recipientName || '—'}</td>
+            <td>${cs.compMgrName || '—'} (${cs.compMgrPhone || '—'})</td>
             <td>
               <div style="display:flex;gap:6px;">
                 <button class="select-btn" onclick="reprintCallSheet('${cs.id}')">🖨️ Печать</button>
@@ -2180,7 +2156,9 @@
       document.getElementById('csp-stage-mgr-label-print').innerText = `${cs.stageMgrRoleTitle || 'Продюсер / Выпускающий'}:`;
       document.getElementById('csp-stage-mgr').innerText = cs.stageMgrStr;
       
-      document.getElementById('csp-recipient-full').innerText = `${cs.recipientRole || 'Участник'}: ${cs.recipientName || '—'}`;
+      const phoneFormatted = formatPhoneNumberStr(cs.compMgrPhone);
+      const phoneStr = phoneFormatted ? ` (${phoneFormatted})` : '';
+      document.getElementById('csp-comp-mgr-full').innerText = `${cs.compMgrName || '—'}${phoneStr}`;
       
       let venueContactsStr = '—';
       if (cs.venueTechDir || cs.venueMgr) {
@@ -2521,16 +2499,15 @@
       const addressVal = document.getElementById('cs-address').value;
       const notesVal = document.getElementById('cs-notes').value;
 
-      const recRole = document.getElementById('cs-recipient-role-select').value;
-      const recNameEl = document.getElementById('cs-recipient-name');
-      const recName = recNameEl ? recNameEl.value : '—';
+      const compMgrNameVal = document.getElementById('cs-comp-mgr-name').value.trim();
+      const compMgrPhoneVal = document.getElementById('cs-comp-mgr-phone').value.trim();
 
       const venueTechDirVal = document.getElementById('cs-venue-tech-dir').value.trim();
       const venueMgrVal = document.getElementById('cs-venue-mgr').value.trim();
 
       callSheetData.city = cityVal;
-      callSheetData.recipientRole = recRole;
-      callSheetData.recipientName = recName;
+      callSheetData.compMgrName = compMgrNameVal;
+      callSheetData.compMgrPhone = compMgrPhoneVal;
       callSheetData.venueTechDir = venueTechDirVal;
       callSheetData.venueMgr = venueMgrVal;
 
@@ -2545,7 +2522,9 @@
       document.getElementById('csp-stage-mgr-label-print').innerText = `${callSheetData.stageMgrRoleTitle || 'Продюсер / Выпускающий'}:`;
       document.getElementById('csp-stage-mgr').innerText = callSheetData.stageMgrStr;
       
-      document.getElementById('csp-recipient-full').innerText = `${recRole}: ${recName}`;
+      const phoneFormatted = formatPhoneNumberStr(compMgrPhoneVal);
+      const phoneStr = phoneFormatted ? ` (${phoneFormatted})` : '';
+      document.getElementById('csp-comp-mgr-full').innerText = `${compMgrNameVal || '—'}${phoneStr}`;
       
       let venueContactsStr = '—';
       if (venueTechDirVal || venueMgrVal) {
@@ -2618,8 +2597,8 @@
         city: cityVal,
         location: locationVal,
         address: addressVal,
-        recipientRole: recRole,
-        recipientName: recName,
+        compMgrName: compMgrNameVal,
+        compMgrPhone: compMgrPhoneVal,
         techDirRoleTitle: callSheetData.techDirRoleTitle,
         techDirStr: callSheetData.techDirStr,
         stageMgrRoleTitle: callSheetData.stageMgrRoleTitle,
@@ -2648,7 +2627,7 @@
         ["ДАТА", document.getElementById('cs-date').value, "", "", "", ""],
         ["ГОРОД", document.getElementById('cs-city').value, "", "", "", ""],
         ["ЛОКАЦИЯ", document.getElementById('cs-location').value, "", "", "", ""],
-        ["ПОЛУЧАТЕЛЬ", `${document.getElementById('cs-recipient-role-select').value}: ${callSheetData.recipientName}`, "", "", "", ""],
+        ["МЕНЕДЖЕР КОМПЕТЕНЦИИ", `${callSheetData.compMgrName} (${callSheetData.compMgrPhone})`, "", "", "", ""],
         ["ОТВЕТСТВЕННЫЕ", `${callSheetData.techDirRoleTitle}: ${callSheetData.techDirStr}`, `${callSheetData.stageMgrRoleTitle}: ${callSheetData.stageMgrStr}`, "", "", ""],
         [],
         headers
