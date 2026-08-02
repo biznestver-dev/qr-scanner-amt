@@ -182,7 +182,7 @@
       transition: all 0.25s ease;
     }
 
-    /* Интегрированная строка инвентарного номера с кнопкой Базы МТБ */
+    /* Интегрированная строка инвентарного номера с динамической кнопкой */
     .inv-input-group {
       display: flex;
       gap: 10px;
@@ -209,6 +209,29 @@
       background: var(--am-purple);
       color: #fff;
       border-color: var(--am-cyan);
+    }
+
+    .add-quick-btn {
+      background: var(--accent-gradient);
+      border: none;
+      color: #fff;
+      padding: 0 18px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      white-space: nowrap;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 15px var(--accent-glow);
+    }
+
+    .add-quick-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px var(--accent-glow);
     }
 
     .phone-input-group {
@@ -627,12 +650,14 @@
     <div id="reader"></div>
 
     <div class="form-grid">
-      <!-- Инвентарный номер с интегрированной кнопкой Базы МТБ -->
+      <!-- Инвентарный номер с динамической кнопкой -->
       <div class="form-group">
         <label for="inv-input">Инвентарный номер (QR / Штрихкод)</label>
         <div class="inv-input-group">
           <input type="text" id="inv-input" placeholder="Сканируйте или введите..." oninput="onInventoryChange(this.value)">
-          <button class="db-quick-btn" onclick="openDbModal()">📋 База МТБ</button>
+          <div id="inv-action-btn-container">
+            <button class="db-quick-btn" onclick="openDbModal()">📋 База МТБ</button>
+          </div>
         </div>
       </div>
 
@@ -1506,7 +1531,20 @@
       return el ? el.value.trim() : '';
     }
 
+    // ДИНАМИЧЕСКОЕ ОБНОВЛЕНИЕ КНОПКИ РЯДОМ С ИНВ. НОМЕРОМ
+    function updateInvActionButton() {
+      const invVal = document.getElementById('inv-input').value.trim();
+      const btnContainer = document.getElementById('inv-action-btn-container');
+      
+      if (invVal.length > 0) {
+        btnContainer.innerHTML = `<button class="add-quick-btn" onclick="addItemToCurrentAct()">+ Добавить</button>`;
+      } else {
+        btnContainer.innerHTML = `<button class="db-quick-btn" onclick="openDbModal()">📋 База МТБ</button>`;
+      }
+    }
+
     function onInventoryChange(invVal) {
+      updateInvActionButton();
       if (typeof findEquipment === 'function') {
         const found = findEquipment(invVal);
         if (found) document.getElementById('equipment-name').value = found.name;
@@ -1516,6 +1554,7 @@
     function onScanSuccess(decodedText) {
       const scannedInv = decodedText.trim();
       document.getElementById('inv-input').value = scannedInv;
+      updateInvActionButton();
       
       let equipName = 'Оборудование';
       if (typeof findEquipment === 'function') {
@@ -1536,6 +1575,7 @@
 
       document.getElementById('equipment-name').value = equipName;
 
+      // Автоматическое добавление в текущий список Акта
       if (scannedInv && equipName) {
         if (!currentActItems.some(item => item.inv === scannedInv)) {
           currentActItems.push({ inv: scannedInv, name: equipName });
@@ -1543,6 +1583,7 @@
           
           document.getElementById('inv-input').value = '';
           document.getElementById('equipment-name').value = '';
+          updateInvActionButton();
         } else {
           alert(`Позиция с инвентарным номером ${scannedInv} уже добавлена!`);
         }
@@ -1573,6 +1614,7 @@
       
       document.getElementById('inv-input').value = '';
       document.getElementById('equipment-name').value = '';
+      updateInvActionButton();
       
       renderSelectedItems();
     }
@@ -1880,6 +1922,7 @@
     function resetForm() {
       document.getElementById('inv-input').value = '';
       document.getElementById('equipment-name').value = '';
+      updateInvActionButton();
       
       const pName = document.getElementById('participant-name');
       if (pName) pName.value = '';
