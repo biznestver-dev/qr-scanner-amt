@@ -739,8 +739,15 @@
       </div>
       
       <div class="table-wrapper" style="padding: 10px;">
+        <!-- БЛОК 1: Основная информация о смене + Ответственные лица -->
         <div class="cs-section">
-          <div class="cs-section-title">Основная информация о смене</div>
+          <div class="cs-section-title">
+            <span>Основная информация о смене</span>
+            <div style="display: flex; gap: 8px;">
+              <button class="add-row-btn" onclick="addTechDirToMainBlock()" style="background: rgba(59, 38, 166, 0.4); color: #fff;">+ Из Тех. отдела</button>
+              <button class="add-row-btn" onclick="addEmployeeToMainBlock()">+ Из Сотрудников</button>
+            </div>
+          </div>
           <div class="form-grid">
             <div class="form-group">
               <label>Название проекта / Мероприятия</label>
@@ -763,15 +770,15 @@
               <input type="text" id="cs-address" value="г. Москва, ул. Варварка, д. 6 (КПП №2)">
             </div>
             
-            <!-- Поле выбора технического руководителя АТО -->
+            <!-- Динамический выбор Руководителя Тех. Отдела -->
             <div class="form-group">
               <label>Административно-технический отдел (Тех. Директор)</label>
               <select id="cs-tech-dir-select" onchange="onTechDirSelect(this.value)">
-                <!-- Динамически заполняется с отображением должности -->
+                <!-- Динамически заполняется -->
               </select>
             </div>
 
-            <!-- Поле выбора выпускающего / продюсера -->
+            <!-- Динамический выбор Выпускающего / Продюсера -->
             <div class="form-group">
               <label>Выпускающий / Продюсер смены</label>
               <select id="cs-stage-mgr-select" onchange="onStageMgrSelect(this.value)">
@@ -792,11 +799,7 @@
         <div class="cs-section">
           <div class="cs-section-title">
             <span>Вызов персонала и команды</span>
-            <div style="display: flex; gap: 8px;">
-              <button class="add-row-btn" onclick="addCsCrewMemberFromAto()" style="background: rgba(59, 38, 166, 0.4); color: #fff;">+ Из Тех. отдела</button>
-              <button class="add-row-btn" onclick="addCsCrewMemberFromEmployees()">+ Из Сотрудников</button>
-              <button class="add-row-btn" onclick="addCsCrewRow()">+ Вручную</button>
-            </div>
+            <button class="add-row-btn" onclick="addCsCrewRow()">+ Добавить сотрудника</button>
           </div>
           <div id="cs-crew-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
@@ -1908,6 +1911,18 @@
       onStageMgrSelect(select.value);
     }
 
+    // Кнопка "+ Из Тех. отдела" для первого блока
+    function addTechDirToMainBlock() {
+      const select = document.getElementById('cs-tech-dir-select');
+      select.focus();
+    }
+
+    // Кнопка "+ Из Сотрудников" для первого блока
+    function addEmployeeToMainBlock() {
+      const select = document.getElementById('cs-stage-mgr-select');
+      select.focus();
+    }
+
     function onTechDirSelect(val) {
       const emp = EMPLOYEES_LIST.find(e => e.name === val);
       const title = MANAGER_TITLES[val] || (emp ? emp.role : "Административно-технический отдел");
@@ -1980,43 +1995,6 @@
         `;
         container.appendChild(div);
       });
-    }
-
-    // Быстрое добавление представителя АТО
-    function addCsCrewMemberFromAto() {
-      const atoList = [
-        "Зломанов Олег Викторович",
-        "Смутный Богдан Сергеевич",
-        "Белоусов Алексей Алексеевич",
-        "Белоусова Анастасия Константиновна",
-        "Сидоренко Артем Валерьевич"
-      ];
-      
-      const name = atoList[0];
-      const emp = EMPLOYEES_LIST.find(e => e.name === name);
-      const role = MANAGER_TITLES[name] || "Административно-технический отдел";
-      
-      callSheetData.crew.push({
-        time: '08:00',
-        dept: 'Тех. отдел',
-        name: `${name} (${role})`,
-        phone: emp && emp.phone ? emp.phone : '',
-        task: 'Координация застройки и оборудования'
-      });
-      renderCsCrew();
-    }
-
-    // Быстрое добавление любого сотрудника АНО «АртМастерс»
-    function addCsCrewMemberFromEmployees() {
-      const emp = EMPLOYEES_LIST[0];
-      callSheetData.crew.push({
-        time: '09:00',
-        dept: emp.role,
-        name: emp.name,
-        phone: emp.phone || '',
-        task: ''
-      });
-      renderCsCrew();
     }
 
     function addCsCrewRow() {
