@@ -1263,7 +1263,7 @@
       if (val.trim().startsWith('@') || /[a-zA-Z]/.test(val)) return;
 
       const digits = val.replace(/\D/g, '');
-      const codeSel = document.getElementById('country-code-select').value;
+      const codeSel = document.getElementById('country-code-select') ? document.getElementById('country-code-select').value : '+7';
       
       if (!digits) {
         input.value = '';
@@ -1624,7 +1624,7 @@
           <td>1</td>
           <td>${act.date}</td>
           <td>${act.returnDate}</td>
-          <td style="text-align: left;">${comment}</td>
+          <td style="text-align: left;">${act.comment}</td>
         `;
         printTbody.appendChild(tr);
       });
@@ -1869,9 +1869,9 @@
         { time: '21:00', event: 'Завершение работ, передача площадки охране' }
       ],
       crew: [
-        { time: '08:00', dept: 'Звук', name: 'Иванов Иван', phone: '+7 900 000-00-01', task: 'Монтаж FOH, размотка мультикора' },
-        { time: '08:30', dept: 'Свет', name: 'Петров Петр', phone: '+7 900 000-00-02', task: 'Развеска приборов, юстировка' },
-        { time: '09:00', dept: 'Видео', name: 'Сидоров Сергей', phone: '+7 900 000-00-03', task: 'Сетап LED-экрана, пультовая' }
+        { type: 'manual', time: '08:00', dept: 'Звук', name: 'Иванов Иван', phone: '+7 900 000 00 01', task: 'Монтаж FOH, размотка мультикора' },
+        { type: 'manual', time: '08:30', dept: 'Свет', name: 'Петров Петр', phone: '+7 900 000 00 02', task: 'Развеска приборов, юстировка' },
+        { type: 'manual', time: '09:00', dept: 'Видео', name: 'Сидоров Сергей', phone: '+7 900 000 00 03', task: 'Сетап LED-экрана, пультовая' }
       ]
     };
 
@@ -1967,44 +1967,78 @@
       renderCsMilestones();
     }
 
+    // РЕНДЕР ТАБЛИЦЫ ПЕРСОНАЛА И КОМАНДЫ
     function renderCsCrew() {
       const container = document.getElementById('cs-crew-container');
       container.innerHTML = '';
       callSheetData.crew.forEach((c, idx) => {
         const div = document.createElement('div');
         div.style.cssText = 'display:flex; gap:10px; align-items:center; flex-wrap:wrap;';
+
+        let nameFieldHtml = '';
+        if (c.type === 'ato') {
+          const atoList = ["Зломанов Олег Викторович", "Смутный Богдан Сергеевич", "Белоусов Алексей Алексеевич", "Белоусова Анастасия Константиновна", "Сидоренко Артем Валерьевич"];
+          let opts = atoList.map(n => `<option value="${n}" ${n === c.name ? 'selected' : ''}>${n}</option>`).join('');
+          nameFieldHtml = `<select style="width: 210px;" onchange="onCsCrewAtoChange(${idx}, this.value)">${opts}</select>`;
+        } else if (c.type === 'emp') {
+          let opts = EMPLOYEES_LIST.map(e => `<option value="${e.name}" ${e.name === c.name ? 'selected' : ''}>${e.name}</option>`).join('');
+          nameFieldHtml = `<select style="width: 210px;" onchange="onCsCrewEmpChange(${idx}, this.value)">${opts}</select>`;
+        } else {
+          nameFieldHtml = `<input type="text" value="${c.name}" style="width: 190px;" placeholder="ФИО сотрудника" onchange="callSheetData.crew[${idx}].name = this.value">`;
+        }
+
         div.innerHTML = `
-          <input type="text" value="${c.time}" style="width: 90px; font-family: 'JetBrains Mono';" onchange="callSheetData.crew[${idx}].time = this.value">
+          <input type="text" value="${c.time}" style="width: 85px; font-family: 'JetBrains Mono';" onchange="callSheetData.crew[${idx}].time = this.value">
           <input type="text" value="${c.dept}" style="width: 140px;" placeholder="Департамент/Роль" onchange="callSheetData.crew[${idx}].dept = this.value">
-          <input type="text" value="${c.name}" style="width: 190px;" placeholder="ФИО сотрудника" onchange="callSheetData.crew[${idx}].name = this.value">
-          <input type="text" value="${c.phone}" style="width: 150px;" placeholder="Телефон" onchange="callSheetData.crew[${idx}].phone = this.value">
-          <input type="text" value="${c.task}" style="flex: 1; min-width: 200px;" placeholder="Задача на смене" onchange="callSheetData.crew[${idx}].task = this.value">
+          ${nameFieldHtml}
+          <input type="text" value="${c.phone}" style="width: 160px;" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this); callSheetData.crew[${idx}].phone = this.value">
+          <input type="text" value="${c.task}" style="flex: 1; min-width: 180px;" placeholder="Задача на смене" onchange="callSheetData.crew[${idx}].task = this.value">
           <button class="delete-btn" onclick="removeCsCrew(${idx})">✕</button>
         `;
         container.appendChild(div);
       });
     }
 
-    // Добавление сотрудника АТО в список смены
+    function onCsCrewAtoChange(idx, val) {
+      const emp = EMPLOYEES_LIST.find(e => e.name === val);
+      callSheetData.crew[idx].name = val;
+      callSheetData.crew[idx].dept = MANAGER_TITLES[val] || "Тех. отдел";
+      callSheetData.crew[idx].phone = emp && emp.phone ? emp.phone : '';
+      renderCsCrew();
+    }
+
+    function onCsCrewEmpChange(idx, val) {
+      const emp = EMPLOYEES_LIST.find(e => e.name === val);
+      if (emp) {
+        callSheetData.crew[idx].name = emp.name;
+        callSheetData.crew[idx].dept = emp.role;
+        callSheetData.crew[idx].phone = emp.phone || '';
+      }
+      renderCsCrew();
+    }
+
+    // 1. Добавление сотрудника Тех. отдела
     function addCsCrewMemberFromAto() {
-      const name = "Зломанов Олег Викторович";
+      const atoList = ["Зломанов Олег Викторович", "Смутный Богдан Сергеевич", "Белоусов Алексей Алексеевич", "Белоусова Анастасия Константиновна", "Сидоренко Артем Валерьевич"];
+      const name = atoList[0];
       const emp = EMPLOYEES_LIST.find(e => e.name === name);
-      const role = MANAGER_TITLES[name] || "Административно-технический отдел";
       
       callSheetData.crew.push({
+        type: 'ato',
         time: '08:00',
-        dept: 'Тех. отдел',
-        name: `${name} (${role})`,
+        dept: MANAGER_TITLES[name] || 'Тех. отдел',
+        name: name,
         phone: emp && emp.phone ? emp.phone : '',
-        task: 'Координация застройки и оборудования'
+        task: 'Координация площадки'
       });
       renderCsCrew();
     }
 
-    // Добавление произвольного сотрудника АНО в список смены
+    // 2. Добавление любого Сотрудника АНО
     function addCsCrewMemberFromEmployees() {
       const emp = EMPLOYEES_LIST[0];
       callSheetData.crew.push({
+        type: 'emp',
         time: '09:00',
         dept: emp.role,
         name: emp.name,
@@ -2014,8 +2048,16 @@
       renderCsCrew();
     }
 
+    // 3. Ручное добавление с автоформатом телефона +7 900 000 00 00
     function addCsCrewRow() {
-      callSheetData.crew.push({ time: '09:00', dept: 'Департамент', name: '', phone: '', task: '' });
+      callSheetData.crew.push({ 
+        type: 'manual', 
+        time: '09:00', 
+        dept: 'Департамент', 
+        name: '', 
+        phone: '', 
+        task: '' 
+      });
       renderCsCrew();
     }
 
