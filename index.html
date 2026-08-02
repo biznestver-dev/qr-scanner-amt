@@ -506,6 +506,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
     #act-print-area, #callsheet-print-area { display: none; }
@@ -760,20 +762,20 @@
               <label>Точный адрес / КПП / Маршрут</label>
               <input type="text" id="cs-address" value="г. Москва, ул. Варварка, д. 6 (КПП №2)">
             </div>
+            
+            <!-- Поле выбора технического руководителя АТО -->
             <div class="form-group">
               <label>Административно-технический отдел (Тех. Директор)</label>
               <select id="cs-tech-dir-select" onchange="onTechDirSelect(this.value)">
-                <option value="Зломанов Олег Викторович">Зломанов Олег Викторович (Административно-технический директор)</option>
-                <option value="Смутный Богдан Сергеевич">Смутный Богдан Сергеевич (Технический менеджер)</option>
-                <option value="Белоусов Алексей Алексеевич">Белоусов Алексей Алексеевич (Системный администратор)</option>
-                <option value="Белоусова Анастасия Константиновна">Белоусова Анастасия Константиновна (Офис-менеджер)</option>
-                <option value="Сидоренко Артем Валерьевич">Сидоренко Артем Валерьевич (Старший технический менеджер)</option>
+                <!-- Динамически заполняется с отображением должности -->
               </select>
             </div>
+
+            <!-- Поле выбора выпускающего / продюсера -->
             <div class="form-group">
               <label>Выпускающий / Продюсер смены</label>
               <select id="cs-stage-mgr-select" onchange="onStageMgrSelect(this.value)">
-                <!-- Заполняется динамически из EMPLOYEES_LIST -->
+                <!-- Динамически заполняется из EMPLOYEES_LIST -->
               </select>
             </div>
           </div>
@@ -790,7 +792,11 @@
         <div class="cs-section">
           <div class="cs-section-title">
             <span>Вызов персонала и команды</span>
-            <button class="add-row-btn" onclick="addCsCrewRow()">+ Добавить сотрудника</button>
+            <div style="display: flex; gap: 8px;">
+              <button class="add-row-btn" onclick="addCsCrewMemberFromAto()" style="background: rgba(59, 38, 166, 0.4); color: #fff;">+ Из Тех. отдела</button>
+              <button class="add-row-btn" onclick="addCsCrewMemberFromEmployees()">+ Из Сотрудников</button>
+              <button class="add-row-btn" onclick="addCsCrewRow()">+ Вручную</button>
+            </div>
           </div>
           <div id="cs-crew-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
@@ -891,7 +897,7 @@
       <tr>
         <td style="width: 15%; font-weight: bold; background: #f2f2f2; text-align: left;">Локация / Адрес:</td>
         <td style="text-align: left;" id="csp-location-full"></td>
-        <td style="width: 15%; font-weight: bold; background: #f2f2f2; text-align: left;">Тех. Директор:</td>
+        <td style="width: 15%; font-weight: bold; background: #f2f2f2; text-align: left;">Тех. Директор / АТО:</td>
         <td style="text-align: left;" id="csp-tech-dir"></td>
       </tr>
       <tr>
@@ -1850,7 +1856,7 @@
 
     // --- ЛОГИКА ВЫЗЫВНОГО ЛИСТА (CALL SHEET) ---
     let callSheetData = {
-      techDirStr: "Зломанов Олег Викторович (+79206931013)",
+      techDirStr: "Зломанов Олег Викторович (Административно-технический директор, +79206931013)",
       stageMgrStr: "Жижневская Ксения Владимировна (Шеф-редактор, +79055099087)",
       milestones: [
         { time: '08:00', event: 'Заезд автотранспорта, сбор технической группы' },
@@ -1866,13 +1872,36 @@
       ]
     };
 
+    function initTechDirSelect() {
+      const select = document.getElementById('cs-tech-dir-select');
+      select.innerHTML = '';
+      const atoList = [
+        "Зломанов Олег Викторович",
+        "Смутный Богдан Сергеевич",
+        "Белоусов Алексей Алексеевич",
+        "Белоусова Анастасия Константиновна",
+        "Сидоренко Артем Валерьевич"
+      ];
+      
+      atoList.forEach(name => {
+        const emp = EMPLOYEES_LIST.find(e => e.name === name);
+        const role = MANAGER_TITLES[name] || (emp ? emp.role : "Административно-технический отдел");
+        const option = document.createElement('option');
+        option.value = name;
+        option.innerText = `${name} — ${role}`;
+        if (name === "Зломанов Олег Викторович") option.selected = true;
+        select.appendChild(option);
+      });
+      onTechDirSelect(select.value);
+    }
+
     function initStageMgrSelect() {
       const select = document.getElementById('cs-stage-mgr-select');
       select.innerHTML = '';
       EMPLOYEES_LIST.forEach(emp => {
         const option = document.createElement('option');
         option.value = emp.name;
-        option.innerText = `${emp.name} (${emp.role})`;
+        option.innerText = `${emp.name} — ${emp.role}`;
         if (emp.name === "Жижневская Ксения Владимировна") option.selected = true;
         select.appendChild(option);
       });
@@ -1880,15 +1909,9 @@
     }
 
     function onTechDirSelect(val) {
-      const mgrTitles = {
-        "Зломанов Олег Викторович": "+79206931013",
-        "Смутный Богдан Сергеевич": "+79601805290",
-        "Белоусов Алексей Алексеевич": "+79265668913",
-        "Белоусова Анастасия Константиновна": "+79262363012",
-        "Сидоренко Артем Валерьевич": "+79772772750"
-      };
-      const title = MANAGER_TITLES[val] || "Административно-технический отдел";
-      const phone = mgrTitles[val] ? `, ${mgrTitles[val]}` : '';
+      const emp = EMPLOYEES_LIST.find(e => e.name === val);
+      const title = MANAGER_TITLES[val] || (emp ? emp.role : "Административно-технический отдел");
+      const phone = emp && emp.phone ? `, ${emp.phone}` : '';
       callSheetData.techDirStr = `${val} (${title}${phone})`;
     }
 
@@ -1905,6 +1928,7 @@
     function openCallSheetModal() {
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('cs-date').value = today;
+      initTechDirSelect();
       initStageMgrSelect();
       renderCsMilestones();
       renderCsCrew();
@@ -1948,14 +1972,51 @@
         div.style.cssText = 'display:flex; gap:10px; align-items:center; flex-wrap:wrap;';
         div.innerHTML = `
           <input type="text" value="${c.time}" style="width: 90px; font-family: 'JetBrains Mono';" onchange="callSheetData.crew[${idx}].time = this.value">
-          <input type="text" value="${c.dept}" style="width: 130px;" placeholder="Департамент" onchange="callSheetData.crew[${idx}].dept = this.value">
-          <input type="text" value="${c.name}" style="width: 180px;" placeholder="ФИО" onchange="callSheetData.crew[${idx}].name = this.value">
+          <input type="text" value="${c.dept}" style="width: 140px;" placeholder="Департамент/Роль" onchange="callSheetData.crew[${idx}].dept = this.value">
+          <input type="text" value="${c.name}" style="width: 190px;" placeholder="ФИО сотрудника" onchange="callSheetData.crew[${idx}].name = this.value">
           <input type="text" value="${c.phone}" style="width: 150px;" placeholder="Телефон" onchange="callSheetData.crew[${idx}].phone = this.value">
-          <input type="text" value="${c.task}" style="flex: 1; min-width: 200px;" placeholder="Задача" onchange="callSheetData.crew[${idx}].task = this.value">
+          <input type="text" value="${c.task}" style="flex: 1; min-width: 200px;" placeholder="Задача на смене" onchange="callSheetData.crew[${idx}].task = this.value">
           <button class="delete-btn" onclick="removeCsCrew(${idx})">✕</button>
         `;
         container.appendChild(div);
       });
+    }
+
+    // Быстрое добавление представителя АТО
+    function addCsCrewMemberFromAto() {
+      const atoList = [
+        "Зломанов Олег Викторович",
+        "Смутный Богдан Сергеевич",
+        "Белоусов Алексей Алексеевич",
+        "Белоусова Анастасия Константиновна",
+        "Сидоренко Артем Валерьевич"
+      ];
+      
+      const name = atoList[0];
+      const emp = EMPLOYEES_LIST.find(e => e.name === name);
+      const role = MANAGER_TITLES[name] || "Административно-технический отдел";
+      
+      callSheetData.crew.push({
+        time: '08:00',
+        dept: 'Тех. отдел',
+        name: `${name} (${role})`,
+        phone: emp && emp.phone ? emp.phone : '',
+        task: 'Координация застройки и оборудования'
+      });
+      renderCsCrew();
+    }
+
+    // Быстрое добавление любого сотрудника АНО «АртМастерс»
+    function addCsCrewMemberFromEmployees() {
+      const emp = EMPLOYEES_LIST[0];
+      callSheetData.crew.push({
+        time: '09:00',
+        dept: emp.role,
+        name: emp.name,
+        phone: emp.phone || '',
+        task: ''
+      });
+      renderCsCrew();
     }
 
     function addCsCrewRow() {
