@@ -762,7 +762,7 @@
             <option value="+992">🇹🇯 +993</option>
             <option value="other">🌐 Другой</option>
           </select>
-          <input type="text" id="contact-input" placeholder="900 000 00 00 или @username..." oninput="formatPhoneNumber(this)">
+          <input type="text" id="contact-input" placeholder="900 000 00 00 or @username..." oninput="formatPhoneNumber(this)">
         </div>
       </div>
 
@@ -791,6 +791,7 @@
 
     <div class="btn-group">
       <button class="btn" onclick="addItemToCurrentAct()"><span style="font-weight: 800;">+</span> Добавить в акт</button>
+      <button class="btn" onclick="downloadActWord()" style="background: rgba(0, 180, 216, 0.2); border-color: rgba(0, 180, 216, 0.4); color: #00f0ff;"><span style="font-weight: 800;">📥</span> Скачать акт Word</button>
       <button class="btn" onclick="generateAndPrintAct()">🖨️ Напечатать Акт</button>
       <button class="btn btn-callsheet" onclick="openCallSheetModal()">📋 Вызывной лист</button>
       <button class="btn btn-callsheet" onclick="openCallSheetHistoryModal()">📜 Архив вызывных</button>
@@ -1561,7 +1562,6 @@
       return el ? el.value.trim() : '';
     }
 
-    // ДИНАМИЧЕСКОЕ ОБНОВЛЕНИЕ КНОПКИ РЯДОМ С ИНВ. НОМЕРОМ
     function updateInvActionButton() {
       const invVal = document.getElementById('inv-input').value.trim();
       const btnContainer = document.getElementById('inv-action-btn-container');
@@ -2093,6 +2093,215 @@
       document.getElementById('act-print-area').classList.add('active-print');
 
       window.print();
+
+      currentActItems = [];
+      renderSelectedItems();
+      resetForm();
+    }
+
+    function downloadActWord() {
+      const currentInv = document.getElementById('inv-input').value.trim();
+      const currentName = document.getElementById('equipment-name').value.trim();
+      
+      if (currentInv && currentName && !currentActItems.some(i => i.inv === currentInv)) {
+        currentActItems.push({ inv: currentInv, name: currentName });
+      }
+
+      if (currentActItems.length === 0) {
+        alert('Добавьте хотя бы одну позицию оборудования для скачивания Акта!');
+        return;
+      }
+
+      const today = new Date().toLocaleDateString('ru-RU');
+      const todayFormatted = getFormattedDate();
+      const underlineDateStrIssue = getUnderlineDateStr(today);
+
+      const comp = document.getElementById('competence-select').value;
+      const manager = document.getElementById('manager-select').value;
+      const role = document.getElementById('recipient-role-select').value;
+      const participant = getParticipantValue() || '—';
+      const contact = getFullContactValue();
+      const comment = document.getElementById('comment-input').value || '—';
+
+      const noReturnChecked = document.getElementById('no-return-date-checkbox').checked;
+      const rawDate = document.getElementById('return-date-input').value;
+      let returnDate = '—';
+      if (!noReturnChecked && rawDate) {
+        const p = rawDate.split('-');
+        returnDate = `${p[2]}.${p[1]}.${p[0]}`;
+      }
+
+      const underlineDateStrReturn = getUnderlineDateStr(returnDate);
+      const managerTitleStr = getManagerTitle(manager);
+      const managerTitleOut = `Выдал ${managerTitleStr.toLowerCase()}`;
+      const managerTitleIn = `Принял ${managerTitleStr.toLowerCase()}`;
+      const recipientTitle = getRecipientRoleTitle(role, participant);
+      const sigText = participant !== '—' ? participant : '__________________________';
+
+      const h = getActsHistory();
+      const actNum = `2026-${String(h.length + 1).padStart(3, '0')}`;
+
+      if (window.EQUIPMENT_DB) {
+        currentActItems.forEach(item => {
+          let key = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === item.inv);
+          if (key) {
+            const cInfo = contact !== '—' ? ` (${contact})` : '';
+            window.EQUIPMENT_DB[key].status = `На площадке (${participant !== '—' ? participant : 'Занят'}${cInfo})`;
+          }
+        });
+        saveDbToLocalStorage();
+      }
+
+      let subtitleHtml = role === 'Сотрудник' ? `Выдано сотруднику Артмастерс: <b>${recipientTitle} — ${participant}</b>` : (role === 'Менеджер компетенции' ? `Менеджер компетенции — <b>${comp}</b>` : `Участник компетенции — <b>${comp}</b>`);
+
+      let safetyHtml = '';
+      if (role === 'Сотрудник') {
+        const emp = EMPLOYEES_LIST.find(e => e.name === participant);
+        const empRoleStr = emp && emp.role ? `${emp.role} АНО «Артмастерс»` : 'Сотрудник АНО «Артмастерс»';
+        safetyHtml = `
+          <br clear="all" style="page-break-before:always;" />
+          <div style="font-size: 10pt; line-height: 1.3;">
+            <h3 style="text-align: center; font-size: 11pt; font-weight: bold; margin-bottom: 10px;">ПРАВИЛА ТЕХНИКИ БЕЗОПАСНОСТИ ПРИ РАБОТЕ С КОМПЬЮТЕРНОЙ ТЕХНИКОЙ</h3>
+            <p><b>Организация:</b> АНО «АртМастерс»<br><b>Дата введения:</b> ${todayFormatted}<br><b>Ответственный:</b> Технический директор - Зломанов Олег Викторович</p>
+            <h4 style="font-size: 10pt; font-weight: bold; margin-top: 10px; margin-bottom: 4px;">1. Общие положения</h4>
+            <p>1.1. Правила обязательны для всех сотрудников офиса, стажёров, подрядчиков и иных лиц, использующих компьютерную технику.</p>
+            <p>1.2. Цель правил — предотвратить повреждение техники и исключить риск поражения электрическим током.</p>
+            <h4 style="font-size: 10pt; font-weight: bold; margin-top: 10px; margin-bottom: 4px;">2. Работа с техникой</h4>
+            <p>2.1. Не допускайте попадания жидкостей на технику, не работайте мокрыми руками.</p>
+            <p>2.2. Не вскрывайте корпуса устройств и не производите самостоятельный ремонт.</p>
+            <h4 style="font-size: 10pt; font-weight: bold; margin-top: 10px; margin-bottom: 4px;">3. Завершение работы</h4>
+            <p>3.1. Корректно завершите все программы, выключите периферию и сетевой фильтр.</p>
+            <br>
+            <table style="width: 100%; border: none; margin-top: 20px;">
+              <tr>
+                <td style="width: 50%; border: none; font-size: 9pt;">
+                  <b>Инструктаж провел:</b><br>Технический директор АНО «Артмастерс»<br>Зломанов Олег Викторович<br><br>______________________ / ${underlineDateStrIssue}
+                </td>
+                <td style="width: 50%; border: none; font-size: 9pt;">
+                  <b>С правилами ознакомлен(а):</b><br>${empRoleStr}<br>${participant !== '—' ? participant : '__________________________'}<br><br>______________________ / ${underlineDateStrIssue}
+                </td>
+              </tr>
+            </table>
+          </div>
+        `;
+      }
+
+      let htmlContent = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+          <meta charset="utf-8">
+          <title>Акт № ${actNum}</title>
+          <style>
+            @page Section1 {
+              size: 841.7pt 595.3pt;
+              mso-page-orientation: landscape;
+              margin: 36pt 36pt 36pt 36pt;
+            }
+            div.Section1 { page: Section1; }
+            body { font-family: 'Arial', sans-serif; font-size: 9pt; color: #000; line-height: 1.2; }
+            h2 { text-align: center; font-size: 13pt; text-transform: uppercase; margin: 0 0 5px 0; }
+            .sub { text-align: center; font-size: 10.5pt; margin-bottom: 15px; }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 10px; mso-yfti-tbllook: 1184; }
+            th, td { border: 1px solid #000; padding: 4px 6px; font-size: 8.5pt; text-align: center; vertical-align: middle; }
+            th { background-color: #f2f2f2; font-weight: bold; }
+            .rules { font-size: 8pt; line-height: 1.25; margin-bottom: 12px; }
+            .rules ul { margin: 3px 0 0 16px; padding: 0; }
+            .sig-line { margin-top: 10px; font-size: 9pt; }
+            .sig-grid { width: 100%; border-collapse: collapse; margin-top: 10px; border: none; }
+            .sig-grid td { border: none; width: 50%; font-size: 9pt; padding: 5px 0; text-align: left; vertical-align: top; }
+          </style>
+        </head>
+        <body>
+          <div class="Section1">
+            <h2>АНО «АртМастерс»</h2>
+            <div style="text-align: center; font-size: 11pt; font-weight: bold; margin-bottom: 4px;">Акт приема-передачи оборудования № ${actNum}</div>
+            <div class="sub">${subtitleHtml}</div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 4%;">№</th>
+                  <th style="width: 30%;">Наименование</th>
+                  <th style="width: 14%;">Инвентарный номер</th>
+                  <th style="width: 18%;">${role} ФИО</th>
+                  <th style="width: 15%;">Телефон / Telegram / MAX</th>
+                  <th style="width: 5%;">Кол-во</th>
+                  <th style="width: 9%;">Дата выдачи</th>
+                  <th style="width: 9%;">Дата возврата</th>
+                  <th style="width: 16%;">Комментарии</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${currentActItems.map((item, idx) => `
+                  <tr>
+                    <td>${idx + 1}</td>
+                    <td style="text-align: left;">${item.name}</td>
+                    <td>${item.inv}</td>
+                    <td>${participant}</td>
+                    <td>${contact}</td>
+                    <td>1</td>
+                    <td>${today}</td>
+                    <td>${returnDate}</td>
+                    <td style="text-align: left;">${comment}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+
+            <div class="rules">
+              <b>Просим обратить внимание:</b>
+              <ul>
+                <li>На технику, чёрный диск и упаковку не допускается наклеивать какие‑либо стикеры, бирки, надписи или иные маркировочные материалы.</li>
+                <li>В случае необходимости идентификации содержимого диска/накопителя следует создать отдельную папку с фамилией ответственного сотрудника.</li>
+                <li>Перед переносом информации диски должны быть отформатированы в exFAT.</li>
+                <li>Оборудование и диски сдаются с полностью отснятым/рабочим материалом — ничего не удаляется.</li>
+              </ul>
+            </div>
+
+            <div class="sig-line">
+              С правилами выдачи ознакомлен (а), ${role.toLowerCase()}: <b>${sigText}</b> ______________________ (подпись) / ${underlineDateStrIssue}
+            </div>
+
+            <table class="sig-grid">
+              <tr>
+                <td>${managerTitleOut}: <b>${manager}</b><br>______________________ (подпись) / ${underlineDateStrIssue}</td>
+                <td>${managerTitleIn}: <b>${manager}</b><br>______________________ (подпись) / ${underlineDateStrReturn}</td>
+              </tr>
+              <tr>
+                <td><br>Получил (а) ${recipientTitle}: <b>${sigText}</b><br>______________________ (подпись) / ${underlineDateStrIssue}</td>
+                <td><br>Сдал (а) ${recipientTitle}: <b>${sigText}</b><br>______________________ (подпись) / ${underlineDateStrReturn}</td>
+              </tr>
+            </table>
+
+            ${safetyHtml}
+          </div>
+        </body>
+        </html>
+      `;
+
+      saveActToHistory({ 
+        num: actNum, 
+        date: today, 
+        dateIntro: todayFormatted,
+        returnDate: returnDate, 
+        items: currentActItems,
+        comp: comp, 
+        manager: manager, 
+        role: role, 
+        participant: participant, 
+        contact: contact, 
+        comment: comment 
+      });
+
+      const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Act_${actNum.replace(/[^а-яА-Яa-zA-Z0-9]/g, '_')}_${today.replace(/\./g, '-')}.doc`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
 
       currentActItems = [];
       renderSelectedItems();
