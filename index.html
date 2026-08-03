@@ -182,11 +182,13 @@
       transition: all 0.25s ease;
     }
 
+    /* Интегрированная строка инвентарного номера с динамической кнопкой */
     .inv-input-group {
       display: flex;
       gap: 10px;
     }
 
+    /* Единый фиксированный размер для обеих кнопок */
     .db-quick-btn, .add-quick-btn {
       height: 52px;
       min-width: 140px;
@@ -549,76 +551,73 @@
     #act-print-area, #callsheet-print-area { display: none; }
 
     @media print {
-      @page { size: A4 landscape !important; margin: 5mm 6mm !important; }
+      @page { 
+        size: A4 landscape !important; 
+        margin: 3mm 4mm !important; 
+      }
       html, body {
         width: 100% !important;
+        height: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
         background: #fff !important;
         color: #000 !important;
         font-family: Arial, sans-serif !important;
-        zoom: 82% !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
       }
       .container, .modal, #reader, .form-group, .btn-group, .app-header { display: none !important; }
       
       #act-print-area.active-print { display: block !important; width: 100% !important; color: #000 !important; }
-      #callsheet-print-area.active-print { display: block !important; width: 100% !important; color: #000 !important; }
+      #callsheet-print-area.active-print { 
+        display: block !important; 
+        width: 100% !important; 
+        color: #000 !important; 
+        font-size: 7.5pt !important; 
+      }
+
+      .cs-print-header { border-bottom: 2px solid #000; padding-bottom: 3px; margin-bottom: 6px; }
+      .cs-print-title { font-size: 12pt; font-weight: bold; text-transform: uppercase; }
+
+      table.act-table { width: 100% !important; border-collapse: collapse !important; margin-bottom: 5px !important; }
+      table.act-table th, table.act-table td { border: 1px solid #000 !important; padding: 2px 4px !important; font-size: 7.5pt !important; text-align: center; }
+      table.act-table th { background-color: #f2f2f2 !important; font-weight: bold; }
+      
+      #callsheet-print-area div[style*="font-weight: bold"] {
+        font-size: 8pt !important;
+        margin-top: 4px !important;
+        margin-bottom: 2px !important;
+      }
+
+      #csp-notes {
+        padding: 4px 6px !important;
+        font-size: 7.5pt !important;
+        margin-bottom: 6px !important;
+      }
+
+      #callsheet-print-area * {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
 
       .act-header { text-align: center; font-weight: bold; font-size: 12pt; margin-bottom: 10px; }
       .act-header .subtitle { font-size: 10.5pt; margin-top: 3px; }
-      table.act-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-      table.act-table th, table.act-table td { border: 1px solid #000; padding: 4px 6px; font-size: 8.5pt; text-align: center; }
-      table.act-table th { background-color: #f2f2f2; font-weight: bold; }
-      
       .rules-block { border: none !important; padding: 4px 0; font-size: 7.5pt; line-height: 1.25; margin-bottom: 8px; }
       .rules-block ul { margin: 3px 0 0 16px; padding: 0; }
-      
       .signature-line { margin-top: 8px; font-size: 8.5pt; }
       .signatures-grid { width: 100%; margin-top: 8px; border-collapse: collapse; }
       .signatures-grid td { width: 50%; font-size: 8.5pt; padding: 3px 0; }
-
       .page-break { page-break-before: always; }
       .safety-rules-wrapper { display: none; }
       .safety-rules-wrapper.active { display: block !important; }
-
-      .safety-rules-block {
-        font-size: 7.2pt;
-        line-height: 1.2;
-        margin-top: 5px;
-      }
-      .safety-rules-block h3 {
-        text-align: center;
-        font-size: 9pt;
-        font-weight: bold;
-        margin-bottom: 4px;
-      }
-      .safety-rules-block .meta {
-        margin-bottom: 4px;
-        font-size: 7.5pt;
-      }
-      .safety-rules-block h4 {
-        font-size: 7.5pt;
-        font-weight: bold;
-        margin-top: 4px;
-        margin-bottom: 2px;
-      }
+      .safety-rules-block { font-size: 7.2pt; line-height: 1.2; margin-top: 5px; }
+      .safety-rules-block h3 { text-align: center; font-size: 9pt; font-weight: bold; margin-bottom: 4px; }
+      .safety-rules-block .meta { margin-bottom: 4px; font-size: 7.5pt; }
+      .safety-rules-block h4 { font-size: 7.5pt; font-weight: bold; margin-top: 4px; margin-bottom: 2px; }
       .safety-rules-block p { margin-bottom: 2px; }
       .safety-rules-block ul { margin: 2px 0 3px 16px; padding: 0; }
-      
-      .safety-signatures-table {
-        width: 100%;
-        margin-top: 8px;
-        border-collapse: collapse;
-      }
-      .safety-signatures-table td {
-        width: 50%;
-        font-size: 7.5pt;
-        vertical-align: top;
-        padding-right: 10px;
-      }
-
-      .cs-print-header { border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 10px; }
-      .cs-print-title { font-size: 14pt; font-weight: bold; text-transform: uppercase; }
+      .safety-signatures-table { width: 100%; margin-top: 8px; border-collapse: collapse; }
+      .safety-signatures-table td { width: 50%; font-size: 7.5pt; vertical-align: top; padding-right: 10px; }
     }
   </style>
 </head>
@@ -775,6 +774,7 @@
       </div>
       
       <div class="table-wrapper" style="padding: 10px;">
+        <!-- БЛОК 1: Основная информация о смене -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>Основная информация о смене</span>
@@ -805,6 +805,7 @@
               <input type="text" id="cs-address" value="ул. Варварка, д. 6 (КПП №2)">
             </div>
 
+            <!-- МЕНЕДЖЕР КОМПЕТЕНЦИИ -->
             <div class="form-group">
               <label>Менеджер компетенции (ФИО)</label>
               <input type="text" id="cs-comp-mgr-name" placeholder="Введите ФИО менеджера компетенции...">
@@ -815,6 +816,7 @@
               <input type="text" id="cs-comp-mgr-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)">
             </div>
             
+            <!-- РУКОВОДСТВО АРТМАСТЕРС -->
             <div class="form-group">
               <label id="cs-tech-dir-label">Технический директор (АртМастерс)</label>
               <select id="cs-tech-dir-select" onchange="onTechDirSelect(this.value)"></select>
@@ -825,6 +827,7 @@
               <select id="cs-stage-mgr-select" onchange="onStageMgrSelect(this.value)"></select>
             </div>
 
+            <!-- ОТВЕТСТВЕННЫЕ ОТ ПЛОЩАДКИ (РАЗДЕЛЬНО) -->
             <div class="form-group">
               <label>От Площадки: Технический директор (ФИО)</label>
               <input type="text" id="cs-venue-tech-dir-name" placeholder="Петров П.П.">
@@ -847,6 +850,7 @@
           </div>
         </div>
 
+        <!-- БЛОК 2: Тайминг смены -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>1. Тайминг смены</span>
@@ -855,6 +859,7 @@
           <div id="cs-milestones-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
 
+        <!-- БЛОК 3: Вызов персонала -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>2. Вызов персонала и команды</span>
@@ -867,6 +872,7 @@
           <div id="cs-crew-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
 
+        <!-- БЛОК 4: Примечания -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>3. Важные примечания и Дресс-код</span>
@@ -874,6 +880,7 @@
           <textarea id="cs-notes" rows="2">Форма одежды: Total Black. На площадке обязательно наличие защитной обуви на застройке.</textarea>
         </div>
 
+        <!-- БЛОК 5: Перечень оборудования -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>4. Перечень ввозимого и вывозимого оборудования</span>
@@ -885,6 +892,7 @@
           <div id="cs-equipment-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
 
+        <!-- БЛОК 6: Автотранспорт -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>5. Автотранспорт</span>
@@ -894,8 +902,9 @@
         </div>
       </div>
 
-      <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 18px;">
-        <button class="btn" onclick="printCallSheet()" style="background: var(--accent-gradient); min-width: 240px;">🖨️ Распечатать / Сохранить PDF</button>
+      <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 18px; flex-wrap: wrap;">
+        <button class="btn" onclick="downloadCallSheetWord()" style="background: rgba(0, 180, 216, 0.2); border-color: rgba(0, 180, 216, 0.4); color: #00f0ff; min-width: 200px;">📥 Скачать Word (.doc)</button>
+        <button class="btn" onclick="printCallSheet()" style="background: var(--accent-gradient); min-width: 220px;">🖨️ Распечатать / Сохранить PDF</button>
       </div>
     </div>
   </div>
@@ -1010,6 +1019,7 @@
       </div>
     </div>
 
+    <!-- ТАБЛИЦА ШАПКИ СТРОГО С РАЗДЕЛЬНЫМИ СТРОКАМИ И СТОЛБЦАМИ -->
     <table class="act-table" style="margin-bottom: 12px;">
       <tr>
         <td style="width: 16%; font-weight: bold; background: #f2f2f2; text-align: left;">Город:</td>
@@ -1515,6 +1525,7 @@
       return el ? el.value.trim() : '';
     }
 
+    // ДИНАМИЧЕСКОЕ ОБНОВЛЕНИЕ КНОПКИ РЯДОМ С ИНВ. НОМЕРОМ
     function updateInvActionButton() {
       const invVal = document.getElementById('inv-input').value.trim();
       const btnContainer = document.getElementById('inv-action-btn-container');
@@ -2206,9 +2217,8 @@
             <td>${cs.location}</td>
             <td>${cs.compMgrName || '—'} (${cs.compMgrPhone || '—'})</td>
             <td>
-              <div style="display:flex;gap:6px; flex-wrap: wrap;">
+              <div style="display:flex;gap:6px;">
                 <button class="select-btn" onclick="reprintCallSheet('${cs.id}')">🖨️ Печать</button>
-                <button class="export-btn" onclick="exportCallSheetToWord('${cs.id}')" style="background: #2b579a;">📥 Word</button>
                 <button class="delete-btn" onclick="deleteCallSheetFromHistory('${cs.id}')">🗑️ Удалить</button>
               </div>
             </td>
@@ -2216,140 +2226,6 @@
           tbody.appendChild(tr);
         }
       });
-    }
-
-    function exportCallSheetToWord(csId) {
-      const cs = getCallSheetHistory().find(c => c.id === csId);
-      if (!cs) return;
-
-      let htmlContent = `
-        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
-        <head>
-          <meta charset="utf-8">
-          <title>Call Sheet - ${cs.projectName}</title>
-          <style>
-            body { font-family: 'Arial', sans-serif; font-size: 11pt; color: #000; line-height: 1.3; }
-            h1 { font-size: 14pt; text-transform: uppercase; margin-bottom: 5px; }
-            h3 { font-size: 12pt; text-transform: uppercase; margin-top: 15px; margin-bottom: 5px; border-bottom: 1px solid #000; padding-bottom: 3px; }
-            table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-            th, td { border: 1px solid #000; padding: 5px 8px; font-size: 10pt; text-align: left; vertical-align: top; }
-            th { background-color: #f2f2f2; font-weight: bold; text-align: center; }
-            .meta-table td { border: 1px solid #000; padding: 5px 8px; }
-            .meta-label { font-weight: bold; background-color: #f2f2f2; width: 25%; }
-          </style>
-        </head>
-        <body>
-          <div style="text-align: right; font-size: 9pt; font-weight: bold; color: #555;">CALL SHEET / ВЫЗЫВНОЙ ЛИСТ</div>
-          <h1>${cs.projectName}</h1>
-          <div style="font-size: 10pt; margin-bottom: 15px;">
-            <b>Дата:</b> ${cs.date} | <b>Статус:</b> ${cs.shiftNum}
-          </div>
-
-          <table class="meta-table">
-            <tr>
-              <td class="meta-label">Город:</td>
-              <td>${cs.city || 'г. Москва'}</td>
-              <td class="meta-label">${cs.techDirRoleTitle || 'Тех. Директор'}:</td>
-              <td>${cs.techDirStr}</td>
-            </tr>
-            <tr>
-              <td class="meta-label">Локация / Павильон:</td>
-              <td>${cs.location || '—'}</td>
-              <td class="meta-label">${cs.stageMgrRoleTitle || 'Продюсер'}:</td>
-              <td>${cs.stageMgrStr}</td>
-            </tr>
-            <tr>
-              <td class="meta-label">Точный адрес:</td>
-              <td>${cs.address || '—'}</td>
-              <td class="meta-label">От Площадки (ТД):</td>
-              <td>${cs.venueTechDirName ? cs.venueTechDirName + (cs.venueTechDirPhone ? ' / ' + formatPhoneNumberStr(cs.venueTechDirPhone) : '') : '—'}</td>
-            </tr>
-            <tr>
-              <td class="meta-label">Менеджер компетенции:</td>
-              <td>${cs.compMgrName || '—'} ${cs.compMgrPhone ? '(' + formatPhoneNumberStr(cs.compMgrPhone) + ')' : ''}</td>
-              <td class="meta-label">От Площадки (Менеджер):</td>
-              <td>${cs.venueMgrName ? cs.venueMgrName + (cs.venueMgrPhone ? ' / ' + formatPhoneNumberStr(cs.venueMgrPhone) : '') : '—'}</td>
-            </tr>
-          </table>
-
-          <h3>1. Общий тайминг смены</h3>
-          <table>
-            <thead>
-              <tr>
-                <th style="width: 20%;">Время</th>
-                <th>Событие / Этап работ</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${cs.milestones.map(m => `<tr><td style="text-align:center; font-weight:bold;">${m.time}</td><td>${m.event}</td></tr>`).join('')}
-            </tbody>
-          </table>
-
-          <h3>2. Вызов персонала и департаментов</h3>
-          <table>
-            <thead>
-              <tr>
-                <th style="width: 15%;">Время</th>
-                <th style="width: 25%;">Должность / Департамент</th>
-                <th style="width: 25%;">ФИО</th>
-                <th style="width: 20%;">Телефон</th>
-                <th>Задача</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${cs.crew.map(c => `<tr><td style="text-align:center; font-weight:bold; color:#b91c1c;">${c.time}</td><td><b>${c.dept}</b></td><td>${c.name}</td><td>${formatPhoneNumberStr(c.phone)}</td><td>${c.task}</td></tr>`).join('')}
-            </tbody>
-          </table>
-
-          <h3>3. Важные примечания и регламент</h3>
-          <div style="border: 1px solid #000; padding: 8px; font-size: 10pt; margin-bottom: 10px;">
-            ${cs.notes ? cs.notes.replace(/\n/g, '<br>') : '—'}
-          </div>
-
-          <h3>4. Перечень ввозимого и вывозимого оборудования</h3>
-          <table>
-            <thead>
-              <tr>
-                <th style="width: 5%;">№</th>
-                <th style="width: 45%;">Наименование / Модель</th>
-                <th style="width: 20%;">Инвентарный №</th>
-                <th style="width: 20%;">Серийный №</th>
-                <th style="width: 10%;">Кол-во</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${cs.equipment.map((eq, idx) => `<tr><td style="text-align:center;">${idx + 1}</td><td><b>${eq.name}</b></td><td style="text-align:center;">${eq.inv || '—'}</td><td style="text-align:center;">${eq.sn || '—'}</td><td style="text-align:center;">${eq.count || '1'}</td></tr>`).join('')}
-            </tbody>
-          </table>
-
-          <h3>5. Автотранспорт</h3>
-          <table>
-            <thead>
-              <tr>
-                <th style="width: 20%;">Марка / Модель</th>
-                <th style="width: 15%;">Гос. номер</th>
-                <th style="width: 25%;">Водитель (ФИО)</th>
-                <th style="width: 20%;">Телефон</th>
-                <th>Цель / Задача</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${cs.transport.map(t => `<tr><td><b>${t.model}</b></td><td style="text-align:center; font-weight:bold;">${t.plate}</td><td>${t.driver}</td><td>${formatPhoneNumberStr(t.phone)}</td><td>${t.task}</td></tr>`).join('')}
-            </tbody>
-          </table>
-        </body>
-        </html>
-      `;
-
-      const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `CallSheet_${cs.projectName.replace(/\s+/g, '_')}_${cs.date.replace(/\./g, '-')}.doc`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
     }
 
     function reprintCallSheet(csId) {
@@ -2834,6 +2710,170 @@
 
       closeCallSheetModal();
       window.print();
+    }
+
+    function downloadCallSheetWord() {
+      const projName = document.getElementById('cs-project-name').value;
+      const rawDate = document.getElementById('cs-date').value;
+      let formattedDate = rawDate;
+      if (rawDate) {
+        const p = rawDate.split('-');
+        formattedDate = `${p[2]}.${p[1]}.${p[0]}`;
+      }
+      const shiftNum = document.getElementById('cs-shift-num').value;
+      const cityVal = document.getElementById('cs-city').value;
+      const locationVal = document.getElementById('cs-location').value;
+      const addressVal = document.getElementById('cs-address').value;
+      const notesVal = document.getElementById('cs-notes').value;
+
+      const compMgrNameVal = document.getElementById('cs-comp-mgr-name').value.trim();
+      const compMgrPhoneVal = document.getElementById('cs-comp-mgr-phone').value.trim();
+      const phoneFormatted = formatPhoneNumberStr(compMgrPhoneVal);
+      const compMgrFull = `${compMgrNameVal || '—'}${phoneFormatted ? ' (' + phoneFormatted + ')' : ''}`;
+
+      const venueTDName = document.getElementById('cs-venue-tech-dir-name').value.trim();
+      const venueTDPhone = formatPhoneNumberStr(document.getElementById('cs-venue-tech-dir-phone').value.trim());
+      const venueTDStr = venueTDName ? `${venueTDName}${venueTDPhone ? ' / ' + venueTDPhone : ''}` : '—';
+
+      const venueMgrName = document.getElementById('cs-venue-mgr-name').value.trim();
+      const venueMgrPhone = formatPhoneNumberStr(document.getElementById('cs-venue-mgr-phone').value.trim());
+      const venueMgrStr = venueMgrName ? `${venueMgrName}${venueMgrPhone ? ' / ' + venueMgrPhone : ''}` : '—';
+
+      const techDirStr = callSheetData.techDirStr || '—';
+      const techDirTitle = callSheetData.techDirRoleTitle || 'Тех. Директор';
+      const stageMgrStr = callSheetData.stageMgrStr || '—';
+      const stageMgrTitle = callSheetData.stageMgrRoleTitle || 'Продюсер / Выпускающий';
+
+      let htmlContent = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+          <meta charset="utf-8">
+          <title>${projName}</title>
+          <style>
+            @page Section1 {
+              size: 841.7pt 595.3pt;
+              mso-page-orientation: landscape;
+              margin: 36pt 36pt 36pt 36pt;
+            }
+            div.Section1 { page: Section1; }
+            body { font-family: 'Arial', sans-serif; font-size: 8.5pt; color: #000; line-height: 1.15; }
+            h1 { text-align: center; font-size: 12pt; text-transform: uppercase; margin: 0 0 3px 0; }
+            .sub-header { text-align: center; font-size: 9pt; margin-bottom: 8px; color: #444; }
+            h3 { font-size: 9pt; text-transform: uppercase; margin-top: 8px; margin-bottom: 3px; background: #f2f2f2; padding: 3px 5px; }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 5px; mso-yfti-tbllook: 1184; }
+            th, td { border: 1px solid #000; padding: 3px 5px; font-size: 8pt; text-align: left; vertical-align: middle; }
+            th { background-color: #f2f2f2; text-align: center; }
+            .notes-box { border: 1px solid #000; padding: 5px; font-size: 8pt; line-height: 1.2; background: #fafafa; }
+          </style>
+        </head>
+        <body>
+          <div class="Section1">
+            <h1>CALL SHEET / ВЫЗЫВНОЙ ЛИСТ</h1>
+            <div class="sub-header"><b>${projName}</b> | Дата: ${formattedDate} | ${shiftNum}</div>
+
+            <table>
+              <tr>
+                <td style="width: 18%; font-weight: bold; background: #f2f2f2;">Город:</td>
+                <td style="width: 32%;">${cityVal}</td>
+                <td style="width: 18%; font-weight: bold; background: #f2f2f2;">${techDirTitle}:</td>
+                <td style="width: 32%;">${techDirStr}</td>
+              </tr>
+              <tr>
+                <td style="font-weight: bold; background: #f2f2f2;">Локация / Павильон:</td>
+                <td>${locationVal}</td>
+                <td style="font-weight: bold; background: #f2f2f2;">${stageMgrTitle}:</td>
+                <td>${stageMgrStr}</td>
+              </tr>
+              <tr>
+                <td style="font-weight: bold; background: #f2f2f2;">Точный адрес:</td>
+                <td>${addressVal}</td>
+                <td style="font-weight: bold; background: #f2f2f2;">От Площадки (ТД):</td>
+                <td>${venueTDStr}</td>
+              </tr>
+              <tr>
+                <td style="font-weight: bold; background: #f2f2f2;">Менеджер компетенции:</td>
+                <td>${compMgrFull}</td>
+                <td style="font-weight: bold; background: #f2f2f2;">От Площадки (Менеджер):</td>
+                <td>${venueMgrStr}</td>
+              </tr>
+            </table>
+
+            <h3>1. Общий тайминг смены</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 15%;">Время</th>
+                  <th>Событие / Этап работ</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${callSheetData.milestones.map(m => `<tr><td style="text-align: center; font-weight: bold;">${m.time}</td><td>${m.event}</td></tr>`).join('')}
+              </tbody>
+            </table>
+
+            <h3>2. Вызов персонала и департаментов</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 12%;">Время</th>
+                  <th style="width: 22%;">Департамент / Роль</th>
+                  <th style="width: 26%;">ФИО</th>
+                  <th style="width: 20%;">Телефон</th>
+                  <th>Задача</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${callSheetData.crew.map(c => `<tr><td style="text-align: center; font-weight: bold; color: #b91c1c;">${c.time}</td><td><b>${c.dept}</b></td><td>${c.name}</td><td>${formatPhoneNumberStr(c.phone)}</td><td>${c.task}</td></tr>`).join('')}
+              </tbody>
+            </table>
+
+            <h3>3. Важные примечания и регламент</h3>
+            <div class="notes-box">${notesVal.replace(/\n/g, '<br>')}</div>
+
+            <h3>4. Перечень ввозимого и вывозимого оборудования</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 5%;">№</th>
+                  <th style="width: 45%;">Наименование / Модель</th>
+                  <th style="width: 20%;">Инв. №</th>
+                  <th style="width: 20%;">Серийный №</th>
+                  <th style="width: 10%;">Кол-во</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${callSheetData.equipment.map((eq, idx) => `<tr><td style="text-align: center;">${idx + 1}</td><td><b>${eq.name}</b></td><td style="text-align: center;">${eq.inv || '—'}</td><td style="text-align: center;">${eq.sn || '—'}</td><td style="text-align: center;">${eq.count || '1'}</td></tr>`).join('')}
+              </tbody>
+            </table>
+
+            <h3>5. Автотранспорт</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 25%;">Марка / Модель</th>
+                  <th style="width: 18%;">Гос. номер</th>
+                  <th style="width: 25%;">Водитель</th>
+                  <th style="width: 32%;">Телефон / Задача</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${callSheetData.transport.map(t => `<tr><td><b>${t.model}</b></td><td style="text-align: center; font-weight: bold;">${t.plate}</td><td>${t.driver}</td><td>${formatPhoneNumberStr(t.phone)} / ${t.task}</td></tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `CallSheet_${projName.replace(/[^а-яА-Яa-zA-Z0-9]/g, '_')}_${formattedDate.replace(/\./g, '-')}.doc`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     }
 
     function exportCallSheetToCSV() {
