@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Учет оборудования (МТБ) — ArtMasters</title>
   <!-- Сканер QR-кодов html5-qrcode -->
   <script src="https://unpkg.com/html5-qrcode"></script>
@@ -546,6 +546,42 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 8px;
+    }
+
+    /* Мобильная адаптивность */
+    @media (max-width: 768px) {
+      body {
+        padding: 8px 4px !important;
+      }
+      .container {
+        padding: 16px 12px !important;
+        border-radius: 16px !important;
+      }
+      .app-header {
+        margin-bottom: 20px !important;
+        padding-bottom: 14px !important;
+      }
+      .app-title-text h2 {
+        font-size: 18px !important;
+      }
+      .form-grid {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+      }
+      .btn-group {
+        flex-direction: column !important;
+        gap: 8px !important;
+        margin-top: 20px !important;
+      }
+      .btn {
+        width: 100% !important;
+        min-width: 100% !important;
+      }
+      .modal-content {
+        padding: 16px !important;
+        max-height: 94vh !important;
+        border-radius: 20px !important;
+      }
     }
 
     #act-print-area, #callsheet-print-area { display: none; }
