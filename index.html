@@ -797,7 +797,7 @@
       <div class="selected-items-list full-width">
         <h4>Выбранное оборудование для выдачи (<span id="items-count">0</span>)</h4>
         <div id="selected-items-container">
-          <p style="font-size: 13px; color: var(--text-muted);">Сканируйте QR или введите инвентарный номер и нажмите «+ Добавить в акт»</p>
+          <p style="font-size: 13px; color: var(--text-muted);">Сканируйте QR или введите инвентарный номер и нажмите кнопку выше</p>
         </div>
       </div>
     </div>
@@ -809,7 +809,7 @@
         <button class="btn" onclick="addItemToCurrentAct()"><span style="font-weight: 800;">+</span> Добавить в акт</button>
         <div class="btn-act-row">
           <button class="btn" onclick="generateAndPrintAct()">🖨️ Напечатать акт</button>
-          <button class="btn" onclick="downloadActWord()" style="background: rgba(0, 180, 216, 0.2); border-color: rgba(0, 180, 216, 0.4); color: #00f0ff;">📥 Скачать акт</button>
+          <button class="btn" onclick="downloadActWord()">📥 Скачать акт</button>
         </div>
         <button class="btn" onclick="openHistoryModal()">📜 История накладных</button>
       </div>
@@ -1681,7 +1681,7 @@
       document.getElementById('items-count').innerText = currentActItems.length;
 
       if (currentActItems.length === 0) {
-        container.innerHTML = `<p style="font-size: 13px; color: var(--text-muted);">Сканируйте QR или введите инвентарный номер и нажмите «+ Добавить в акт»</p>`;
+        container.innerHTML = `<p style="font-size: 13px; color: var(--text-muted);">Сканируйте QR или введите инвентарный номер и нажмите кнопку выше</p>`;
         return;
       }
 
