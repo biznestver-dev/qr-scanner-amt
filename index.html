@@ -297,22 +297,28 @@
 
     .item-row:last-child { margin-bottom: 0; }
 
-    .btn-group {
-      display: flex;
-      gap: 12px;
+    /* НОВАЯ ПАНЕЛЬ КНОПОК УПРАВЛЕНИЯ */
+    .control-panels-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
       margin-top: 32px;
-      flex-wrap: wrap;
     }
 
-    @media (max-width: 600px) {
-      .btn-group {
-        flex-direction: column;
+    @media (max-width: 768px) {
+      .control-panels-wrapper {
+        grid-template-columns: 1fr;
       }
     }
 
+    .control-panel-column {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
     .btn {
-      flex: 1;
-      min-width: 170px;
+      width: 100%;
       background: rgba(112, 0, 255, 0.15);
       color: var(--text-primary);
       padding: 16px 18px;
@@ -345,6 +351,17 @@
     .btn:active {
       transform: translateY(0);
       box-shadow: 0 4px 15px var(--accent-glow);
+    }
+
+    .btn-act-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    @media (max-width: 480px) {
+      .btn-act-row {
+        flex-direction: column;
+      }
     }
 
     .btn-callsheet {
@@ -568,14 +585,10 @@
         grid-template-columns: 1fr !important;
         gap: 14px !important;
       }
-      .btn-group {
-        flex-direction: column !important;
-        gap: 8px !important;
+      .control-panels-wrapper {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
         margin-top: 20px !important;
-      }
-      .btn {
-        width: 100% !important;
-        min-width: 100% !important;
       }
       .modal-content {
         padding: 16px !important;
@@ -602,7 +615,7 @@
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
       }
-      .container, .modal, #reader, .form-group, .btn-group, .app-header { display: none !important; }
+      .container, .modal, #reader, .form-group, .control-panels-wrapper, .app-header { display: none !important; }
       
       #act-print-area.active-print { display: block !important; width: 100% !important; color: #000 !important; }
       #callsheet-print-area.active-print { 
@@ -789,13 +802,23 @@
       </div>
     </div>
 
-    <div class="btn-group">
-      <button class="btn" onclick="addItemToCurrentAct()"><span style="font-weight: 800;">+</span> Добавить в акт</button>
-      <button class="btn" onclick="downloadActWord()" style="background: rgba(0, 180, 216, 0.2); border-color: rgba(0, 180, 216, 0.4); color: #00f0ff;"><span style="font-weight: 800;">📥</span> Скачать акт Word</button>
-      <button class="btn" onclick="generateAndPrintAct()">🖨️ Напечатать Акт</button>
-      <button class="btn btn-callsheet" onclick="openCallSheetModal()">📋 Вызывной лист</button>
-      <button class="btn btn-callsheet" onclick="openCallSheetHistoryModal()">📜 Архив вызывных</button>
-      <button class="btn" onclick="openHistoryModal()">📜 История накладных</button>
+    <!-- ДВУХКОЛОНОЧНЫЙ БЛОК УПРАВЛЕНИЯ -->
+    <div class="control-panels-wrapper">
+      <!-- ЛЕВАЯ КОЛОНКА: АКТЫ -->
+      <div class="control-panel-column">
+        <button class="btn" onclick="addItemToCurrentAct()"><span style="font-weight: 800;">+</span> Добавить в акт</button>
+        <div class="btn-act-row">
+          <button class="btn" onclick="generateAndPrintAct()">🖨️ Напечатать акт</button>
+          <button class="btn" onclick="downloadActWord()" style="background: rgba(0, 180, 216, 0.2); border-color: rgba(0, 180, 216, 0.4); color: #00f0ff;">📥 Скачать акт</button>
+        </div>
+        <button class="btn" onclick="openHistoryModal()">📜 История накладных</button>
+      </div>
+
+      <!-- ПРАВАЯ КОЛОНКА: ВЫЗЫВНЫЕ ЛИСТЫ -->
+      <div class="control-panel-column">
+        <button class="btn btn-callsheet" onclick="openCallSheetModal()">📋 Создать вызывной лист</button>
+        <button class="btn btn-callsheet" onclick="openCallSheetHistoryModal()">📜 Архив вызывных листов</button>
+      </div>
     </div>
   </div>
 
