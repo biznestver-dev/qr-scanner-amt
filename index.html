@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Учет оборудования (МТБ) — ArtMasters</title>
+  <title>Техотдел AM — Учет оборудования (МТБ)</title>
   <!-- Сканер QR-кодов html5-qrcode -->
   <script src="https://unpkg.com/html5-qrcode"></script>
   <!-- Шрифт Plus Jakarta Sans & JetBrains Mono -->
@@ -116,6 +116,7 @@
       letter-spacing: -0.02em;
       background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
       text-transform: uppercase;
     }
@@ -182,13 +183,11 @@
       transition: all 0.25s ease;
     }
 
-    /* Интегрированная строка инвентарного номера с динамической кнопкой */
     .inv-input-group {
       display: flex;
       gap: 10px;
     }
 
-    /* Единый фиксированный размер для обеих кнопок */
     .db-quick-btn, .add-quick-btn {
       height: 52px;
       min-width: 140px;
@@ -297,7 +296,6 @@
 
     .item-row:last-child { margin-bottom: 0; }
 
-    /* НОВАЯ ПАНЕЛЬ КНОПОК УПРАВЛЕНИЯ */
     .control-panels-wrapper {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -565,7 +563,6 @@
       gap: 8px;
     }
 
-    /* Мобильная адаптивность */
     @media (max-width: 768px) {
       body {
         padding: 8px 4px !important;
@@ -683,8 +680,8 @@
           </svg>
         </div>
         <div class="app-title-text">
-          <h2>Учет оборудования (МТБ)</h2>
-          <p>ArtMasters</p>
+          <h2>Техотдел AM</h2>
+          <p>Учет оборудования (МТБ)</p>
         </div>
       </div>
     </div>
@@ -1078,7 +1075,6 @@
       </div>
     </div>
 
-    <!-- ТАБЛИЦА ШАПКИ СТРОГО С РАЗДЕЛЬНЫМИ СТРОКАМИ И СТОЛБЦАМИ -->
     <table class="act-table" style="margin-bottom: 12px;">
       <tr>
         <td style="width: 16%; font-weight: bold; background: #f2f2f2; text-align: left;">Город:</td>
@@ -2401,7 +2397,6 @@
       downloadCSV(`Acts_Registry_${new Date().toISOString().slice(0,10)}.csv`, rows);
     }
 
-    // --- ЛОГИКА ВЫЗЫВНОГО ЛИСТА (CALL SHEET) ---
     let callSheetData = {
       city: "г. Москва",
       compMgrName: "—",
