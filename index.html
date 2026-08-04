@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Учет оборудования (МТБ) — ArtMasters</title>
+  <title>Учет оборудования (МТБ) ArtMasters</title>
   <!-- Сканер QR-кодов html5-qrcode -->
   <script src="https://unpkg.com/html5-qrcode"></script>
   <!-- Шрифт Plus Jakarta Sans & JetBrains Mono -->
@@ -683,7 +683,7 @@
           </svg>
         </div>
         <div class="app-title-text">
-          <h2>Учет оборудования (МТБ)</h2>
+          <h2>Учет оборудования (МТБ) ArtMasters</h2>
           <p>ArtMasters</p>
         </div>
       </div>
@@ -733,7 +733,7 @@
       </div>
 
       <div class="form-group">
-        <label for="manager-select">Административно-технический отдел</label>
+        <label for="manager-select">Офис</label>
         <select id="manager-select">
           <option value="Зломанов Олег Викторович">Зломанов Олег Викторович</option>
           <option value="Смутный Богдан Сергеевич">Смутный Богдан Сергеевич</option>
@@ -2374,7 +2374,7 @@
         alert("Реестр актов пуст");
         return;
       }
-      const headers = ["№ Накладной", "Дата выдачи", "Планируемая дата возврата", "Компетенция", "Отдел", "Роль", "Получатель (ФИО)", "Контакты", "Инвентарные №", "Наименования оборудования", "Кол-во предметов", "Комментарии"];
+      const headers = ["№ Накладной", "Дата выдачи", "Планируемая дата возврата", "Компетенция", "Офис", "Роль", "Получатель (ФИО)", "Контакты", "Инвентарные №", "Наименования оборудования", "Кол-во предметов", "Комментарии"];
       const rows = [headers];
 
       history.forEach(act => {
