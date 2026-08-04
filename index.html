@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Учет оборудования (МТБ) ArtMasters</title>
+  <title>техотдел АМ</title>
   <!-- Сканер QR-кодов html5-qrcode -->
   <script src="https://unpkg.com/html5-qrcode"></script>
   <!-- Шрифт Plus Jakarta Sans & JetBrains Mono -->
@@ -101,13 +101,17 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      border-radius: 16px;
+      color: var(--am-cyan);
     }
 
     .app-logo svg {
-      width: 100%;
-      height: 100%;
+      width: 28px;
+      height: 28px;
       display: block;
-      filter: drop-shadow(0 0 16px rgba(255, 0, 67, 0.4));
+      fill: currentColor;
     }
 
     .app-title-text h2 {
@@ -675,15 +679,14 @@
   <div class="container">
     <div class="app-header">
       <div class="app-title">
-        <div class="app-logo">
-          <svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M142.5 450.5C52.5 410.5 25.5 305.5 65.5 215.5C105.5 125.5 210.5 98.5 300.5 138.5C390.5 178.5 486.5 244.5 446.5 334.5C406.5 424.5 232.5 490.5 142.5 450.5Z" fill="#FF0043"/>
-            <path d="M178.5 385.5C123.5 360.5 106.5 295.5 131.5 240.5C156.5 185.5 221.5 168.5 276.5 193.5C331.5 218.5 383.5 260.5 358.5 315.5C333.5 370.5 233.5 410.5 178.5 385.5Z" fill="#FFFFFF"/>
-            <path d="M205.5 340.5C185.5 331.5 178.5 307.5 187.5 287.5C196.5 267.5 220.5 260.5 240.5 269.5C260.5 278.5 282.5 292.5 273.5 312.5C264.5 332.5 225.5 349.5 205.5 340.5Z" fill="#3B26A6"/>
+        <div class="app-logo" title="Настройки">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M19.4 15C19.69 14.13 19.85 13.2 19.85 12.25C19.85 11.3 19.69 10.37 19.4 9.5L21.75 7.67C21.96 7.5 22.02 7.2 21.88 6.95L19.68 3.14C19.54 2.9 19.25 2.81 19 2.91L16.22 4.04C15.64 3.59 15.01 3.22 14.33 2.94L13.92 0.05C13.89 -0.2 13.68 -0.38 13.43 -0.38H8.85C8.6 -0.38 8.39 -0.2 8.36 0.05L7.95 2.94C7.27 3.22 6.64 3.59 6.06 4.04L3.28 2.91C3.03 2.81 2.74 2.9 2.6 3.14L0.4 6.95C0.26 7.2 0.32 7.5 0.53 7.67L2.88 9.5C2.59 10.37 2.43 11.3 2.43 12.25C2.43 13.2 2.59 14.13 2.88 15L0.53 16.83C0.32 17 0.26 17.3 0.4 17.55L2.6 21.36C2.74 21.6 3.03 21.69 3.28 21.59L6.06 20.46C6.64 20.91 7.27 21.28 7.95 21.56L8.36 24.45C8.39 24.7 8.6 24.88 8.85 24.88H13.43C13.68 24.88 13.89 24.7 13.92 24.45L14.33 21.56C15.01 21.28 15.64 20.91 16.22 20.46L19 21.59C19.25 21.69 19.54 21.6 19.68 21.36L21.88 17.55C22.02 17.3 21.96 17 21.75 16.83L19.4 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
         <div class="app-title-text">
-          <h2>Учет оборудования (МТБ) ArtMasters</h2>
+          <h2>техотдел АМ</h2>
           <p>ArtMasters</p>
         </div>
       </div>
