@@ -818,7 +818,7 @@
     </div>
   </div>
 
-  <!-- Модальное окно Вызывного Листа (Конструктор с кнопками добавления СНИЗУ) -->
+  <!-- Модальное окно Вызывного Листа -->
   <div id="callSheetModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -902,7 +902,6 @@
           </div>
         </div>
 
-        <!-- Тайминг смены (Кнопка добавления СНИЗУ) -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>1. Тайминг смены</span>
@@ -911,7 +910,6 @@
           <button class="add-row-btn" onclick="addCsMilestoneRow()" style="width: 100%; justify-content: center; padding: 12px;">+ Добавить пункт тайминга</button>
         </div>
 
-        <!-- Вызов персонала (Кнопки добавления СНИЗУ) -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>2. Вызов персонала и команды</span>
@@ -931,7 +929,6 @@
           <textarea id="cs-notes" rows="2">Форма одежды: Total Black. На площадке обязательно наличие защитной обуви на застройке.</textarea>
         </div>
 
-        <!-- Оборудование (Кнопки добавления СНИЗУ) -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>4. Перечень ввозимого и вывозимого оборудования</span>
@@ -943,7 +940,6 @@
           </div>
         </div>
 
-        <!-- Автотранспорт (Кнопка добавления СНИЗУ) -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>5. Автотранспорт</span>
@@ -1983,8 +1979,7 @@
             <td>${invsList}</td>
             <td>
               <div style="display:flex;gap:6px; flex-wrap: wrap;">
-                <button class="select-btn" onclick="reprintAct('${act.num}')" style="padding: 6px 10px;" title="Печать / Сохранить PDF">🖨️</button>
-                <button class="export-btn" onclick="reprintAct('${act.num}')" style="padding: 6px 10px; background: #0096c7;" title="Скачать PDF">📥 PDF</button>
+                <button class="select-btn" onclick="reprintAct('${act.num}')" style="padding: 6px 10px;" title="Печать">🖨️</button>
                 <button class="add-row-btn" onclick="openEditActModal('${act.num}')" style="padding: 6px 10px;" title="Редактировать">✏️</button>
                 <button class="delete-btn" onclick="deleteActFromHistory('${act.num}')" style="padding: 6px 10px;" title="Удалить">🗑️</button>
               </div>
@@ -2689,8 +2684,7 @@
             <td>${cs.compMgrName || '—'} (${cs.compMgrPhone || '—'})</td>
             <td>
               <div style="display:flex;gap:6px; flex-wrap: wrap;">
-                <button class="select-btn" onclick="reprintCallSheet('${cs.id}')" style="padding: 6px 10px;" title="Печать / Сохранить PDF">🖨️</button>
-                <button class="export-btn" onclick="reprintCallSheet('${cs.id}')" style="padding: 6px 10px; background: #0096c7;" title="Скачать PDF">📥 PDF</button>
+                <button class="select-btn" onclick="reprintCallSheet('${cs.id}')" style="padding: 6px 10px;" title="Печать">🖨️</button>
                 <button class="add-row-btn" onclick="openEditCallSheetModal('${cs.id}')" style="padding: 6px 10px;" title="Редактировать">✏️</button>
                 <button class="delete-btn" onclick="deleteCallSheetFromHistory('${cs.id}')" style="padding: 6px 10px;" title="Удалить">🗑️</button>
               </div>
