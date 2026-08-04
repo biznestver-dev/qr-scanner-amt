@@ -830,7 +830,6 @@
       </div>
       
       <div class="table-wrapper" style="padding: 10px;">
-        <!-- БЛОК 1: Основная информация о смене -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>Основная информация о смене</span>
@@ -861,7 +860,6 @@
               <input type="text" id="cs-address" value="ул. Варварка, д. 6 (КПП №2)">
             </div>
 
-            <!-- МЕНЕДЖЕР КОМПЕТЕНЦИИ -->
             <div class="form-group">
               <label>Менеджер компетенции (ФИО)</label>
               <input type="text" id="cs-comp-mgr-name" placeholder="Введите ФИО менеджера компетенции...">
@@ -872,7 +870,6 @@
               <input type="text" id="cs-comp-mgr-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)">
             </div>
             
-            <!-- РУКОВОДСТВО АРТМАСТЕРС -->
             <div class="form-group">
               <label id="cs-tech-dir-label">Технический директор (АртМастерс)</label>
               <select id="cs-tech-dir-select" onchange="onTechDirSelect(this.value)"></select>
@@ -883,7 +880,6 @@
               <select id="cs-stage-mgr-select" onchange="onStageMgrSelect(this.value)"></select>
             </div>
 
-            <!-- ОТВЕТСТВЕННЫЕ ОТ ПЛОЩАДКИ (РАЗДЕЛЬНО) -->
             <div class="form-group">
               <label>От Площадки: Технический директор (ФИО)</label>
               <input type="text" id="cs-venue-tech-dir-name" placeholder="Петров П.П.">
@@ -906,7 +902,6 @@
           </div>
         </div>
 
-        <!-- БЛОК 2: Тайминг смены -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>1. Тайминг смены</span>
@@ -915,7 +910,6 @@
           <div id="cs-milestones-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
 
-        <!-- БЛОК 3: Вызов персонала -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>2. Вызов персонала и команды</span>
@@ -928,7 +922,6 @@
           <div id="cs-crew-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
 
-        <!-- БЛОК 4: Примечания -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>3. Важные примечания и Дресс-код</span>
@@ -936,7 +929,6 @@
           <textarea id="cs-notes" rows="2">Форма одежды: Total Black. На площадке обязательно наличие защитной обуви на застройке.</textarea>
         </div>
 
-        <!-- БЛОК 5: Перечень оборудования -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>4. Перечень ввозимого и вывозимого оборудования</span>
@@ -948,7 +940,6 @@
           <div id="cs-equipment-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
 
-        <!-- БЛОК 6: Автотранспорт -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>5. Автотранспорт</span>
@@ -1060,6 +1051,58 @@
           </thead>
           <tbody id="historyTableBody"></tbody>
         </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно редактирования Акта -->
+  <div id="editActModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3>Редактирование акта № <span id="edit-act-num-title"></span></h3>
+        <div class="modal-actions">
+          <button class="close-btn" onclick="closeEditActModal()">&times;</button>
+        </div>
+      </div>
+      
+      <input type="hidden" id="edit-act-hidden-num">
+      
+      <div class="form-grid" style="grid-template-columns: 1fr; gap: 14px;">
+        <div class="form-group">
+          <label>Роль получателя</label>
+          <select id="edit-act-role" onchange="onEditRoleChange(this.value)">
+            <option value="Участник">Участник</option>
+            <option value="Сотрудник">Сотрудник</option>
+            <option value="Менеджер компетенции">Менеджер компетенции</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label id="edit-act-participant-label">Получатель (ФИО)</label>
+          <div id="edit-act-participant-container">
+            <input type="text" id="edit-act-participant" placeholder="ФИО получателя...">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Телефон / Telegram / MAX</label>
+          <input type="text" id="edit-act-contact" placeholder="+7 900 000 00 00">
+        </div>
+
+        <div class="form-group">
+          <label>Планируемая дата возврата</label>
+          <input type="text" id="edit-act-return-date" placeholder="ДД.ММ.ГГГГ">
+        </div>
+
+        <div class="form-group">
+          <label>Комментарии</label>
+          <textarea id="edit-act-comment" rows="3" placeholder="Примечания..."></textarea>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+        <button class="btn" onclick="closeEditActModal()" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);">Отмена</button>
+        <button class="btn" onclick="saveEditedAct()" style="background: var(--accent-gradient);">Сохранить изменения</button>
       </div>
     </div>
   </div>
@@ -1877,15 +1920,82 @@
             <td>${itemsList}${countStr}</td>
             <td>${invsList}</td>
             <td>
-              <div style="display:flex;gap:6px;">
-                <button class="select-btn" onclick="reprintAct('${act.num}')">🖨️ Печать</button>
-                <button class="delete-btn" onclick="deleteActFromHistory('${act.num}')">🗑️ Удалить</button>
+              <div style="display:flex;gap:6px; flex-wrap: wrap;">
+                <button class="select-btn" onclick="reprintAct('${act.num}')" style="padding: 6px 10px;" title="Печать">🖨️</button>
+                <button class="add-row-btn" onclick="openEditActModal('${act.num}')" style="padding: 6px 10px;" title="Редактировать">✏️</button>
+                <button class="delete-btn" onclick="deleteActFromHistory('${act.num}')" style="padding: 6px 10px;" title="Удалить">🗑️</button>
               </div>
             </td>
           `;
           tbody.appendChild(tr);
         }
       });
+    }
+
+    function openEditActModal(actNum) {
+      const h = getActsHistory();
+      const act = h.find(a => a.num === actNum);
+      if (!act) return;
+
+      document.getElementById('edit-act-hidden-num').value = act.num;
+      document.getElementById('edit-act-num-title').innerText = act.num;
+      document.getElementById('edit-act-role').value = act.role || 'Участник';
+      
+      onEditRoleChange(act.role || 'Участник', act.participant);
+
+      document.getElementById('edit-act-contact').value = act.contact || '';
+      document.getElementById('edit-act-return-date').value = act.returnDate || '';
+      document.getElementById('edit-act-comment').value = act.comment || '';
+
+      document.getElementById('editActModal').style.display = 'flex';
+    }
+
+    function closeEditActModal() {
+      document.getElementById('editActModal').style.display = 'none';
+    }
+
+    function onEditRoleChange(role, selectedParticipant = '') {
+      const label = document.getElementById('edit-act-participant-label');
+      const container = document.getElementById('edit-act-participant-container');
+      label.innerText = `Получатель (${role})`;
+
+      if (role === 'Сотрудник') {
+        let selectHtml = `<select id="edit-act-participant">
+          <option value="">-- Выберите сотрудника --</option>`;
+        EMPLOYEES_LIST.forEach(emp => {
+          selectHtml += `<option value="${emp.name}" ${emp.name === selectedParticipant ? 'selected' : ''}>${emp.name}</option>`;
+        });
+        selectHtml += `</select>`;
+        container.innerHTML = selectHtml;
+      } else {
+        container.innerHTML = `<input type="text" id="edit-act-participant" value="${selectedParticipant !== '—' ? selectedParticipant : ''}" placeholder="Введите ФИО...">`;
+      }
+    }
+
+    function saveEditedAct() {
+      const actNum = document.getElementById('edit-act-hidden-num').value;
+      let h = getActsHistory();
+      let index = h.findIndex(a => a.num === actNum);
+      if (index === -1) return;
+
+      const role = document.getElementById('edit-act-role').value;
+      const participantEl = document.getElementById('edit-act-participant');
+      const participant = participantEl ? participantEl.value.trim() : '—';
+      const contact = document.getElementById('edit-act-contact').value.trim() || '—';
+      const returnDate = document.getElementById('edit-act-return-date').value.trim() || '—';
+      const comment = document.getElementById('edit-act-comment').value.trim() || '—';
+
+      h[index].role = role;
+      h[index].participant = participant || '—';
+      h[index].contact = contact;
+      h[index].returnDate = returnDate;
+      h[index].comment = comment;
+
+      localStorage.setItem('artmasters_acts_history', JSON.stringify(h));
+      
+      closeEditActModal();
+      renderHistoryTable();
+      alert(`Акт № ${actNum} успешно обновлен!`);
     }
 
     function reprintAct(actNum) {
@@ -2041,7 +2151,7 @@
         const empRoleStr = emp && emp.role ? `${emp.role} АНО «Артмастерс»` : 'Сотрудник АНО «Артмастерс»';
         document.getElementById('safety-employee-title').innerText = empRoleStr;
         document.getElementById('safety-employee-name').innerText = participant !== '—' ? participant : '__________________________';
-        document.getElementById('safety-date-intro').innerText = todayFormatted;
+        document.getElementById('safety-date-intro').innerText = currentDateFormatted;
       } else {
         safetyWrapper.classList.remove('active');
       }
