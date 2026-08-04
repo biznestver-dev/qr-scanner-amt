@@ -6,8 +6,6 @@
   <title>Учет оборудования (МТБ) ArtMasters</title>
   <!-- Сканер QR-кодов html5-qrcode -->
   <script src="https://unpkg.com/html5-qrcode"></script>
-  <!-- Библиотека генерации PDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <!-- Шрифт Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -964,7 +962,7 @@
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 18px; flex-wrap: wrap;">
-        <button class="btn" onclick="downloadCallSheetPDF()" style="background: rgba(255, 0, 67, 0.2); border-color: rgba(255, 0, 67, 0.4); color: #ff0043; min-width: 170px;">📥 Скачать PDF</button>
+        <button class="btn" onclick="downloadCallSheetPDF()" style="background: rgba(255, 0, 67, 0.2); border-color: rgba(255, 0, 67, 0.4); color: #ff0043; min-width: 170px;">📥 Сохранить в PDF</button>
         <button class="btn" onclick="downloadCallSheetWord()" style="background: rgba(0, 180, 216, 0.2); border-color: rgba(0, 180, 216, 0.4); color: #00f0ff; min-width: 170px;">📥 Скачать Word (.doc)</button>
         <button class="btn" onclick="printCallSheet()" style="background: var(--accent-gradient); min-width: 190px;">🖨️ Печать</button>
       </div>
@@ -2988,42 +2986,7 @@
     }
 
     function downloadCallSheetPDF() {
-      prepareCallSheetDOM();
-      const element = document.getElementById('callsheet-print-area');
-      
-      // Делаем элемент видимым для генерации PDF
-      element.style.display = 'block';
-      element.style.position = 'absolute';
-      element.style.left = '-9999px';
-      element.style.top = '0';
-      element.style.width = '297mm';
-      element.style.background = '#ffffff';
-      element.style.color = '#000000';
-      element.style.fontSize = '8pt';
-
-      const opt = {
-        margin:       [5, 5, 5, 5],
-        filename:     `CallSheet_${document.getElementById('cs-project-name').value.replace(/[^а-яА-Яa-zA-Z0-9]/g, '_')}.pdf`,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
-      };
-
-      html2pdf().from(element).set(opt).save().then(() => {
-        // Возвращаем исходное скрытое состояние
-        element.style.display = 'none';
-        element.style.position = '';
-        element.style.left = '';
-        element.style.top = '';
-        element.style.width = '';
-        element.style.background = '';
-        element.style.color = '';
-        element.style.fontSize = '';
-        closeCallSheetModal();
-      }).catch(err => {
-        console.error('Ошибка генерации PDF:', err);
-        element.style.display = 'none';
-      });
+      printCallSheet();
     }
 
     function downloadCallSheetWord() {
