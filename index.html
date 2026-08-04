@@ -2990,19 +2990,39 @@
     function downloadCallSheetPDF() {
       prepareCallSheetDOM();
       const element = document.getElementById('callsheet-print-area');
-      element.classList.add('active-print');
+      
+      // Делаем элемент видимым для генерации PDF
+      element.style.display = 'block';
+      element.style.position = 'absolute';
+      element.style.left = '-9999px';
+      element.style.top = '0';
+      element.style.width = '297mm';
+      element.style.background = '#ffffff';
+      element.style.color = '#000000';
+      element.style.fontSize = '8pt';
 
       const opt = {
         margin:       [5, 5, 5, 5],
         filename:     `CallSheet_${document.getElementById('cs-project-name').value.replace(/[^а-яА-Яa-zA-Z0-9]/g, '_')}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true },
+        html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
       };
 
       html2pdf().from(element).set(opt).save().then(() => {
-        element.classList.remove('active-print');
+        // Возвращаем исходное скрытое состояние
+        element.style.display = 'none';
+        element.style.position = '';
+        element.style.left = '';
+        element.style.top = '';
+        element.style.width = '';
+        element.style.background = '';
+        element.style.color = '';
+        element.style.fontSize = '';
         closeCallSheetModal();
+      }).catch(err => {
+        console.error('Ошибка генерации PDF:', err);
+        element.style.display = 'none';
       });
     }
 
