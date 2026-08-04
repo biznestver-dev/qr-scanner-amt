@@ -986,6 +986,64 @@
     </div>
   </div>
 
+  <!-- Модальное окно редактирования Вызывного Листа -->
+  <div id="editCallSheetModal" class="modal">
+    <div class="modal-content" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3>Редактирование вызывного листа</h3>
+        <div class="modal-actions">
+          <button class="close-btn" onclick="closeEditCallSheetModal()">&times;</button>
+        </div>
+      </div>
+      
+      <input type="hidden" id="edit-cs-hidden-id">
+      
+      <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 14px;">
+        <div class="form-group">
+          <label>Название проекта</label>
+          <input type="text" id="edit-cs-project">
+        </div>
+        <div class="form-group">
+          <label>Дата смены</label>
+          <input type="text" id="edit-cs-date" placeholder="ДД.ММ.ГГГГ">
+        </div>
+        <div class="form-group">
+          <label>Статус / Смена</label>
+          <input type="text" id="edit-cs-shift">
+        </div>
+        <div class="form-group">
+          <label>Город</label>
+          <input type="text" id="edit-cs-city">
+        </div>
+        <div class="form-group">
+          <label>Локация / Павильон</label>
+          <input type="text" id="edit-cs-location">
+        </div>
+        <div class="form-group">
+          <label>Точный адрес</label>
+          <input type="text" id="edit-cs-address">
+        </div>
+        <div class="form-group">
+          <label>Менеджер компетенции (ФИО)</label>
+          <input type="text" id="edit-cs-comp-mgr">
+        </div>
+        <div class="form-group">
+          <label>Телефон менеджера</label>
+          <input type="text" id="edit-cs-comp-phone">
+        </div>
+        <div class="form-group full-width">
+          <label>Примечания и регламент</label>
+          <textarea id="edit-cs-notes" rows="3"></textarea>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+        <button class="btn" onclick="closeEditCallSheetModal()" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);">Отмена</button>
+        <button class="btn" onclick="saveEditedCallSheet()" style="background: var(--accent-gradient);">Сохранить изменения</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Модальное окно Базы МТБ -->
   <div id="dbModal" class="modal">
     <div class="modal-content">
@@ -2625,15 +2683,62 @@
             <td>${cs.location}</td>
             <td>${cs.compMgrName || '—'} (${cs.compMgrPhone || '—'})</td>
             <td>
-              <div style="display:flex;gap:6px;">
-                <button class="select-btn" onclick="reprintCallSheet('${cs.id}')">🖨️ Печать</button>
-                <button class="delete-btn" onclick="deleteCallSheetFromHistory('${cs.id}')">🗑️ Удалить</button>
+              <div style="display:flex;gap:6px; flex-wrap: wrap;">
+                <button class="select-btn" onclick="reprintCallSheet('${cs.id}')" style="padding: 6px 10px;" title="Печать">🖨️</button>
+                <button class="add-row-btn" onclick="openEditCallSheetModal('${cs.id}')" style="padding: 6px 10px;" title="Редактировать">✏️</button>
+                <button class="delete-btn" onclick="deleteCallSheetFromHistory('${cs.id}')" style="padding: 6px 10px;" title="Удалить">🗑️</button>
               </div>
             </td>
           `;
           tbody.appendChild(tr);
         }
       });
+    }
+
+    function openEditCallSheetModal(csId) {
+      const h = getCallSheetHistory();
+      const cs = h.find(c => c.id === csId);
+      if (!cs) return;
+
+      document.getElementById('edit-cs-hidden-id').value = cs.id;
+      document.getElementById('edit-cs-project').value = cs.projectName || '';
+      document.getElementById('edit-cs-date').value = cs.date || '';
+      document.getElementById('edit-cs-shift').value = cs.shiftNum || '';
+      document.getElementById('edit-cs-city').value = cs.city || '';
+      document.getElementById('edit-cs-location').value = cs.location || '';
+      document.getElementById('edit-cs-address').value = cs.address || '';
+      document.getElementById('edit-cs-comp-mgr').value = cs.compMgrName || '';
+      document.getElementById('edit-cs-comp-phone').value = cs.compMgrPhone || '';
+      document.getElementById('edit-cs-notes').value = cs.notes || '';
+
+      document.getElementById('editCallSheetModal').style.display = 'flex';
+    }
+
+    function closeEditCallSheetModal() {
+      document.getElementById('editCallSheetModal').style.display = 'none';
+    }
+
+    function saveEditedCallSheet() {
+      const csId = document.getElementById('edit-cs-hidden-id').value;
+      let h = getCallSheetHistory();
+      let index = h.findIndex(c => c.id === csId);
+      if (index === -1) return;
+
+      h[index].projectName = document.getElementById('edit-cs-project').value.trim() || 'ArtMasters — Смена';
+      h[index].date = document.getElementById('edit-cs-date').value.trim() || '';
+      h[index].shiftNum = document.getElementById('edit-cs-shift').value.trim() || '';
+      h[index].city = document.getElementById('edit-cs-city').value.trim() || '';
+      h[index].location = document.getElementById('edit-cs-location').value.trim() || '';
+      h[index].address = document.getElementById('edit-cs-address').value.trim() || '';
+      h[index].compMgrName = document.getElementById('edit-cs-comp-mgr').value.trim() || '';
+      h[index].compMgrPhone = document.getElementById('edit-cs-comp-phone').value.trim() || '';
+      h[index].notes = document.getElementById('edit-cs-notes').value.trim() || '';
+
+      localStorage.setItem('artmasters_callsheet_history', JSON.stringify(h));
+
+      closeEditCallSheetModal();
+      renderCallSheetHistoryTable();
+      alert('Вызывной лист успешно обновлен!');
     }
 
     function reprintCallSheet(csId) {
