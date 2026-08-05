@@ -186,13 +186,11 @@
       transition: all 0.25s ease;
     }
 
-    /* Интегрированная строка инвентарного номера с динамической кнопкой */
     .inv-input-group {
       display: flex;
       gap: 10px;
     }
 
-    /* Единый фиксированный размер для обеих кнопок */
     .db-quick-btn, .add-quick-btn {
       height: 52px;
       min-width: 140px;
@@ -301,7 +299,6 @@
 
     .item-row:last-child { margin-bottom: 0; }
 
-    /* НОВАЯ ПАНЕЛЬ КНОПОК УПРАВЛЕНИЯ */
     .control-panels-wrapper {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -569,7 +566,6 @@
       gap: 8px;
     }
 
-    /* Мобильная адаптивность */
     @media (max-width: 768px) {
       body {
         padding: 8px 4px !important;
@@ -840,6 +836,7 @@
         <div class="cs-section">
           <div class="cs-section-title">
             <span>Основная информация о смене</span>
+            <button class="add-row-btn" onclick="addCsExtraInfoRow()">+ Добавить пункт</button>
           </div>
           <div class="form-grid">
             <div class="form-group">
@@ -910,6 +907,9 @@
               <input type="text" id="cs-venue-mgr-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)">
             </div>
           </div>
+
+          <!-- КОНТЕЙНЕР ДЛЯ ДОБАВЛЕННЫХ ПУНКТОВ -->
+          <div id="cs-extra-info-container" style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;"></div>
         </div>
 
         <!-- БЛОК 2: Тайминг смены -->
@@ -1108,6 +1108,11 @@
         <td style="font-weight: bold; background: #f2f2f2; text-align: left;">От Площадки (Менеджер):</td>
         <td style="text-align: left;" id="csp-venue-mgr-print"></td>
       </tr>
+    </table>
+
+    <!-- ДИНАМИЧЕСКИЕ ДОП. ПОЛЯ ШАПКИ ДЛЯ ПЕЧАТИ -->
+    <table class="act-table" id="csp-extra-info-table" style="margin-bottom: 12px; display: none;">
+      <tbody id="csp-extra-info-tbody"></tbody>
     </table>
 
     <div style="font-weight: bold; font-size: 10pt; margin-bottom: 4px; text-transform: uppercase;">1. Общий тайминг смены</div>
@@ -2418,6 +2423,7 @@
       venueTechDirPhone: "",
       venueMgrName: "",
       venueMgrPhone: "",
+      extraInfo: [],
       milestones: [
         { time: '08:00', event: 'Заезд автотранспорта, сбор технической группы' },
         { time: '09:00', event: 'Начало монтажных работ и разворачивание сетей' },
@@ -2438,6 +2444,33 @@
         { model: 'Газель NEXT', plate: 'А 123 АА 777', driver: 'Иванов Алексей', phone: '+7 999 111 22 33', task: 'Доставка звукового оборудования' }
       ]
     };
+
+    function renderCsExtraInfo() {
+      const container = document.getElementById('cs-extra-info-container');
+      container.innerHTML = '';
+      callSheetData.extraInfo.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background: rgba(25, 34, 60, 0.4); padding: 10px; border-radius: 12px; border: 1px solid var(--glass-border);';
+        const formattedPhone = formatPhoneNumberStr(item.phone);
+        div.innerHTML = `
+          <input type="text" value="${item.position}" style="flex: 1; min-width: 160px;" placeholder="Должность" onchange="callSheetData.extraInfo[${idx}].position = this.value">
+          <input type="text" value="${item.name}" style="flex: 1.5; min-width: 180px;" placeholder="Введите ФИО" onchange="callSheetData.extraInfo[${idx}].name = this.value">
+          <input type="text" value="${formattedPhone}" style="width: 170px;" placeholder="+7 900 00 00" oninput="formatPhoneNumber(this); callSheetData.extraInfo[${idx}].phone = this.value">
+          <button class="delete-btn" onclick="removeCsExtraInfo(${idx})">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addCsExtraInfoRow() {
+      callSheetData.extraInfo.push({ position: '', name: '', phone: '' });
+      renderCsExtraInfo();
+    }
+
+    function removeCsExtraInfo(idx) {
+      callSheetData.extraInfo.splice(idx, 1);
+      renderCsExtraInfo();
+    }
 
     function getCallSheetHistory() {
       return JSON.parse(localStorage.getItem('artmasters_callsheet_history') || '[]');
@@ -2526,6 +2559,25 @@
 
       const venueMgrPhoneF = formatPhoneNumberStr(cs.venueMgrPhone);
       document.getElementById('csp-venue-mgr-print').innerText = cs.venueMgrName ? `${cs.venueMgrName}${venueMgrPhoneF ? ' / ' + venueMgrPhoneF : ''}` : '—';
+
+      // Отрисовка доп. полей в печатной шапке
+      const extraTbody = document.getElementById('csp-extra-info-tbody');
+      const extraTable = document.getElementById('csp-extra-info-table');
+      extraTbody.innerHTML = '';
+      if (cs.extraInfo && cs.extraInfo.length > 0) {
+        extraTable.style.display = 'table';
+        cs.extraInfo.forEach(item => {
+          const tr = document.createElement('tr');
+          const pFormatted = formatPhoneNumberStr(item.phone);
+          tr.innerHTML = `
+            <td style="width: 18%; font-weight: bold; background: #f2f2f2; text-align: left;">${item.position || 'Должность'}:</td>
+            <td colspan="3" style="text-align: left;"><b>${item.name || '—'}</b>${pFormatted ? ' (' + pFormatted + ')' : ''}</td>
+          `;
+          extraTbody.appendChild(tr);
+        });
+      } else {
+        extraTable.style.display = 'none';
+      }
 
       document.getElementById('csp-notes').innerText = cs.notes;
 
@@ -2656,6 +2708,7 @@
       document.getElementById('cs-date').value = `${year}-${month}-${day}`;
       initTechDirSelect();
       initStageMgrSelect();
+      renderCsExtraInfo();
       renderCsMilestones();
       renderCsCrew();
       renderCsEquipment();
@@ -2900,6 +2953,25 @@
       const venueMgrPhoneF = formatPhoneNumberStr(venueMgrPhone);
       document.getElementById('csp-venue-mgr-print').innerText = venueMgrName ? `${venueMgrName}${venueMgrPhoneF ? ' / ' + venueMgrPhoneF : ''}` : '—';
 
+      // Отрисовка доп. полей в печатной шапке
+      const extraTbody = document.getElementById('csp-extra-info-tbody');
+      const extraTable = document.getElementById('csp-extra-info-table');
+      extraTbody.innerHTML = '';
+      if (callSheetData.extraInfo && callSheetData.extraInfo.length > 0) {
+        extraTable.style.display = 'table';
+        callSheetData.extraInfo.forEach(item => {
+          const tr = document.createElement('tr');
+          const pFormatted = formatPhoneNumberStr(item.phone);
+          tr.innerHTML = `
+            <td style="width: 18%; font-weight: bold; background: #f2f2f2; text-align: left;">${item.position || 'Должность'}:</td>
+            <td colspan="3" style="text-align: left;"><b>${item.name || '—'}</b>${pFormatted ? ' (' + pFormatted + ')' : ''}</td>
+          `;
+          extraTbody.appendChild(tr);
+        });
+      } else {
+        extraTable.style.display = 'none';
+      }
+
       document.getElementById('csp-notes').innerText = notesVal;
 
       const msTbody = document.getElementById('csp-milestones-tbody');
@@ -2972,6 +3044,7 @@
         venueTechDirPhone: venueTDPhone,
         venueMgrName: venueMgrName,
         venueMgrPhone: venueMgrPhone,
+        extraInfo: callSheetData.extraInfo,
         notes: notesVal,
         milestones: callSheetData.milestones,
         crew: callSheetData.crew,
@@ -3023,6 +3096,19 @@
       const techDirTitle = callSheetData.techDirRoleTitle || 'Тех. Директор';
       const stageMgrStr = callSheetData.stageMgrStr || '—';
       const stageMgrTitle = callSheetData.stageMgrRoleTitle || 'Продюсер / Выпускающий';
+
+      let extraRowsHtml = '';
+      if (callSheetData.extraInfo && callSheetData.extraInfo.length > 0) {
+        callSheetData.extraInfo.forEach(item => {
+          const pF = formatPhoneNumberStr(item.phone);
+          extraRowsHtml += `
+            <tr>
+              <td style="width: 18%; font-weight: bold; background: #f2f2f2;">${item.position || 'Должность'}:</td>
+              <td colspan="3"><b>${item.name || '—'}</b>${pF ? ' (' + pF + ')' : ''}</td>
+            </tr>
+          `;
+        });
+      }
 
       let htmlContent = `
         <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
@@ -3076,6 +3162,7 @@
                 <td style="font-weight: bold; background: #f2f2f2;">От Площадки (Менеджер):</td>
                 <td>${venueMgrStr}</td>
               </tr>
+              ${extraRowsHtml}
             </table>
 
             <h3>1. Общий тайминг смены</h3>
@@ -3168,10 +3255,17 @@
         ["АДРЕС", document.getElementById('cs-address').value, "", "", "", ""],
         ["МЕНЕДЖЕР КОМПЕТЕНЦИИ", `${callSheetData.compMgrName} (${callSheetData.compMgrPhone})`, "", "", "", ""],
         ["ОТВЕТСТВЕННЫЕ АРТМАСТЕРС", `${callSheetData.techDirRoleTitle}: ${callSheetData.techDirStr}`, `${callSheetData.stageMgrRoleTitle}: ${callSheetData.stageMgrStr}`, "", "", ""],
-        ["ОТВЕТСТВЕННЫЕ ПЛОЩАДКА", `ТД: ${callSheetData.venueTechDirName} (${callSheetData.venueTechDirPhone})`, `Менеджер: ${callSheetData.venueMgrName} (${callSheetData.venueMgrPhone})`, "", "", ""],
-        [],
-        headers
+        ["ОТВЕТСТВЕННЫЕ ПЛОЩАДКА", `ТД: ${callSheetData.venueTechDirName} (${callSheetData.venueTechDirPhone})`, `Менеджер: ${callSheetData.venueMgrName} (${callSheetData.venueMgrPhone})`, "", "", ""]
       ];
+
+      if (callSheetData.extraInfo && callSheetData.extraInfo.length > 0) {
+        callSheetData.extraInfo.forEach(item => {
+          rows.push(["ДОП. ОТВЕТСТВЕННЫЙ", item.position, item.name, formatPhoneNumberStr(item.phone), "", ""]);
+        });
+      }
+
+      rows.push([]);
+      rows.push(headers);
 
       callSheetData.milestones.forEach(m => {
         rows.push(["Тайминг", m.time, "Этап", m.event, "", ""]);
