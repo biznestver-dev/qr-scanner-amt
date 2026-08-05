@@ -371,70 +371,31 @@
       color: #fff;
     }
 
-    /* ИНТЕРАКТИВНАЯ КНОПКА-КАПСУЛА С ИКОНКОЙ КОНТАКТОВ */
+    /* ИДЕАЛЬНО КРУГЛАЯ КНОПКА С ИКОНКОЙ КОНТАКТОВ */
     .am-round-btn-wrapper {
       display: flex;
       justify-content: center;
       margin-top: 28px;
     }
-    
     .am-round-btn {
-      width: 58px;
-      height: 58px;
-      border-radius: 29px;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
       background: var(--accent-gradient);
-      border: 1px solid rgba(0, 240, 255, 0.4);
+      border: 2px solid rgba(0, 240, 255, 0.4);
       color: #fff;
+      font-size: 24px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 20px var(--accent-glow);
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      overflow: hidden;
-      padding: 0;
-      white-space: nowrap;
+      box-shadow: 0 0 25px var(--accent-glow), inset 0 0 15px rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
     }
-
-    .am-round-btn .btn-icon {
-      font-size: 22px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.3s ease;
-    }
-
-    .am-round-btn .btn-text {
-      max-width: 0;
-      opacity: 0;
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      transition: max-width 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, margin 0.3s ease;
-      margin-left: 0;
-      overflow: hidden;
-    }
-
     .am-round-btn:hover {
-      width: 270px;
-      border-radius: 29px;
-      background: linear-gradient(135deg, #00f0ff 0%, #7000ff 100%);
-      border-color: transparent;
-      box-shadow: 0 10px 30px var(--cyan-glow);
-      transform: translateY(-2px);
-      padding: 0 22px;
-      justify-content: flex-start;
-    }
-
-    .am-round-btn:hover .btn-text {
-      max-width: 200px;
-      opacity: 1;
-      margin-left: 10px;
-    }
-
-    .am-round-btn:hover .btn-icon {
-      transform: scale(1.1);
+      transform: scale(1.1) translateY(-2px);
+      box-shadow: 0 0 35px var(--am-cyan), inset 0 0 20px rgba(255, 255, 255, 0.4);
+      border-color: var(--am-cyan);
     }
 
     /* МОДАЛЬНОЕ ОКНО КОНТАКТОВ СОТРУДНИКОВ */
@@ -1024,7 +985,7 @@
       </div>
     </div>
 
-    <!-- КНОПКА С ИКОНКОЙ КОНТАКТОВ, РАСШИРЯЮЩАЯСЯ В КАПСУЛУ -->
+    <!-- КРУГЛАЯ КНОПКА СО ЗНАЧКОМ КОНТАКТОВ, РАСШИРЯЮЩАЯСЯ ПРИ НАВЕДЕНИИ -->
     <div class="am-round-btn-wrapper">
       <button class="am-round-btn" onclick="openContactsModal()" title="Контакты сотрудников">
         <span class="btn-icon">📇</span>
@@ -2723,7 +2684,7 @@
             <p style="font-weight: bold; margin-top: 6px; margin-bottom: 2px;">5. Действия при нештатных ситуациях</p>
             <p>5.1. При появлении запаха гари, искрения, необычного шума, перегрева — немедленно отключите питание на сетевом фильтре/автомате и сообщите ответственному. Не пытайтесь устранять неисправность самостоятельно.</p>
             <p>5.2. При поражении электрическим током: не прикасайтесь к пострадавшему до снятия напряжения; вызовите скорую помощь (112); окажите первую помощь по инструкции.</p>
-            <p>5.3. При сбое ПО или потере данных: не выполняйте произвольных действий; зафиксируйте симптомы и обратитесь в ИТ-поддержку.</p>
+            <p>5.3. При сбое ПО или потере данных: не выполняйте произвольных действий; зафиксируйте симптомы (ошибка, время, что делали) и обратитесь в ИТ-поддержку.</p>
             <p>5.4. При возгорании техники: обесточьте, используйте огнетушитель, эвакуируйтесь по плану и сообщите охране/администратору.</p>
 
             <p style="font-weight: bold; margin-top: 6px; margin-bottom: 2px;">6. Завершение работы</p>
