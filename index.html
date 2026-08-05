@@ -1,8 +1,3 @@
-Для автоматического получения онлайн-данных о восходе, закате и погоды прямо в «Конструктор вызывного листа» мы добавим встроенный блок гео-определения и погоды (использующий открытые API Open-Meteo и Sunrise-Sunset по координатам выбранного города или текущей локации). При открытии конструктора вызывного листа (или смене города) данные будут подгружаться автоматически и вставляться в примечания или специальное поле смены.
-
-Обновленный код приложения:
-
-```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -1470,7 +1465,6 @@
       infoText.innerHTML = `Запрос данных для ${cityInput}...`;
 
       try {
-        // Геокодинг города через Open-Meteo
         const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityInput)}&count=1&language=ru&format=json`);
         const geoData = await geoRes.json();
 
@@ -1479,9 +1473,8 @@
           return;
         }
 
-        const { latitude, longitude, name, country } = geoData.results[0];
+        const { latitude, longitude, name } = geoData.results[0];
 
-        // Запрос погоды и восхода/заката
         const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=sunrise,sunset,temperature_2m_max,weathercode&timezone=auto&start_date=${dateInput}&end_date=${dateInput}`);
         const weatherData = await weatherRes.json();
 
@@ -3449,5 +3442,3 @@
   </script>
 </body>
 </html>
-
-```
