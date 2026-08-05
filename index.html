@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Техотдел AM — ArtMasters</title>
+  <title>Учет оборудования (МТБ) ArtMasters</title>
   <!-- Сканер QR-кодов html5-qrcode -->
   <script src="https://unpkg.com/html5-qrcode"></script>
   <!-- Шрифт Plus Jakarta Sans & JetBrains Mono -->
@@ -714,7 +714,7 @@
           </svg>
         </div>
         <div class="app-title-text">
-          <h2>Техотдел AM</h2>
+          <h2>Учет оборудования (МТБ) ArtMasters</h2>
           <p>ArtMasters</p>
         </div>
       </div>
@@ -1131,9 +1131,9 @@
     <div class="cs-print-header">
       <div style="float: right; font-size: 10pt; font-weight: bold; color: #555;">CALL SHEET / ВЫЗЫВНОЙ ЛИСТ</div>
       <div class="cs-print-title" id="csp-project-name">ArtMasters — Смена</div>
-      <div style="font-size: 10pt; margin-top: 4px;">
-        <b>Дата:</b> <span id="csp-date"></span> | 
-        <b>Статус:</b> <span id="csp-shift-num"></span>
+      <div style="font-size: 10pt; margin-top: 4px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+        <div><b>Дата:</b> <span id="csp-date"></span> | <b>Статус:</b> <span id="csp-shift-num"></span></div>
+        <div id="csp-weather-line" style="font-size: 9pt; color: #333; font-weight: normal;"></div>
       </div>
     </div>
 
@@ -1459,7 +1459,6 @@
 
     async function fetchOnlineWeatherAndSun() {
       let rawCity = document.getElementById('cs-city').value.trim() || 'Москва';
-      // Очищаем от приставок типа "г.", "город" для корректного поиска в API
       const cleanCity = rawCity.replace(/^(г\.|город)\s*/i, '').trim();
       const dateInput = document.getElementById('cs-date').value || new Date().toISOString().slice(0,10);
       const infoText = document.getElementById('weather-info-text');
@@ -2700,6 +2699,15 @@
       document.getElementById('csp-date').innerText = cs.date;
       document.getElementById('csp-shift-num').innerText = cs.shiftNum;
       
+      const weatherLineEl = document.getElementById('csp-weather-line');
+      if (cs.weatherInfo) {
+        weatherLineEl.innerText = cs.weatherInfo;
+        weatherLineEl.style.display = 'block';
+      } else {
+        weatherLineEl.innerText = '';
+        weatherLineEl.style.display = 'none';
+      }
+
       document.getElementById('csp-print-city').innerText = cs.city || 'Москва';
       document.getElementById('csp-print-location').innerText = cs.location || '—';
       document.getElementById('csp-print-address').innerText = cs.address || '—';
@@ -3095,6 +3103,17 @@
       document.getElementById('csp-project-name').innerText = projName;
       document.getElementById('csp-date').innerText = formattedDate;
       document.getElementById('csp-shift-num').innerText = shiftNum;
+
+      const weatherLineEl = document.getElementById('csp-weather-line');
+      let weatherStr = '';
+      if (onlineWeatherData.sunrise) {
+        weatherStr = `Погода: ${onlineWeatherData.temp} | Восход: ${onlineWeatherData.sunrise} | Закат: ${onlineWeatherData.sunset}`;
+        weatherLineEl.innerText = weatherStr;
+        weatherLineEl.style.display = 'block';
+      } else {
+        weatherLineEl.innerText = '';
+        weatherLineEl.style.display = 'none';
+      }
       
       document.getElementById('csp-print-city').innerText = cityVal;
       document.getElementById('csp-print-location').innerText = locationVal;
@@ -3212,7 +3231,8 @@
         milestones: callSheetData.milestones,
         crew: callSheetData.crew,
         equipment: callSheetData.equipment,
-        transport: callSheetData.transport
+        transport: callSheetData.transport,
+        weatherInfo: weatherStr
       });
 
       document.getElementById('act-print-area').classList.remove('active-print');
@@ -3254,6 +3274,11 @@
       const stageMgrStr = callSheetData.stageMgrStr || '—';
       const stageMgrTitle = callSheetData.stageMgrRoleTitle || 'Продюсер / Выпускающий';
 
+      let weatherWordHtml = '';
+      if (onlineWeatherData.sunrise) {
+        weatherWordHtml = `<div style="text-align: center; font-size: 8.5pt; margin-bottom: 6px; color: #333;">Погода: ${onlineWeatherData.temp} | Восход: ${onlineWeatherData.sunrise} | Закат: ${onlineWeatherData.sunset}</div>`;
+      }
+
       let extraRowsHtml = '';
       if (callSheetData.extraInfo && callSheetData.extraInfo.length > 0) {
         callSheetData.extraInfo.forEach(item => {
@@ -3293,6 +3318,7 @@
           <div class="Section1">
             <h1>CALL SHEET / ВЫЗЫВНОЙ ЛИСТ</h1>
             <div class="sub-header"><b>${projName}</b> | Дата: ${formattedDate} | ${shiftNum}</div>
+            ${weatherWordHtml}
 
             <table>
               <tr>
@@ -3413,6 +3439,10 @@
         ["ОТВЕТСТВЕННЫЕ АРТМАСТЕРС", `${callSheetData.techDirRoleTitle}: ${callSheetData.techDirStr}`, `${callSheetData.stageMgrRoleTitle}: ${callSheetData.stageMgrStr}`, "", "", ""],
         ["ОТВЕТСТВЕННЫЕ ПЛОЩАДКА", `ТД: ${callSheetData.venueTechDirName} (${callSheetData.venueTechDirPhone})`, `Менеджер: ${callSheetData.venueMgrName} (${callSheetData.venueMgrPhone})`, "", "", ""]
       ];
+
+      if (onlineWeatherData.sunrise) {
+        rows.push(["ПОГОДА И СОЛНЦЕ", `Темп: ${onlineWeatherData.temp}`, `Восход: ${onlineWeatherData.sunrise}`, `Закат: ${onlineWeatherData.sunset}`, "", ""]);
+      }
 
       if (callSheetData.extraInfo && callSheetData.extraInfo.length > 0) {
         callSheetData.extraInfo.forEach(item => {
