@@ -371,18 +371,31 @@
       color: #fff;
     }
 
-    /* КРУГЛАЯ КНОПКА AM */
+    /* КРУГЛАЯ КНОПКА AM С ЖЕЛТЫМ ПУЛЬСИРУЮЩИМ СВЕЧЕНИЕМ */
     .am-round-btn-wrapper {
       display: flex;
       justify-content: center;
       margin-top: 24px;
     }
+    
+    @keyframes yellowPulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.7), 0 0 25px rgba(234, 179, 8, 0.5);
+      }
+      70% {
+        box-shadow: 0 0 0 15px rgba(234, 179, 8, 0), 0 0 40px rgba(234, 179, 8, 0.8);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(234, 179, 8, 0), 0 0 25px rgba(234, 179, 8, 0.5);
+      }
+    }
+
     .am-round-btn {
       width: 68px;
       height: 68px;
       border-radius: 50%;
-      background: var(--accent-gradient);
-      border: 2px solid rgba(0, 240, 255, 0.4);
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      border: 2px solid #fde047;
       color: #fff;
       font-size: 16px;
       font-weight: 900;
@@ -391,13 +404,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 25px var(--accent-glow), inset 0 0 15px rgba(255, 255, 255, 0.2);
+      animation: yellowPulse 2s infinite;
       transition: all 0.3s ease;
     }
     .am-round-btn:hover {
-      transform: scale(1.08) translateY(-2px);
-      box-shadow: 0 0 35px var(--am-cyan), inset 0 0 20px rgba(255, 255, 255, 0.4);
-      border-color: var(--am-cyan);
+      transform: scale(1.1) translateY(-2px);
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      border-color: #ffffff;
     }
 
     /* МОДАЛЬНОЕ ОКНО КОНТАКТОВ СОТРУДНИКОВ */
@@ -987,7 +1000,7 @@
       </div>
     </div>
 
-    <!-- КРУГЛАЯ КНОПКА AM ПОСЛЕ ВСЕХ КНОПОК -->
+    <!-- КРУГЛАЯ КНОПКА AM ПОСЛЕ ВСЕХ КНОПОК С ЖЕЛТЫМ ПУЛЬСИРУЮЩИМ СВЕЧЕНИЕМ -->
     <div class="am-round-btn-wrapper">
       <button class="am-round-btn" onclick="openContactsModal()" title="Контакты сотрудников">AM</button>
     </div>
@@ -1983,7 +1996,7 @@
       else if (codeSel === '+996') prefix = '+996';
       else if (codeSel === '+373') prefix = '+373';
       else if (codeSel === '+993') prefix = '+993';
-      else if (codeSel === '+992') prefix = '+992';
+      else if (codeSel === '+992') prefix = '+993';
       else if (codeSel === 'other') prefix = '';
 
       if (codeSel === '+7' || codeSel === '+7_KZ') {
