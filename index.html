@@ -891,7 +891,7 @@
               </div>
               <div class="form-group">
                 <label>Город</label>
-                <input type="text" id="cs-city" value="г. Москва" onchange="fetchOnlineWeatherAndSun()">
+                <input type="text" id="cs-city" value="Москва" onchange="fetchOnlineWeatherAndSun()">
               </div>
               <div class="form-group">
                 <label>Локация / Павильон</label>
@@ -1458,18 +1458,20 @@
     let onlineWeatherData = { temp: '', weather: '', sunrise: '', sunset: '' };
 
     async function fetchOnlineWeatherAndSun() {
-      const cityInput = document.getElementById('cs-city').value.trim() || 'Москва';
+      let rawCity = document.getElementById('cs-city').value.trim() || 'Москва';
+      // Очищаем от приставок типа "г.", "город" для корректного поиска в API
+      const cleanCity = rawCity.replace(/^(г\.|город)\s*/i, '').trim();
       const dateInput = document.getElementById('cs-date').value || new Date().toISOString().slice(0,10);
       const infoText = document.getElementById('weather-info-text');
 
-      infoText.innerHTML = `Запрос данных для ${cityInput}...`;
+      infoText.innerHTML = `Запрос данных для ${cleanCity}...`;
 
       try {
-        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityInput)}&count=1&language=ru&format=json`);
+        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cleanCity)}&count=1&language=ru&format=json`);
         const geoData = await geoRes.json();
 
         if (!geoData.results || geoData.results.length === 0) {
-          infoText.innerHTML = `Город не найден, погода недоступна`;
+          infoText.innerHTML = `Город "${cleanCity}" не найден, погода недоступна`;
           return;
         }
 
@@ -2570,7 +2572,7 @@
 
     // --- ЛОГИКА ВЫЗЫВНОГО ЛИСТА (CALL SHEET) ---
     let callSheetData = {
-      city: "г. Москва",
+      city: "Москва",
       compMgrName: "—",
       compMgrPhone: "—",
       techDirRoleTitle: "Технический директор (АртМастерс)",
@@ -2675,7 +2677,7 @@
           tr.innerHTML = `
             <td><b>${cs.projectName}</b></td>
             <td>${cs.date}</td>
-            <td>${cs.city || 'г. Москва'}</td>
+            <td>${cs.city || 'Москва'}</td>
             <td>${cs.location}</td>
             <td>${cs.compMgrName || '—'} (${cs.compMgrPhone || '—'})</td>
             <td>
@@ -2698,7 +2700,7 @@
       document.getElementById('csp-date').innerText = cs.date;
       document.getElementById('csp-shift-num').innerText = cs.shiftNum;
       
-      document.getElementById('csp-print-city').innerText = cs.city || 'г. Москва';
+      document.getElementById('csp-print-city').innerText = cs.city || 'Москва';
       document.getElementById('csp-print-location').innerText = cs.location || '—';
       document.getElementById('csp-print-address').innerText = cs.address || '—';
 
