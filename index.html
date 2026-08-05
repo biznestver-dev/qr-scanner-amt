@@ -9,7 +9,7 @@
   <!-- Шрифт Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <style>
     :root {
@@ -541,7 +541,14 @@
     .add-row-btn { background: rgba(0, 240, 255, 0.2); color: var(--am-cyan); border: 1px solid rgba(0, 240, 255, 0.4); }
     .add-row-btn:hover { background: var(--am-cyan); color: #000; }
 
-    /* СЕКЦИИ С КНОПКАМИ СНИЗУ */
+    #callSheetModal input[type="text"], 
+    #callSheetModal input[type="date"], 
+    #callSheetModal select, 
+    #callSheetModal textarea {
+      font-family: Arial, sans-serif !important;
+      font-variant-numeric: tabular-nums;
+    }
+
     .cs-section {
       background: rgba(9, 12, 21, 0.6);
       border: 1px solid var(--glass-border);
@@ -563,13 +570,13 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 8px;
-      order: 1; /* Заголовок сверху */
+      order: 1;
     }
     .cs-section-content {
-      order: 2; /* Контент по центру */
+      order: 2;
     }
     .cs-section-actions {
-      order: 3; /* Кнопки добавления/действий в самом низу блока */
+      order: 3;
       margin-top: 14px;
       display: flex;
       justify-content: flex-end;
@@ -2218,26 +2225,68 @@
         const emp = EMPLOYEES_LIST.find(e => e.name === participant);
         const empRoleStr = emp && emp.role ? `${emp.role} АНО «Артмастерс»` : 'Сотрудник АНО «Артмастерс»';
         safetyHtml = `
-          <br clear="all" style="page-break-before:always;" />
-          <div style="font-size: 10pt; line-height: 1.3;">
-            <h3 style="text-align: center; font-size: 11pt; font-weight: bold; margin-bottom: 10px;">ПРАВИЛА ТЕХНИКИ БЕЗОПАСНОСТИ ПРИ РАБОТЕ С КОМПЬЮТЕРНОЙ ТЕХНИКОЙ</h3>
+          <br clear="all" style="mso-special-character:line-break; page-break-before:always;" />
+          <div style="font-size: 9pt; line-height: 1.25; font-family: Arial, sans-serif;">
+            <p style="text-align: center; font-size: 10pt; font-weight: bold; margin-bottom: 8px;">ПРАВИЛА ТЕХНИКИ БЕЗОПАСНОСТИ ПРИ РАБОТЕ С КОМПЬЮТЕРНОЙ ТЕХНИКОЙ</p>
             <p><b>Организация:</b> АНО «АртМастерс»<br><b>Дата введения:</b> ${todayFormatted}<br><b>Ответственный:</b> Технический директор - Зломанов Олег Викторович</p>
-            <h4 style="font-size: 10pt; font-weight: bold; margin-top: 10px; margin-bottom: 4px;">1. Общие положения</h4>
-            <p>1.1. Правила обязательны для всех сотрудников офиса, стажёров, подрядчиков и иных лиц, использующих компьютерную технику.</p>
-            <p>1.2. Цель правил — предотвратить повреждение техники и исключить риск поражения электрическим током.</p>
-            <h4 style="font-size: 10pt; font-weight: bold; margin-top: 10px; margin-bottom: 4px;">2. Работа с техникой</h4>
-            <p>2.1. Не допускайте попадания жидкостей на технику, не работайте мокрыми руками.</p>
-            <p>2.2. Не вскрывайте корпуса устройств и не производите самостоятельный ремонт.</p>
-            <h4 style="font-size: 10pt; font-weight: bold; margin-top: 10px; margin-bottom: 4px;">3. Завершение работы</h4>
-            <p>3.1. Корректно завершите все программы, выключите периферию и сетевой фильтр.</p>
+            
+            <p style="font-weight: bold; margin-top: 6px; margin-bottom: 2px;">1. Общие положения</p>
+            <p>1.1. Правила обязательны для всех сотрудников офиса, стажёров, подрядчиков и иных лиц, использующих компьютерную технику (ПК, ноутбуки, мониторы, периферию, док-станции, сетевые фильтры).</p>
+            <p>1.2. Цель правил — предотвратить повреждение техники, исключить риск поражения электрическим током, снизить риски для здоровья при длительной работе за компьютером.</p>
+            <p>1.3. Допуск к работе возможен только после прохождения вводного инструктажа по охране труда и ознакомления с этими правилами под подпись.</p>
+
+            <p style="font-weight: bold; margin-top: 6px; margin-bottom: 2px;">2. Подготовка рабочего места</p>
+            <p>2.1. Перед началом работы осмотрите технику: нет ли видимых повреждений корпуса, экрана, кабелей, разъёмов.</p>
+            <p>2.2. Проверьте исправность розетки и сетевого фильтра; не используйте повреждённые удлинители и самодельные переходники.</p>
+            <p>2.3. Разместите кабели так, чтобы они не мешали проходу; используйте кабель-менеджмент (стяжки, каналы) — это критично для безопасности в активных зонах офиса.</p>
+            <p>2.4. Настройте эргономику: расстояние от глаз до экрана — 50–70 см; верхняя треть экрана — на уровне глаз или чуть ниже; спина опирается на спинку кресла, локти под углом ~90°, стопы на полу или на подставке.</p>
+            <p>2.5. Проверьте освещение: на экране не должно быть сильных бликов; при необходимости отрегулируйте жалюзи или яркость монитора.</p>
+
+            <p style="font-weight: bold; margin-top: 6px; margin-bottom: 2px;">3. Работа с техникой</p>
+            <p>3.1. Включение: сначала сетевой фильтр/ИБП, затем периферия, затем ПК/ноутбук.</p>
+            <p>3.2. Не допускайте попадания жидкостей на технику; не ставьте рядом напитки, не работайте мокрыми руками.</p>
+            <p>3.3. Не вскрывайте корпуса устройств и не производите самостоятельный ремонт. При неисправности — сразу сообщите ИТ-отделу или ответственному.</p>
+            <p>3.4. Не перекрывайте вентиляционные отверстия; не кладите на технику бумаги, папки и иные предметы.</p>
+            <p>3.5. Не подключайте и не отключайте кабели при включённом питании, кроме случаев «горячей» замены (USB, наушники и т. п.), разрешённых производителем.</p>
+            <p>3.6. Используйте только штатные и сертифицированные блоки питания и зарядные устройства.</p>
+            <p>3.7. Не используйте технику при явных признаках неисправности (странный запах, шум, перегрев, мерцание экрана).</p>
+
+            <p style="font-weight: bold; margin-top: 6px; margin-bottom: 2px;">4. Режим труда и профилактика утомления</p>
+            <p>4.1. Делайте перерывы каждые 50–60 минут: 10–15 минут на разминку и гимнастику для глаз.</p>
+            <p>4.2. Во время перерыва отводите взгляд от экрана, смотрите вдаль, моргайте чаще, чтобы снизить риск «синдрома сухого глаза».</p>
+            <p>4.3. При длительной работе чередуйте задачи: часть времени — за экраном, часть — на обсуждение, проверку распечаток, ходьбу по офису.</p>
+
+            <p style="font-weight: bold; margin-top: 6px; margin-bottom: 2px;">5. Действия при нештатных ситуациях</p>
+            <p>5.1. При появлении запаха гари, искрения, необычного шума, перегрева — немедленно отключите питание на сетевом фильтре/автомате и сообщите ответственному. Не пытайтесь устранять неисправность самостоятельно.</p>
+            <p>5.2. При поражении электрическим током: не прикасайтесь к пострадавшему до снятия напряжения; вызовите скорую помощь (112); окажите первую помощь по инструкции.</p>
+            <p>5.3. При сбое ПО или потере данных: не выполняйте произвольных действий; зафиксируйте симптомы и обратитесь в ИТ-поддержку.</p>
+            <p>5.4. При возгорании техники: обесточьте, используйте огнетушитель, эвакуируйтесь по плану и сообщите охране/администратору.</p>
+
+            <p style="font-weight: bold; margin-top: 6px; margin-bottom: 2px;">6. Завершение работы</p>
+            <p>6.1. Корректно завершите все программы, сохраните данные.</p>
+            <p>6.2. Выключите технику в порядке, обратном включению: ПК/ноутбук → периферия → сетевой фильтр/ИБП.</p>
+            <p>6.3. Осмотрите рабочее место: кабели не натянуты, техника не перегрета, нет посторонних предметов на устройствах.</p>
+            <p>6.4. Если техника передаётся другому сотруднику, передайте её по краткой проверке и отметьте в журнале/чате ИТ-поддержки.</p>
+
+            <p style="font-weight: bold; margin-top: 6px; margin-bottom: 2px;">7. Ответственность и контроль</p>
+            <p>7.1. Контроль соблюдения правил возлагается на руководителей подразделений и технического директора.</p>
+            <p>7.2. Нарушение правил может служить основанием для отстранения от работы и привлечения к дисциплинарной ответственности.</p>
+            <p>7.3. Факт ознакомления подтверждается подписью в журнале инструктажа либо в электронной форме.</p>
+
             <br>
-            <table style="width: 100%; border: none; margin-top: 20px;">
+            <table style="width: 100%; border: none; margin-top: 15px;">
               <tr>
-                <td style="width: 50%; border: none; font-size: 9pt;">
-                  <b>Инструктаж провел:</b><br>Технический директор АНО «Артмастерс»<br>Зломанов Олег Викторович<br><br>______________________ / ${underlineDateStrIssue}
+                <td style="width: 50%; border: none; font-size: 8.5pt; text-align: left; vertical-align: top;">
+                  <b>Инструктаж провел:</b><br>
+                  Технический директор АНО «Артмастерс»<br>
+                  Зломанов Олег Викторович<br><br>
+                  ______________________ / ${underlineDateStrIssue}
                 </td>
-                <td style="width: 50%; border: none; font-size: 9pt;">
-                  <b>С правилами ознакомлен(а):</b><br>${empRoleStr}<br>${participant !== '—' ? participant : '__________________________'}<br><br>______________________ / ${underlineDateStrIssue}
+                <td style="width: 50%; border: none; font-size: 8.5pt; text-align: left; vertical-align: top;">
+                  <b>С правилами техники безопасности ознакомлен(а), обязуюсь выполнять:</b><br>
+                  ${empRoleStr}<br>
+                  ${participant !== '—' ? participant : '__________________________'}<br><br>
+                  ______________________ / ${underlineDateStrIssue}
                 </td>
               </tr>
             </table>
@@ -2613,7 +2662,7 @@
       msTbody.innerHTML = '';
       cs.milestones.forEach(m => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td style="font-weight: bold; font-family: 'JetBrains Mono';">${m.time}</td><td style="text-align: left;">${m.event}</td>`;
+        tr.innerHTML = `<td style="font-weight: bold; font-family: Arial, sans-serif;">${m.time}</td><td style="text-align: left;">${m.event}</td>`;
         msTbody.appendChild(tr);
       });
 
@@ -2622,10 +2671,10 @@
       cs.crew.forEach(c => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td style="font-weight: bold; color: #b91c1c;">${c.time}</td>
+          <td style="font-weight: bold; color: #b91c1c; font-family: Arial, sans-serif;">${c.time}</td>
           <td style="text-align: left; font-weight: bold;">${c.dept}</td>
           <td style="text-align: left;">${c.name}</td>
-          <td>${formatPhoneNumberStr(c.phone)}</td>
+          <td style="font-family: Arial, sans-serif;">${formatPhoneNumberStr(c.phone)}</td>
           <td style="text-align: left;">${c.task}</td>
         `;
         crewTbody.appendChild(tr);
@@ -2636,11 +2685,11 @@
       cs.equipment.forEach((eq, idx) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${idx + 1}</td>
+          <td style="font-family: Arial, sans-serif;">${idx + 1}</td>
           <td style="text-align: left; font-weight: bold;">${eq.name}</td>
-          <td style="font-family: 'JetBrains Mono';">${eq.inv || '—'}</td>
-          <td>${eq.sn || '—'}</td>
-          <td>${eq.count || '1'}</td>
+          <td style="font-family: Arial, sans-serif;">${eq.inv || '—'}</td>
+          <td style="font-family: Arial, sans-serif;">${eq.sn || '—'}</td>
+          <td style="font-family: Arial, sans-serif;">${eq.count || '1'}</td>
         `;
         eqTbody.appendChild(tr);
       });
@@ -2651,9 +2700,9 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td style="font-weight: bold;">${trItem.model}</td>
-          <td style="font-family: 'JetBrains Mono'; font-weight: bold;">${trItem.plate}</td>
+          <td style="font-weight: bold; font-family: Arial, sans-serif;">${trItem.plate}</td>
           <td style="text-align: left;">${trItem.driver}</td>
-          <td>${formatPhoneNumberStr(trItem.phone)}</td>
+          <td style="font-family: Arial, sans-serif;">${formatPhoneNumberStr(trItem.phone)}</td>
           <td style="text-align: left;">${trItem.task}</td>
         `;
         trTbody.appendChild(tr);
@@ -2755,7 +2804,7 @@
         const div = document.createElement('div');
         div.style.cssText = 'display:flex; gap:10px; align-items:center;';
         div.innerHTML = `
-          <input type="text" value="${m.time}" style="width: 100px; font-family: 'JetBrains Mono';" onchange="callSheetData.milestones[${idx}].time = this.value">
+          <input type="text" value="${m.time}" style="width: 100px; font-family: Arial, sans-serif;" onchange="callSheetData.milestones[${idx}].time = this.value">
           <input type="text" value="${m.event}" style="flex: 1;" onchange="callSheetData.milestones[${idx}].event = this.value">
           <button class="delete-btn" onclick="removeCsMilestone(${idx})">✕</button>
         `;
@@ -2795,10 +2844,10 @@
         const formattedPhone = formatPhoneNumberStr(c.phone);
 
         div.innerHTML = `
-          <input type="text" value="${c.time}" style="width: 85px; font-family: 'JetBrains Mono';" onchange="callSheetData.crew[${idx}].time = this.value">
+          <input type="text" value="${c.time}" style="width: 85px; font-family: Arial, sans-serif;" onchange="callSheetData.crew[${idx}].time = this.value">
           <input type="text" value="${c.dept}" style="width: 140px;" placeholder="Департамент/Роль" onchange="callSheetData.crew[${idx}].dept = this.value">
           ${nameFieldHtml}
-          <input type="text" value="${formattedPhone}" style="width: 160px;" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this); callSheetData.crew[${idx}].phone = this.value">
+          <input type="text" value="${formattedPhone}" style="width: 160px; font-family: Arial, sans-serif;" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this); callSheetData.crew[${idx}].phone = this.value">
           <input type="text" value="${c.task}" style="flex: 1; min-width: 180px;" placeholder="Задача на смене" onchange="callSheetData.crew[${idx}].task = this.value">
           <button class="delete-btn" onclick="removeCsCrew(${idx})">✕</button>
         `;
@@ -2878,9 +2927,9 @@
         div.style.cssText = 'display:flex; gap:10px; align-items:center; flex-wrap:wrap;';
         div.innerHTML = `
           <input type="text" value="${eq.name}" style="flex: 2; min-width: 200px;" placeholder="Наименование / Модель" onchange="callSheetData.equipment[${idx}].name = this.value">
-          <input type="text" value="${eq.inv}" style="width: 140px; font-family: 'JetBrains Mono';" placeholder="Инв. №" onchange="callSheetData.equipment[${idx}].inv = this.value">
-          <input type="text" value="${eq.sn}" style="width: 140px;" placeholder="Серийный №" onchange="callSheetData.equipment[${idx}].sn = this.value">
-          <input type="text" value="${eq.count}" style="width: 70px; text-align: center;" placeholder="Кол-во" onchange="callSheetData.equipment[${idx}].count = this.value">
+          <input type="text" value="${eq.inv}" style="width: 140px; font-family: Arial, sans-serif;" placeholder="Инв. №" onchange="callSheetData.equipment[${idx}].inv = this.value">
+          <input type="text" value="${eq.sn}" style="width: 140px; font-family: Arial, sans-serif;" placeholder="Серийный №" onchange="callSheetData.equipment[${idx}].sn = this.value">
+          <input type="text" value="${eq.count}" style="width: 70px; text-align: center; font-family: Arial, sans-serif;" placeholder="Кол-во" onchange="callSheetData.equipment[${idx}].count = this.value">
           <button class="delete-btn" onclick="removeCsEquipment(${idx})">✕</button>
         `;
         container.appendChild(div);
@@ -2907,9 +2956,9 @@
 
         div.innerHTML = `
           <input type="text" value="${tr.model}" style="width: 140px;" placeholder="Марка / Модель" onchange="callSheetData.transport[${idx}].model = this.value">
-          <input type="text" value="${tr.plate}" style="width: 120px; font-family: 'JetBrains Mono';" placeholder="Гос. номер" onchange="callSheetData.transport[${idx}].plate = this.value">
+          <input type="text" value="${tr.plate}" style="width: 120px; font-family: Arial, sans-serif;" placeholder="Гос. номер" onchange="callSheetData.transport[${idx}].plate = this.value">
           <input type="text" value="${tr.driver}" style="width: 180px;" placeholder="ФИО Водителя" onchange="callSheetData.transport[${idx}].driver = this.value">
-          <input type="text" value="${formattedPhone}" style="width: 160px;" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this); callSheetData.transport[${idx}].phone = this.value">
+          <input type="text" value="${formattedPhone}" style="width: 160px; font-family: Arial, sans-serif;" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this); callSheetData.transport[${idx}].phone = this.value">
           <input type="text" value="${tr.task}" style="flex: 1; min-width: 160px;" placeholder="Цель / Задача" onchange="callSheetData.transport[${idx}].task = this.value">
           <button class="delete-btn" onclick="removeCsTransport(${idx})">✕</button>
         `;
@@ -3006,7 +3055,7 @@
       msTbody.innerHTML = '';
       callSheetData.milestones.forEach(m => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td style="font-weight: bold; font-family: 'JetBrains Mono';">${m.time}</td><td style="text-align: left;">${m.event}</td>`;
+        tr.innerHTML = `<td style="font-weight: bold; font-family: Arial, sans-serif;">${m.time}</td><td style="text-align: left;">${m.event}</td>`;
         msTbody.appendChild(tr);
       });
 
@@ -3016,10 +3065,10 @@
         const tr = document.createElement('tr');
         const printPhone = formatPhoneNumberStr(c.phone);
         tr.innerHTML = `
-          <td style="font-weight: bold; color: #b91c1c;">${c.time}</td>
+          <td style="font-weight: bold; color: #b91c1c; font-family: Arial, sans-serif;">${c.time}</td>
           <td style="text-align: left; font-weight: bold;">${c.dept}</td>
           <td style="text-align: left;">${c.name}</td>
-          <td>${printPhone}</td>
+          <td style="font-family: Arial, sans-serif;">${printPhone}</td>
           <td style="text-align: left;">${c.task}</td>
         `;
         crewTbody.appendChild(tr);
@@ -3030,11 +3079,11 @@
       callSheetData.equipment.forEach((eq, idx) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${idx + 1}</td>
+          <td style="font-family: Arial, sans-serif;">${idx + 1}</td>
           <td style="text-align: left; font-weight: bold;">${eq.name}</td>
-          <td style="font-family: 'JetBrains Mono';">${eq.inv || '—'}</td>
-          <td>${eq.sn || '—'}</td>
-          <td>${eq.count || '1'}</td>
+          <td style="font-family: Arial, sans-serif;">${eq.inv || '—'}</td>
+          <td style="font-family: Arial, sans-serif;">${eq.sn || '—'}</td>
+          <td style="font-family: Arial, sans-serif;">${eq.count || '1'}</td>
         `;
         eqTbody.appendChild(tr);
       });
@@ -3046,9 +3095,9 @@
         const printPhone = formatPhoneNumberStr(trItem.phone);
         tr.innerHTML = `
           <td style="font-weight: bold;">${trItem.model}</td>
-          <td style="font-family: 'JetBrains Mono'; font-weight: bold;">${trItem.plate}</td>
+          <td style="font-weight: bold; font-family: Arial, sans-serif;">${trItem.plate}</td>
           <td style="text-align: left;">${trItem.driver}</td>
-          <td>${printPhone}</td>
+          <td style="font-family: Arial, sans-serif;">${printPhone}</td>
           <td style="text-align: left;">${trItem.task}</td>
         `;
         trTbody.appendChild(tr);
