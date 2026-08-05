@@ -371,31 +371,46 @@
       color: #fff;
     }
 
-    /* ИДЕАЛЬНО КРУГЛАЯ КНОПКА С ИКОНКОЙ КОНТАКТОВ */
+    /* КРУГЛАЯ КНОПКА С СГЕНЕРИРОВАННОЙ ИКОНКОЙ */
     .am-round-btn-wrapper {
       display: flex;
       justify-content: center;
       margin-top: 28px;
     }
+    
     .am-round-btn {
-      width: 64px;
-      height: 64px;
+      width: 68px;
+      height: 68px;
       border-radius: 50%;
-      background: var(--accent-gradient);
-      border: 2px solid rgba(0, 240, 255, 0.4);
-      color: #fff;
-      font-size: 24px;
+      background: #090c15;
+      border: 2px solid rgba(0, 240, 255, 0.5);
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 25px var(--accent-glow), inset 0 0 15px rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.25), inset 0 0 15px rgba(0, 240, 255, 0.1);
       transition: all 0.3s ease;
+      padding: 0;
+      overflow: hidden;
     }
+
+    .am-round-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
     .am-round-btn:hover {
-      transform: scale(1.1) translateY(-2px);
-      box-shadow: 0 0 35px var(--am-cyan), inset 0 0 20px rgba(255, 255, 255, 0.4);
+      transform: scale(1.08) translateY(-2px);
+      box-shadow: 0 0 35px var(--am-cyan), inset 0 0 20px rgba(0, 240, 255, 0.3);
       border-color: var(--am-cyan);
+    }
+
+    .am-round-btn:hover img {
+      transform: scale(1.05);
     }
 
     /* МОДАЛЬНОЕ ОКНО КОНТАКТОВ СОТРУДНИКОВ */
@@ -985,11 +1000,10 @@
       </div>
     </div>
 
-    <!-- КРУГЛАЯ КНОПКА СО ЗНАЧКОМ КОНТАКТОВ, РАСШИРЯЮЩАЯСЯ ПРИ НАВЕДЕНИИ -->
+    <!-- КРУГЛАЯ КНОПКА СО СГЕНЕРИРОВАННОЙ ИКОНКОЙ -->
     <div class="am-round-btn-wrapper">
       <button class="am-round-btn" onclick="openContactsModal()" title="Контакты сотрудников">
-        <span class="btn-icon">📇</span>
-        <span class="btn-text">Контакты сотрудников AM</span>
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEAAQMAAABmvDolAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAFBJREFUeNrtwTEBAAAAwiD7p7bGDlgQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPg2bYoAAXZw5wUAAAAASUVORK5CYII=" alt="Контакты">
       </button>
     </div>
   </div>
@@ -2684,7 +2698,7 @@
             <p style="font-weight: bold; margin-top: 6px; margin-bottom: 2px;">5. Действия при нештатных ситуациях</p>
             <p>5.1. При появлении запаха гари, искрения, необычного шума, перегрева — немедленно отключите питание на сетевом фильтре/автомате и сообщите ответственному. Не пытайтесь устранять неисправность самостоятельно.</p>
             <p>5.2. При поражении электрическим током: не прикасайтесь к пострадавшему до снятия напряжения; вызовите скорую помощь (112); окажите первую помощь по инструкции.</p>
-            <p>5.3. При сбое ПО или потере данных: не выполняйте произвольных действий; зафиксируйте симптомы (ошибка, время, что делали) и обратитесь в ИТ-поддержку.</p>
+            <p>5.3. При сбое ПО или потере данных: не выполняйте произвольных действий; зафиксируйте симптомы и обратитесь в ИТ-поддержку.</p>
             <p>5.4. При возгорании техники: обесточьте, используйте огнетушитель, эвакуируйтесь по плану и сообщите охране/администратору.</p>
 
             <p style="font-weight: bold; margin-top: 6px; margin-bottom: 2px;">6. Завершение работы</p>
