@@ -371,6 +371,131 @@
       color: #fff;
     }
 
+    /* КРУГЛАЯ КНОПКА AM */
+    .am-round-btn-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-top: 24px;
+    }
+    .am-round-btn {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: var(--accent-gradient);
+      border: 2px solid rgba(0, 240, 255, 0.4);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 25px var(--accent-glow), inset 0 0 15px rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+    .am-round-btn:hover {
+      transform: scale(1.08) translateY(-2px);
+      box-shadow: 0 0 35px var(--am-cyan), inset 0 0 20px rgba(255, 255, 255, 0.4);
+      border-color: var(--am-cyan);
+    }
+
+    /* БЛОК КОНТАКТОВ СОТРУДНИКОВ */
+    .contacts-section {
+      display: none;
+      margin-top: 36px;
+      padding-top: 28px;
+      border-top: 1px solid var(--glass-border);
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    .contacts-section.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .contacts-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .contacts-header h3 {
+      font-size: 18px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--am-cyan);
+      letter-spacing: 0.05em;
+    }
+    .contacts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 768px) {
+      .contacts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .contact-card {
+      background: rgba(9, 12, 21, 0.6);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .contact-card:hover {
+      border-color: rgba(0, 240, 255, 0.3);
+      background: rgba(25, 34, 60, 0.5);
+    }
+    .contact-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .contact-role {
+      font-size: 12px;
+      color: var(--am-cyan);
+      font-weight: 600;
+    }
+    .contact-info {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .contact-info a {
+      color: var(--text-primary);
+      text-decoration: none;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .contact-info a:hover {
+      color: var(--am-cyan);
+      text-decoration: underline;
+    }
+    .contact-badges {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .contact-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-tg { background: rgba(0, 240, 255, 0.15); color: var(--am-cyan); border: 1px solid rgba(0, 240, 255, 0.3); }
+    .badge-max { background: rgba(255, 0, 67, 0.15); color: var(--am-magenta); border: 1px solid rgba(255, 0, 67, 0.3); }
+
     .modal {
       display: none;
       position: fixed;
@@ -849,6 +974,23 @@
         <button class="btn btn-callsheet" onclick="openCallSheetModal()">📋 Создать вызывной лист</button>
         <button class="btn btn-callsheet" onclick="openCallSheetHistoryModal()">📜 Архив вызывных листов</button>
       </div>
+    </div>
+
+    <!-- КРУГЛАЯ КНОПКА AM ПОСЛЕ ВСЕХ КНОПОК -->
+    <div class="am-round-btn-wrapper">
+      <button class="am-round-btn" onclick="toggleContactsSection()" title="Контакты сотрудников">AM</button>
+    </div>
+
+    <!-- БЛОК КОНТАКТОВ СОТРУДНИКОВ -->
+    <div id="contactsSection" class="contacts-section">
+      <div class="contacts-header">
+        <h3>Контакты сотрудников ArtMasters</h3>
+        <button class="close-btn" onclick="toggleContactsSection()" style="width: 32px; height: 32px; font-size: 16px;">&times;</button>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="contactsSearchInput" placeholder="Поиск по сотрудникам и должностям..." oninput="renderEmployeesDirectory()">
+      </div>
+      <div class="contacts-grid" id="contactsGridContainer"></div>
     </div>
   </div>
 
@@ -1373,66 +1515,114 @@
     }
 
     const EMPLOYEES_LIST = [
-      { name: "Агапов Даниил", role: "Веб-дизайнер", phone: "+79534307790" },
-      { name: "Баранова Татьяна Николаевна", role: "Ведущий специалист документационного обеспечения", phone: "+79605811818" },
-      { name: "Бекетова Алла Александровна", role: "Администратор", phone: "+79283104564" },
-      { name: "Белоусов Алексей Алексеевич", role: "Системный администратор", phone: "+79265668913" },
-      { name: "Белоусова Анастасия Константиновна", role: "Офис-менеджер, ассистент технического отдела", phone: "+79262363012" },
+      { name: "Володин Борислав Борисович", role: "Директор", phone: "+79857697535", email: "bvolodin@artmasters.ru", tg: true, max: true },
+      { name: "Агапов Даниил", role: "Веб-дизайнер", phone: "+79534307790", email: "dagapov@artmasters.ru", tg: true, max: true },
+      { name: "Баранова Татьяна Николаевна", role: "Ведущий специалист документационного обеспечения", phone: "+79605811818", email: "doc@artmasters.ru" },
+      { name: "Бекетова Алла Александровна", role: "Администратор", phone: "+79283104564", email: "abeketova@artmasters.ru" },
+      { name: "Белоусов Алексей Алексеевич", role: "Технический менеджер", phone: "+79265668913", email: "admin@artmasters.ru", tg: true, max: true },
+      { name: "Белоусова Анастасия Константиновна", role: "Офис-менеджер, ассистент технического отдела", phone: "+79262363012", email: "office@artmasters.ru" },
       { name: "Буланов Кирилл Сергеевич", role: "Контент-менеджер соцсетей", phone: "+79150183176" },
-      { name: "Василенко Анна Владимировна", role: "Заместитель директора по работе с органами государственной власти и развитию", phone: "+79260422211" },
-      { name: "Василец Светлана Михайловна", role: "Руководитель департамента методики и экспертизы", phone: "+79162611880" },
-      { name: "Васина Светлана Сергеевна", role: "Старший специалист казначейства", phone: "+79055404903" },
-      { name: "Володин Борислав Борисович", role: "Директор", phone: "+79857697535" },
-      { name: "Гаврилова Анастасия Евгеньевна", role: "Менеджер образовательных программ и проектов", phone: "+79147592882" },
-      { name: "Глазкова Юлия Александровна", role: "Советник Директора по правовым вопросам, Генеральный директор Ассоциации «АртМастерс»", phone: "+79684541151" },
+      { name: "Василенко Анна Владимировна", role: "Заместитель директора по работе с органами государственной власти и развитию", phone: "+79260422211", email: "avasilenko@artmasters.ru", tg: true, max: true },
+      { name: "Василец Светлана Михайловна", role: "Руководитель департамента методики и экспертизы", phone: "+79162611880", email: "spelevina@artmasters.ru", tg: true, max: true },
+      { name: "Васина Светлана Сергеевна", role: "Старший специалист казначейства", phone: "+79055404903", email: "svasina@artmasters.ru" },
+      { name: "Вахрушева Ольга Анатольевна", role: "Руководитель финансового отдела", phone: "+79652798776", email: "ova@artmasters.ru" },
+      { name: "Гаврилова Анастасия Евгеньевна", role: "Менеджер образовательных программ и проектов", phone: "+79147592882", email: "agavrilova@artmasters.ru", tg: true, max: true },
+      { name: "Глазкова Юлия Александровна", role: "Советник Директора по правовым вопросам, Генеральный директор Ассоциации «АртМастерс»", phone: "+79684541151", email: "uglazkova@artmasters.ru", tg: true, max: true },
       { name: "Даминов Булат Ильдарович", role: "Видеомонтажер", phone: "+79274985730" },
-      { name: "Дашкина Зульфия", role: "Менеджер по спецпроектам", phone: "+79254432518" },
-      { name: "Деликова Алина", role: "Сотрудник", phone: "+79689757153" },
-      { name: "Ермак Виолетта Юрьевна", role: "Заместитель руководителя департамента по работе с регионами", phone: "" },
-      { name: "Ермоленко Наталия Александровна", role: "Главный редактор по работе с участниками", phone: "+79161567039" },
-      { name: "Жижневская Ксения Владимировна", role: "Шеф-редактор", phone: "+79055099087" },
-      { name: "Зёма Елизавета Алексеевна", role: "Специалист первичного контроля", phone: "+79261873271" },
-      { name: "Зломанов Олег Викторович", role: "Административно-технический директор", phone: "+79206931013" },
-      { name: "Иванова Александра Ивановна", role: "Линейный продюсер по направлению «Кино»", phone: "+79888800577" },
-      { name: "Иванова Вероника Ивановна", role: "Секретарь", phone: "+79245486320" },
-      { name: "Казакова Лариса Анастольевна", role: "Руководитель производственного департамента", phone: "+79161245600" },
-      { name: "Казаченко Владимир Анатольевич", role: "Исполнительный директор", phone: "+79138200218" },
-      { name: "Капура Елена Николаевна", role: "Руководитель департамента образовательных программ", phone: "+79851968561" },
-      { name: "Караулова Татьяна", role: "Специалист информационно-аналитического отдела", phone: "+79267076336" },
-      { name: "Кирьяненко Татьяна Викторовна", role: "Руководитель финансово-юридического департамента", phone: "+79167256902" },
-      { name: "Кличко Анастасия Витальевна", role: "Линейный продюсер по направлению «Театр»", phone: "+79647087343" },
-      { name: "Колпаков Никита Александрович", role: "Продюсер внутреннего медиапроизводства", phone: "+79164300216" },
-      { name: "Криштоб Арина Петровна", role: "Дизайнер", phone: "+79035681699" },
-      { name: "Кудасова Екатерина Владимировна", role: "Юрист", phone: "+79521662000" },
-      { name: "Левченко Екатерина Анатольевна", role: "Линейный продюсер", phone: "+79168430171" },
-      { name: "Лукьянчикова Евгения Васильевна", role: "Секретарь-координатор Экспертного совета", phone: "+79606859282" },
-      { name: "Лютикова Маргарита Ефимовна", role: "Старший менеджер компетенций", phone: "+79601291238" },
+      { name: "Дашкина Зульфия", role: "Менеджер по спецпроектам", phone: "+79254432518", email: "dashkina@artmasters.ru" },
+      { name: "Деликова Алина", role: "", phone: "+79689757153", email: "adelikova@artmasters.ru", tg: true, max: true },
+      { name: "Ермак Виолетта Юрьевна", role: "Заместитель руководителя департамента по работе с регионами", phone: "+79154420460", email: "vermak@artmasters.ru" },
+      { name: "Ермоленко Наталия Александровна", role: "Главный редактор по работе с участниками", phone: "+79161567039", email: "nermolenko@artmasters.ru", tg: true, max: true },
+      { name: "Жижневская Ксения Владимировна", role: "Шеф-редактор", phone: "+79055099087", email: "kzhizhnevskaya@artmasters.ru", tg: true, max: true },
+      { name: "Зёма Елизавета Алексеевна", role: "Специалист первичного контроля", phone: "+79261873271", email: "hr@artmasters.ru" },
+      { name: "Зломанов Олег Викторович", role: "Административно-технический директор", phone: "+79206931013", email: "ozlomanov@artmasters.ru", tg: true, max: true },
+      { name: "Иванова Александра Ивановна", role: "Линейный продюсер по направлению «Кино»", phone: "+79888800577", email: "aivanova@artmasters.ru", tg: true, max: true },
+      { name: "Иванова Вероника Ивановна", role: "Секретарь", phone: "+79245486320", email: "vivanova@artmasters.ru", tg: true, max: true },
+      { name: "Казакова Лариса Анастольевна", role: "Руководитель производственного департамента", phone: "+79161245600", email: "lkazakova@artmasters.ru" },
+      { name: "Казаченко Владимир Анатольевич", role: "Исполнительный директор", phone: "+79138200218", email: "vkazachenko@artmasters.ru", tg: true, max: true },
+      { name: "Капура Елена Николаевна", role: "Руководитель департамента образовательных программ", phone: "+79851968561", email: "ekapura@artmasters.ru", tg: true, max: true },
+      { name: "Караулова Татьяна", role: "Специалист информационно-аналитического отдела", phone: "+79267076336", email: "tkaraulova@artmasters.ru" },
+      { name: "Кирьяненко Татьяна Викторовна", role: "Руководитель финансово-юридического департамента", phone: "+79167256902", email: "tkirianenko@artmasters.ru" },
+      { name: "Кличко Анастасия Витальевна", role: "Линейный продюсер по направлению «Театр»", phone: "+79647087343", email: "aklichko@artmasters.ru" },
+      { name: "Колпаков Никита Александрович", role: "Продюсер внутреннего медиапроизводства", phone: "+79164300216", email: "nkolpakov@artmasters.ru", tg: true, max: true },
+      { name: "Кочеткова Алёна Алексеевна", role: "", phone: "+79850501690", email: "akochetkova@artmasters.ru", tg: true, max: true },
+      { name: "Криштоб Арина Петровна", role: "Дизайнер", phone: "+79035681699", email: "akrishtob@artmasters.ru", tg: true, max: true },
+      { name: "Кудасова Екатерина Владимировна", role: "Юрист", phone: "+79521662000", email: "legal@artmasters.ru" },
+      { name: "Левченко Екатерина Анатольевна", role: "Линейный продюсер", phone: "+79168430171", email: "elevchenko@artmasters.ru", tg: true, max: true },
+      { name: "Лукьянчикова Евгения Васильевна", role: "Секретарь-координатор Экспертного совета", phone: "+79606859282", email: "elukyanchikova@artmasters.ru" },
+      { name: "Лютикова Маргарита Ефимовна", role: "Старший менеджер компетенций", phone: "+79601291238", email: "mlutikova@artmasters.ru" },
       { name: "Малашенко Александр Сергеевич", role: "Фотограф", phone: "+79773060506" },
-      { name: "Матвеева Виктория Игоревна", role: "Специалист операционного отдела", phone: "+79832227633" },
-      { name: "Минаева Ольга Анатольевна", role: "Главный бухгалтер", phone: "+79037692342" },
-      { name: "Московкина Ксения", role: "Сотрудник", phone: "+79267256262" },
-      { name: "Невзорова Александра Кирилловна", role: "Заместитель руководителя департамента по работе с партнёрами", phone: "+79262499722" },
-      { name: "Новикова Анастасия Владимировна", role: "Старший продюсер", phone: "+79629964020" },
-      { name: "Омельченко Елена Евгеньевна", role: "Руководитель операционного отдела", phone: "+79851442930" },
-      { name: "Орлов Денис Игоревич", role: "Специалист по договорной работе и отчетности", phone: "+79778099594" },
-      { name: "Осипова Аксинья Сергеевна", role: "Специалист-модератор", phone: "+79998579335" },
-      { name: "Плотникова Елена Вадимовна", role: "Арт-директор", phone: "+79153154720" },
-      { name: "Полякова Дарья Александровна", role: "Редактор по работе с участниками", phone: "+79096688887" },
-      { name: "Посякина Татьяна Александровна", role: "Ведущий специалист операционного отдела", phone: "+79167867799" },
-      { name: "Пригарин Алексей Вячеславович", role: "Финансовый директор", phone: "+79037240052" },
-      { name: "Разыграев Андрей Викторович", role: "Креативный директор", phone: "+79255890909" },
-      { name: "Саламатова Екатерина Константиновна", role: "Руководитель информационно-аналитического отдела, председатель счетной комиссии", phone: "+79124535791" },
+      { name: "Матвеева Виктория Игоревна", role: "Специалист операционного отдела", phone: "+79832227633", email: "vmatveeva@artmasters.ru" },
+      { name: "Минаева Ольга Анатольевна", role: "Главный бухгалтер", phone: "+79037692342", email: "ominaeva@artmasters.ru" },
+      { name: "Московкина Ксения", role: "", phone: "+79267256262", email: "kmoskovkina@artmasters.ru", tg: true, max: true },
+      { name: "Невзорова Александра Кирилловна", role: "Заместитель руководителя департамента по работе с партнёрами", phone: "+79262499722", email: "anevzorova@artmasters.ru", tg: true, max: true },
+      { name: "Новикова Анастасия Владимировна", role: "Старший продюсер", phone: "+79629964020", email: "anovikova@artmasters.ru", tg: true, max: true },
+      { name: "Омельченко Елена Евгеньевна", role: "Руководитель операционного отдела", phone: "+79851442930", email: "eomelchenko@artmasters.ru", tg: true, max: true },
+      { name: "Орлов Денис Игоревич", role: "Специалист по договорной работе и отчетности", phone: "+79778099594", email: "dorlov@artmasters.ru" },
+      { name: "Осипова Аксинья Сергеевна", role: "Специалист-модератор", phone: "+79998579335", email: "aosipova@artmasters.ru", tg: true, max: true },
+      { name: "Плотникова Елена Вадимовна", role: "Арт-директор", phone: "+79153154720", email: "eplotnikova@artmasters.ru", tg: true, max: true },
+      { name: "Полякова Дарья Александровна", role: "Редактор по работе с участниками", phone: "+79096688887", email: "dpolyakova@artmasters.ru" },
+      { name: "Посякина Татьяна Александровна", role: "Ведущий специалист операционного отдела", phone: "+79167867799", email: "tposyakina@artmasters.ru" },
+      { name: "Пригарин Алексей Вячеславович", role: "", phone: "+79037240052", email: "aprigarin@artmasters.ru" },
+      { name: "Разыграев Андрей Викторович", role: "Креативный директор", phone: "+79255890909", email: "arazygraev@artmasters.ru", tg: true, max: true },
+      { name: "Саламатова Екатерина Константиновна", role: "Руководитель информационно-аналитического отдела, председатель счетной комиссии", phone: "+79124535791", email: "esalamatova@artmasters.ru", tg: true, max: true },
       { name: "Сафин Матвей Эдуардович", role: "Видеооператор", phone: "+79995668275" },
-      { name: "Селецкая Валерия Валентиновна", role: "Заместитель руководителя департамента образовательных программ", phone: "+79147552035" },
-      { name: "Сиверс Юлия Александровна", role: "Ведущий специалист отдела методики", phone: "+79858815399" },
-      { name: "Сидоренко Артём Валерьевич", role: "Старший технический менеджер", phone: "+79772772750" },
-      { name: "Сиропова Евгения Владимировна", role: "Старший координатор", phone: "+79046281466" },
-      { name: "Смутный Богдан Сергеевич", role: "Технический менеджер", phone: "+79601805290" },
-      { name: "Талеб Лина Сид-Ахмедовна", role: "Менеджер по работе с органами государственной власти", phone: "+79632225826" },
+      { name: "Селецкая Валерия Валентиновна", role: "Заместитель руководителя департамента образовательных программ", phone: "+79147552035", email: "vseleckaya@artmasters.ru", tg: true, max: true },
+      { name: "Сиверс Юлия Александровна", role: "Ведущий специалист отдела методики", phone: "+79858815399", email: "usivers@artmasters.ru", tg: true, max: true },
+      { name: "Сидоренко Артём Валерьевич", role: "Старший технический менеджер", phone: "+79772772750", email: "sav@artmasters.ru", tg: true },
+      { name: "Сиропова Евгения Владимировна", role: "Старший координатор", phone: "+79046281466", email: "esiropova@artmasters.ru", tg: true, max: true },
+      { name: "Смутный Богдан Сергеевич", role: "Технический менеджер", phone: "+79601805290", email: "bsmutny@artmasters.ru", tg: true, max: true },
+      { name: "Талеб Лина Сид-Ахмедовна", role: "Менеджер по работе с органами государственной власти", phone: "+79632225826", email: "ltaleb@artmasters.ru", tg: true, max: true },
       { name: "Тетеря Валерия Сергеевна", role: "Помощник редактора по работе с участниками", phone: "+79104074291" },
-      { name: "Чикунова Анна Алексеевна", role: "Редактор по работе с участниками", phone: "+79851360339" },
-      { name: "Чурилина Екатерина Владимировна", role: "Руководитель отдела методики и конкурсной документации", phone: "+79031408395" }
+      { name: "Чикунова Анна Алексеевна", role: "Редактор по работе с участниками", phone: "+79851360339", email: "achikunova@artmasters.ru", tg: true, max: true },
+      { name: "Чурилина Екатерина Владимировна", role: "Руководитель отдела методики и конкурсной документации", phone: "+79031408395", email: "echurilina@artmasters.ru", tg: true, max: true }
     ];
+
+    function toggleContactsSection() {
+      const section = document.getElementById('contactsSection');
+      section.classList.toggle('active');
+      if (section.classList.contains('active')) {
+        renderEmployeesDirectory();
+        section.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function renderEmployeesDirectory() {
+      const container = document.getElementById('contactsGridContainer');
+      const search = document.getElementById('contactsSearchInput').value.toLowerCase().trim();
+      container.innerHTML = '';
+
+      const filtered = EMPLOYEES_LIST.filter(emp => {
+        const text = `${emp.name} ${emp.role} ${emp.phone} ${emp.email || ''}`.toLowerCase();
+        return !search || text.includes(search);
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 20px;">Сотрудники не найдены</p>';
+        return;
+      }
+
+      filtered.forEach(emp => {
+        const phoneFormatted = formatPhoneNumberStr(emp.phone);
+        const card = document.createElement('div');
+        card.className = 'contact-card';
+        
+        let badgesHtml = '';
+        if (emp.tg) badgesHtml += '<span class="contact-badge badge-tg">Telegram</span>';
+        if (emp.max) badgesHtml += '<span class="contact-badge badge-max">MAX</span>';
+
+        card.innerHTML = `
+          <div class="contact-name">${emp.name}</div>
+          ${emp.role ? `<div class="contact-role">${emp.role}</div>` : ''}
+          <div class="contact-info">
+            <div>📞 Тел: <a href="tel:${emp.phone}">${phoneFormatted}</a></div>
+            ${emp.email ? `<div>✉️ Почта: <a href="mailto:${emp.email}">${emp.email}</a></div>` : ''}
+          </div>
+          ${badgesHtml ? `<div class="contact-badges">${badgesHtml}</div>` : ''}
+        `;
+        container.appendChild(card);
+      });
+    }
 
     function formatPhoneNumberStr(rawPhone) {
       if (!rawPhone) return '';
