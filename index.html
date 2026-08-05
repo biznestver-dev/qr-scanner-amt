@@ -492,8 +492,14 @@
       border-radius: 6px;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
     }
     .badge-tg { background: rgba(0, 240, 255, 0.15); color: var(--am-cyan); border: 1px solid rgba(0, 240, 255, 0.3); }
+    .badge-tg:hover { background: rgba(0, 240, 255, 0.3); }
     .badge-max { background: rgba(255, 0, 67, 0.15); color: var(--am-magenta); border: 1px solid rgba(255, 0, 67, 0.3); }
 
     .modal {
@@ -1604,12 +1610,20 @@
 
       filtered.forEach(emp => {
         const phoneFormatted = formatPhoneNumberStr(emp.phone);
+        const cleanPhoneDigits = emp.phone ? emp.phone.replace(/\D/g, '') : '';
         const card = document.createElement('div');
         card.className = 'contact-card';
         
         let badgesHtml = '';
-        if (emp.tg) badgesHtml += '<span class="contact-badge badge-tg">Telegram</span>';
-        if (emp.max) badgesHtml += '<span class="contact-badge badge-max">MAX</span>';
+        if (emp.tg && cleanPhoneDigits) {
+          badgesHtml += `<a href="https://t.me/+${cleanPhoneDigits}" target="_blank" class="contact-badge badge-tg">Telegram</a>`;
+        } else if (emp.tg) {
+          badgesHtml += `<span class="contact-badge badge-tg">Telegram</span>`;
+        }
+
+        if (emp.max) {
+          badgesHtml += '<span class="contact-badge badge-max">MAX</span>';
+        }
 
         card.innerHTML = `
           <div class="contact-name">${emp.name}</div>
