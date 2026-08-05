@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>техотдел АМ</title>
+  <title>Учет оборудования (МТБ) — ArtMasters</title>
   <!-- Сканер QR-кодов html5-qrcode -->
   <script src="https://unpkg.com/html5-qrcode"></script>
   <!-- Шрифт Plus Jakarta Sans & JetBrains Mono -->
@@ -101,17 +101,13 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      background: rgba(0, 240, 255, 0.1);
-      border: 1px solid rgba(0, 240, 255, 0.3);
-      border-radius: 16px;
-      color: var(--am-cyan);
     }
 
     .app-logo svg {
-      width: 28px;
-      height: 28px;
+      width: 100%;
+      height: 100%;
       display: block;
-      fill: currentColor;
+      filter: drop-shadow(0 0 16px rgba(255, 0, 67, 0.4));
     }
 
     .app-title-text h2 {
@@ -545,12 +541,15 @@
     .add-row-btn { background: rgba(0, 240, 255, 0.2); color: var(--am-cyan); border: 1px solid rgba(0, 240, 255, 0.4); }
     .add-row-btn:hover { background: var(--am-cyan); color: #000; }
 
+    /* СЕКЦИИ С КНОПКАМИ СНИЗУ */
     .cs-section {
       background: rgba(9, 12, 21, 0.6);
       border: 1px solid var(--glass-border);
       border-radius: 16px;
       padding: 18px;
       margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
     }
     .cs-section-title {
       font-size: 12px;
@@ -563,6 +562,17 @@
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
+      gap: 8px;
+      order: 1; /* Заголовок сверху */
+    }
+    .cs-section-content {
+      order: 2; /* Контент по центру */
+    }
+    .cs-section-actions {
+      order: 3; /* Кнопки добавления/действий в самом низу блока */
+      margin-top: 14px;
+      display: flex;
+      justify-content: flex-end;
       gap: 8px;
     }
 
@@ -675,14 +685,15 @@
   <div class="container">
     <div class="app-header">
       <div class="app-title">
-        <div class="app-logo" title="Настройки">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M19.4 15C19.69 14.13 19.85 13.2 19.85 12.25C19.85 11.3 19.69 10.37 19.4 9.5L21.75 7.67C21.96 7.5 22.02 7.2 21.88 6.95L19.68 3.14C19.54 2.9 19.25 2.81 19 2.91L16.22 4.04C15.64 3.59 15.01 3.22 14.33 2.94L13.92 0.05C13.89 -0.2 13.68 -0.38 13.43 -0.38H8.85C8.6 -0.38 8.39 -0.2 8.36 0.05L7.95 2.94C7.27 3.22 6.64 3.59 6.06 4.04L3.28 2.91C3.03 2.81 2.74 2.9 2.6 3.14L0.4 6.95C0.26 7.2 0.32 7.5 0.53 7.67L2.88 9.5C2.59 10.37 2.43 11.3 2.43 12.25C2.43 13.2 2.59 14.13 2.88 15L0.53 16.83C0.32 17 0.26 17.3 0.4 17.55L2.6 21.36C2.74 21.6 3.03 21.69 3.28 21.59L6.06 20.46C6.64 20.91 7.27 21.28 7.95 21.56L8.36 24.45C8.39 24.7 8.6 24.88 8.85 24.88H13.43C13.68 24.88 13.89 24.7 13.92 24.45L14.33 21.56C15.01 21.28 15.64 20.91 16.22 20.46L19 21.59C19.25 21.69 19.54 21.6 19.68 21.36L21.88 17.55C22.02 17.3 21.96 17 21.75 16.83L19.4 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <div class="app-logo">
+          <svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M142.5 450.5C52.5 410.5 25.5 305.5 65.5 215.5C105.5 125.5 210.5 98.5 300.5 138.5C390.5 178.5 486.5 244.5 446.5 334.5C406.5 424.5 232.5 490.5 142.5 450.5Z" fill="#FF0043"/>
+            <path d="M178.5 385.5C123.5 360.5 106.5 295.5 131.5 240.5C156.5 185.5 221.5 168.5 276.5 193.5C331.5 218.5 383.5 260.5 358.5 315.5C333.5 370.5 233.5 410.5 178.5 385.5Z" fill="#FFFFFF"/>
+            <path d="M205.5 340.5C185.5 331.5 178.5 307.5 187.5 287.5C196.5 267.5 220.5 260.5 240.5 269.5C260.5 278.5 282.5 292.5 273.5 312.5C264.5 332.5 225.5 349.5 205.5 340.5Z" fill="#3B26A6"/>
           </svg>
         </div>
         <div class="app-title-text">
-          <h2>техотдел АМ</h2>
+          <h2>Учет оборудования (МТБ)</h2>
           <p>ArtMasters</p>
         </div>
       </div>
@@ -732,7 +743,7 @@
       </div>
 
       <div class="form-group">
-        <label for="manager-select">Офис</label>
+        <label for="manager-select">Административно-технический отдел</label>
         <select id="manager-select">
           <option value="Зломанов Олег Викторович">Зломанов Олег Викторович</option>
           <option value="Смутный Богдан Сергеевич">Смутный Богдан Сергеевич</option>
@@ -836,102 +847,112 @@
         <div class="cs-section">
           <div class="cs-section-title">
             <span>Основная информация о смене</span>
+          </div>
+          <div class="cs-section-content">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Название проекта / Мероприятия</label>
+                <input type="text" id="cs-project-name" value="ArtMasters — Смена / Застройка">
+              </div>
+              <div class="form-group">
+                <label>Дата смены</label>
+                <input type="date" id="cs-date">
+              </div>
+              <div class="form-group">
+                <label>Номер смены / День монтажа</label>
+                <input type="text" id="cs-shift-num" value="Смена №1 (Застройка)">
+              </div>
+              <div class="form-group">
+                <label>Город</label>
+                <input type="text" id="cs-city" value="г. Москва">
+              </div>
+              <div class="form-group">
+                <label>Локация / Павильон</label>
+                <input type="text" id="cs-location" value="Заповедное Посольство / Площадка №1">
+              </div>
+              <div class="form-group">
+                <label>Точный адрес / КПП / Маршрут</label>
+                <input type="text" id="cs-address" value="ул. Варварка, д. 6 (КПП №2)">
+              </div>
+
+              <!-- МЕНЕДЖЕР КОМПЕТЕНЦИИ -->
+              <div class="form-group">
+                <label>Менеджер компетенции (ФИО)</label>
+                <input type="text" id="cs-comp-mgr-name" placeholder="Введите ФИО менеджера компетенции...">
+              </div>
+
+              <div class="form-group">
+                <label>Телефон менеджера компетенции</label>
+                <input type="text" id="cs-comp-mgr-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)">
+              </div>
+              
+              <!-- РУКОВОДСТВО АРТМАСТЕРС -->
+              <div class="form-group">
+                <label id="cs-tech-dir-label">Технический директор (АртМастерс)</label>
+                <select id="cs-tech-dir-select" onchange="onTechDirSelect(this.value)"></select>
+              </div>
+
+              <div class="form-group">
+                <label id="cs-stage-mgr-label">Продюсер / Шеф-редактор / Выпускающий</label>
+                <select id="cs-stage-mgr-select" onchange="onStageMgrSelect(this.value)"></select>
+              </div>
+
+              <!-- ОТВЕТСТВЕННЫЕ ОТ ПЛОЩАДКИ (РАЗДЕЛЬНО) -->
+              <div class="form-group">
+                <label>От Площадки: Технический директор (ФИО)</label>
+                <input type="text" id="cs-venue-tech-dir-name" placeholder="Петров П.П.">
+              </div>
+
+              <div class="form-group">
+                <label>От Площадки: Технический директор (Телефон)</label>
+                <input type="text" id="cs-venue-tech-dir-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)">
+              </div>
+
+              <div class="form-group">
+                <label>От Площадки: Менеджер / Администратор (ФИО)</label>
+                <input type="text" id="cs-venue-mgr-name" placeholder="Сидоров С.С.">
+              </div>
+
+              <div class="form-group">
+                <label>От Площадки: Менеджер / Администратор (Телефон)</label>
+                <input type="text" id="cs-venue-mgr-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)">
+              </div>
+            </div>
+
+            <!-- КОНТЕЙНЕР ДЛЯ ДОБАВЛЕННЫХ ПУНКТОВ -->
+            <div id="cs-extra-info-container" style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;"></div>
+          </div>
+          <div class="cs-section-actions">
             <button class="add-row-btn" onclick="addCsExtraInfoRow()">+ Добавить пункт</button>
           </div>
-          <div class="form-grid">
-            <div class="form-group">
-              <label>Название проекта / Мероприятия</label>
-              <input type="text" id="cs-project-name" value="ArtMasters — Смена / Застройка">
-            </div>
-            <div class="form-group">
-              <label>Дата смены</label>
-              <input type="date" id="cs-date">
-            </div>
-            <div class="form-group">
-              <label>Номер смены / День монтажа</label>
-              <input type="text" id="cs-shift-num" value="Смена №1 (Застройка)">
-            </div>
-            <div class="form-group">
-              <label>Город</label>
-              <input type="text" id="cs-city" value="г. Москва">
-            </div>
-            <div class="form-group">
-              <label>Локация / Павильон</label>
-              <input type="text" id="cs-location" value="Заповедное Посольство / Площадка №1">
-            </div>
-            <div class="form-group">
-              <label>Точный адрес / КПП / Маршрут</label>
-              <input type="text" id="cs-address" value="ул. Варварка, д. 6 (КПП №2)">
-            </div>
-
-            <!-- МЕНЕДЖЕР КОМПЕТЕНЦИИ -->
-            <div class="form-group">
-              <label>Менеджер компетенции (ФИО)</label>
-              <input type="text" id="cs-comp-mgr-name" placeholder="Введите ФИО менеджера компетенции...">
-            </div>
-
-            <div class="form-group">
-              <label>Телефон менеджера компетенции</label>
-              <input type="text" id="cs-comp-mgr-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)">
-            </div>
-            
-            <!-- РУКОВОДСТВО АРТМАСТЕРС -->
-            <div class="form-group">
-              <label id="cs-tech-dir-label">Технический директор (АртМастерс)</label>
-              <select id="cs-tech-dir-select" onchange="onTechDirSelect(this.value)"></select>
-            </div>
-
-            <div class="form-group">
-              <label id="cs-stage-mgr-label">Продюсер / Шеф-редактор / Выпускающий</label>
-              <select id="cs-stage-mgr-select" onchange="onStageMgrSelect(this.value)"></select>
-            </div>
-
-            <!-- ОТВЕТСТВЕННЫЕ ОТ ПЛОЩАДКИ (РАЗДЕЛЬНО) -->
-            <div class="form-group">
-              <label>От Площадки: Технический директор (ФИО)</label>
-              <input type="text" id="cs-venue-tech-dir-name" placeholder="Петров П.П.">
-            </div>
-
-            <div class="form-group">
-              <label>От Площадки: Технический директор (Телефон)</label>
-              <input type="text" id="cs-venue-tech-dir-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)">
-            </div>
-
-            <div class="form-group">
-              <label>От Площадки: Менеджер / Администратор (ФИО)</label>
-              <input type="text" id="cs-venue-mgr-name" placeholder="Сидоров С.С.">
-            </div>
-
-            <div class="form-group">
-              <label>От Площадки: Менеджер / Администратор (Телефон)</label>
-              <input type="text" id="cs-venue-mgr-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)">
-            </div>
-          </div>
-
-          <!-- КОНТЕЙНЕР ДЛЯ ДОБАВЛЕННЫХ ПУНКТОВ -->
-          <div id="cs-extra-info-container" style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;"></div>
         </div>
 
         <!-- БЛОК 2: Тайминг смены -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>1. Тайминг смены</span>
+          </div>
+          <div class="cs-section-content">
+            <div id="cs-milestones-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+          </div>
+          <div class="cs-section-actions">
             <button class="add-row-btn" onclick="addCsMilestoneRow()">+ Добавить пункт</button>
           </div>
-          <div id="cs-milestones-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
 
         <!-- БЛОК 3: Вызов персонала -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>2. Вызов персонала и команды</span>
-            <div style="display: flex; gap: 8px;">
-              <button class="add-row-btn" onclick="addCsCrewMemberFromAto()" style="background: rgba(59, 38, 166, 0.4); color: #fff;">+ Из Тех. отдела</button>
-              <button class="add-row-btn" onclick="addCsCrewMemberFromEmployees()">+ Из Сотрудников</button>
-              <button class="add-row-btn" onclick="addCsCrewRow()">+ Вручную</button>
-            </div>
           </div>
-          <div id="cs-crew-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+          <div class="cs-section-content">
+            <div id="cs-crew-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+          </div>
+          <div class="cs-section-actions">
+            <button class="add-row-btn" onclick="addCsCrewMemberFromAto()" style="background: rgba(59, 38, 166, 0.4); color: #fff;">+ Из Тех. отдела</button>
+            <button class="add-row-btn" onclick="addCsCrewMemberFromEmployees()">+ Из Сотрудников</button>
+            <button class="add-row-btn" onclick="addCsCrewRow()">+ Вручную</button>
+          </div>
         </div>
 
         <!-- БЛОК 4: Примечания -->
@@ -939,35 +960,42 @@
           <div class="cs-section-title">
             <span>3. Важные примечания и Дресс-код</span>
           </div>
-          <textarea id="cs-notes" rows="2">Форма одежды: Total Black. На площадке обязательно наличие защитной обуви на застройке.</textarea>
+          <div class="cs-section-content">
+            <textarea id="cs-notes" rows="2">Форма одежды: Total Black. На площадке обязательно наличие защитной обуви на застройке.</textarea>
+          </div>
         </div>
 
         <!-- БЛОК 5: Перечень оборудования -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>4. Перечень ввозимого и вывозимого оборудования</span>
-            <div style="display: flex; gap: 8px;">
-              <button class="add-row-btn" onclick="importCurrentActItemsToCallSheet()" style="background: rgba(0, 240, 255, 0.3); color: #fff;">📥 + Импорт из Акта</button>
-              <button class="add-row-btn" onclick="addCsEquipmentRow()">+ Вручную</button>
-            </div>
           </div>
-          <div id="cs-equipment-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+          <div class="cs-section-content">
+            <div id="cs-equipment-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+          </div>
+          <div class="cs-section-actions">
+            <button class="add-row-btn" onclick="importCurrentActItemsToCallSheet()" style="background: rgba(0, 240, 255, 0.3); color: #fff;">📥 + Импорт из Акта</button>
+            <button class="add-row-btn" onclick="addCsEquipmentRow()">+ Вручную</button>
+          </div>
         </div>
 
         <!-- БЛОК 6: Автотранспорт -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>5. Автотранспорт</span>
+          </div>
+          <div class="cs-section-content">
+            <div id="cs-transport-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+          </div>
+          <div class="cs-section-actions">
             <button class="add-row-btn" onclick="addCsTransportRow()">+ Добавить автомобиль</button>
           </div>
-          <div id="cs-transport-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 18px; flex-wrap: wrap;">
-        <button class="btn" onclick="downloadCallSheetPDF()" style="background: rgba(255, 0, 67, 0.2); border-color: rgba(255, 0, 67, 0.4); color: #ff0043; min-width: 170px;">📥 Сохранить в PDF</button>
-        <button class="btn" onclick="downloadCallSheetWord()" style="background: rgba(0, 180, 216, 0.2); border-color: rgba(0, 180, 216, 0.4); color: #00f0ff; min-width: 170px;">📥 Скачать Word (.doc)</button>
-        <button class="btn" onclick="printCallSheet()" style="background: var(--accent-gradient); min-width: 190px;">🖨️ Печать</button>
+        <button class="btn" onclick="downloadCallSheetWord()" style="background: rgba(0, 180, 216, 0.2); border-color: rgba(0, 180, 216, 0.4); color: #00f0ff; min-width: 200px;">📥 Скачать Word (.doc)</button>
+        <button class="btn" onclick="printCallSheet()" style="background: var(--accent-gradient); min-width: 220px;">🖨️ Распечатать / Сохранить PDF</button>
       </div>
     </div>
   </div>
@@ -2383,7 +2411,7 @@
         alert("Реестр актов пуст");
         return;
       }
-      const headers = ["№ Накладной", "Дата выдачи", "Планируемая дата возврата", "Компетенция", "Офис", "Роль", "Получатель (ФИО)", "Контакты", "Инвентарные №", "Наименования оборудования", "Кол-во предметов", "Комментарии"];
+      const headers = ["№ Накладной", "Дата выдачи", "Планируемая дата возврата", "Компетенция", "Отдел", "Роль", "Получатель (ФИО)", "Контакты", "Инвентарные №", "Наименования оборудования", "Кол-во предметов", "Комментарии"];
       const rows = [headers];
 
       history.forEach(act => {
@@ -2899,7 +2927,7 @@
       renderCsTransport();
     }
 
-    function prepareCallSheetDOM() {
+    function printCallSheet() {
       const projName = document.getElementById('cs-project-name').value;
       const rawDate = document.getElementById('cs-date').value;
       let formattedDate = rawDate;
@@ -3051,18 +3079,12 @@
         equipment: callSheetData.equipment,
         transport: callSheetData.transport
       });
-    }
 
-    function printCallSheet() {
-      prepareCallSheetDOM();
       document.getElementById('act-print-area').classList.remove('active-print');
       document.getElementById('callsheet-print-area').classList.add('active-print');
+
       closeCallSheetModal();
       window.print();
-    }
-
-    function downloadCallSheetPDF() {
-      printCallSheet();
     }
 
     function downloadCallSheetWord() {
@@ -3241,7 +3263,6 @@
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-      closeCallSheetModal();
     }
 
     function exportCallSheetToCSV() {
