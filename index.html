@@ -1,3 +1,8 @@
+Для автоматического получения онлайн-данных о восходе, закате и погоды прямо в «Конструктор вызывного листа» мы добавим встроенный блок гео-определения и погоды (использующий открытые API Open-Meteo и Sunrise-Sunset по координатам выбранного города или текущей локации). При открытии конструктора вызывного листа (или смене города) данные будут подгружаться автоматически и вставляться в примечания или специальное поле смены.
+
+Обновленный код приложения:
+
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -583,6 +588,21 @@
       gap: 8px;
     }
 
+    /* БЛОК ОНЛАЙН-ПОГОДЫ И СОЛНЦА В КОНСТРУКТОРЕ */
+    .weather-widget-box {
+      background: rgba(0, 240, 255, 0.05);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 12px;
+    }
+
     @media (max-width: 768px) {
       body {
         padding: 8px 4px !important;
@@ -849,6 +869,12 @@
       </div>
       
       <div class="table-wrapper" style="padding: 10px;">
+        <!-- ВИДЖЕТ ОНЛАЙН-ПОГОДЫ И СОЛНЦА -->
+        <div class="weather-widget-box" id="weather-widget-panel">
+          <div>⏳ Онлайн-погода и солнце: <b id="weather-info-text">Загрузка данных...</b></div>
+          <button class="add-row-btn" onclick="appendWeatherToNotes()" style="font-size: 10px; padding: 4px 8px;">📌 Добавить в примечания</button>
+        </div>
+
         <!-- БЛОК 1: Основная информация о смене -->
         <div class="cs-section">
           <div class="cs-section-title">
@@ -862,7 +888,7 @@
               </div>
               <div class="form-group">
                 <label>Дата смены</label>
-                <input type="date" id="cs-date">
+                <input type="date" id="cs-date" onchange="fetchOnlineWeatherAndSun()">
               </div>
               <div class="form-group">
                 <label>Номер смены / День монтажа</label>
@@ -870,7 +896,7 @@
               </div>
               <div class="form-group">
                 <label>Город</label>
-                <input type="text" id="cs-city" value="г. Москва">
+                <input type="text" id="cs-city" value="г. Москва" onchange="fetchOnlineWeatherAndSun()">
               </div>
               <div class="form-group">
                 <label>Локация / Павильон</label>
@@ -967,7 +993,7 @@
             <span>3. Важные примечания и Дресс-код</span>
           </div>
           <div class="cs-section-content">
-            <textarea id="cs-notes" rows="2">Форма одежды: Total Black. На площадке обязательно наличие защитной обуви на застройке.</textarea>
+            <textarea id="cs-notes" rows="3">Форма одежды: Total Black. На площадке обязательно наличие защитной обуви на застройке.</textarea>
           </div>
         </div>
 
@@ -1434,6 +1460,69 @@
 
     let currentStatusFilter = 'all';
     let currentActItems = [];
+    let onlineWeatherData = { temp: '', weather: '', sunrise: '', sunset: '' };
+
+    async function fetchOnlineWeatherAndSun() {
+      const cityInput = document.getElementById('cs-city').value.trim() || 'Москва';
+      const dateInput = document.getElementById('cs-date').value || new Date().toISOString().slice(0,10);
+      const infoText = document.getElementById('weather-info-text');
+
+      infoText.innerHTML = `Запрос данных для ${cityInput}...`;
+
+      try {
+        // Геокодинг города через Open-Meteo
+        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityInput)}&count=1&language=ru&format=json`);
+        const geoData = await geoRes.json();
+
+        if (!geoData.results || geoData.results.length === 0) {
+          infoText.innerHTML = `Город не найден, погода недоступна`;
+          return;
+        }
+
+        const { latitude, longitude, name, country } = geoData.results[0];
+
+        // Запрос погоды и восхода/заката
+        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=sunrise,sunset,temperature_2m_max,weathercode&timezone=auto&start_date=${dateInput}&end_date=${dateInput}`);
+        const weatherData = await weatherRes.json();
+
+        if (weatherData.daily && weatherData.daily.sunrise && weatherData.daily.sunrise.length > 0) {
+          const sunriseIso = weatherData.daily.sunrise[0];
+          const sunsetIso = weatherData.daily.sunset[0];
+          const maxTemp = weatherData.daily.temperature_2m_max[0];
+          
+          const sunriseTime = sunriseIso.split('T')[1].substring(0, 5);
+          const sunsetTime = sunsetIso.split('T')[1].substring(0, 5);
+
+          onlineWeatherData = {
+            temp: maxTemp !== undefined ? `${maxTemp > 0 ? '+' : ''}${maxTemp}°C` : '',
+            sunrise: sunriseTime,
+            sunset: sunsetTime
+          };
+
+          infoText.innerHTML = `📍 ${name} | Темп: <b>${onlineWeatherData.temp}</b> | 🌅 Восход: <b>${sunriseTime}</b> | 🌇 Закат: <b>${sunsetTime}</b>`;
+        } else {
+          infoText.innerHTML = `Данные о погоде временно недоступны`;
+        }
+      } catch (e) {
+        console.error('Ошибка получения погоды:', e);
+        infoText.innerHTML = `Ошибка онлайн-подключения к сервису погоды`;
+      }
+    }
+
+    function appendWeatherToNotes() {
+      if (!onlineWeatherData.sunrise) {
+        alert('Данные погоды и солнца еще не загружены!');
+        return;
+      }
+      const notesArea = document.getElementById('cs-notes');
+      const weatherString = `Погода: ${onlineWeatherData.temp}. Восход солнца: ${onlineWeatherData.sunrise}, Закат: ${onlineWeatherData.sunset}.`;
+      if (!notesArea.value.includes(weatherString)) {
+        notesArea.value = notesArea.value ? notesArea.value + '\n' + weatherString : weatherString;
+        alert('Данные о погоде и световом дне добавлены в примечания!');
+      } else {
+        alert('Эти данные уже добавлены в примечания.');
+      }
+    }
 
     function getRecipientRoleTitle(role, participantName) {
       if (role === 'Сотрудник' && participantName) {
@@ -2669,11 +2758,12 @@
       crewTbody.innerHTML = '';
       cs.crew.forEach(c => {
         const tr = document.createElement('tr');
+        const printPhone = formatPhoneNumberStr(c.phone);
         tr.innerHTML = `
           <td style="font-weight: bold; color: #b91c1c; font-family: Arial, sans-serif;">${c.time}</td>
           <td style="text-align: left; font-weight: bold;">${c.dept}</td>
           <td style="text-align: left;">${c.name}</td>
-          <td style="font-family: Arial, sans-serif;">${formatPhoneNumberStr(c.phone)}</td>
+          <td style="font-family: Arial, sans-serif;">${printPhone}</td>
           <td style="text-align: left;">${c.task}</td>
         `;
         crewTbody.appendChild(tr);
@@ -2697,11 +2787,12 @@
       trTbody.innerHTML = '';
       cs.transport.forEach(trItem => {
         const tr = document.createElement('tr');
+        const printPhone = formatPhoneNumberStr(trItem.phone);
         tr.innerHTML = `
           <td style="font-weight: bold;">${trItem.model}</td>
           <td style="font-weight: bold; font-family: Arial, sans-serif;">${trItem.plate}</td>
           <td style="text-align: left;">${trItem.driver}</td>
-          <td style="font-family: Arial, sans-serif;">${formatPhoneNumberStr(trItem.phone)}</td>
+          <td style="font-family: Arial, sans-serif;">${printPhone}</td>
           <td style="text-align: left;">${trItem.task}</td>
         `;
         trTbody.appendChild(tr);
@@ -2790,6 +2881,7 @@
       renderCsEquipment();
       renderCsTransport();
       document.getElementById('callSheetModal').style.display = 'flex';
+      fetchOnlineWeatherAndSun();
     }
 
     function closeCallSheetModal() {
@@ -3357,3 +3449,5 @@
   </script>
 </body>
 </html>
+
+```
