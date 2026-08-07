@@ -1031,7 +1031,7 @@
       </div>
     </div>
 
-    <!-- СЕКЦИЯ: ОСНОВНОЙ ЧЕМПИОНАТ -->
+    <!-- СЕКЦИЯ: ОСНОВНОЙ ЧЕМПИОНАТ (ПОДМЕНЮ С ТРЕМЯ КНОПКАМИ) -->
     <div id="section-main-champ" class="app-section">
       <div class="back-menu-bar">
         <button class="back-menu-btn" onclick="switchAppSection('section-main-menu')">← Назад в меню</button>
@@ -1040,11 +1040,11 @@
       <div class="main-menu-view">
         <div class="menu-hero">
           <h3>Основной чемпионат</h3>
-          <p>Выберите нужный раздел для управления площадками и инфраструктурой</p>
+          <p>Единый справочник локаций, расписания и оперативной связи</p>
         </div>
 
-        <div class="neon-cards-grid" style="grid-template-columns: repeat(1, 1fr); max-width: 480px; margin: 0 auto;">
-          <!-- Кнопка: Площадки -->
+        <div class="neon-cards-grid">
+          <!-- Кнопка 1: Площадки -->
           <div class="neon-card card-mtb" onclick="openVenuesModal()">
             <div class="neon-card-icon">
               <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1052,8 +1052,31 @@
                 <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
               </svg>
             </div>
-            <div class="neon-card-title">Площадки чемпионата</div>
-            <div class="neon-card-desc">Реестр павильонов, локаций, ответственных и технического оснащения</div>
+            <div class="neon-card-title">Площадки</div>
+            <div class="neon-card-desc">Единый справочник локаций, павильонов и ответственных лиц</div>
+          </div>
+
+          <!-- Кнопка 2: Расписание защит -->
+          <div class="neon-card card-callsheet" onclick="openScheduleModal()">
+            <div class="neon-card-icon">
+              <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#7000ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <div class="neon-card-title">Расписание защит</div>
+            <div class="neon-card-desc">Точное время выступлений участников, регламенты и координация по компетенциям</div>
+          </div>
+
+          <!-- Кнопка 3: Контакты (Чемпионата) -->
+          <div class="neon-card card-contacts" onclick="openChampContactsModal()">
+            <div class="neon-card-icon">
+              <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#ff0043" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+            </div>
+            <div class="neon-card-title">Контакты</div>
+            <div class="neon-card-desc">Быстрый доступ к ответственным менеджерам, техслужбам и логистике</div>
           </div>
         </div>
       </div>
@@ -1255,8 +1278,8 @@
     <div class="modal-content">
       <div class="modal-header">
         <div style="display: flex; align-items: center; gap: 12px;">
-          <button class="back-menu-btn" onclick="closeVenuesModal()">← Назад в меню</button>
-          <h3>Площадки основного чемпионата</h3>
+          <button class="back-menu-btn" onclick="switchAppSection('section-main-champ')">← Назад</button>
+          <h3>Площадки чемпионата</h3>
         </div>
         <div class="modal-actions">
           <button class="add-row-btn" onclick="openVenueEditorModal()">+ Добавить площадку</button>
@@ -1316,6 +1339,143 @@
         <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 15px;">
           <button class="btn" onclick="closeVenueEditorModal()" style="background: rgba(255,255,255,0.05); border-color: var(--glass-border); min-width: 120px;">Отмена</button>
           <button class="btn" onclick="saveVenueData()" style="background: var(--accent-gradient); min-width: 150px;">Сохранить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНОЕ ОКНО: РАСПИСАНИЕ ЗАЩИТ -->
+  <div id="scheduleModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="back-menu-btn" onclick="switchAppSection('section-main-champ')">← Назад</button>
+          <h3>Расписание защит и выступлений</h3>
+        </div>
+        <div class="modal-actions">
+          <button class="add-row-btn" onclick="openScheduleEditorModal()">+ Добавить защиту</button>
+          <button class="close-btn" onclick="closeScheduleModal()">&times;</button>
+        </div>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="scheduleSearchInput" placeholder="Поиск по компетенциям, участникам и времени..." oninput="renderScheduleTable()">
+      </div>
+      <div class="table-wrapper">
+        <table class="db-table">
+          <thead>
+            <tr>
+              <th>Время</th>
+              <th>Компетенция</th>
+              <th>Участник / Команда</th>
+              <th>Локация / Площадка</th>
+              <th>Регламент / Описание</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody id="scheduleTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно редактирования / добавления защиты -->
+  <div id="scheduleEditorModal" class="modal" style="z-index: 1025;">
+    <div class="modal-content" style="max-width: 520px; max-height: auto;">
+      <div class="modal-header">
+        <h3 id="scheduleEditorTitle">Добавить защиту</h3>
+        <button class="close-btn" onclick="closeScheduleEditorModal()">&times;</button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <input type="hidden" id="edit-schedule-index" value="-1">
+        <div class="form-group">
+          <label>Точное время</label>
+          <input type="text" id="edit-schedule-time" placeholder="10:00 - 11:00">
+        </div>
+        <div class="form-group">
+          <label>Компетенция</label>
+          <input type="text" id="edit-schedule-comp" placeholder="Моушн-дизайнер">
+        </div>
+        <div class="form-group">
+          <label>Участник / Команда</label>
+          <input type="text" id="edit-schedule-participant" placeholder="Иванов И.И.">
+        </div>
+        <div class="form-group">
+          <label>Локация / Площадка</label>
+          <input type="text" id="edit-schedule-location" placeholder="Заповедное Посольство">
+        </div>
+        <div class="form-group">
+          <label>Регламент / Описание</label>
+          <input type="text" id="edit-schedule-desc" placeholder="Защита проекта, 15 мин выступление + 5 мин вопросы">
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 15px;">
+          <button class="btn" onclick="closeScheduleEditorModal()" style="background: rgba(255,255,255,0.05); border-color: var(--glass-border); min-width: 120px;">Отмена</button>
+          <button class="btn" onclick="saveScheduleData()" style="background: var(--accent-gradient); min-width: 150px;">Сохранить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНОЕ ОКНО: КОНТАКТЫ ЧЕМПИОНАТА (ОПЕРАТИВНАЯ СВЯЗЬ) -->
+  <div id="champContactsModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="back-menu-btn" onclick="switchAppSection('section-main-champ')">← Назад</button>
+          <h3>Оперативные контакты чемпионата</h3>
+        </div>
+        <div class="modal-actions">
+          <button class="add-row-btn" onclick="openChampContactEditorModal()">+ Добавить контакт</button>
+          <button class="close-btn" onclick="closeChampContactsModal()">&times;</button>
+        </div>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="champContactsSearchInput" placeholder="Поиск по службам, менеджерам и телефонам..." oninput="renderChampContactsTable()">
+      </div>
+      <div class="table-wrapper">
+        <table class="db-table">
+          <thead>
+            <tr>
+              <th>Служба / Отдел</th>
+              <th>Ответственное лицо (ФИО)</th>
+              <th>Роль / Задача</th>
+              <th>Телефон</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody id="champContactsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно редактирования / добавления контакта чемпионата -->
+  <div id="champContactEditorModal" class="modal" style="z-index: 1030;">
+    <div class="modal-content" style="max-width: 520px; max-height: auto;">
+      <div class="modal-header">
+        <h3 id="champContactEditorTitle">Добавить контакт</h3>
+        <button class="close-btn" onclick="closeChampContactEditorModal()">&times;</button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <input type="hidden" id="edit-champ-contact-index" value="-1">
+        <div class="form-group">
+          <label>Служба / Отдел</label>
+          <input type="text" id="edit-champ-dept" placeholder="Техническая служба / Логистика">
+        </div>
+        <div class="form-group">
+          <label>Ответственное лицо (ФИО)</label>
+          <input type="text" id="edit-champ-name" placeholder="Смирнов А.А.">
+        </div>
+        <div class="form-group">
+          <label>Роль / Задача</label>
+          <input type="text" id="edit-champ-task" placeholder="Координация оборудования и выдачи">
+        </div>
+        <div class="form-group">
+          <label>Телефон</label>
+          <input type="text" id="edit-champ-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)">
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 15px;">
+          <button class="btn" onclick="closeChampContactEditorModal()" style="background: rgba(255,255,255,0.05); border-color: var(--glass-border); min-width: 120px;">Отмена</button>
+          <button class="btn" onclick="saveChampContactData()" style="background: var(--accent-gradient); min-width: 150px;">Сохранить</button>
         </div>
       </div>
     </div>
@@ -1843,7 +2003,7 @@
   <script src="app.js"></script>
 
   <script>
-    // Управление переключением между главным меню и секцией МТБ
+    // Управление переключением между главным меню и секцией МТБ / Чемпионата
     function switchAppSection(sectionId) {
       document.querySelectorAll('.app-section').forEach(sec => {
         sec.classList.remove('active-section');
@@ -2080,6 +2240,261 @@
             <div style="display:flex;gap:6px;">
               <button class="select-btn" onclick="openVenueEditorModal(${originalIndex})">✏️</button>
               <button class="delete-btn" onclick="deleteVenue(${originalIndex})">🗑️</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // --- УПРАВЛЕНИЕ РАСПИСАНИЕМ ЗАЩИТ ---
+    const DEFAULT_SCHEDULE_LIST = [
+      { time: "10:00 - 11:30", comp: "Моушн-дизайнер", participant: "Команда №1 (Иванов, Петров)", location: "Заповедное Посольство", desc: "Защита кейса, регламент 20 мин" },
+      { time: "12:00 - 13:30", comp: "Звукорежиссёр (FOH)", participant: "Смирнов А.А.", location: "Главный павильон", desc: "Саундчек и практическая защита" }
+    ];
+
+    let SCHEDULE_LIST = [];
+
+    function initScheduleList() {
+      const saved = localStorage.getItem('artmasters_schedule_list');
+      if (saved) {
+        try {
+          SCHEDULE_LIST = JSON.parse(saved);
+        } catch (e) {
+          SCHEDULE_LIST = [...DEFAULT_SCHEDULE_LIST];
+        }
+      } else {
+        SCHEDULE_LIST = [...DEFAULT_SCHEDULE_LIST];
+      }
+    }
+
+    function saveScheduleList() {
+      localStorage.setItem('artmasters_schedule_list', JSON.stringify(SCHEDULE_LIST));
+    }
+
+    initScheduleList();
+
+    function openScheduleModal() {
+      renderScheduleTable();
+      document.getElementById('scheduleModal').style.display = 'flex';
+    }
+
+    function closeScheduleModal() {
+      document.getElementById('scheduleModal').style.display = 'none';
+    }
+
+    function openScheduleEditorModal(index = -1) {
+      document.getElementById('edit-schedule-index').value = index;
+      if (index >= 0) {
+        document.getElementById('scheduleEditorTitle').innerText = 'Редактировать защиту';
+        const s = SCHEDULE_LIST[index];
+        document.getElementById('edit-schedule-time').value = s.time || '';
+        document.getElementById('edit-schedule-comp').value = s.comp || '';
+        document.getElementById('edit-schedule-participant').value = s.participant || '';
+        document.getElementById('edit-schedule-location').value = s.location || '';
+        document.getElementById('edit-schedule-desc').value = s.desc || '';
+      } else {
+        document.getElementById('scheduleEditorTitle').innerText = 'Добавить защиту';
+        document.getElementById('edit-schedule-time').value = '';
+        document.getElementById('edit-schedule-comp').value = '';
+        document.getElementById('edit-schedule-participant').value = '';
+        document.getElementById('edit-schedule-location').value = '';
+        document.getElementById('edit-schedule-desc').value = '';
+      }
+      document.getElementById('scheduleEditorModal').style.display = 'flex';
+    }
+
+    function closeScheduleEditorModal() {
+      document.getElementById('scheduleEditorModal').style.display = 'none';
+    }
+
+    function saveScheduleData() {
+      const idx = parseInt(document.getElementById('edit-schedule-index').value);
+      const time = document.getElementById('edit-schedule-time').value.trim();
+      const comp = document.getElementById('edit-schedule-comp').value.trim();
+      const participant = document.getElementById('edit-schedule-participant').value.trim();
+      const location = document.getElementById('edit-schedule-location').value.trim();
+      const desc = document.getElementById('edit-schedule-desc').value.trim();
+
+      if (!time || !comp) {
+        alert('Заполните обязательные поля: Время и Компетенция!');
+        return;
+      }
+
+      const schedObj = { time, comp, participant, location, desc };
+
+      if (idx >= 0) {
+        SCHEDULE_LIST[idx] = schedObj;
+      } else {
+        SCHEDULE_LIST.unshift(schedObj);
+      }
+
+      saveScheduleList();
+      closeScheduleEditorModal();
+      renderScheduleTable();
+    }
+
+    function deleteSchedule(index) {
+      if (confirm(`Удалить защиту по компетенции "${SCHEDULE_LIST[index].comp}"?`)) {
+        SCHEDULE_LIST.splice(index, 1);
+        saveScheduleList();
+        renderScheduleTable();
+      }
+    }
+
+    function renderScheduleTable() {
+      const tbody = document.getElementById('scheduleTableBody');
+      const search = document.getElementById('scheduleSearchInput').value.toLowerCase().trim();
+      tbody.innerHTML = '';
+
+      const filtered = SCHEDULE_LIST.map((item, originalIndex) => ({ item, originalIndex })).filter(({ item }) => {
+        const text = `${item.time} ${item.comp} ${item.participant} ${item.location} ${item.desc}`.toLowerCase();
+        return !search || text.includes(search);
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px; color: var(--text-muted);">Защиты не найдены</td></tr>';
+        return;
+      }
+
+      filtered.forEach(({ item, originalIndex }) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><b style="color: var(--am-cyan); font-family: 'JetBrains Mono';">${item.time}</b></td>
+          <td><b>${item.comp}</b></td>
+          <td>${item.participant || '—'}</td>
+          <td>${item.location || '—'}</td>
+          <td>${item.desc || '—'}</td>
+          <td>
+            <div style="display:flex;gap:6px;">
+              <button class="select-btn" onclick="openScheduleEditorModal(${originalIndex})">✏️</button>
+              <button class="delete-btn" onclick="deleteSchedule(${originalIndex})">🗑️</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // --- ОПЕРАТИВНЫЕ КОНТАКТЫ ЧЕМПИОНАТА ---
+    const DEFAULT_CHAMP_CONTACTS = [
+      { dept: "Техническая служба", name: "Зломанов Олег Викторович", task: "Руководство и координация", phone: "+79206931013" },
+      { dept: "Служба логистики", name: "Смутный Богдан Сергеевич", task: "Доставка оборудования", phone: "+79601805290" }
+    ];
+
+    let CHAMP_CONTACTС_LIST = [];
+
+    function initChampContactsList() {
+      const saved = localStorage.getItem('artmasters_champ_contacts');
+      if (saved) {
+        try {
+          CHAMP_CONTACTС_LIST = JSON.parse(saved);
+        } catch (e) {
+          CHAMP_CONTACTС_LIST = [...DEFAULT_CHAMP_CONTACTS];
+        }
+      } else {
+        CHAMP_CONTACTС_LIST = [...DEFAULT_CHAMP_CONTACTS];
+      }
+    }
+
+    function saveChampContactsList() {
+      localStorage.setItem('artmasters_champ_contacts', JSON.stringify(CHAMP_CONTACTС_LIST));
+    }
+
+    initChampContactsList();
+
+    function openChampContactsModal() {
+      renderChampContactsTable();
+      document.getElementById('champContactsModal').style.display = 'flex';
+    }
+
+    function closeChampContactsModal() {
+      document.getElementById('champContactsModal').style.display = 'none';
+    }
+
+    function openChampContactEditorModal(index = -1) {
+      document.getElementById('edit-champ-contact-index').value = index;
+      if (index >= 0) {
+        document.getElementById('champContactEditorTitle').innerText = 'Редактировать контакт';
+        const c = CHAMP_CONTACTС_LIST[index];
+        document.getElementById('edit-champ-dept').value = c.dept || '';
+        document.getElementById('edit-champ-name').value = c.name || '';
+        document.getElementById('edit-champ-task').value = c.task || '';
+        document.getElementById('edit-champ-phone').value = formatPhoneNumberStr(c.phone || '');
+      } else {
+        document.getElementById('champContactEditorTitle').innerText = 'Добавить контакт';
+        document.getElementById('edit-champ-dept').value = '';
+        document.getElementById('edit-champ-name').value = '';
+        document.getElementById('edit-champ-task').value = '';
+        document.getElementById('edit-champ-phone').value = '';
+      }
+      document.getElementById('champContactEditorModal').style.display = 'flex';
+    }
+
+    function closeChampContactEditorModal() {
+      document.getElementById('champContactEditorModal').style.display = 'none';
+    }
+
+    function saveChampContactData() {
+      const idx = parseInt(document.getElementById('edit-champ-contact-index').value);
+      const dept = document.getElementById('edit-champ-dept').value.trim();
+      const name = document.getElementById('edit-champ-name').value.trim();
+      const task = document.getElementById('edit-champ-task').value.trim();
+      const phone = document.getElementById('edit-champ-phone').value.trim();
+
+      if (!dept || !name || !phone) {
+        alert('Заполните обязательные поля: Служба, ФИО и Телефон!');
+        return;
+      }
+
+      const contactObj = { dept, name, task, phone };
+
+      if (idx >= 0) {
+        CHAMP_CONTACTС_LIST[idx] = contactObj;
+      } else {
+        CHAMP_CONTACTС_LIST.unshift(contactObj);
+      }
+
+      saveChampContactsList();
+      closeChampContactEditorModal();
+      renderChampContactsTable();
+    }
+
+    function deleteChampContact(index) {
+      if (confirm(`Удалить контакт "${CHAMP_CONTACTС_LIST[index].name}"?`)) {
+        CHAMP_CONTACTС_LIST.splice(index, 1);
+        saveChampContactsList();
+        renderChampContactsTable();
+      }
+    }
+
+    function renderChampContactsTable() {
+      const tbody = document.getElementById('champContactsTableBody');
+      const search = document.getElementById('champContactsSearchInput').value.toLowerCase().trim();
+      tbody.innerHTML = '';
+
+      const filtered = CHAMP_CONTACTС_LIST.map((item, originalIndex) => ({ item, originalIndex })).filter(({ item }) => {
+        const text = `${item.dept} ${item.name} ${item.task} ${item.phone}`.toLowerCase();
+        return !search || text.includes(search);
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px; color: var(--text-muted);">Контакты не найдены</td></tr>';
+        return;
+      }
+
+      filtered.forEach(({ item, originalIndex }) => {
+        const phoneFormatted = formatPhoneNumberStr(item.phone);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><b>${item.dept}</b></td>
+          <td>${item.name}</td>
+          <td>${item.task || '—'}</td>
+          <td>${phoneFormatted ? `<a href="tel:${item.phone}" style="color:var(--am-cyan); text-decoration:none; font-family:'JetBrains Mono';">${phoneFormatted}</a>` : '—'}</td>
+          <td>
+            <div style="display:flex;gap:6px;">
+              <button class="select-btn" onclick="openChampContactEditorModal(${originalIndex})">✏️</button>
+              <button class="delete-btn" onclick="deleteChampContact(${originalIndex})">🗑️</button>
             </div>
           </td>
         `;
