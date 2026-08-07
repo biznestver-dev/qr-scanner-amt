@@ -779,7 +779,7 @@
     .export-btn { background: #00b4d8; color: white; }
     .export-btn:hover { background: #0077b6; }
     .add-row-btn { background: rgba(0, 240, 255, 0.2); color: var(--am-cyan); border: 1px solid rgba(0, 240, 255, 0.4); }
-    .add-row-btn:hover { background: var(--am-cyan); color: #000; }
+    .add-row-btn:hover { background: rgba(0, 240, 255, 0.05); }
 
     #callSheetModal input[type="text"], 
     #callSheetModal input[type="date"], 
@@ -1134,7 +1134,7 @@
         </div>
       </div>
 
-      <!-- ЕДИНЫЙ БЛОК УПРАВЛЕНИЯ АКТАМИ (ВЫВЕДЕНЫ ТОЛЬКО КНОПКИ АКТОВ) -->
+      <!-- ЕДИНЫЙ БЛОК УПРАВЛЕНИЯ АКТАМИ -->
       <div class="control-panels-wrapper">
         <div class="btn-act-row">
           <button class="btn" onclick="generateAndPrintAct()">🖨️ Напечатать акт</button>
@@ -3093,6 +3093,909 @@
       });
 
       downloadCSV(`Acts_Registry_${new Date().toISOString().slice(0,10)}.csv`, rows);
+    }
+
+    // --- ЛОГИКА ВЫЗЫВНОГО ЛИСТА (CALL SHEET) ---
+    let callSheetData = {
+      city: "Москва",
+      compMgrName: "—",
+      compMgrPhone: "—",
+      techDirRoleTitle: "Технический директор (АртМастерс)",
+      techDirStr: "Зломанов Олег Викторович (+7 920 693 10 13)",
+      stageMgrRoleTitle: "Шеф-редактор",
+      stageMgrStr: "Жижневская Ксения Владимировна (+7 905 509 90 87)",
+      venueTechDirName: "",
+      venueTechDirPhone: "",
+      venueMgrName: "",
+      venueMgrPhone: "",
+      extraInfo: [],
+      milestones: [
+        { time: '08:00', event: 'Заезд автотранспорта, сбор технической группы' },
+        { time: '09:00', event: 'Начало монтажных работ и разворачивание сетей' },
+        { time: '13:00', event: 'Обед' },
+        { time: '18:00', event: 'Технический прогон и саундчек' },
+        { time: '21:00', event: 'Завершение работ, передача площадки охране' }
+      ],
+      crew: [
+        { type: 'manual', time: '08:00', dept: 'Звук', name: 'Иванов Иван', phone: '+7 900 000 00 01', task: 'Монтаж FOH, размотка мультикора' },
+        { type: 'manual', time: '08:30', dept: 'Свет', name: 'Петров Петр', phone: '+7 900 000 00 02', task: 'Развеска приборов, юстировка' },
+        { type: 'manual', time: '09:00', dept: 'Видео', name: 'Сидоров Сергей', phone: '+7 900 000 00 03', task: 'Сетап LED-экрана, пультовая' }
+      ],
+      equipment: [
+        { name: 'Микшерный пульт Yamaha QL5', inv: 'AM-00123', sn: 'SN987654', count: '1' },
+        { name: 'Комплект радиосистем Shure ULXD', inv: 'AM-00456', sn: 'SN123456', count: '4' }
+      ],
+      transport: [
+        { model: 'Газель NEXT', plate: 'А 123 АА 777', driver: 'Иванов Алексей', phone: '+7 999 111 22 33', task: 'Доставка звукового оборудования' }
+      ]
+    };
+
+    function renderCsExtraInfo() {
+      const container = document.getElementById('cs-extra-info-container');
+      container.innerHTML = '';
+      callSheetData.extraInfo.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background: rgba(25, 34, 60, 0.4); padding: 10px; border-radius: 12px; border: 1px solid var(--glass-border);';
+        const formattedPhone = formatPhoneNumberStr(item.phone);
+        div.innerHTML = `
+          <input type="text" value="${item.position}" style="flex: 1; min-width: 160px;" placeholder="Должность" onchange="callSheetData.extraInfo[${idx}].position = this.value">
+          <input type="text" value="${item.name}" style="flex: 1.5; min-width: 180px;" placeholder="Введите ФИО" onchange="callSheetData.extraInfo[${idx}].name = this.value">
+          <input type="text" value="${formattedPhone}" style="width: 170px;" placeholder="+7 900 00 00" oninput="formatPhoneNumber(this); callSheetData.extraInfo[${idx}].phone = this.value">
+          <button class="delete-btn" onclick="removeCsExtraInfo(${idx})">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addCsExtraInfoRow() {
+      callSheetData.extraInfo.push({ position: '', name: '', phone: '' });
+      renderCsExtraInfo();
+    }
+
+    function removeCsExtraInfo(idx) {
+      callSheetData.extraInfo.splice(idx, 1);
+      renderCsExtraInfo();
+    }
+
+    function getCallSheetHistory() {
+      return JSON.parse(localStorage.getItem('artmasters_callsheet_history') || '[]');
+    }
+
+    function saveCallSheetToHistory(cs) {
+      const h = getCallSheetHistory();
+      h.unshift(cs);
+      localStorage.setItem('artmasters_callsheet_history', JSON.stringify(h));
+    }
+
+    function deleteCallSheetFromHistory(id) {
+      if (confirm(`Удалить Вызывной лист из архива?`)) {
+        let h = getCallSheetHistory().filter(c => c.id !== id);
+        localStorage.setItem('artmasters_callsheet_history', JSON.stringify(h));
+        renderCallSheetHistoryTable();
+      }
+    }
+
+    function openCallSheetHistoryModal() {
+      renderCallSheetHistoryTable();
+      document.getElementById('csHistoryModal').style.display = 'flex';
+    }
+
+    function closeCallSheetHistoryModal() {
+      document.getElementById('csHistoryModal').style.display = 'none';
+    }
+
+    function renderCallSheetHistoryTable() {
+      const tbody = document.getElementById('csHistoryTableBody');
+      tbody.innerHTML = '';
+      const h = getCallSheetHistory();
+      const filter = document.getElementById('csHistorySearchInput').value.toLowerCase().trim();
+
+      if (h.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;">Архив вызывных пуст</td></tr>';
+        return;
+      }
+
+      h.forEach(cs => {
+        const searchStr = `${cs.projectName} ${cs.date} ${cs.city || ''} ${cs.location} ${cs.compMgrName || ''}`.toLowerCase();
+        if (!filter || searchStr.includes(filter)) {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><b>${cs.projectName}</b></td>
+            <td>${cs.date}</td>
+            <td>${cs.city || 'Москва'}</td>
+            <td>${cs.location}</td>
+            <td>${cs.compMgrName || '—'} (${cs.compMgrPhone || '—'})</td>
+            <td>
+              <div style="display:flex;gap:6px;">
+                <button class="select-btn" onclick="reprintCallSheet('${cs.id}')">🖨️ Печать</button>
+                <button class="delete-btn" onclick="deleteCallSheetFromHistory('${cs.id}')">🗑️ Удалить</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+    }
+
+    function reprintCallSheet(csId) {
+      const cs = getCallSheetHistory().find(c => c.id === csId);
+      if (!cs) return;
+
+      document.getElementById('csp-project-name').innerText = cs.projectName;
+      document.getElementById('csp-date').innerText = cs.date;
+      document.getElementById('csp-shift-num').innerText = cs.shiftNum;
+      
+      const weatherLineEl = document.getElementById('csp-weather-line');
+      if (cs.weatherInfo) {
+        weatherLineEl.innerText = cs.weatherInfo;
+        weatherLineEl.style.display = 'block';
+      } else {
+        weatherLineEl.innerText = '';
+        weatherLineEl.style.display = 'none';
+      }
+
+      document.getElementById('csp-print-city').innerText = cs.city || 'Москва';
+      document.getElementById('csp-print-location').innerText = cs.location || '—';
+      document.getElementById('csp-print-address').innerText = cs.address || '—';
+
+      document.getElementById('csp-tech-dir-label-print').innerText = `${cs.techDirRoleTitle || 'Тех. Директор'}:`;
+      document.getElementById('csp-tech-dir').innerText = cs.techDirStr;
+      
+      document.getElementById('csp-stage-mgr-label-print').innerText = `${cs.stageMgrRoleTitle || 'Продюсер / Выпускающий'}:`;
+      document.getElementById('csp-stage-mgr').innerText = cs.stageMgrStr;
+      
+      const phoneFormatted = formatPhoneNumberStr(cs.compMgrPhone);
+      const phoneStr = phoneFormatted ? ` (${phoneFormatted})` : '';
+      document.getElementById('csp-comp-mgr-full').innerText = `${cs.compMgrName || '—'}${phoneStr}`;
+      
+      const venueTDPhoneF = formatPhoneNumberStr(cs.venueTechDirPhone);
+      document.getElementById('csp-venue-td-print').innerText = cs.venueTechDirName ? `${cs.venueTechDirName}${venueTDPhoneF ? ' / ' + venueTDPhoneF : ''}` : '—';
+
+      const venueMgrPhoneF = formatPhoneNumberStr(cs.venueMgrPhone);
+      document.getElementById('csp-venue-mgr-print').innerText = cs.venueMgrName ? `${cs.venueMgrName}${venueMgrPhoneF ? ' / ' + venueMgrPhoneF : ''}` : '—';
+
+      // Отрисовка доп. полей в печатной шапке
+      const extraTbody = document.getElementById('csp-extra-info-tbody');
+      const extraTable = document.getElementById('csp-extra-info-table');
+      extraTbody.innerHTML = '';
+      if (cs.extraInfo && cs.extraInfo.length > 0) {
+        extraTable.style.display = 'table';
+        cs.extraInfo.forEach(item => {
+          const tr = document.createElement('tr');
+          const pFormatted = formatPhoneNumberStr(item.phone);
+          tr.innerHTML = `
+            <td style="width: 18%; font-weight: bold; background: #f2f2f2; text-align: left;">${item.position || 'Должность'}:</td>
+            <td colspan="3" style="text-align: left;"><b>${item.name || '—'}</b>${pFormatted ? ' (' + pFormatted + ')' : ''}</td>
+          `;
+          extraTbody.appendChild(tr);
+        });
+      } else {
+        extraTable.style.display = 'none';
+      }
+
+      document.getElementById('csp-notes').innerText = cs.notes;
+
+      const msTbody = document.getElementById('csp-milestones-tbody');
+      msTbody.innerHTML = '';
+      cs.milestones.forEach(m => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td style="font-weight: bold; font-family: Arial, sans-serif;">${m.time}</td><td style="text-align: left;">${m.event}</td>`;
+        msTbody.appendChild(tr);
+      });
+
+      const crewTbody = document.getElementById('csp-crew-tbody');
+      crewTbody.innerHTML = '';
+      cs.crew.forEach(c => {
+        const tr = document.createElement('tr');
+        const printPhone = formatPhoneNumberStr(c.phone);
+        tr.innerHTML = `
+          <td style="font-weight: bold; color: #b91c1c; font-family: Arial, sans-serif;">${c.time}</td>
+          <td style="text-align: left; font-weight: bold;">${c.dept}</td>
+          <td style="text-align: left;">${c.name}</td>
+          <td style="font-family: Arial, sans-serif;">${printPhone}</td>
+          <td style="text-align: left;">${c.task}</td>
+        `;
+        crewTbody.appendChild(tr);
+      });
+
+      const eqTbody = document.getElementById('csp-equipment-tbody');
+      eqTbody.innerHTML = '';
+      cs.equipment.forEach((eq, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-family: Arial, sans-serif;">${idx + 1}</td>
+          <td style="text-align: left; font-weight: bold;">${eq.name}</td>
+          <td style="font-family: Arial, sans-serif;">${eq.inv || '—'}</td>
+          <td style="font-family: Arial, sans-serif;">${eq.sn || '—'}</td>
+          <td style="font-family: Arial, sans-serif;">${eq.count || '1'}</td>
+        `;
+        eqTbody.appendChild(tr);
+      });
+
+      const trTbody = document.getElementById('csp-transport-tbody');
+      trTbody.innerHTML = '';
+      cs.transport.forEach(trItem => {
+        const tr = document.createElement('tr');
+        const printPhone = formatPhoneNumberStr(trItem.phone);
+        tr.innerHTML = `
+          <td style="font-weight: bold;">${trItem.model}</td>
+          <td style="font-weight: bold; font-family: Arial, sans-serif;">${trItem.plate}</td>
+          <td style="text-align: left;">${trItem.driver}</td>
+          <td style="font-family: Arial, sans-serif;">${printPhone}</td>
+          <td style="text-align: left;">${trItem.task}</td>
+        `;
+        trTbody.appendChild(tr);
+      });
+
+      document.getElementById('act-print-area').classList.remove('active-print');
+      document.getElementById('callsheet-print-area').classList.add('active-print');
+
+      closeCallSheetHistoryModal();
+      window.print();
+    }
+
+    function initTechDirSelect() {
+      const select = document.getElementById('cs-tech-dir-select');
+      select.innerHTML = '';
+      const atoList = [
+        "Зломанов Олег Викторович",
+        "Смутный Богдан Сергеевич",
+        "Белоусов Алексей Алексеевич",
+        "Белоусова Анастасия Константиновна",
+        "Сидоренко Артем Валерьевич"
+      ];
+      
+      atoList.forEach(name => {
+        const emp = EMPLOYEES_LIST.find(e => e.name === name);
+        const role = MANAGER_TITLES[name] || (emp ? emp.role : "Административно-технический отдел");
+        const option = document.createElement('option');
+        option.value = name;
+        option.innerText = `${name} — ${role}`;
+        if (name === "Зломанов Олег Викторович") option.selected = true;
+        select.appendChild(option);
+      });
+      onTechDirSelect(select.value);
+    }
+
+    function initStageMgrSelect() {
+      const select = document.getElementById('cs-stage-mgr-select');
+      select.innerHTML = '';
+      EMPLOYEES_LIST.forEach(emp => {
+        const option = document.createElement('option');
+        option.value = emp.name;
+        option.innerText = `${emp.name} — ${emp.role}`;
+        if (emp.name === "Жижневская Ксения Владимировна") option.selected = true;
+        select.appendChild(option);
+      });
+      onStageMgrSelect(select.value);
+    }
+
+    function onTechDirSelect(val) {
+      const emp = EMPLOYEES_LIST.find(e => e.name === val);
+      const title = MANAGER_TITLES[val] || (emp ? emp.role : "Технический директор");
+      const phone = emp && emp.phone ? `, ${formatPhoneNumberStr(emp.phone)}` : '';
+      callSheetData.techDirRoleTitle = title;
+      callSheetData.techDirStr = `${val}${phone}`;
+      
+      const labelEl = document.getElementById('cs-tech-dir-label');
+      if (labelEl) labelEl.innerText = `${title} (АртМастерс)`;
+    }
+
+    function onStageMgrSelect(empName) {
+      const emp = EMPLOYEES_LIST.find(e => e.name === empName);
+      if (emp) {
+        const phoneStr = emp.phone ? `, ${formatPhoneNumberStr(emp.phone)}` : '';
+        callSheetData.stageMgrRoleTitle = emp.role || "Продюсер / Шеф-редактор";
+        callSheetData.stageMgrStr = `${emp.name}${phoneStr}`;
+        
+        const labelEl = document.getElementById('cs-stage-mgr-label');
+        if (labelEl) labelEl.innerText = `${emp.role} (АртМастерс)`;
+      } else {
+        callSheetData.stageMgrRoleTitle = "Продюсер / Шеф-редактор";
+        callSheetData.stageMgrStr = empName;
+      }
+    }
+
+    function openCallSheetModal() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      document.getElementById('cs-date').value = `${year}-${month}-${day}`;
+      initTechDirSelect();
+      initStageMgrSelect();
+      renderCsExtraInfo();
+      renderCsMilestones();
+      renderCsCrew();
+      renderCsEquipment();
+      renderCsTransport();
+      document.getElementById('callSheetModal').style.display = 'flex';
+      fetchOnlineWeatherAndSun();
+    }
+
+    function closeCallSheetModal() {
+      document.getElementById('callSheetModal').style.display = 'none';
+    }
+
+    function renderCsMilestones() {
+      const container = document.getElementById('cs-milestones-container');
+      container.innerHTML = '';
+      callSheetData.milestones.forEach((m, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display:flex; gap:10px; align-items:center;';
+        div.innerHTML = `
+          <input type="text" value="${m.time}" style="width: 100px; font-family: Arial, sans-serif;" onchange="callSheetData.milestones[${idx}].time = this.value">
+          <input type="text" value="${m.event}" style="flex: 1;" onchange="callSheetData.milestones[${idx}].event = this.value">
+          <button class="delete-btn" onclick="removeCsMilestone(${idx})">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addCsMilestoneRow() {
+      callSheetData.milestones.push({ time: '12:00', event: 'Новый этап работ' });
+      renderCsMilestones();
+    }
+
+    function removeCsMilestone(idx) {
+      callSheetData.milestones.splice(idx, 1);
+      renderCsMilestones();
+    }
+
+    function renderCsCrew() {
+      const container = document.getElementById('cs-crew-container');
+      container.innerHTML = '';
+      callSheetData.crew.forEach((c, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display:flex; gap:10px; align-items:center; flex-wrap:wrap;';
+
+        let nameFieldHtml = '';
+        if (c.type === 'ato') {
+          const atoList = ["Зломанов Олег Викторович", "Смутный Богдан Сергеевич", "Белоусов Алексей Алексеевич", "Белоусова Анастасия Константиновна", "Сидоренко Артем Валерьевич"];
+          let opts = atoList.map(n => `<option value="${n}" ${n === c.name ? 'selected' : ''}>${n}</option>`).join('');
+          nameFieldHtml = `<select style="width: 210px;" onchange="onCsCrewAtoChange(${idx}, this.value)">${opts}</select>`;
+        } else if (c.type === 'emp') {
+          let opts = EMPLOYEES_LIST.map(e => `<option value="${e.name}" ${e.name === c.name ? 'selected' : ''}>${e.name}</option>`).join('');
+          nameFieldHtml = `<select style="width: 210px;" onchange="onCsCrewEmpChange(${idx}, this.value)">${opts}</select>`;
+        } else {
+          nameFieldHtml = `<input type="text" value="${c.name}" style="width: 190px;" placeholder="ФИО сотрудника" onchange="callSheetData.crew[${idx}].name = this.value">`;
+        }
+
+        const formattedPhone = formatPhoneNumberStr(c.phone);
+
+        div.innerHTML = `
+          <input type="text" value="${c.time}" style="width: 85px; font-family: Arial, sans-serif;" onchange="callSheetData.crew[${idx}].time = this.value">
+          <input type="text" value="${c.dept}" style="width: 140px;" placeholder="Департамент/Роль" onchange="callSheetData.crew[${idx}].dept = this.value">
+          ${nameFieldHtml}
+          <input type="text" value="${formattedPhone}" style="width: 160px; font-family: Arial, sans-serif;" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this); callSheetData.crew[${idx}].phone = this.value">
+          <input type="text" value="${c.task}" style="flex: 1; min-width: 180px;" placeholder="Задача на смене" onchange="callSheetData.crew[${idx}].task = this.value">
+          <button class="delete-btn" onclick="removeCsCrew(${idx})">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function onCsCrewAtoChange(idx, val) {
+      const emp = EMPLOYEES_LIST.find(e => e.name === val);
+      callSheetData.crew[idx].name = val;
+      callSheetData.crew[idx].dept = MANAGER_TITLES[val] || "Тех. отдел";
+      callSheetData.crew[idx].phone = emp && emp.phone ? formatPhoneNumberStr(emp.phone) : '';
+      renderCsCrew();
+    }
+
+    function onCsCrewEmpChange(idx, val) {
+      const emp = EMPLOYEES_LIST.find(e => e.name === val);
+      if (emp) {
+        callSheetData.crew[idx].name = emp.name;
+        callSheetData.crew[idx].dept = emp.role;
+        callSheetData.crew[idx].phone = emp.phone ? formatPhoneNumberStr(emp.phone) : '';
+      }
+      renderCsCrew();
+    }
+
+    function addCsCrewMemberFromAto() {
+      const atoList = ["Зломанов Олег Викторович", "Смутный Богдан Сергеевич", "Белоусов Алексей Алексеевич", "Белоусова Анастасия Константиновна", "Сидоренко Артем Валерьевич"];
+      const name = atoList[0];
+      const emp = EMPLOYEES_LIST.find(e => e.name === name);
+      
+      callSheetData.crew.push({
+        type: 'ato',
+        time: '08:00',
+        dept: MANAGER_TITLES[name] || 'Тех. отдел',
+        name: name,
+        phone: emp && emp.phone ? formatPhoneNumberStr(emp.phone) : '',
+        task: 'Координация площадки'
+      });
+      renderCsCrew();
+    }
+
+    function addCsCrewMemberFromEmployees() {
+      const emp = EMPLOYEES_LIST[0];
+      callSheetData.crew.push({
+        type: 'emp',
+        time: '09:00',
+        dept: emp.role,
+        name: emp.name,
+        phone: emp.phone ? formatPhoneNumberStr(emp.phone) : '',
+        task: ''
+      });
+      renderCsCrew();
+    }
+
+    function addCsCrewRow() {
+      callSheetData.crew.push({ 
+        type: 'manual', 
+        time: '09:00', 
+        dept: 'Департамент', 
+        name: '', 
+        phone: '', 
+        task: '' 
+      });
+      renderCsCrew();
+    }
+
+    function removeCsCrew(idx) {
+      callSheetData.crew.splice(idx, 1);
+      renderCsCrew();
+    }
+
+    function renderCsEquipment() {
+      const container = document.getElementById('cs-equipment-container');
+      container.innerHTML = '';
+      callSheetData.equipment.forEach((eq, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display:flex; gap:10px; align-items:center; flex-wrap:wrap;';
+        div.innerHTML = `
+          <input type="text" value="${eq.name}" style="flex: 2; min-width: 200px;" placeholder="Наименование / Модель" onchange="callSheetData.equipment[${idx}].name = this.value">
+          <input type="text" value="${eq.inv}" style="width: 140px; font-family: Arial, sans-serif;" placeholder="Инв. №" onchange="callSheetData.equipment[${idx}].inv = this.value">
+          <input type="text" value="${eq.sn}" style="width: 140px; font-family: Arial, sans-serif;" placeholder="Серийный №" onchange="callSheetData.equipment[${idx}].sn = this.value">
+          <input type="text" value="${eq.count}" style="width: 70px; text-align: center; font-family: Arial, sans-serif;" placeholder="Кол-во" onchange="callSheetData.equipment[${idx}].count = this.value">
+          <button class="delete-btn" onclick="removeCsEquipment(${idx})">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addCsEquipmentRow() {
+      callSheetData.equipment.push({ name: '', inv: '', sn: '', count: '1' });
+      renderCsEquipment();
+    }
+
+    function removeCsEquipment(idx) {
+      callSheetData.equipment.splice(idx, 1);
+      renderCsEquipment();
+    }
+
+    function renderCsTransport() {
+      const container = document.getElementById('cs-transport-container');
+      container.innerHTML = '';
+      callSheetData.transport.forEach((tr, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display:flex; gap:10px; align-items:center; flex-wrap:wrap;';
+        const formattedPhone = formatPhoneNumberStr(tr.phone);
+
+        div.innerHTML = `
+          <input type="text" value="${tr.model}" style="width: 140px;" placeholder="Марка / Модель" onchange="callSheetData.transport[${idx}].model = this.value">
+          <input type="text" value="${tr.plate}" style="width: 120px; font-family: Arial, sans-serif;" placeholder="Гос. номер" onchange="callSheetData.transport[${idx}].plate = this.value">
+          <input type="text" value="${tr.driver}" style="width: 180px;" placeholder="ФИО Водителя" onchange="callSheetData.transport[${idx}].driver = this.value">
+          <input type="text" value="${formattedPhone}" style="width: 160px; font-family: Arial, sans-serif;" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this); callSheetData.transport[${idx}].phone = this.value">
+          <input type="text" value="${tr.task}" style="flex: 1; min-width: 160px;" placeholder="Цель / Задача" onchange="callSheetData.transport[${idx}].task = this.value">
+          <button class="delete-btn" onclick="removeCsTransport(${idx})">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addCsTransportRow() {
+      callSheetData.transport.push({ model: '', plate: '', driver: '', phone: '', task: '' });
+      renderCsTransport();
+    }
+
+    function removeCsTransport(idx) {
+      callSheetData.transport.splice(idx, 1);
+      renderCsTransport();
+    }
+
+    function printCallSheet() {
+      const projName = document.getElementById('cs-project-name').value;
+      const rawDate = document.getElementById('cs-date').value;
+      let formattedDate = rawDate;
+      if (rawDate) {
+        const p = rawDate.split('-');
+        formattedDate = `${p[2]}.${p[1]}.${p[0]}`;
+      }
+      const shiftNum = document.getElementById('cs-shift-num').value;
+      const cityVal = document.getElementById('cs-city').value;
+      const locationVal = document.getElementById('cs-location').value;
+      const addressVal = document.getElementById('cs-address').value;
+      const notesVal = document.getElementById('cs-notes').value;
+
+      const compMgrNameVal = document.getElementById('cs-comp-mgr-name').value.trim();
+      const compMgrPhoneVal = document.getElementById('cs-comp-mgr-phone').value.trim();
+
+      const venueTDName = document.getElementById('cs-venue-tech-dir-name').value.trim();
+      const venueTDPhone = document.getElementById('cs-venue-tech-dir-phone').value.trim();
+      const venueMgrName = document.getElementById('cs-venue-mgr-name').value.trim();
+      const venueMgrPhone = document.getElementById('cs-venue-mgr-phone').value.trim();
+
+      callSheetData.city = cityVal;
+      callSheetData.compMgrName = compMgrNameVal;
+      callSheetData.compMgrPhone = compMgrPhoneVal;
+      callSheetData.venueTechDirName = venueTDName;
+      callSheetData.venueTechDirPhone = venueTDPhone;
+      callSheetData.venueMgrName = venueMgrName;
+      callSheetData.venueMgrPhone = venueMgrPhone;
+
+      document.getElementById('csp-project-name').innerText = projName;
+      document.getElementById('csp-date').innerText = formattedDate;
+      document.getElementById('csp-shift-num').innerText = shiftNum;
+
+      const weatherLineEl = document.getElementById('csp-weather-line');
+      let weatherStr = '';
+      if (onlineWeatherData.sunrise) {
+        weatherStr = `Погода: ${onlineWeatherData.temp} | Восход: ${onlineWeatherData.sunrise} | Закат: ${onlineWeatherData.sunset}`;
+        weatherLineEl.innerText = weatherStr;
+        weatherLineEl.style.display = 'block';
+      } else {
+        weatherLineEl.innerText = '';
+        weatherLineEl.style.display = 'none';
+      }
+      
+      document.getElementById('csp-print-city').innerText = cityVal;
+      document.getElementById('csp-print-location').innerText = locationVal;
+      document.getElementById('csp-print-address').innerText = addressVal;
+
+      document.getElementById('csp-tech-dir-label-print').innerText = `${callSheetData.techDirRoleTitle || 'Тех. Директор'}:`;
+      document.getElementById('csp-tech-dir').innerText = callSheetData.techDirStr;
+      
+      document.getElementById('csp-stage-mgr-label-print').innerText = `${callSheetData.stageMgrRoleTitle || 'Продюсер / Выпускающий'}:`;
+      document.getElementById('csp-stage-mgr').innerText = callSheetData.stageMgrStr;
+      
+      const phoneFormatted = formatPhoneNumberStr(compMgrPhoneVal);
+      const phoneStr = phoneFormatted ? ` (${phoneFormatted})` : '';
+      document.getElementById('csp-comp-mgr-full').innerText = `${compMgrNameVal || '—'}${phoneStr}`;
+      
+      const venueTDPhoneF = formatPhoneNumberStr(venueTDPhone);
+      document.getElementById('csp-venue-td-print').innerText = venueTDName ? `${venueTDName}${venueTDPhoneF ? ' / ' + venueTDPhoneF : ''}` : '—';
+
+      const venueMgrPhoneF = formatPhoneNumberStr(venueMgrPhone);
+      document.getElementById('csp-venue-mgr-print').innerText = venueMgrName ? `${venueMgrName}${venueMgrPhoneF ? ' / ' + venueMgrPhoneF : ''}` : '—';
+
+      // Отрисовка доп. полей в печатной шапке
+      const extraTbody = document.getElementById('csp-extra-info-tbody');
+      const extraTable = document.getElementById('csp-extra-info-table');
+      extraTbody.innerHTML = '';
+      if (callSheetData.extraInfo && callSheetData.extraInfo.length > 0) {
+        extraTable.style.display = 'table';
+        callSheetData.extraInfo.forEach(item => {
+          const tr = document.createElement('tr');
+          const pFormatted = formatPhoneNumberStr(item.phone);
+          tr.innerHTML = `
+            <td style="width: 18%; font-weight: bold; background: #f2f2f2; text-align: left;">${item.position || 'Должность'}:</td>
+            <td colspan="3" style="text-align: left;"><b>${item.name || '—'}</b>${pFormatted ? ' (' + pFormatted + ')' : ''}</td>
+          `;
+          extraTbody.appendChild(tr);
+        });
+      } else {
+        extraTable.style.display = 'none';
+      }
+
+      document.getElementById('csp-notes').innerText = notesVal;
+
+      const msTbody = document.getElementById('csp-milestones-tbody');
+      msTbody.innerHTML = '';
+      callSheetData.milestones.forEach(m => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td style="font-weight: bold; font-family: Arial, sans-serif;">${m.time}</td><td style="text-align: left;">${m.event}</td>`;
+        msTbody.appendChild(tr);
+      });
+
+      const crewTbody = document.getElementById('csp-crew-tbody');
+      crewTbody.innerHTML = '';
+      callSheetData.crew.forEach(c => {
+        const tr = document.createElement('tr');
+        const printPhone = formatPhoneNumberStr(c.phone);
+        tr.innerHTML = `
+          <td style="font-weight: bold; color: #b91c1c; font-family: Arial, sans-serif;">${c.time}</td>
+          <td style="text-align: left; font-weight: bold;">${c.dept}</td>
+          <td style="text-align: left;">${c.name}</td>
+          <td style="font-family: Arial, sans-serif;">${printPhone}</td>
+          <td style="text-align: left;">${c.task}</td>
+        `;
+        crewTbody.appendChild(tr);
+      });
+
+      const eqTbody = document.getElementById('csp-equipment-tbody');
+      eqTbody.innerHTML = '';
+      callSheetData.equipment.forEach((eq, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-family: Arial, sans-serif;">${idx + 1}</td>
+          <td style="text-align: left; font-weight: bold;">${eq.name}</td>
+          <td style="font-family: Arial, sans-serif;">${eq.inv || '—'}</td>
+          <td style="font-family: Arial, sans-serif;">${eq.sn || '—'}</td>
+          <td style="font-family: Arial, sans-serif;">${eq.count || '1'}</td>
+        `;
+        eqTbody.appendChild(tr);
+      });
+
+      const trTbody = document.getElementById('csp-transport-tbody');
+      trTbody.innerHTML = '';
+      callSheetData.transport.forEach(trItem => {
+        const tr = document.createElement('tr');
+        const printPhone = formatPhoneNumberStr(trItem.phone);
+        tr.innerHTML = `
+          <td style="font-weight: bold;">${trItem.model}</td>
+          <td style="font-weight: bold; font-family: Arial, sans-serif;">${trItem.plate}</td>
+          <td style="text-align: left;">${trItem.driver}</td>
+          <td style="font-family: Arial, sans-serif;">${printPhone}</td>
+          <td style="text-align: left;">${trItem.task}</td>
+        `;
+        trTbody.appendChild(tr);
+      });
+
+      saveCallSheetToHistory({
+        id: 'CS-' + Date.now(),
+        projectName: projName,
+        date: formattedDate,
+        shiftNum: shiftNum,
+        city: cityVal,
+        location: locationVal,
+        address: addressVal,
+        compMgrName: compMgrNameVal,
+        compMgrPhone: compMgrPhoneVal,
+        techDirRoleTitle: callSheetData.techDirRoleTitle,
+        techDirStr: callSheetData.techDirStr,
+        stageMgrRoleTitle: callSheetData.stageMgrRoleTitle,
+        stageMgrStr: callSheetData.stageMgrStr,
+        venueTechDirName: venueTDName,
+        venueTechDirPhone: venueTDPhone,
+        venueMgrName: venueMgrName,
+        venueMgrPhone: venueMgrPhone,
+        extraInfo: callSheetData.extraInfo,
+        notes: notesVal,
+        milestones: callSheetData.milestones,
+        crew: callSheetData.crew,
+        equipment: callSheetData.equipment,
+        transport: callSheetData.transport,
+        weatherInfo: weatherStr
+      });
+
+      document.getElementById('act-print-area').classList.remove('active-print');
+      document.getElementById('callsheet-print-area').classList.add('active-print');
+
+      closeCallSheetHistoryModal();
+      window.print();
+    }
+
+    function downloadCallSheetWord() {
+      const projName = document.getElementById('cs-project-name').value;
+      const rawDate = document.getElementById('cs-date').value;
+      let formattedDate = rawDate;
+      if (rawDate) {
+        const p = rawDate.split('-');
+        formattedDate = `${p[2]}.${p[1]}.${p[0]}`;
+      }
+      const shiftNum = document.getElementById('cs-shift-num').value;
+      const cityVal = document.getElementById('cs-city').value;
+      const locationVal = document.getElementById('cs-location').value;
+      const addressVal = document.getElementById('cs-address').value;
+      const notesVal = document.getElementById('cs-notes').value;
+
+      const compMgrNameVal = document.getElementById('cs-comp-mgr-name').value.trim();
+      const compMgrPhoneVal = document.getElementById('cs-comp-mgr-phone').value.trim();
+      const phoneFormatted = formatPhoneNumberStr(compMgrPhoneVal);
+      const compMgrFull = `${compMgrNameVal || '—'}${phoneFormatted ? ' (' + phoneFormatted + ')' : ''}`;
+
+      const venueTDName = document.getElementById('cs-venue-tech-dir-name').value.trim();
+      const venueTDPhone = formatPhoneNumberStr(document.getElementById('cs-venue-tech-dir-phone').value.trim());
+      const venueTDStr = venueTDName ? `${venueTDName}${venueTDPhone ? ' / ' + venueTDPhone : ''}` : '—';
+
+      const venueMgrName = document.getElementById('cs-venue-mgr-name').value.trim();
+      const venueMgrPhone = formatPhoneNumberStr(document.getElementById('cs-venue-mgr-phone').value.trim());
+      const venueMgrStr = venueMgrName ? `${venueMgrName}${venueMgrPhone ? ' / ' + venueMgrPhone : ''}` : '—';
+
+      const techDirStr = callSheetData.techDirStr || '—';
+      const techDirTitle = callSheetData.techDirRoleTitle || 'Тех. Директор';
+      const stageMgrStr = callSheetData.stageMgrStr || '—';
+      const stageMgrTitle = callSheetData.stageMgrRoleTitle || 'Продюсер / Выпускающий';
+
+      let weatherWordHtml = '';
+      if (onlineWeatherData.sunrise) {
+        weatherWordHtml = `<div style="text-align: center; font-size: 8.5pt; margin-bottom: 6px; color: #333;">Погода: ${onlineWeatherData.temp} | Восход: ${onlineWeatherData.sunrise} | Закат: ${onlineWeatherData.sunset}</div>`;
+      }
+
+      let extraRowsHtml = '';
+      if (callSheetData.extraInfo && callSheetData.extraInfo.length > 0) {
+        callSheetData.extraInfo.forEach(item => {
+          const pF = formatPhoneNumberStr(item.phone);
+          extraRowsHtml += `
+            <tr>
+              <td style="width: 18%; font-weight: bold; background: #f2f2f2;">${item.position || 'Должность'}:</td>
+              <td colspan="3"><b>${item.name || '—'}</b>${pF ? ' (' + pF + ')' : ''}</td>
+            </tr>
+          `;
+        });
+      }
+
+      let htmlContent = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+          <meta charset="utf-8">
+          <title>${projName}</title>
+          <style>
+            @page Section1 {
+              size: 841.7pt 595.3pt;
+              mso-page-orientation: landscape;
+              margin: 36pt 36pt 36pt 36pt;
+            }
+            div.Section1 { page: Section1; }
+            body { font-family: 'Arial', sans-serif; font-size: 8.5pt; color: #000; line-height: 1.15; }
+            h1 { text-align: center; font-size: 12pt; text-transform: uppercase; margin: 0 0 3px 0; }
+            .sub-header { text-align: center; font-size: 9pt; margin-bottom: 8px; color: #444; }
+            h3 { font-size: 9pt; text-transform: uppercase; margin-top: 8px; margin-bottom: 3px; background: #f2f2f2; padding: 3px 5px; }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 5px; mso-yfti-tbllook: 1184; }
+            th, td { border: 1px solid #000; padding: 3px 5px; font-size: 8pt; text-align: left; vertical-align: middle; }
+            th { background-color: #f2f2f2; text-align: center; }
+            .notes-box { border: 1px solid #000; padding: 5px; font-size: 8pt; line-height: 1.2; background: #fafafa; }
+          </style>
+        </head>
+        <body>
+          <div class="Section1">
+            <h1>CALL SHEET / ВЫЗЫВНОЙ ЛИСТ</h1>
+            <div class="sub-header"><b>${projName}</b> | Дата: ${formattedDate} | ${shiftNum}</div>
+            ${weatherWordHtml}
+
+            <table>
+              <tr>
+                <td style="width: 18%; font-weight: bold; background: #f2f2f2;">Город:</td>
+                <td style="width: 32%;">${cityVal}</td>
+                <td style="width: 18%; font-weight: bold; background: #f2f2f2;">${techDirTitle}:</td>
+                <td style="width: 32%;">${techDirStr}</td>
+              </tr>
+              <tr>
+                <td style="font-weight: bold; background: #f2f2f2;">Локация / Павильон:</td>
+                <td>${locationVal}</td>
+                <td style="font-weight: bold; background: #f2f2f2;">${stageMgrTitle}:</td>
+                <td>${stageMgrStr}</td>
+              </tr>
+              <tr>
+                <td style="font-weight: bold; background: #f2f2f2;">Точный адрес:</td>
+                <td>${addressVal}</td>
+                <td style="font-weight: bold; background: #f2f2f2;">От Площадки (ТД):</td>
+                <td>${venueTDStr}</td>
+              </tr>
+              <tr>
+                <td style="font-weight: bold; background: #f2f2f2;">Менеджер компетенции:</td>
+                <td>${compMgrFull}</td>
+                <td style="font-weight: bold; background: #f2f2f2;">От Площадки (Менеджер):</td>
+                <td>${venueMgrStr}</td>
+              </tr>
+              ${extraRowsHtml}
+            </table>
+
+            <h3>1. Общий тайминг смены</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 15%;">Время</th>
+                  <th>Событие / Этап работ</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${callSheetData.milestones.map(m => `<tr><td style="text-align: center; font-weight: bold;">${m.time}</td><td>${m.event}</td></tr>`).join('')}
+              </tbody>
+            </table>
+
+            <h3>2. Вызов персонала и департаментов</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 12%;">Время</th>
+                  <th style="width: 22%;">Департамент / Роль</th>
+                  <th style="width: 26%;">ФИО</th>
+                  <th style="width: 20%;">Телефон</th>
+                  <th>Задача</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${callSheetData.crew.map(c => `<tr><td style="text-align: center; font-weight: bold; color: #b91c1c;">${c.time}</td><td><b>${c.dept}</b></td><td>${c.name}</td><td>${formatPhoneNumberStr(c.phone)}</td><td>${c.task}</td></tr>`).join('')}
+              </tbody>
+            </table>
+
+            <h3>3. Важные примечания и регламент</h3>
+            <div class="notes-box">${notesVal.replace(/\n/g, '<br>')}</div>
+
+            <h3>4. Перечень ввозимого и вывозимого оборудования</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 5%;">№</th>
+                  <th style="width: 45%;">Наименование / Модель</th>
+                  <th style="width: 20%;">Инв. №</th>
+                  <th style="width: 20%;">Серийный №</th>
+                  <th style="width: 10%;">Кол-во</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${callSheetData.equipment.map((eq, idx) => `<tr><td style="text-align: center;">${idx + 1}</td><td><b>${eq.name}</b></td><td style="text-align: center;">${eq.inv || '—'}</td><td style="text-align: center;">${eq.sn || '—'}</td><td style="text-align: center;">${eq.count || '1'}</td></tr>`).join('')}
+              </tbody>
+            </table>
+
+            <h3>5. Автотранспорт</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 25%;">Марка / Модель</th>
+                  <th style="width: 18%;">Гос. номер</th>
+                  <th style="width: 25%;">Водитель</th>
+                  <th style="width: 32%;">Телефон / Задача</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${callSheetData.transport.map(t => `<tr><td><b>${t.model}</b></td><td style="text-align: center; font-weight: bold;">${t.plate}</td><td>${t.driver}</td><td>${formatPhoneNumberStr(t.phone)} / ${t.task}</td></tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `CallSheet_${projName.replace(/[^а-яА-Яa-zA-Z0-9]/g, '_')}_${formattedDate.replace(/\./g, '-')}.doc`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function exportCallSheetToCSV() {
+      const proj = document.getElementById('cs-project-name').value;
+      const headers = ["Тип", "Параметр 1", "Параметр 2", "Параметр 3", "Телефон / Серийник", "Задача / Кол-во"];
+      const rows = [
+        ["ПРОЕКТ", proj, "", "", "", ""],
+        ["ДАТА", document.getElementById('cs-date').value, "", "", "", ""],
+        ["ГОРОД", document.getElementById('cs-city').value, "", "", "", ""],
+        ["ЛОКАЦИЯ", document.getElementById('cs-location').value, "", "", "", ""],
+        ["АДРЕС", document.getElementById('cs-address').value, "", "", "", ""],
+        ["МЕНЕДЖЕР КОМПЕТЕНЦИИ", `${callSheetData.compMgrName} (${callSheetData.compMgrPhone})`, "", "", "", ""],
+        ["ОТВЕТСТВЕННЫЕ АРТМАСТЕРС", `${callSheetData.techDirRoleTitle}: ${callSheetData.techDirStr}`, `${callSheetData.stageMgrRoleTitle}: ${callSheetData.stageMgrStr}`, "", "", ""],
+        ["ОТВЕТСТВЕННЫЕ ПЛОЩАДКА", `ТД: ${callSheetData.venueTechDirName} (${callSheetData.venueTechDirPhone})`, `Менеджер: ${callSheetData.venueMgrName} (${callSheetData.venueMgrPhone})`, "", "", ""]
+      ];
+
+      if (onlineWeatherData.sunrise) {
+        rows.push(["ПОГОДА И СОЛНЦЕ", `Темп: ${onlineWeatherData.temp}`, `Восход: ${onlineWeatherData.sunrise}`, `Закат: ${onlineWeatherData.sunset}`, "", ""]);
+      }
+
+      if (callSheetData.extraInfo && callSheetData.extraInfo.length > 0) {
+        callSheetData.extraInfo.forEach(item => {
+          rows.push(["ДОП. ОТВЕТСТВЕННЫЙ", item.position, item.name, formatPhoneNumberStr(item.phone), "", ""]);
+        });
+      }
+
+      rows.push([]);
+      rows.push(headers);
+
+      callSheetData.milestones.forEach(m => {
+        rows.push(["Тайминг", m.time, "Этап", m.event, "", ""]);
+      });
+
+      callSheetData.crew.forEach(c => {
+        rows.push(["Персонал", c.time, c.dept, c.name, formatPhoneNumberStr(c.phone), c.task]);
+      });
+
+      callSheetData.equipment.forEach(e => {
+        rows.push(["Оборудование", e.name, e.inv, e.sn, "", e.count]);
+      });
+
+      callSheetData.transport.forEach(t => {
+        rows.push(["Транспорт", t.model, t.plate, t.driver, formatPhoneNumberStr(t.phone), t.task]);
+      });
+
+      downloadCSV(`CallSheet_${proj.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.csv`, rows);
     }
   </script>
 </body>
