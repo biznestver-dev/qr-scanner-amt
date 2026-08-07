@@ -1215,6 +1215,7 @@
           <h3>КОНСТРУКТОР ВЫЗЫВНОГО ЛИСТА</h3>
         </div>
         <div class="modal-actions">
+          <button class="db-quick-btn" onclick="openCallSheetHistoryModal()" style="height: 40px; min-width: auto; padding: 0 12px; font-size: 11px;">📜 Архив</button>
           <button class="export-btn" onclick="exportCallSheetToCSV()">📊 Экспорт CSV</button>
           <button class="close-btn" onclick="closeCallSheetModal()">&times;</button>
         </div>
@@ -1378,8 +1379,9 @@
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 18px; flex-wrap: wrap;">
-        <button class="btn" onclick="downloadCallSheetWord()" style="background: rgba(0, 180, 216, 0.2); border-color: rgba(0, 180, 216, 0.4); color: #00f0ff; min-width: 200px;">📥 Скачать Word (.doc)</button>
-        <button class="btn" onclick="printCallSheet()" style="background: var(--accent-gradient); min-width: 220px;">🖨️ Распечатать / Сохранить PDF</button>
+        <button class="btn" onclick="saveCurrentCallSheetManually()" style="background: rgba(59, 38, 166, 0.6); border-color: rgba(0, 240, 255, 0.4); color: var(--am-cyan); min-width: 180px;">💾 В архив</button>
+        <button class="btn" onclick="downloadCallSheetWord()" style="background: rgba(0, 180, 216, 0.2); border-color: rgba(0, 180, 216, 0.4); color: #00f0ff; min-width: 180px;">📥 Скачать Word</button>
+        <button class="btn" onclick="printCallSheet()" style="background: var(--accent-gradient); min-width: 200px;">🖨️ Печать / PDF</button>
       </div>
     </div>
   </div>
@@ -3594,6 +3596,58 @@
     function removeCsTransport(idx) {
       callSheetData.transport.splice(idx, 1);
       renderCsTransport();
+    }
+
+    function saveCurrentCallSheetManually() {
+      const projName = document.getElementById('cs-project-name').value;
+      const rawDate = document.getElementById('cs-date').value;
+      let formattedDate = rawDate;
+      if (rawDate) {
+        const p = rawDate.split('-');
+        formattedDate = `${p[2]}.${p[1]}.${p[0]}`;
+      }
+      const shiftNum = document.getElementById('cs-shift-num').value;
+      const cityVal = document.getElementById('cs-city').value;
+      const locationVal = document.getElementById('cs-location').value;
+      const addressVal = document.getElementById('cs-address').value;
+      const notesVal = document.getElementById('cs-notes').value;
+
+      const compMgrNameVal = document.getElementById('cs-comp-mgr-name').value.trim();
+      const compMgrPhoneVal = document.getElementById('cs-comp-mgr-phone').value.trim();
+      const venueTDName = document.getElementById('cs-venue-tech-dir-name').value.trim();
+      const venueTDPhone = document.getElementById('cs-venue-tech-dir-phone').value.trim();
+      const venueMgrName = document.getElementById('cs-venue-mgr-name').value.trim();
+      const venueMgrPhone = document.getElementById('cs-venue-mgr-phone').value.trim();
+
+      saveCallSheetToHistory({
+        id: 'CS-' + Date.now(),
+        projectName: projName,
+        date: formattedDate,
+        shiftNum: shiftNum,
+        city: cityVal,
+        location: locationVal,
+        address: addressVal,
+        compMgrName: compMgrNameVal,
+        compMgrPhone: compMgrPhoneVal,
+        techDirRoleTitle: callSheetData.techDirRoleTitle,
+        techDirStr: callSheetData.techDirStr,
+        stageMgrRoleTitle: callSheetData.stageMgrRoleTitle,
+        stageMgrStr: callSheetData.stageMgrStr,
+        venueTechDirName: venueTDName,
+        venueTechDirPhone: venueTDPhone,
+        venueMgrName: venueMgrName,
+        venueMgrPhone: venueMgrPhone,
+        extraInfo: callSheetData.extraInfo,
+        notes: notesVal,
+        milestones: callSheetData.milestones,
+        crew: callSheetData.crew,
+        equipment: callSheetData.equipment,
+        transport: callSheetData.transport,
+        weatherInfo: onlineWeatherData.sunrise ? `Погода: ${onlineWeatherData.temp} | Восход: ${onlineWeatherData.sunrise} | Закат: ${onlineWeatherData.sunset}` : ''
+      });
+
+      alert('Вызывной лист успешно сохранен в архив!');
+      openCallSheetHistoryModal();
     }
 
     function printCallSheet() {
