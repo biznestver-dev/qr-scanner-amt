@@ -13,7 +13,6 @@
   
   <style>
     :root {
-      /* Фирменная палитра ArtMasters */
       --bg-gradient: radial-gradient(circle at 50% -20%, #1a0836 0%, #090c15 50%, #04060a 100%);
       --glass-bg: rgba(15, 21, 38, 0.75);
       --glass-border: rgba(255, 255, 255, 0.1);
@@ -129,7 +128,6 @@
       margin-top: 2px;
     }
 
-    /* ГЛАВНОЕ МЕНЮ С НЕОНОВЫМИ КАРТОЧКАМИ */
     .main-menu-view {
       display: flex;
       flex-direction: column;
@@ -449,7 +447,6 @@
 
     .item-row:last-child { margin-bottom: 0; }
 
-    /* ЕДИНЫЙ БЛОК УПРАВЛЕНИЯ АКТАМИ */
     .control-panels-wrapper {
       display: flex;
       flex-direction: column;
@@ -504,7 +501,6 @@
       }
     }
 
-    /* МОДАЛЬНЫЕ ОКНА И ДИРЕКТОРИИ */
     .modal {
       display: none;
       position: fixed;
@@ -823,7 +819,6 @@
       gap: 8px;
     }
 
-    /* БЛОК ОНЛАЙН-ПОГОДЫ И СОЛНЦА В КОНСТРУКТОРЕ */
     .weather-widget-box {
       background: rgba(0, 240, 255, 0.05);
       border: 1px solid rgba(0, 240, 255, 0.2);
@@ -946,7 +941,6 @@
     <div class="app-header">
       <div class="app-title">
         <div class="app-logo">
-          <!-- Иконка шестеренки -->
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" fill="#00F0FF" stroke="#00F0FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.604.852 1 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="#FF0043" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -959,7 +953,7 @@
       </div>
     </div>
 
-    <!-- СЕКЦИЯ 1: ГЛАВНОЕ МЕНЮ (НЕОНОВЫЕ КАРТОЧКИ) -->
+    <!-- СЕКЦИЯ 1: ГЛАВНОЕ МЕНЮ -->
     <div id="section-main-menu" class="app-section active-section">
       <div class="main-menu-view">
         <div class="menu-hero">
@@ -968,7 +962,6 @@
         </div>
 
         <div class="neon-cards-grid">
-          <!-- Карточка 1: База МТБ -->
           <div class="neon-card card-mtb" onclick="switchAppSection('section-mtb')">
             <div class="neon-card-icon">
               <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -982,7 +975,6 @@
             <div class="neon-card-desc">Сканирование QR, выдача оборудования, реестр актов и справочник склада</div>
           </div>
 
-          <!-- Карточка 2: Основной чемпионат -->
           <div class="neon-card" style="border-color: rgba(255, 170, 0, 0.4);" onclick="switchAppSection('section-main-champ')">
             <div class="neon-card-icon" style="box-shadow: 0 0 20px rgba(255, 170, 0, 0.15);">
               <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#ffaa00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -998,7 +990,6 @@
             <div class="neon-card-desc">Управление площадками, локациями и координация соревновательных дней</div>
           </div>
 
-          <!-- Карточка 3: Вызывной лист -->
           <div class="neon-card card-callsheet" onclick="openCallSheetModalFromMenu()">
             <div class="neon-card-icon">
               <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#7000ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1014,7 +1005,6 @@
             <div class="neon-card-desc">Конструктор смен, онлайн-погода, тайминг, персонал и импорт из МТБ</div>
           </div>
 
-          <!-- Карточка 4: Контакты -->
           <div class="neon-card card-contacts" onclick="openContactsModalFromMenu()">
             <div class="neon-card-icon">
               <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#ff0043" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1031,7 +1021,7 @@
       </div>
     </div>
 
-    <!-- СЕКЦИЯ: ОСНОВНОЙ ЧЕМПИОНАТ (ПОДМЕНЮ С ТРЕМЯ КНОПКАМИ) -->
+    <!-- СЕКЦИЯ: ОСНОВНОЙ ЧЕМПИОНАТ -->
     <div id="section-main-champ" class="app-section">
       <div class="back-menu-bar">
         <button class="back-menu-btn" onclick="switchAppSection('section-main-menu')">← Назад в меню</button>
@@ -1044,7 +1034,6 @@
         </div>
 
         <div class="neon-cards-grid">
-          <!-- Кнопка 1: Площадки -->
           <div class="neon-card card-mtb" onclick="openVenuesModal()">
             <div class="neon-card-icon">
               <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1056,19 +1045,17 @@
             <div class="neon-card-desc">Единый справочник локаций, павильонов и ответственных лиц</div>
           </div>
 
-          <!-- Кнопка 2: Расписание защит -->
           <div class="neon-card card-callsheet" onclick="openScheduleModal()">
             <div class="neon-card-icon">
               <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#7000ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
-                polyline points="12 6 12 12 16 14"></polyline>
+                <polyline points="12 6 12 12 16 14"></polyline>
               </svg>
             </div>
             <div class="neon-card-title">Расписание защит</div>
-            <div class="neon-card-desc">Точное время выступлений участников, регламенты и координация по компетенциям</div>
+            <div class="neon-card-desc">Точное время выступлений участников, регламенты и координация</div>
           </div>
 
-          <!-- Кнопка 3: Контакты (Чемпионата) -->
           <div class="neon-card card-contacts" onclick="openChampContactsModal()">
             <div class="neon-card-icon">
               <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#ff0043" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1082,7 +1069,7 @@
       </div>
     </div>
 
-    <!-- СЕКЦИЯ 2: РАБОЧИЙ МОДУЛЬ МТБ И ВЫДАЧИ АК ТОВ -->
+    <!-- СЕКЦИЯ: МТБ -->
     <div id="section-mtb" class="app-section">
       <div class="back-menu-bar">
         <button class="back-menu-btn" onclick="switchAppSection('section-main-menu')">← Назад в меню</button>
@@ -1091,7 +1078,6 @@
       <div id="reader"></div>
 
       <div class="form-grid">
-        <!-- Инвентарный номер с динамической кнопкой -->
         <div class="form-group">
           <label for="inv-input">Инвентарный номер (QR / Штрихкод)</label>
           <div class="inv-input-group">
@@ -1201,7 +1187,6 @@
         </div>
       </div>
 
-      <!-- ЕДИНЫЙ БЛОК УПРАВЛЕНИЯ АКТАМИ -->
       <div class="control-panels-wrapper">
         <div class="btn-act-row">
           <button class="btn" onclick="generateAndPrintAct()">🖨️ Напечатать акт</button>
@@ -1212,7 +1197,9 @@
     </div>
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО КОНТАКТОВ СОТРУДНИКОВ -->
+  <!-- МОДАЛЬНЫЕ ОКНА -->
+  
+  <!-- Контакты сотрудников -->
   <div id="contactsModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -1232,7 +1219,7 @@
     </div>
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ / ДОБАВЛЕНИЯ КОНТАКТА -->
+  <!-- Редактор контакта -->
   <div id="contactEditorModal" class="modal" style="z-index: 1010;">
     <div class="modal-content" style="max-width: 520px; max-height: auto;">
       <div class="modal-header">
@@ -1273,12 +1260,12 @@
     </div>
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО УПРАВЛЕНИЯ ПЛОЩАДКАМИ -->
+  <!-- Площадки чемпионата -->
   <div id="venuesModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
         <div style="display: flex; align-items: center; gap: 12px;">
-          <button class="back-menu-btn" onclick="switchAppSection('section-main-champ')">← Назад</button>
+          <button class="back-menu-btn" onclick="closeVenuesModal()">← Назад</button>
           <h3>Площадки чемпионата</h3>
         </div>
         <div class="modal-actions">
@@ -1307,7 +1294,7 @@
     </div>
   </div>
 
-  <!-- Модальное окно редактирования / добавления площадки -->
+  <!-- Редактор площадки -->
   <div id="venueEditorModal" class="modal" style="z-index: 1020;">
     <div class="modal-content" style="max-width: 520px; max-height: auto;">
       <div class="modal-header">
@@ -1334,7 +1321,7 @@
         </div>
         <div class="form-group">
           <label>Статус / Режим работы</label>
-          <input type="text" id="edit-venue-status" value="Монтаж / Застройка" placeholder="Монтаж / Проведение / Свод">
+          <input type="text" id="edit-venue-status" value="Монтаж / Застройка">
         </div>
         <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 15px;">
           <button class="btn" onclick="closeVenueEditorModal()" style="background: rgba(255,255,255,0.05); border-color: var(--glass-border); min-width: 120px;">Отмена</button>
@@ -1344,12 +1331,12 @@
     </div>
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО: РАСПИСАНИЕ ЗАЩИТ -->
+  <!-- Расписание защит -->
   <div id="scheduleModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
         <div style="display: flex; align-items: center; gap: 12px;">
-          <button class="back-menu-btn" onclick="switchAppSection('section-main-champ')">← Назад</button>
+          <button class="back-menu-btn" onclick="closeScheduleModal()">← Назад</button>
           <h3>Расписание защит и выступлений</h3>
         </div>
         <div class="modal-actions">
@@ -1378,7 +1365,7 @@
     </div>
   </div>
 
-  <!-- Модальное окно редактирования / добавления защиты -->
+  <!-- Редактор защиты -->
   <div id="scheduleEditorModal" class="modal" style="z-index: 1025;">
     <div class="modal-content" style="max-width: 520px; max-height: auto;">
       <div class="modal-header">
@@ -1415,12 +1402,12 @@
     </div>
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО: КОНТАКТЫ ЧЕМПИОНАТА (ОПЕРАТИВНАЯ СВЯЗЬ) -->
+  <!-- Контакты чемпионата -->
   <div id="champContactsModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
         <div style="display: flex; align-items: center; gap: 12px;">
-          <button class="back-menu-btn" onclick="switchAppSection('section-main-champ')">← Назад</button>
+          <button class="back-menu-btn" onclick="closeChampContactsModal()">← Назад</button>
           <h3>Оперативные контакты чемпионата</h3>
         </div>
         <div class="modal-actions">
@@ -1448,7 +1435,7 @@
     </div>
   </div>
 
-  <!-- Модальное окно редактирования / добавления контакта чемпионата -->
+  <!-- Редактор контакта чемпионата -->
   <div id="champContactEditorModal" class="modal" style="z-index: 1030;">
     <div class="modal-content" style="max-width: 520px; max-height: auto;">
       <div class="modal-header">
@@ -1481,7 +1468,7 @@
     </div>
   </div>
 
-  <!-- Модальное окно Вызывного Листа -->
+  <!-- Вызывной лист -->
   <div id="callSheetModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -1497,13 +1484,11 @@
       </div>
       
       <div class="table-wrapper" style="padding: 10px;">
-        <!-- ВИДЖЕТ ОНЛАЙН-ПОГОДЫ И СОЛНЦА -->
         <div class="weather-widget-box" id="weather-widget-panel">
           <div>⏳ Онлайн-погода и солнце: <b id="weather-info-text">Загрузка данных...</b></div>
           <button class="add-row-btn" onclick="appendWeatherToNotes()" style="font-size: 10px; padding: 4px 8px;">📌 Добавить в примечания</button>
         </div>
 
-        <!-- БЛОК 1: Основная информация о смене -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>Основная информация о смене</span>
@@ -1534,52 +1519,39 @@
                 <label>Точный адрес / КПП / Маршрут</label>
                 <input type="text" id="cs-address" value="ул. Варварка, д. 6 (КПП №2)">
               </div>
-
-              <!-- МЕНЕДЖЕР КОМПЕТЕНЦИИ -->
               <div class="form-group">
                 <label>Менеджер компетенции (ФИО)</label>
                 <input type="text" id="cs-comp-mgr-name" placeholder="Введите ФИО менеджера компетенции...">
               </div>
-
               <div class="form-group">
                 <label>Телефон менеджера компетенции</label>
                 <input type="text" id="cs-comp-mgr-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)">
               </div>
-              
-              <!-- РУКОВОДСТВО АРТМАСТЕРС -->
               <div class="form-group">
                 <label id="cs-tech-dir-label">Технический директор (АртМастерс)</label>
                 <select id="cs-tech-dir-select" onchange="onTechDirSelect(this.value)"></select>
               </div>
-
               <div class="form-group">
                 <label id="cs-stage-mgr-label">Продюсер / Шеф-редактор / Выпускающий</label>
                 <select id="cs-stage-mgr-select" onchange="onStageMgrSelect(this.value)"></select>
               </div>
-
-              <!-- ОТВЕТСТВЕННЫЕ ОТ ПЛОЩАДКИ (РАЗДЕЛЬНО) -->
               <div class="form-group">
                 <label>От Площадки: Технический директор (ФИО)</label>
                 <input type="text" id="cs-venue-tech-dir-name" placeholder="Петров П.П.">
               </div>
-
               <div class="form-group">
                 <label>От Площадки: Технический директор (Телефон)</label>
                 <input type="text" id="cs-venue-tech-dir-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)">
               </div>
-
               <div class="form-group">
                 <label>От Площадки: Менеджер / Администратор (ФИО)</label>
                 <input type="text" id="cs-venue-mgr-name" placeholder="Сидоров С.С.">
               </div>
-
               <div class="form-group">
                 <label>От Площадки: Менеджер / Администратор (Телефон)</label>
                 <input type="text" id="cs-venue-mgr-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)">
               </div>
             </div>
-
-            <!-- КОНТЕЙНЕР ДЛЯ ДОБАВЛЕННЫХ ПУНКТОВ -->
             <div id="cs-extra-info-container" style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;"></div>
           </div>
           <div class="cs-section-actions">
@@ -1587,7 +1559,6 @@
           </div>
         </div>
 
-        <!-- БЛОК 2: Тайминг смены -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>1. Тайминг смены</span>
@@ -1600,7 +1571,6 @@
           </div>
         </div>
 
-        <!-- БЛОК 3: Вызов персонала -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>2. Вызов персонала и команды</span>
@@ -1615,7 +1585,6 @@
           </div>
         </div>
 
-        <!-- БЛОК 4: Примечания -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>3. Важные примечания и Дресс-код</span>
@@ -1625,7 +1594,6 @@
           </div>
         </div>
 
-        <!-- БЛОК 5: Перечень оборудования -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>4. Перечень ввозимого и вывозимого оборудования</span>
@@ -1639,7 +1607,6 @@
           </div>
         </div>
 
-        <!-- БЛОК 6: Автотранспорт -->
         <div class="cs-section">
           <div class="cs-section-title">
             <span>5. Автотранспорт</span>
@@ -1661,7 +1628,7 @@
     </div>
   </div>
 
-  <!-- Модальное окно Архива Вызывных Листов -->
+  <!-- Архив вызывных листов -->
   <div id="csHistoryModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -1694,7 +1661,7 @@
     </div>
   </div>
 
-  <!-- Модальное окно Базы МТБ -->
+  <!-- База МТБ -->
   <div id="dbModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -1733,7 +1700,7 @@
     </div>
   </div>
 
-  <!-- Модальное окно Истории Накладных -->
+  <!-- История накладных -->
   <div id="historyModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -1769,7 +1736,7 @@
     </div>
   </div>
 
-  <!-- Печатная зона Вызывного листа (Call Sheet) -->
+  <!-- Печатные зоны -->
   <div id="callsheet-print-area">
     <div class="cs-print-header">
       <div style="float: right; font-size: 10pt; font-weight: bold; color: #555;">CALL SHEET / ВЫЗЫВНОЙ ЛИСТ</div>
@@ -1780,7 +1747,6 @@
       </div>
     </div>
 
-    <!-- ТАБЛИЦА ШАПКИ СТРОГО С РАЗДЕЛЬНЫМИ СТРОКАМИ И СТОЛБЦАМИ -->
     <table class="act-table" style="margin-bottom: 12px;">
       <tr>
         <td style="width: 16%; font-weight: bold; background: #f2f2f2; text-align: left;">Город:</td>
@@ -1808,7 +1774,6 @@
       </tr>
     </table>
 
-    <!-- ДИНАМИЧЕСКИЕ ДОП. ПОЛЯ ШАПКИ ДЛЯ ПЕЧАТИ -->
     <table class="act-table" id="csp-extra-info-table" style="margin-bottom: 12px; display: none;">
       <tbody id="csp-extra-info-tbody"></tbody>
     </table>
@@ -1870,7 +1835,6 @@
     </table>
   </div>
 
-  <!-- Печатный Акт Приема-Передачи -->
   <div id="act-print-area">
     <div class="act-header">
       АНО «АртМастерс»
@@ -1921,64 +1885,49 @@
 
     <div id="safety-rules-wrapper" class="safety-rules-wrapper">
       <div class="page-break"></div>
-
       <div class="safety-rules-block">
         <h3>ПРАВИЛА ТЕХНИКИ БЕЗОПАСНОСТИ ПРИ РАБОТЕ С КОМПЬЮТЕРНОЙ ТЕХНИКОЙ</h3>
-        
         <div class="meta">
           <b>Организация:</b> АНО «АртМастерс»<br>
           <b>Дата введения:</b> <span id="safety-date-intro">28 июля 2026 г.</span><br>
           <b>Ответственный:</b> Технический директор - Зломанов Олег Викторович
         </div>
-
         <h4>1. Общие положения</h4>
         <p>1.1. Правила обязательны для всех сотрудников офиса, стажёров, подрядчиков и иных лиц, использующих компьютерную технику (ПК, ноутбуки, мониторы, периферию, док-станции, сетевые фильтры).</p>
         <p>1.2. Цель правил — предотвратить повреждение техники, исключить риск поражения электрическим током, снизить риски для здоровья при длительной работе за компьютером.</p>
         <p>1.3. Допуск к работе возможен только после прохождения вводного инструктажа по охране труда и ознакомления с этими правилами под подпись.</p>
-
         <h4>2. Подготовка рабочего места</h4>
         <p>2.1. Перед началом работы осмотрите технику: нет ли видимых повреждений корпуса, экрана, кабелей, разъёмов.</p>
         <p>2.2. Проверьте исправность розетки и сетевого фильтра; не используйте повреждённые удлинители и самодельные переходники.</p>
         <p>2.3. Разместите кабели так, чтобы они не мешали проходу; используйте кабель-менеджмент (стяжки, каналы) — это критично для безопасности в активных зонах офиса.</p>
-        <p>2.4. Настройте эргономику:</p>
-        <ul>
-          <li>расстояние от глаз до экрана — 50–70 см;</li>
-          <li>верхняя треть экрана — на уровне глаз или чуть ниже;</li>
-          <li>спина опирается на спинку кресла, локти под углом ~90°, стопы на полу или на подставке.</li>
-        </ul>
+        <p>2.4. Настройте эргономику: расстояние от глаз до экрана — 50–70 см; верхняя треть экрана — на уровне глаз или чуть ниже; спина опирается на спинку кресла, локти под углом ~90°, стопы на полу или на подставке.</p>
         <p>2.5. Проверьте освещение: на экране не должно быть сильных бликов; при необходимости отрегулируйте жалюзи или яркость монитора.</p>
-
         <h4>3. Работа с техникой</h4>
         <p>3.1. Включение: сначала сетевой фильтр/ИБП, затем периферия, затем ПК/ноутбук.</p>
         <p>3.2. Не допускайте попадания жидкостей на технику; не ставьте рядом напитки, не работайте мокрыми руками.</p>
-        <p>3.3. Не вскрывайте корпуса устройств и не производите самостоятельный ремонт. При неисправности — сразу сообщите ИТ-отделу (канал #it-help в Slack/Teams) или ответственному.</p>
+        <p>3.3. Не вскрывайте корпуса устройств и не производите самостоятельный ремонт. При неисправности — сразу сообщите ИТ-отделу или ответственному.</p>
         <p>3.4. Не перекрывайте вентиляционные отверстия; не кладите на технику бумаги, папки и иные предметы.</p>
         <p>3.5. Не подключайте и не отключайте кабели при включённом питании, кроме случаев «горячей» замены (USB, наушники и т. п.), разрешённых производителем.</p>
         <p>3.6. Используйте только штатные и сертифицированные блоки питания и зарядные устройства.</p>
         <p>3.7. Не используйте технику при явных признаках неисправности (странный запах, шум, перегрев, мерцание экрана).</p>
-
         <h4>4. Режим труда и профилактика утомления</h4>
         <p>4.1. Делайте перерывы каждые 50–60 минут: 10–15 минут на разминку и гимнастику для глаз.</p>
         <p>4.2. Во время перерыва отводите взгляд от экрана, смотрите вдаль, моргайте чаще, чтобы снизить риск «синдрома сухого глаза».</p>
         <p>4.3. При длительной работе чередуйте задачи: часть времени — за экраном, часть — на обсуждение, проверку распечаток, ходьбу по офису.</p>
-
         <h4>5. Действия при нештатных ситуациях</h4>
         <p>5.1. При появлении запаха гари, искрения, необычного шума, перегрева — немедленно отключите питание на сетевом фильтре/автомате и сообщите ответственному. Не пытайтесь устранять неисправность самостоятельно.</p>
         <p>5.2. При поражении электрическим током: не прикасайтесь к пострадавшему до снятия напряжения; вызовите скорую помощь (112); окажите первую помощь по инструкции.</p>
         <p>5.3. При сбое ПО или потере данных: не выполняйте произвольных действий; зафиксируйте симптомы (ошибка, время, что делали) и обратитесь в ИТ-поддержку.</p>
         <p>5.4. При возгорании техники: обесточьте, используйте огнетушитель (если обучены и безопасно), эвакуируйтесь по плану и сообщите охране/администратору.</p>
-
         <h4>6. Завершение работы</h4>
         <p>6.1. Корректно завершите все программы, сохраните данные.</p>
         <p>6.2. Выключите технику в порядке, обратном включению: ПК/ноутбук → периферия → сетевой фильтр/ИБП.</p>
         <p>6.3. Осмотрите рабочее место: кабели не натянуты, техника не перегрета, нет посторонних предметов на устройствах.</p>
         <p>6.4. Если техника передаётся другому сотруднику (например, сменный режим), передайте её по краткой проверке и отметьте в журнале/чате ИТ-поддержки.</p>
-
         <h4>7. Ответственность и контроль</h4>
         <p>7.1. Контроль соблюдения правил возлагается на руководителей подразделений и технического директора.</p>
         <p>7.2. Нарушение правил может служить основанием для отстранения от работы и привлечения к дисциплинарной ответственности.</p>
         <p>7.3. Факт ознакомления подтверждается подписью в журнале инструктажа либо в электронной форме (через чек-лист).</p>
-
         <table class="safety-signatures-table">
           <tr>
             <td>
@@ -3916,7 +3865,6 @@
       const venueMgrPhoneF = formatPhoneNumberStr(cs.venueMgrPhone);
       document.getElementById('csp-venue-mgr-print').innerText = cs.venueMgrName ? `${cs.venueMgrName}${venueMgrPhoneF ? ' / ' + venueMgrPhoneF : ''}` : '—';
 
-      // Отрисовка доп. полей в печатной шапке
       const extraTbody = document.getElementById('csp-extra-info-tbody');
       const extraTable = document.getElementById('csp-extra-info-table');
       extraTbody.innerHTML = '';
@@ -4375,7 +4323,6 @@
       const venueMgrPhoneF = formatPhoneNumberStr(venueMgrPhone);
       document.getElementById('csp-venue-mgr-print').innerText = venueMgrName ? `${venueMgrName}${venueMgrPhoneF ? ' / ' + venueMgrPhoneF : ''}` : '—';
 
-      // Отрисовка доп. полей в печатной шапке
       const extraTbody = document.getElementById('csp-extra-info-tbody');
       const extraTable = document.getElementById('csp-extra-info-table');
       extraTbody.innerHTML = '';
