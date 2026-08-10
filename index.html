@@ -1676,8 +1676,6 @@
         </div>
         <div class="modal-actions">
           <button class="export-btn" onclick="exportDbToCSV()">📊 Экспорт CSV</button>
-          <button class="add-row-btn" onclick="document.getElementById('csvFileInput').click()">📥 Импорт CSV</button>
-          <input type="file" id="csvFileInput" accept=".csv" style="display: none;" onchange="importDbFromCSV(event)">
           <button class="close-btn" onclick="closeDbModal()">&times;</button>
         </div>
       </div>
@@ -1919,7 +1917,7 @@
         <p>3.7. Не используйте технику при явных признаках неисправности (странный запах, шум, перегрев, мерцание экрана).</p>
         <h4>4. Режим труда и профилактика утомления</h4>
         <p>4.1. Делайте перерывы каждые 50–60 минут: 10–15 минут на разминку и гимнастику для глаз.</p>
-        <p>4.2. Во время перерыва отводите взгляд от экрана, смотрите вдаль, моргайте чаще, чтобы снизить риск «синдрому сухого глаза».</p>
+        <p>4.2. Во время перерыва отводите взгляд от экрана, смотрите вдаль, моргайте чаще, чтобы снизить риск «синдрома сухого глаза».</p>
         <p>4.3. При длительной работе чередуйте задачи: часть времени — за экраном, часть — на обсуждение, проверку распечаток, ходьбу по офису.</p>
         <h4>5. Действия при нештатных ситуациях</h4>
         <p>5.1. При появлении запаха гари, искрения, необычного шума, перегрева — немедленно отключите питание на сетевом фильтре/автомате и сообщите ответственному. Не пытайтесь устранять неисправность самостоятельно.</p>
@@ -1955,2302 +1953,2754 @@
     </div>
   </div>
 
-  <script>
-window.EQUIPMENT_DB = {
-  "AM-TF-0001": {
-    "inv": "AM-TF-0001",
-    "category": "IP-телефония",
-    "name": "Grandstream GXP-2160",
-    "sn": "",
-    "status": ""
-  },
-  "AM-TF-0002": {
-    "inv": "AM-TF-0002",
-    "category": "IP-телефония",
-    "name": "Yealink T31P",
-    "sn": "",
-    "status": ""
-  },
-  "AM-TF-0003": {
-    "inv": "AM-TF-0003",
-    "category": "IP-телефония",
-    "name": "Yealink T31P",
-    "sn": "",
-    "status": ""
-  },
-  "AM-TF-0004": {
-    "inv": "AM-TF-0004",
-    "category": "IP-телефония",
-    "name": "Yealink T31P",
-    "sn": "",
-    "status": ""
-  },
-  "AM-TF-0005": {
-    "inv": "AM-TF-0005",
-    "category": "IP-телефония",
-    "name": "Yealink T31P",
-    "sn": "",
-    "status": ""
-  },
-  "AM-TF-0006": {
-    "inv": "AM-TF-0006",
-    "category": "IP-телефония",
-    "name": "Yealink T31P",
-    "sn": "",
-    "status": ""
-  },
-  "AM-TF-0007": {
-    "inv": "AM-TF-0007",
-    "category": "IP-телефония",
-    "name": "Yealink T31P",
-    "sn": "",
-    "status": ""
-  },
-  "AM-TF-0008": {
-    "inv": "AM-TF-0008",
-    "category": "IP-телефония",
-    "name": "Yealink T31P",
-    "sn": "",
-    "status": ""
-  },
-  "AM-TF-0009": {
-    "inv": "AM-TF-0009",
-    "category": "IP-телефония",
-    "name": "Yealink T31P",
-    "sn": "",
-    "status": ""
-  },
-  "AM-TF-0010": {
-    "inv": "AM-TF-0010",
-    "category": "IP-телефония",
-    "name": "Yealink T31P",
-    "sn": "",
-    "status": ""
-  },
-  "AM-TF-0011": {
-    "inv": "AM-TF-0011",
-    "category": "IP-телефония",
-    "name": "Yealink T31P",
-    "sn": "",
-    "status": ""
-  },
-  "AM-TF-0012": {
-    "inv": "AM-TF-0012",
-    "category": "IP-телефония",
-    "name": "Yealink T31P",
-    "sn": "",
-    "status": ""
-  },
-  "AM-TF-0013": {
-    "inv": "AM-TF-0013",
-    "category": "IP-телефония",
-    "name": "Yealink T31P",
-    "sn": "",
-    "status": ""
-  },
-  "AM-TF-0014": {
-    "inv": "AM-TF-0014",
-    "category": "IP-телефония",
-    "name": "Yealink SIP-T21P E2",
-    "sn": "",
-    "status": ""
-  },
-  "AM-TF-0015": {
-    "inv": "AM-TF-0015",
-    "category": "IP-телефония",
-    "name": "Yealink T31P",
-    "sn": "",
-    "status": ""
-  },
-  "AM-TF-0016": {
-    "inv": "AM-TF-0016",
-    "category": "IP-телефония",
-    "name": "Yealink T31P",
-    "sn": "",
-    "status": ""
-  },
-  "AM-TF-0017": {
-    "inv": "AM-TF-0017",
-    "category": "IP-телефония",
-    "name": "Yealink T31P",
-    "sn": "",
-    "status": ""
-  },
-  "AM-TF-0018": {
-    "inv": "AM-TF-0018",
-    "category": "IP-телефония",
-    "name": "Yealink T31P",
-    "sn": "",
-    "status": ""
-  },
-  "AM-TF-0019": {
-    "inv": "AM-TF-0019",
-    "category": "IP-телефония",
-    "name": "Yealink T31P",
-    "sn": "",
-    "status": ""
-  },
-  "AM-VH-0001": {
-    "inv": "AM-VH-0001",
-    "category": "Видеооборудование",
-    "name": "Logitech Веб-камера",
-    "sn": "2052LZ97U198",
-    "status": "Свободен"
-  },
-  "AM-VH-0002": {
-    "inv": "AM-VH-0002",
-    "category": "Видеооборудование",
-    "name": "Logitech Веб-камера",
-    "sn": "2519ZBU35DQ9",
-    "status": "Занят"
-  },
-  "AM-GT-0001": {
-    "inv": "AM-GT-0001",
-    "category": "Графическое оборудование",
-    "name": "Wacom CTL-672",
-    "sn": "1CA00M1049594",
-    "status": ""
-  },
-  "AM-GT-0002": {
-    "inv": "AM-GT-0002",
-    "category": "Графическое оборудование",
-    "name": "Wacom CTL-672",
-    "sn": "1CA00M1052594",
-    "status": ""
-  },
-  "AM-GT-0003": {
-    "inv": "AM-GT-0003",
-    "category": "Графическое оборудование",
-    "name": "Wacom CTL-672",
-    "sn": "1CA00M1052595",
-    "status": ""
-  },
-  "AM-GT-0004": {
-    "inv": "AM-GT-0004",
-    "category": "Графическое оборудование",
-    "name": "Wacom CTL-672",
-    "sn": "1CA00M1052589",
-    "status": ""
-  },
-  "AM-GT-0005": {
-    "inv": "AM-GT-0005",
-    "category": "Графическое оборудование",
-    "name": "Wacom CTL-672",
-    "sn": "1CA00M1052599",
-    "status": ""
-  },
-  "AM-GT-0006": {
-    "inv": "AM-GT-0006",
-    "category": "Графическое оборудование",
-    "name": "Wacom CTL-672",
-    "sn": "1CA00M1053352",
-    "status": ""
-  },
-  "AM-GT-0007": {
-    "inv": "AM-GT-0007",
-    "category": "Графическое оборудование",
-    "name": "Wacom CTL-672",
-    "sn": "1CA00M1053368",
-    "status": ""
-  },
-  "AM-GT-0008": {
-    "inv": "AM-GT-0008",
-    "category": "Графическое оборудование",
-    "name": "Wacom CTL-672",
-    "sn": "1CA00M1049600",
-    "status": ""
-  },
-  "AM-GT-0009": {
-    "inv": "AM-GT-0009",
-    "category": "Графическое оборудование",
-    "name": "Wacom CTL-672",
-    "sn": "1CA00M1049598",
-    "status": ""
-  },
-  "AM-GT-0010": {
-    "inv": "AM-GT-0010",
-    "category": "Графическое оборудование",
-    "name": "Wacom CTL-672",
-    "sn": "1CA00M1049608",
-    "status": ""
-  },
-  "AM-GT-0011": {
-    "inv": "AM-GT-0011",
-    "category": "Графическое оборудование",
-    "name": "Wacom CTL-672",
-    "sn": "1CA00M1049635",
-    "status": ""
-  },
-  "AM-GT-0012": {
-    "inv": "AM-GT-0012",
-    "category": "Графическое оборудование",
-    "name": "Wacom CTL-672",
-    "sn": "1CA00M1049601",
-    "status": ""
-  },
-  "AM-GT-0013": {
-    "inv": "AM-GT-0013",
-    "category": "Графическое оборудование",
-    "name": "Wacom CTL-672",
-    "sn": "1CA00M1049606",
-    "status": ""
-  },
-  "AM-GT-0014": {
-    "inv": "AM-GT-0014",
-    "category": "Графическое оборудование",
-    "name": "Wacom CTL-672",
-    "sn": "1CA00M1053342",
-    "status": ""
-  },
-  "AM-GT-0015": {
-    "inv": "AM-GT-0015",
-    "category": "Графическое оборудование",
-    "name": "Wacom CTL-672",
-    "sn": "1CA00M1049595",
-    "status": ""
-  },
-  "AM-GT-0016": {
-    "inv": "AM-GT-0016",
-    "category": "Графическое оборудование",
-    "name": "Wacom CTL-672",
-    "sn": "1CA00M1049604",
-    "status": ""
-  },
-  "AM-GT-0017": {
-    "inv": "AM-GT-0017",
-    "category": "Графическое оборудование",
-    "name": "Wacom CTL-672",
-    "sn": "1CA00M1052593",
-    "status": ""
-  },
-  "AM-GT-0018": {
-    "inv": "AM-GT-0018",
-    "category": "Графическое оборудование",
-    "name": "Wacom CTL-672",
-    "sn": "1CA00M1053361",
-    "status": ""
-  },
-  "AM-GT-0019": {
-    "inv": "AM-GT-0019",
-    "category": "Графическое оборудование",
-    "name": "Wacom CTL-672",
-    "sn": "1CA00M1049614",
-    "status": ""
-  },
-  "AM-GT-0020": {
-    "inv": "AM-GT-0020",
-    "category": "Графическое оборудование",
-    "name": "Wacom CTL-672",
-    "sn": "1CA00M1052600",
-    "status": ""
-  },
-  "AM-SH-0001": {
-    "inv": "AM-SH-0001",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniFuse2 Звуковая карта",
-    "sn": "8840400048052456",
-    "status": "В офисе"
-  },
-  "AM-SH-0002": {
-    "inv": "AM-SH-0002",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniFuse2 Звуковая карта",
-    "sn": "8840400675052593",
-    "status": "В офисе"
-  },
-  "AM-SH-0003": {
-    "inv": "AM-SH-0003",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniFuse2 Звуковая карта",
-    "sn": "8840400955052439",
-    "status": "В офисе"
-  },
-  "AM-SH-0004": {
-    "inv": "AM-SH-0004",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniFuse2 Звуковая карта",
-    "sn": "8840400972052438",
-    "status": "В офисе"
-  },
-  "AM-SH-0005": {
-    "inv": "AM-SH-0005",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniFuse2 Звуковая карта",
-    "sn": "8840400758101462",
-    "status": "В офисе"
-  },
-  "AM-SH-0006": {
-    "inv": "AM-SH-0006",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniFuse4 Звуковая карта",
-    "sn": "8860400093090215",
-    "status": "В офисе"
-  },
-  "AM-SH-0007": {
-    "inv": "AM-SH-0007",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniFuse4 Звуковая карта",
-    "sn": "8860400265090216",
-    "status": "В офисе"
-  },
-  "AM-SH-0008": {
-    "inv": "AM-SH-0008",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniLab Mk2 MIDI Клавиатура",
-    "sn": "7015400319785482",
-    "status": "В офисе"
-  },
-  "AM-SH-0009": {
-    "inv": "AM-SH-0009",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniLab Mk2 MIDI Клавиатура",
-    "sn": "7015400765785430",
-    "status": "В офисе"
-  },
-  "AM-SH-0010": {
-    "inv": "AM-SH-0010",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniLab Mk2 MIDI Клавиатура",
-    "sn": "7015400097713831",
-    "status": "В офисе"
-  },
-  "AM-SH-0011": {
-    "inv": "AM-SH-0011",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniLab Mk2 MIDI Клавиатура",
-    "sn": "7015400318785429",
-    "status": "В офисе"
-  },
-  "AM-SH-0012": {
-    "inv": "AM-SH-0012",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniLab Mk2 MIDI Клавиатура",
-    "sn": "7015400033783830",
-    "status": "В офисе"
-  },
-  "AM-SH-0013": {
-    "inv": "AM-SH-0013",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniLab Mk2 MIDI Клавиатура",
-    "sn": "7015400748785427",
-    "status": "В офисе"
-  },
-  "AM-SH-0014": {
-    "inv": "AM-SH-0014",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniLab Mk2 MIDI Клавиатура",
-    "sn": "7015400283713834",
-    "status": "В офисе"
-  },
-  "AM-SH-0015": {
-    "inv": "AM-SH-0015",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniLab Mk2 MIDI Клавиатура",
-    "sn": "7015400092783829",
-    "status": "В офисе"
-  },
-  "AM-SH-0016": {
-    "inv": "AM-SH-0016",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniLab Mk2 MIDI Клавиатура",
-    "sn": "7015400211786375",
-    "status": "В офисе"
-  },
-  "AM-SH-0017": {
-    "inv": "AM-SH-0017",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniLab Mk2 MIDI Клавиатура",
-    "sn": "7015400500785428",
-    "status": "В офисе"
-  },
-  "AM-SH-0018": {
-    "inv": "AM-SH-0018",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniLab Mk2 MIDI Клавиатура",
-    "sn": "7015400921640334",
-    "status": "В офисе"
-  },
-  "AM-SH-0019": {
-    "inv": "AM-SH-0019",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniLab Mk2 MIDI Клавиатура",
-    "sn": "7015400687786371",
-    "status": "В офисе"
-  },
-  "AM-SH-0020": {
-    "inv": "AM-SH-0020",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniLab Mk2 MIDI Клавиатура",
-    "sn": "7015400804783828",
-    "status": "В офисе"
-  },
-  "AM-SH-0021": {
-    "inv": "AM-SH-0021",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniLab Mk2 MIDI Клавиатура",
-    "sn": "7015400993786372",
-    "status": "В офисе"
-  },
-  "AM-SH-0022": {
-    "inv": "AM-SH-0022",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniLab Mk2 MIDI Клавиатура",
-    "sn": "7015400495786373",
-    "status": "В офисе"
-  },
-  "AM-SH-0023": {
-    "inv": "AM-SH-0023",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniFuse2 Звуковая карта",
-    "sn": "8840400944210792",
-    "status": "В офисе"
-  },
-  "AM-SH-0024": {
-    "inv": "AM-SH-0024",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniFuse2 Звуковая карта",
-    "sn": "8840400999210830",
-    "status": "В офисе"
-  },
-  "AM-SH-0025": {
-    "inv": "AM-SH-0025",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniFuse2 Звуковая карта",
-    "sn": "8840400101150879",
-    "status": "В офисе"
-  },
-  "AM-SH-0026": {
-    "inv": "AM-SH-0026",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniFuse2 Звуковая карта",
-    "sn": "8840400914180097",
-    "status": "В офисе"
-  },
-  "AM-SH-0027": {
-    "inv": "AM-SH-0027",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniFuse2 Звуковая карта",
-    "sn": "8840400617150877",
-    "status": "В офисе"
-  },
-  "AM-SH-0028": {
-    "inv": "AM-SH-0028",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniFuse2 Звуковая карта",
-    "sn": "8840400440150878",
-    "status": "В офисе"
-  },
-  "AM-SH-0029": {
-    "inv": "AM-SH-0029",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniFuse2 Звуковая карта",
-    "sn": "8840400168150876",
-    "status": "В офисе"
-  },
-  "AM-SH-0030": {
-    "inv": "AM-SH-0030",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniFuse2 Звуковая карта",
-    "sn": "8840400376150875",
-    "status": "В офисе"
-  },
-  "AM-SH-0031": {
-    "inv": "AM-SH-0031",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniFuse2 Звуковая карта",
-    "sn": "8840400563160691",
-    "status": "В офисе"
-  },
-  "AM-SH-0032": {
-    "inv": "AM-SH-0032",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniFuse2 Звуковая карта",
-    "sn": "8840400894160692",
-    "status": "В офисе"
-  },
-  "AM-SH-0033": {
-    "inv": "AM-SH-0033",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniFuse2 Звуковая карта",
-    "sn": "8840400915160693",
-    "status": "В офисе"
-  },
-  "AM-SH-0034": {
-    "inv": "AM-SH-0034",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniFuse2 Звуковая карта",
-    "sn": "8840400545160690",
-    "status": "В офисе"
-  },
-  "AM-SH-0035": {
-    "inv": "AM-SH-0035",
-    "category": "Звуковое оборудование",
-    "name": "Arturia MiniFuse2 Звуковая карта",
-    "sn": "8840400396160694",
-    "status": "В офисе"
-  },
-  "AM-SH-0036": {
-    "inv": "AM-SH-0036",
-    "category": "Звуковое оборудование",
-    "name": "ZOOM H8 Портативный рекордер",
-    "sn": "C52062640",
-    "status": "В офисе"
-  },
-  "AM-SH-0037": {
-    "inv": "AM-SH-0037",
-    "category": "Звуковое оборудование",
-    "name": "ZOOM H6 Портативный рекордер",
-    "sn": "C50079473",
-    "status": "В офисе"
-  },
-  "AM-SH-0038": {
-    "inv": "AM-SH-0038",
-    "category": "Звуковое оборудование",
-    "name": "Радиосистема",
-    "sn": "BLX2M17",
-    "status": ""
-  },
-  "AM-SH-0039": {
-    "inv": "AM-SH-0039",
-    "category": "Звуковое оборудование",
-    "name": "AKG K702 Наушники",
-    "sn": "242904",
-    "status": "В офисе"
-  },
-  "AM-SH-0040": {
-    "inv": "AM-SH-0040",
-    "category": "Звуковое оборудование",
-    "name": "AKG K702 Наушники",
-    "sn": "244434",
-    "status": "В офисе"
-  },
-  "AM-SH-0041": {
-    "inv": "AM-SH-0041",
-    "category": "Звуковое оборудование",
-    "name": "AKG K702 Наушники",
-    "sn": "242880",
-    "status": "В офисе"
-  },
-  "AM-SH-0042": {
-    "inv": "AM-SH-0042",
-    "category": "Звуковое оборудование",
-    "name": "AKG K702 Наушники",
-    "sn": "243011",
-    "status": "В офисе"
-  },
-  "AM-SH-0043": {
-    "inv": "AM-SH-0043",
-    "category": "Звуковое оборудование",
-    "name": "AKG K702 Наушники",
-    "sn": "242778",
-    "status": "В офисе"
-  },
-  "AM-SH-0044": {
-    "inv": "AM-SH-0044",
-    "category": "Звуковое оборудование",
-    "name": "AKG K702 Наушники",
-    "sn": "244444",
-    "status": "В офисе"
-  },
-  "AM-SH-0045": {
-    "inv": "AM-SH-0045",
-    "category": "Звуковое оборудование",
-    "name": "AKG K702 Наушники",
-    "sn": "243010",
-    "status": "На площадке"
-  },
-  "AM-SH-0046": {
-    "inv": "AM-SH-0046",
-    "category": "Звуковое оборудование",
-    "name": "AKG K702 Наушники",
-    "sn": "242334",
-    "status": "В офисе"
-  },
-  "AM-SH-0047": {
-    "inv": "AM-SH-0047",
-    "category": "Звуковое оборудование",
-    "name": "AKG K702 Наушники",
-    "sn": "243016",
-    "status": "В офисе"
-  },
-  "AM-SH-0048": {
-    "inv": "AM-SH-0048",
-    "category": "Звуковое оборудование",
-    "name": "AbbeyRoad VoltaPro Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0049": {
-    "inv": "AM-SH-0049",
-    "category": "Звуковое оборудование",
-    "name": "AbbeyRoad VoltaPro Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0050": {
-    "inv": "AM-SH-0050",
-    "category": "Звуковое оборудование",
-    "name": "AbbeyRoad VoltaPro Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0051": {
-    "inv": "AM-SH-0051",
-    "category": "Звуковое оборудование",
-    "name": "AbbeyRoad VoltaPro Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0052": {
-    "inv": "AM-SH-0052",
-    "category": "Звуковое оборудование",
-    "name": "AbbeyRoad VoltaPro Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0053": {
-    "inv": "AM-SH-0053",
-    "category": "Звуковое оборудование",
-    "name": "Sennheizer HD206 Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0054": {
-    "inv": "AM-SH-0054",
-    "category": "Звуковое оборудование",
-    "name": "Sennheizer HD206 Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0055": {
-    "inv": "AM-SH-0055",
-    "category": "Звуковое оборудование",
-    "name": "Sennheizer HD206 Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0056": {
-    "inv": "AM-SH-0056",
-    "category": "Звуковое оборудование",
-    "name": "Sennheizer HD206 Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0057": {
-    "inv": "AM-SH-0057",
-    "category": "Звуковое оборудование",
-    "name": "Sennheizer HD206 Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0058": {
-    "inv": "AM-SH-0058",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0059": {
-    "inv": "AM-SH-0059",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0060": {
-    "inv": "AM-SH-0060",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0061": {
-    "inv": "AM-SH-0061",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0062": {
-    "inv": "AM-SH-0062",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0063": {
-    "inv": "AM-SH-0063",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0064": {
-    "inv": "AM-SH-0064",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0065": {
-    "inv": "AM-SH-0065",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0066": {
-    "inv": "AM-SH-0066",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0067": {
-    "inv": "AM-SH-0067",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0068": {
-    "inv": "AM-SH-0068",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0069": {
-    "inv": "AM-SH-0069",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0070": {
-    "inv": "AM-SH-0070",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0071": {
-    "inv": "AM-SH-0071",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0072": {
-    "inv": "AM-SH-0072",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0073": {
-    "inv": "AM-SH-0073",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0074": {
-    "inv": "AM-SH-0074",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0075": {
-    "inv": "AM-SH-0075",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0076": {
-    "inv": "AM-SH-0076",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0077": {
-    "inv": "AM-SH-0077",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0078": {
-    "inv": "AM-SH-0078",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0079": {
-    "inv": "AM-SH-0079",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0080": {
-    "inv": "AM-SH-0080",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0081": {
-    "inv": "AM-SH-0081",
-    "category": "Звуковое оборудование",
-    "name": "Shure SRH440A Наушники",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-SH-0082": {
-    "inv": "AM-SH-0082",
-    "category": "Звуковое оборудование",
-    "name": "Dji Mic 2 Петличка",
-    "sn": "6VRXN3K014FLW8",
-    "status": "В офисе"
-  },
-  "AM-SH-0083": {
-    "inv": "AM-SH-0083",
-    "category": "Звуковое оборудование",
-    "name": "Dji Mic 2 Петличка",
-    "sn": "6VRXN3J014FGD8",
-    "status": "В офисе"
-  },
-  "AM-SH-0084": {
-    "inv": "AM-SH-0084",
-    "category": "Звуковое оборудование",
-    "name": "Dji Mic 2 Петличка",
-    "sn": "6VRXN3J014FGCV",
-    "status": "В офисе"
-  },
-  "AM-SH-0085": {
-    "inv": "AM-SH-0085",
-    "category": "Звуковое оборудование",
-    "name": "Dji Mic 2 Петличка",
-    "sn": "6VRXN3K014FJ74",
-    "status": "В офисе"
-  },
-  "AM-SH-0086": {
-    "inv": "AM-SH-0086",
-    "category": "Звуковое оборудование",
-    "name": "Dji Mic 2 Петличка",
-    "sn": "6VRXN3J014FGC7",
-    "status": "В офисе"
-  },
-  "AM-SH-0087": {
-    "inv": "AM-SH-0087",
-    "category": "Звуковое оборудование",
-    "name": "LAX DC20F Микшерный Пульт",
-    "sn": "20849010023062002",
-    "status": ""
-  },
-  "AM-SH-0088": {
-    "inv": "AM-SH-0088",
-    "category": "Звуковое оборудование",
-    "name": "DSPPA D6533A Напольный монитор",
-    "sn": "D6533A0AUGC080007",
-    "status": ""
-  },
-  "AM-SH-0089": {
-    "inv": "AM-SH-0089",
-    "category": "Звуковое оборудование",
-    "name": "DSPPA D6533A Напольный монитор",
-    "sn": "D6533A0AUGC080008",
-    "status": ""
-  },
-  "AM-SH-0090": {
-    "inv": "AM-SH-0090",
-    "category": "Звуковое оборудование",
-    "name": "Радиосистема",
-    "sn": "BLX2M17",
-    "status": ""
-  },
-  "AM-SH-0091": {
-    "inv": "AM-SH-0091",
-    "category": "Звуковое оборудование",
-    "name": "AverMedia Карта захвата",
-    "sn": "302AGC551DKX",
-    "status": ""
-  },
-  "AM-SH-0092": {
-    "inv": "AM-SH-0092",
-    "category": "Звуковое оборудование",
-    "name": "Оборудование",
-    "sn": "",
-    "status": ""
-  },
-  "AM-SH-0093": {
-    "inv": "AM-SH-0093",
-    "category": "Звуковое оборудование",
-    "name": "Оборудование",
-    "sn": "",
-    "status": ""
-  },
-  "+7 917 520-15-03": {
-    "inv": "+7 917 520-15-03",
-    "category": "Мобильная связь",
-    "name": "Sim",
-    "sn": "",
-    "status": "Активная"
-  },
-  "+7 917 520-17-42": {
-    "inv": "+7 917 520-17-42",
-    "category": "Мобильная связь",
-    "name": "Esim",
-    "sn": "",
-    "status": "Добровольная блокировка"
-  },
-  "+7 917 520-16-70": {
-    "inv": "+7 917 520-16-70",
-    "category": "Мобильная связь",
-    "name": "Sim",
-    "sn": "",
-    "status": "Активная"
-  },
-  "+7 917 520-16-71": {
-    "inv": "+7 917 520-16-71",
-    "category": "Мобильная связь",
-    "name": "Sim",
-    "sn": "",
-    "status": "Активная"
-  },
-  "+7 916 120-11-75": {
-    "inv": "+7 916 120-11-75",
-    "category": "Мобильная связь",
-    "name": "Sim",
-    "sn": "",
-    "status": "Добровольная блокировка"
-  },
-  "+7 915 152-52-56": {
-    "inv": "+7 915 152-52-56",
-    "category": "Мобильная связь",
-    "name": "Esim",
-    "sn": "",
-    "status": "Добровольная блокировка"
-  },
-  "+7 985 896-06-20": {
-    "inv": "+7 985 896-06-20",
-    "category": "Мобильная связь",
-    "name": "Esim",
-    "sn": "",
-    "status": "Активная"
-  },
-  "+7 985 896-04-67": {
-    "inv": "+7 985 896-04-67",
-    "category": "Мобильная связь",
-    "name": "Esim",
-    "sn": "",
-    "status": "Добровольная блокировка"
-  },
-  "+7 985 896-04-36": {
-    "inv": "+7 985 896-04-36",
-    "category": "Мобильная связь",
-    "name": "Esim",
-    "sn": "",
-    "status": "Активная"
-  },
-  "AM-MS-0001": {
-    "inv": "AM-MS-0001",
-    "category": "Мониторы",
-    "name": "AOC 22B2AM",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0002": {
-    "inv": "AM-MS-0002",
-    "category": "Мониторы",
-    "name": "AOC 22B2AM",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0003": {
-    "inv": "AM-MS-0003",
-    "category": "Мониторы",
-    "name": "AOC 22B2AM",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0004": {
-    "inv": "AM-MS-0004",
-    "category": "Мониторы",
-    "name": "AOC 22B2AM",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0005": {
-    "inv": "AM-MS-0005",
-    "category": "Мониторы",
-    "name": "AOC 22B2AM",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0006": {
-    "inv": "AM-MS-0006",
-    "category": "Мониторы",
-    "name": "AOC 22B2AM",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0007": {
-    "inv": "AM-MS-0007",
-    "category": "Мониторы",
-    "name": "AOC 22B2AM",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0008": {
-    "inv": "AM-MS-0008",
-    "category": "Мониторы",
-    "name": "SAMSUNG S24F350FHI LS24F350FHI",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0009": {
-    "inv": "AM-MS-0009",
-    "category": "Мониторы",
-    "name": "SAMSUNG S24F350FHI LS24F350FHI",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0010": {
-    "inv": "AM-MS-0010",
-    "category": "Мониторы",
-    "name": "SAMSUNG S24F350FHI LS24F350FHI",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0011": {
-    "inv": "AM-MS-0011",
-    "category": "Мониторы",
-    "name": "SAMSUNG S24F350FHI LS24F350FHI",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0012": {
-    "inv": "AM-MS-0012",
-    "category": "Мониторы",
-    "name": "SAMSUNG S24F350FHI LS24F350FHI",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0013": {
-    "inv": "AM-MS-0013",
-    "category": "Мониторы",
-    "name": "SAMSUNG S24F350FHI LS24F350FHI",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0014": {
-    "inv": "AM-MS-0014",
-    "category": "Мониторы",
-    "name": "SAMSUNG S24F350FHI LS24F350FHI",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0015": {
-    "inv": "AM-MS-0015",
-    "category": "Мониторы",
-    "name": "SAMSUNG S24F350FHI LS24F350FHI",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0016": {
-    "inv": "AM-MS-0016",
-    "category": "Мониторы",
-    "name": "SAMSUNG S24H850QFI",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0017": {
-    "inv": "AM-MS-0017",
-    "category": "Мониторы",
-    "name": "Samsung s27ag320ni",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0018": {
-    "inv": "AM-MS-0018",
-    "category": "Мониторы",
-    "name": "huawei mate viev gt xwu-cba",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0019": {
-    "inv": "AM-MS-0019",
-    "category": "Мониторы",
-    "name": "Dell E2420H LCD",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0020": {
-    "inv": "AM-MS-0020",
-    "category": "Мониторы",
-    "name": "Dell E2420H LCD",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0021": {
-    "inv": "AM-MS-0021",
-    "category": "Мониторы",
-    "name": "Dell E2420H LCD",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0022": {
-    "inv": "AM-MS-0022",
-    "category": "Мониторы",
-    "name": "LG 35WN75C-B",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0023": {
-    "inv": "AM-MS-0023",
-    "category": "Мониторы",
-    "name": "LG 40WP95C",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0024": {
-    "inv": "AM-MS-0024",
-    "category": "Мониторы",
-    "name": "MSI 3PC3",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0025": {
-    "inv": "AM-MS-0025",
-    "category": "Мониторы",
-    "name": "MSI 3PC3",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0026": {
-    "inv": "AM-MS-0026",
-    "category": "Мониторы",
-    "name": "Philips 276E8V",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0027": {
-    "inv": "AM-MS-0027",
-    "category": "Мониторы",
-    "name": "LG 27U631A-B",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0028": {
-    "inv": "AM-MS-0028",
-    "category": "Мониторы",
-    "name": "LG 27U631A-B",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0029": {
-    "inv": "AM-MS-0029",
-    "category": "Мониторы",
-    "name": "LG 27U631A-B",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0030": {
-    "inv": "AM-MS-0030",
-    "category": "Мониторы",
-    "name": "LG 27U631A-B",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0031": {
-    "inv": "AM-MS-0031",
-    "category": "Мониторы",
-    "name": "LG 27U631A-B",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0032": {
-    "inv": "AM-MS-0032",
-    "category": "Мониторы",
-    "name": "LG 27U631A-B",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0033": {
-    "inv": "AM-MS-0033",
-    "category": "Мониторы",
-    "name": "LG 27U631A-B",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0034": {
-    "inv": "AM-MS-0034",
-    "category": "Мониторы",
-    "name": "LG 27U631A-B",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0035": {
-    "inv": "AM-MS-0035",
-    "category": "Мониторы",
-    "name": "LG 27U631A-B",
-    "sn": "",
-    "status": ""
-  },
-  "AM-MS-0036": {
-    "inv": "AM-MS-0036",
-    "category": "Мониторы",
-    "name": "LG 27U631A-B",
-    "sn": "",
-    "status": ""
-  },
-  "AM-PS-0001": {
-    "inv": "AM-PS-0001",
-    "category": "Принтеры, МФУ, сканеры",
-    "name": "Ricoh MP C2011SP МФУ цветное",
-    "sn": "",
-    "status": ""
-  },
-  "AM-PS-0002": {
-    "inv": "AM-PS-0002",
-    "category": "Принтеры, МФУ, сканеры",
-    "name": "Kyocera 4054ci МФУ цветное",
-    "sn": "",
-    "status": ""
-  },
-  "AM-PS-0003": {
-    "inv": "AM-PS-0003",
-    "category": "Принтеры, МФУ, сканеры",
-    "name": "Kyocera M2040DN МФУ черно-белое",
-    "sn": "",
-    "status": ""
-  },
-  "AM-PS-0004": {
-    "inv": "AM-PS-0004",
-    "category": "Принтеры, МФУ, сканеры",
-    "name": "Kyocera M2040DN МФУ черно-белое",
-    "sn": "",
-    "status": ""
-  },
-  "AM-PS-0005": {
-    "inv": "AM-PS-0005",
-    "category": "Принтеры, МФУ, сканеры",
-    "name": "Kyocera Ecosys P2040dn Принтер черно-белый",
-    "sn": "",
-    "status": ""
-  },
-  "AM-PS-0006": {
-    "inv": "AM-PS-0006",
-    "category": "Принтеры, МФУ, сканеры",
-    "name": "Kyocera Ecosys P2040dn Принтер черно-белый",
-    "sn": "",
-    "status": ""
-  },
-  "AM-PS-0007": {
-    "inv": "AM-PS-0007",
-    "category": "Принтеры, МФУ, сканеры",
-    "name": "Kyocera Ecosys P2040dn Принтер черно-белый",
-    "sn": "",
-    "status": ""
-  },
-  "AM-PS-0008": {
-    "inv": "AM-PS-0008",
-    "category": "Принтеры, МФУ, сканеры",
-    "name": "Kyocera Ecosys P2040dn Принтер черно-белый",
-    "sn": "",
-    "status": ""
-  },
-  "AM-PS-0009": {
-    "inv": "AM-PS-0009",
-    "category": "Принтеры, МФУ, сканеры",
-    "name": "Kyocera FS-1060DN Принтер черно-белый",
-    "sn": "",
-    "status": ""
-  },
-  "AM-PS-0010": {
-    "inv": "AM-PS-0010",
-    "category": "Принтеры, МФУ, сканеры",
-    "name": "Kyocera FS-1060DN Принтер черно-белый",
-    "sn": "",
-    "status": ""
-  },
-  "AM-PS-0011": {
-    "inv": "AM-PS-0011",
-    "category": "Принтеры, МФУ, сканеры",
-    "name": "Kyocera FS-1060DN Принтер черно-белый",
-    "sn": "",
-    "status": ""
-  },
-  "AM-PS-0012": {
-    "inv": "AM-PS-0012",
-    "category": "Принтеры, МФУ, сканеры",
-    "name": "Kyocera ECOSYS PA3500cx Принтер цветной",
-    "sn": "",
-    "status": ""
-  },
-  "AM-PS-0013": {
-    "inv": "AM-PS-0013",
-    "category": "Принтеры, МФУ, сканеры",
-    "name": "HP Color LaserJet M254nw Принтер цветной",
-    "sn": "",
-    "status": ""
-  },
-  "AM-PS-0014": {
-    "inv": "AM-PS-0014",
-    "category": "Принтеры, МФУ, сканеры",
-    "name": "Brother PT-H110 Принтер этикеток",
-    "sn": "",
-    "status": ""
-  },
-  "AM-PS-0015": {
-    "inv": "AM-PS-0015",
-    "category": "Принтеры, МФУ, сканеры",
-    "name": "Ricoh SP-1125N Сканер",
-    "sn": "",
-    "status": ""
-  },
-  "1.0": {
-    "inv": "1.0",
-    "category": "Роллапы",
-    "name": "Юниоры 2025 без года",
-    "sn": "",
-    "status": ""
-  },
-  "2.0": {
-    "inv": "2.0",
-    "category": "Роллапы",
-    "name": "Основные 2025 без года",
-    "sn": "",
-    "status": ""
-  },
-  "3.0": {
-    "inv": "3.0",
-    "category": "Роллапы",
-    "name": "Компетенция ДизВиртМир 2025 с годом",
-    "sn": "",
-    "status": ""
-  },
-  "4.0": {
-    "inv": "4.0",
-    "category": "Роллапы",
-    "name": "Компетенция Моушен 2025 с годом",
-    "sn": "",
-    "status": ""
-  },
-  "5.0": {
-    "inv": "5.0",
-    "category": "Роллапы",
-    "name": "Финальные защиты взрослые 2025 без года",
-    "sn": "",
-    "status": ""
-  },
-  "6.0": {
-    "inv": "6.0",
-    "category": "Роллапы",
-    "name": "Юниоры 2025 без года",
-    "sn": "",
-    "status": ""
-  },
-  "7.0": {
-    "inv": "7.0",
-    "category": "Роллапы",
-    "name": "Компетенция Режмонт 2025 с годом",
-    "sn": "",
-    "status": ""
-  },
-  "8.0": {
-    "inv": "8.0",
-    "category": "Роллапы",
-    "name": "Юниоры 2025 без года",
-    "sn": "",
-    "status": ""
-  },
-  "9.0": {
-    "inv": "9.0",
-    "category": "Роллапы",
-    "name": "Юниоры 2025 без года",
-    "sn": "",
-    "status": ""
-  },
-  "10.0": {
-    "inv": "10.0",
-    "category": "Роллапы",
-    "name": "Компетенция Оператор Кино и ТВ 2025 без года",
-    "sn": "",
-    "status": ""
-  },
-  "11.0": {
-    "inv": "11.0",
-    "category": "Роллапы",
-    "name": "Компетенция Клипмейкер 2025 без года",
-    "sn": "",
-    "status": ""
-  },
-  "12.0": {
-    "inv": "12.0",
-    "category": "Роллапы",
-    "name": "Компетенция Оператор Кино и ТВ 2025 с годои",
-    "sn": "",
-    "status": ""
-  },
-  "13.0": {
-    "inv": "13.0",
-    "category": "Роллапы",
-    "name": "Оборудование",
-    "sn": "",
-    "status": ""
-  },
-  "14.0": {
-    "inv": "14.0",
-    "category": "Роллапы",
-    "name": "Оборудование",
-    "sn": "",
-    "status": ""
-  },
-  "15.0": {
-    "inv": "15.0",
-    "category": "Роллапы",
-    "name": "Оборудование",
-    "sn": "",
-    "status": ""
-  },
-  "16.0": {
-    "inv": "16.0",
-    "category": "Роллапы",
-    "name": "Оборудование",
-    "sn": "",
-    "status": ""
-  },
-  "AM-NET-0001": {
-    "inv": "AM-NET-0001",
-    "category": "Сетевое оборудование",
-    "name": "Ubiquiti UniFi Cloud Key Контроллер",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-NET-0002": {
-    "inv": "AM-NET-0002",
-    "category": "Сетевое оборудование",
-    "name": "TP-Link AX3000 Роутер",
-    "sn": "2232100001887",
-    "status": "Свободен"
-  },
-  "AM-NET-0003": {
-    "inv": "AM-NET-0003",
-    "category": "Сетевое оборудование",
-    "name": "Asus RT-AC66U B1 Роутер",
-    "sn": "H5IN0Z000355",
-    "status": "Свободен"
-  },
-  "AM-NET-0004": {
-    "inv": "AM-NET-0004",
-    "category": "Сетевое оборудование",
-    "name": "Ubiquiti UAP-AC-Pro Точка доступа",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-NET-0005": {
-    "inv": "AM-NET-0005",
-    "category": "Сетевое оборудование",
-    "name": "Ubiquiti UAP-AC-Pro Точка доступа",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-NET-0006": {
-    "inv": "AM-NET-0006",
-    "category": "Сетевое оборудование",
-    "name": "Ubiquiti UAP-AC-Pro Точка доступа",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-NET-0007": {
-    "inv": "AM-NET-0007",
-    "category": "Сетевое оборудование",
-    "name": "Ubiquiti U6-Pro Точка доступа",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-NET-0008": {
-    "inv": "AM-NET-0008",
-    "category": "Сетевое оборудование",
-    "name": "MikroTik RB3011UiAS-RM Маршрутизатор",
-    "sn": "",
-    "status": "Свободен"
-  },
-  "AM-NET-0009": {
-    "inv": "AM-NET-0009",
-    "category": "Сетевое оборудование",
-    "name": "D-Link DGS-1024D Коммутатор",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-NET-0010": {
-    "inv": "AM-NET-0010",
-    "category": "Сетевое оборудование",
-    "name": "D-Link DGS-1026MP Коммутатор",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-NET-0011": {
-    "inv": "AM-NET-0011",
-    "category": "Сетевое оборудование",
-    "name": "D-Link DGS-1026MP Коммутатор",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-NET-0012": {
-    "inv": "AM-NET-0012",
-    "category": "Сетевое оборудование",
-    "name": "D-Link LS108G Коммутатор",
-    "sn": "2194904004474",
-    "status": "Свободен"
-  },
-  "AM-DNS-0001": {
-    "inv": "AM-DNS-0001",
-    "category": "Сетевые накопители",
-    "name": "QNAP D4",
-    "sn": "Q206B27014",
-    "status": ""
-  },
-  "AM-DNS-0002": {
-    "inv": "AM-DNS-0002",
-    "category": "Сетевые накопители",
-    "name": "QNAP",
-    "sn": "",
-    "status": ""
-  },
-  "AM-DNS-0003": {
-    "inv": "AM-DNS-0003",
-    "category": "Сетевые накопители",
-    "name": "QNAP QNAP TS-1673AU",
-    "sn": "QPVML03088K",
-    "status": ""
-  },
-  "AM-DNS-0004": {
-    "inv": "AM-DNS-0004",
-    "category": "Сетевые накопители",
-    "name": "OWC Arcive PRO",
-    "sn": "",
-    "status": ""
-  },
-  "AM-TV-0001": {
-    "inv": "AM-TV-0001",
-    "category": "ТВ",
-    "name": "Samsung",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-TV-0002": {
-    "inv": "AM-TV-0002",
-    "category": "ТВ",
-    "name": "LG",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-TV-0003": {
-    "inv": "AM-TV-0003",
-    "category": "ТВ",
-    "name": "Haier",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-TV-0004": {
-    "inv": "AM-TV-0004",
-    "category": "ТВ",
-    "name": "LG",
-    "sn": "",
-    "status": "В офисе"
-  },
-  "AM-PC-0002": {
-    "inv": "AM-PC-0002",
-    "category": "ЭВМ",
-    "name": "Стационарный",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-PC-0004": {
-    "inv": "AM-PC-0004",
-    "category": "ЭВМ",
-    "name": "Dell OptiPlex 3090 Micro Мини ПК",
-    "sn": "",
-    "status": "Свободен"
-  },
-  "AM-PC-0005": {
-    "inv": "AM-PC-0005",
-    "category": "ЭВМ",
-    "name": "HUAWEI MCLG-X Matebook D16 Ноутбук",
-    "sn": "2NZBB25419801098",
-    "status": "Занят"
-  },
-  "AM-PC-0006": {
-    "inv": "AM-PC-0006",
-    "category": "ЭВМ",
-    "name": "HP 260 G4 Desktop Mini PC Мини ПК+Монитор",
-    "sn": "8CC2011MZY",
-    "status": "Занят"
-  },
-  "AM-PC-0007": {
-    "inv": "AM-PC-0007",
-    "category": "ЭВМ",
-    "name": "HP ZBook Firefly 16 G11 Ноутбук",
-    "sn": "5CG4373QJ8",
-    "status": "Занят"
-  },
-  "AM-PC-0011": {
-    "inv": "AM-PC-0011",
-    "category": "ЭВМ",
-    "name": "Dell OptiPlex 3090 Micro Мини ПК",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-PC-0012": {
-    "inv": "AM-PC-0012",
-    "category": "ЭВМ",
-    "name": "HUAWEI MDG-X Matebook D14 Ноутбук",
-    "sn": "2HGBB25329803696",
-    "status": "Занят"
-  },
-  "AM-PC-0013": {
-    "inv": "AM-PC-0013",
-    "category": "ЭВМ",
-    "name": "HP 260 G4 Desktop Mini PC Мини ПК+Монитор",
-    "sn": "8CC2011LVV",
-    "status": "Занят"
-  },
-  "AM-PC-0014": {
-    "inv": "AM-PC-0014",
-    "category": "ЭВМ",
-    "name": "HUAWEI MDG-X Matebook D14 Ноутбук",
-    "sn": "2HGBB25329803498",
-    "status": "Занят"
-  },
-  "AM-PC-0015": {
-    "inv": "AM-PC-0015",
-    "category": "ЭВМ",
-    "name": "Dell OptiPlex 3080 Micro Мини ПК",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-PC-0016": {
-    "inv": "AM-PC-0016",
-    "category": "ЭВМ",
-    "name": "Dell OptiPlex 3080 Micro Мини ПК",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-PC-0017": {
-    "inv": "AM-PC-0017",
-    "category": "ЭВМ",
-    "name": "HUAWEI MDG-X Matebook D14 Ноутбук",
-    "sn": "2HGBB25329803418",
-    "status": "Занят"
-  },
-  "AM-PC-0018": {
-    "inv": "AM-PC-0018",
-    "category": "ЭВМ",
-    "name": "HUAWEI MDG-X Matebook D14 Ноутбук",
-    "sn": "2HGBB25329803525",
-    "status": "Занят"
-  },
-  "AM-PC-0019": {
-    "inv": "AM-PC-0019",
-    "category": "ЭВМ",
-    "name": "HUAWEI MDG-X Matebook D14 Ноутбук",
-    "sn": "2HGBB25329801039",
-    "status": "Свободен"
-  },
-  "AM-PC-0020": {
-    "inv": "AM-PC-0020",
-    "category": "ЭВМ",
-    "name": "MSI Katana GF76 B12UCR-821XRU Ноутбук",
-    "sn": "K2207N0069501",
-    "status": "Свободен"
-  },
-  "AM-PC-0021": {
-    "inv": "AM-PC-0021",
-    "category": "ЭВМ",
-    "name": "MSI Modern ADL-P AM242 (MS-AE07) Моноблок",
-    "sn": "MSAE07N9S0106160",
-    "status": "Занят"
-  },
-  "AM-PC-0022": {
-    "inv": "AM-PC-0022",
-    "category": "ЭВМ",
-    "name": "HP 250 G8 Ноутбук",
-    "sn": "CND1509MPD",
-    "status": "Занят"
-  },
-  "AM-PC-0023": {
-    "inv": "AM-PC-0023",
-    "category": "ЭВМ",
-    "name": "MSI Modern ADL-P AM242 (MS-AE07) Моноблок",
-    "sn": "MSAE07N9S0106140",
-    "status": "Занят"
-  },
-  "AM-PC-0024": {
-    "inv": "AM-PC-0024",
-    "category": "ЭВМ",
-    "name": "Dell Inspiron 3593 Ноутбук",
-    "sn": "JCYC943",
-    "status": "Занят"
-  },
-  "AM-PC-0025": {
-    "inv": "AM-PC-0025",
-    "category": "ЭВМ",
-    "name": "HP 250 G8 Ноутбук",
-    "sn": "CND1458VGD",
-    "status": "Свободен"
-  },
-  "AM-PC-0026": {
-    "inv": "AM-PC-0026",
-    "category": "ЭВМ",
-    "name": "Dell Inspiron 3593 Ноутбук",
-    "sn": "49QC943",
-    "status": "Занят"
-  },
-  "AM-PC-0027": {
-    "inv": "AM-PC-0027",
-    "category": "ЭВМ",
-    "name": "Dell OptiPlex 3080 Micro Мини ПК",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-PC-0028": {
-    "inv": "AM-PC-0028",
-    "category": "ЭВМ",
-    "name": "HP 250 G8 Ноутбук",
-    "sn": "CDN15096LX",
-    "status": "Занят"
-  },
-  "AM-PC-0029": {
-    "inv": "AM-PC-0029",
-    "category": "ЭВМ",
-    "name": "ИНПРО Стационарный",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-PC-0030": {
-    "inv": "AM-PC-0030",
-    "category": "ЭВМ",
-    "name": "Asus FA706NF Ноутбук",
-    "sn": "SANRCX073002448",
-    "status": "Свободен"
-  },
-  "AM-PC-0031": {
-    "inv": "AM-PC-0031",
-    "category": "ЭВМ",
-    "name": "Asus FA706NF Ноутбук",
-    "sn": "SANRCX072909444",
-    "status": "Свободен"
-  },
-  "AM-PC-0032": {
-    "inv": "AM-PC-0032",
-    "category": "ЭВМ",
-    "name": "Asus FA706NF Ноутбук",
-    "sn": "SANRCX07304544B",
-    "status": "Свободен"
-  },
-  "AM-PC-0033": {
-    "inv": "AM-PC-0033",
-    "category": "ЭВМ",
-    "name": "Asus FA706NF Ноутбук",
-    "sn": "SANRCX07304844F",
-    "status": "Свободен"
-  },
-  "AM-PC-0034": {
-    "inv": "AM-PC-0034",
-    "category": "ЭВМ",
-    "name": "Asus FA706NF Ноутбук",
-    "sn": "SANRCX07303544D",
-    "status": "Свободен"
-  },
-  "AM-PC-0035": {
-    "inv": "AM-PC-0035",
-    "category": "ЭВМ",
-    "name": "Asus FA706NF Ноутбук",
-    "sn": "SANRCX07294044D",
-    "status": "Свободен"
-  },
-  "AM-PC-0036": {
-    "inv": "AM-PC-0036",
-    "category": "ЭВМ",
-    "name": "Asus FA706NF Ноутбук",
-    "sn": "SANRCX072982445",
-    "status": "Свободен"
-  },
-  "AM-PC-0037": {
-    "inv": "AM-PC-0037",
-    "category": "ЭВМ",
-    "name": "Asus FA706NF Ноутбук",
-    "sn": "SANRCX072959446",
-    "status": "Свободен"
-  },
-  "AM-PC-0038": {
-    "inv": "AM-PC-0038",
-    "category": "ЭВМ",
-    "name": "Asus FA706NF Ноутбук",
-    "sn": "SANRCX073054449",
-    "status": "Свободен"
-  },
-  "AM-PC-0039": {
-    "inv": "AM-PC-0039",
-    "category": "ЭВМ",
-    "name": "Asus FA706NF Ноутбук",
-    "sn": "SANRCX073033449",
-    "status": "Свободен"
-  },
-  "AM-PC-0040": {
-    "inv": "AM-PC-0040",
-    "category": "ЭВМ",
-    "name": "HP 260 G4 Desktop Mini PC Мини ПК+Монитор",
-    "sn": "8CC2011N5Y",
-    "status": "Занят"
-  },
-  "AM-PC-0041": {
-    "inv": "AM-PC-0041",
-    "category": "ЭВМ",
-    "name": "Dell OptiPlex 3080 Micro Мини ПК",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-PC-0042": {
-    "inv": "AM-PC-0042",
-    "category": "ЭВМ",
-    "name": "ИНПРО Стационарный",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-PC-0043": {
-    "inv": "AM-PC-0043",
-    "category": "ЭВМ",
-    "name": "HP 250 G8 Ноутбук",
-    "sn": "CDN15096KT",
-    "status": "Занят"
-  },
-  "AM-PC-0044": {
-    "inv": "AM-PC-0044",
-    "category": "ЭВМ",
-    "name": "HP 260 G4 Desktop Mini PC Мини ПК+Монитор",
-    "sn": "8CC2011LL9",
-    "status": "Занят"
-  },
-  "AM-PC-0045": {
-    "inv": "AM-PC-0045",
-    "category": "ЭВМ",
-    "name": "Dell OptiPlex 3080 Micro Мини ПК",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-PC-0046": {
-    "inv": "AM-PC-0046",
-    "category": "ЭВМ",
-    "name": "Huawei MateBook D 15 BoM-WFP9 Ноутбук",
-    "sn": "FGTPM24119002768",
-    "status": "Занят"
-  },
-  "AM-PC-0047": {
-    "inv": "AM-PC-0047",
-    "category": "ЭВМ",
-    "name": "ИНПРО Стационарный",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-PC-0048": {
-    "inv": "AM-PC-0048",
-    "category": "ЭВМ",
-    "name": "ИНПРО Стационарный",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-PC-0049": {
-    "inv": "AM-PC-0049",
-    "category": "ЭВМ",
-    "name": "ИНПРО Стационарный",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-PC-0050": {
-    "inv": "AM-PC-0050",
-    "category": "ЭВМ",
-    "name": "MSI Modern ADL-P AM242 (MS-AE07) Моноблок",
-    "sn": "MSAE07N9S0106142",
-    "status": "Занят"
-  },
-  "AM-PC-0051": {
-    "inv": "AM-PC-0051",
-    "category": "ЭВМ",
-    "name": "HP 260 G4 Desktop Mini PC Мини ПК+Монитор",
-    "sn": "8CC2011N1X",
-    "status": "Занят"
-  },
-  "AM-PC-0052": {
-    "inv": "AM-PC-0052",
-    "category": "ЭВМ",
-    "name": "ИНПРО Стационарный",
-    "sn": "",
-    "status": "Свободен"
-  },
-  "AM-PC-0054": {
-    "inv": "AM-PC-0054",
-    "category": "ЭВМ",
-    "name": "Huawei MateBook D 16 RollerG W7611 Ноутбук",
-    "sn": "QRSPM23607000359",
-    "status": "Занят"
-  },
-  "AM-PC-0055": {
-    "inv": "AM-PC-0055",
-    "category": "ЭВМ",
-    "name": "Ноутбук",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-PC-0056": {
-    "inv": "AM-PC-0056",
-    "category": "ЭВМ",
-    "name": "Asus X515 Ноутбук",
-    "sn": "N3NOCV233089134",
-    "status": "Занят"
-  },
-  "AM-PC-0057": {
-    "inv": "AM-PC-0057",
-    "category": "ЭВМ",
-    "name": "MSI Pulse GL66 12UEK-220RU Ноутбук",
-    "sn": "K2209N0078016",
-    "status": "Занят"
-  },
-  "AM-PC-0060": {
-    "inv": "AM-PC-0060",
-    "category": "ЭВМ",
-    "name": "MSI Bravo 15 B5DD-218XRU Ноутбук",
-    "sn": "K2112N0077245",
-    "status": "Свободен"
-  },
-  "AM-PC-0061": {
-    "inv": "AM-PC-0061",
-    "category": "ЭВМ",
-    "name": "MSI Modern ADL-P AM242 (MS-AE07) Моноблок",
-    "sn": "MSAE07N9S0106147",
-    "status": "Занят"
-  },
-  "AM-PC-0062": {
-    "inv": "AM-PC-0062",
-    "category": "ЭВМ",
-    "name": "Dell OptiPlex 3080 Micro Мини ПК",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-PC-0063": {
-    "inv": "AM-PC-0063",
-    "category": "ЭВМ",
-    "name": "Dell OptiPlex 3080 Micro Мини ПК",
-    "sn": "",
-    "status": "Свободен"
-  },
-  "AM-PC-0064": {
-    "inv": "AM-PC-0064",
-    "category": "ЭВМ",
-    "name": "Dell OptiPlex 3090 Micro Мини ПК",
-    "sn": "",
-    "status": "Свободен"
-  },
-  "AM-PC-0065": {
-    "inv": "AM-PC-0065",
-    "category": "ЭВМ",
-    "name": "ИНПРО Стационарный",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-PC-0066": {
-    "inv": "AM-PC-0066",
-    "category": "ЭВМ",
-    "name": "Apple MacBook Pro MNW93LL/A Ноутбук",
-    "sn": "JY7LT1GY0C",
-    "status": "Занят"
-  },
-  "AM-PC-0067": {
-    "inv": "AM-PC-0067",
-    "category": "ЭВМ",
-    "name": "Apple Mac mini MMFK3 Мини ПК",
-    "sn": "GGWM9GHWYD",
-    "status": "Занят"
-  },
-  "AM-PC-0068": {
-    "inv": "AM-PC-0068",
-    "category": "ЭВМ",
-    "name": "Apple MacBook Air A3240 Ноутбук",
-    "sn": "GP40DX7LC3",
-    "status": "Занят"
-  },
-  "AM-PC-0069": {
-    "inv": "AM-PC-0069",
-    "category": "ЭВМ",
-    "name": "ИНПРО Стационарный",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-PC-0070": {
-    "inv": "AM-PC-0070",
-    "category": "ЭВМ",
-    "name": "Мини ПК",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-PC-0072": {
-    "inv": "AM-PC-0072",
-    "category": "ЭВМ",
-    "name": "Huawei D16 MCLG-X Ноутбук",
-    "sn": "2NZBB25419800574",
-    "status": "Занят"
-  },
-  "AM-PC-0073": {
-    "inv": "AM-PC-0073",
-    "category": "ЭВМ",
-    "name": "Huawei D16 MCLG-X Ноутбук",
-    "sn": "2NZBB25419801285",
-    "status": "Занят"
-  },
-  "AM-PC-0074": {
-    "inv": "AM-PC-0074",
-    "category": "ЭВМ",
-    "name": "Lenovo Ноутбук",
-    "sn": "PF2GTSPJ",
-    "status": "Занят"
-  },
-  "AM-PC-0075": {
-    "inv": "AM-PC-0075",
-    "category": "ЭВМ",
-    "name": "Apple iPad Air 2022 Планшет",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-PC-0076": {
-    "inv": "AM-PC-0076",
-    "category": "ЭВМ",
-    "name": "Apple Mac Mini Мини ПК",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-PC-0077": {
-    "inv": "AM-PC-0077",
-    "category": "ЭВМ",
-    "name": "Huawei Matebook D14 Ноутбук",
-    "sn": "2HGBB25329801566",
-    "status": "Занят"
-  },
-  "AM-PC-0078": {
-    "inv": "AM-PC-0078",
-    "category": "ЭВМ",
-    "name": "Apple Mac mini MMFK3 Мини ПК",
-    "sn": "CJPWWT750DX",
-    "status": "Свободен"
-  },
-  "AM-PC-0079": {
-    "inv": "AM-PC-0079",
-    "category": "ЭВМ",
-    "name": "Ноутбук",
-    "sn": "",
-    "status": "Занят"
-  },
-  "AM-PC-0080": {
-    "inv": "AM-PC-0080",
-    "category": "ЭВМ",
-    "name": "Huawei Matebook D14 Ноутбук",
-    "sn": "2HGBB25329801652",
-    "status": "Занят"
-  },
-  "AM-PC-0081": {
-    "inv": "AM-PC-0081",
-    "category": "ЭВМ",
-    "name": "Huawei Matebook D14 Ноутбук",
-    "sn": "2HGBB25329800861",
-    "status": "Занят"
-  },
-  "AM-PC-0082": {
-    "inv": "AM-PC-0082",
-    "category": "ЭВМ",
-    "name": "Huawei Matebook D14 Ноутбук",
-    "sn": "2HGBB25329802446",
-    "status": "Свободен"
-  },
-  "AM-PC-0084": {
-    "inv": "AM-PC-0084",
-    "category": "ЭВМ",
-    "name": "Huawei Matebook D14 Ноутбук",
-    "sn": "2HGBB25331800007",
-    "status": "Занят"
-  },
-  "AM-PC-0085": {
-    "inv": "AM-PC-0085",
-    "category": "ЭВМ",
-    "name": "Huawei Matebook D14 Ноутбук",
-    "sn": "2HGBB25331800570",
-    "status": "Свободен"
-  },
-  "AM-PC-0086": {
-    "inv": "AM-PC-0086",
-    "category": "ЭВМ",
-    "name": "MSI Vector 17 Ноутбук",
-    "sn": "K2508N0035853",
-    "status": "Свободен"
-  },
-  "AM-PC-0087": {
-    "inv": "AM-PC-0087",
-    "category": "ЭВМ",
-    "name": "MSI Vector 17 Ноутбук",
-    "sn": "K2505N0109128",
-    "status": "Свободен"
-  },
-  "AM-PC-0088": {
-    "inv": "AM-PC-0088",
-    "category": "ЭВМ",
-    "name": "MSI Vector 17 Ноутбук",
-    "sn": "K2505N0109120",
-    "status": "Свободен"
-  },
-  "AM-PC-0089": {
-    "inv": "AM-PC-0089",
-    "category": "ЭВМ",
-    "name": "MSI Vector 17 Ноутбук",
-    "sn": "K2505N0109127",
-    "status": "Свободен"
-  },
-  "AM-PC-0090": {
-    "inv": "AM-PC-0090",
-    "category": "ЭВМ",
-    "name": "MSI Vector 17 Ноутбук",
-    "sn": "K2505N0109125",
-    "status": "Свободен"
-  },
-  "AM-PC-0091": {
-    "inv": "AM-PC-0091",
-    "category": "ЭВМ",
-    "name": "MSI Vector 17 Ноутбук",
-    "sn": "K2505N0109123",
-    "status": "Свободен"
-  },
-  "AM-PC-0092": {
-    "inv": "AM-PC-0092",
-    "category": "ЭВМ",
-    "name": "MSI Vector 17 Ноутбук",
-    "sn": "K2505N0109126",
-    "status": "Свободен"
-  },
-  "AM-PC-0093": {
-    "inv": "AM-PC-0093",
-    "category": "ЭВМ",
-    "name": "MSI Vector 17 Ноутбук",
-    "sn": "K2505N0109122",
-    "status": "Свободен"
-  },
-  "AM-PC-0094": {
-    "inv": "AM-PC-0094",
-    "category": "ЭВМ",
-    "name": "MSI Vector 17 Ноутбук",
-    "sn": "K2508N0035857",
-    "status": "Свободен"
-  },
-  "AM-PC-0095": {
-    "inv": "AM-PC-0095",
-    "category": "ЭВМ",
-    "name": "MSI Vector 17 Ноутбук",
-    "sn": "K2505N0109121",
-    "status": "Свободен"
-  },
-  "AM-PC-0096": {
-    "inv": "AM-PC-0096",
-    "category": "ЭВМ",
-    "name": "Huawei Matebook D14 Ноутбук",
-    "sn": "2HGBB25331800450",
-    "status": "Занят"
-  },
-  "AM-PC-0097": {
-    "inv": "AM-PC-0097",
-    "category": "ЭВМ",
-    "name": "Asus FA506N Ноутбук",
-    "sn": "T8NRCX00B371316",
-    "status": "Свободен"
-  },
-  "AM-PC-0098": {
-    "inv": "AM-PC-0098",
-    "category": "ЭВМ",
-    "name": "Asus FA506N Ноутбук",
-    "sn": "T8NRCX009268313",
-    "status": "Свободен"
-  },
-  "AM-PC-0099": {
-    "inv": "AM-PC-0099",
-    "category": "ЭВМ",
-    "name": "Asus FA506N Ноутбук",
-    "sn": "T8NRCX00B43831A",
-    "status": "Свободен"
-  },
-  "AM-PC-0100": {
-    "inv": "AM-PC-0100",
-    "category": "ЭВМ",
-    "name": "Asus FA506N Ноутбук",
-    "sn": "T8NRCX00B16031D",
-    "status": "Свободен"
-  },
-  "AM-PC-0101": {
-    "inv": "AM-PC-0101",
-    "category": "ЭВМ",
-    "name": "Asus FA506N Ноутбук",
-    "sn": "T8NRCX00B363315",
-    "status": "Свободен"
-  },
-  "AM-PC-0102": {
-    "inv": "AM-PC-0102",
-    "category": "ЭВМ",
-    "name": "Asus FA506N Ноутбук",
-    "sn": "T8NRCX00923831E",
-    "status": "Свободен"
-  },
-  "AM-PC-0103": {
-    "inv": "AM-PC-0103",
-    "category": "ЭВМ",
-    "name": "Asus FA506N Ноутбук",
-    "sn": "T8NRCX00926731E",
-    "status": "Свободен"
-  },
-  "AM-PC-0104": {
-    "inv": "AM-PC-0104",
-    "category": "ЭВМ",
-    "name": "Asus FA506N Ноутбук",
-    "sn": "T8NRCX00927331F",
-    "status": "Свободен"
-  },
-  "AM-PC-0105": {
-    "inv": "AM-PC-0105",
-    "category": "ЭВМ",
-    "name": "Asus FA506N Ноутбук",
-    "sn": "T8NRCX00B37631A",
-    "status": "Свободен"
-  },
-  "AM-PC-0106": {
-    "inv": "AM-PC-0106",
-    "category": "ЭВМ",
-    "name": "Asus FA506N Ноутбук",
-    "sn": "T8NRCX00B14131D",
-    "status": "Свободен"
-  }
-};
+  <script src="equipment.js"></script>
+  <script src="app.js"></script>
 
-/**
- * Функция поиска оборудования по инвентарному номеру
- * @param {string} invInput - Инвентарный номер для поиска
- * @returns {Object|null} - Объект оборудования или null
- */
-function findEquipment(invInput) {
-  if (!invInput) return null;
-  const key = invInput.trim().toUpperCase();
-  return window.EQUIPMENT_DB[key] || null;
-}
+  <script>
+    // Управление переключением между главным меню и секцией МТБ / Чемпионата
+    function switchAppSection(sectionId) {
+      document.querySelectorAll('.app-section').forEach(sec => {
+        sec.classList.remove('active-section');
+      });
+      document.getElementById(sectionId).classList.add('active-section');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openCallSheetModalFromMenu() {
+      openCallSheetModal();
+    }
+
+    function openContactsModalFromMenu() {
+      openContactsModal();
+    }
+
+    const MANAGER_TITLES = {
+      "Зломанов Олег Викторович": "Административно-технический директор",
+      "Белоусов Алексей Алексеевич": "Системный администратор",
+      "Смутный Богдан Сергеевич": "Технический менеджер",
+      "Сидоренко Артем Валерьевич": "Старший технический менеджер",
+      "Белоусова Анастасия Константиновна": "Офис-менеджер, ассистент технического отдела"
+    };
+
+    function getManagerTitle(mgrName) {
+      return MANAGER_TITLES[mgrName] || "Административно-технический отдел";
+    }
+
+    const DEFAULT_EMPLOYEES_LIST = [
+      { name: "Володин Борислав Борисович", role: "Директор", phone: "+79857697535", email: "bvolodin@artmasters.ru", tg: true, max: true },
+      { name: "Агапов Даниил", role: "Веб-дизайнер", phone: "+79534307790", email: "dagapov@artmasters.ru", tg: true, max: true },
+      { name: "Баранова Татьяна Николаевна", role: "Ведущий специалист документационного обеспечения", phone: "+79605811818", email: "doc@artmasters.ru", tg: false, max: false },
+      { name: "Бекетова Алла Александровна", role: "Администратор", phone: "+79283104564", email: "abeketova@artmasters.ru", tg: false, max: false },
+      { name: "Белоусов Алексей Алексеевич", role: "Технический менеджер", phone: "+79265668913", email: "admin@artmasters.ru", tg: true, max: true },
+      { name: "Белоусова Анастасия Константиновна", role: "Офис-менеджер, ассистент технического отдела", phone: "+79262363012", email: "office@artmasters.ru", tg: false, max: false },
+      { name: "Буланов Кирилл Сергеевич", role: "Контент-менеджер соцсетей", phone: "+79150183176", email: "", tg: false, max: false },
+      { name: "Василенко Анна Владимировна", role: "Заместитель директора по работе с органами государственной власти и развитию", phone: "+79260422211", email: "avasilenko@artmasters.ru", tg: true, max: true },
+      { name: "Василец Светлана Михайловна", role: "Руководитель департамента методики и экспертизы", phone: "+79162611880", email: "spelevina@artmasters.ru", tg: true, max: true },
+      { name: "Васина Светлана Сергеевна", role: "Старший специалист казначейства", phone: "+79055404903", email: "svasina@artmasters.ru", tg: false, max: false },
+      { name: "Вахрушева Ольга Анатольевна", role: "Руководитель финансового отдела", phone: "+79652798776", email: "ova@artmasters.ru", tg: false, max: false },
+      { name: "Гаврилова Анастасия Евгеньевна", role: "Менеджер образовательных программ и проектов", phone: "+79147592882", email: "agavrilova@artmasters.ru", tg: true, max: true },
+      { name: "Глазкова Юлия Александровна", role: "Советник Директора по правовым вопросам, Генеральный директор Ассоциации «АртМастерс»", phone: "+79684541151", email: "uglazkova@artmasters.ru", tg: true, max: true },
+      { name: "Даминов Булат Ильдарович", role: "Видеомонтажер", phone: "+79274985730", email: "", tg: false, max: false },
+      { name: "Дашкина Зульфия", role: "Менеджер по спецпроектам", phone: "+79254432518", email: "dashkina@artmasters.ru", tg: false, max: false },
+      { name: "Деликова Алина", role: "", phone: "+79689757153", email: "adelikova@artmasters.ru", tg: true, max: true },
+      { name: "Ермак Виолетта Юрьевна", role: "Заместитель руководителя департамента по работе с регионами", phone: "+79154420460", email: "vermak@artmasters.ru", tg: false, max: false },
+      { name: "Ермоленко Наталия Александровна", role: "Главный редактор по работе с участниками", phone: "+79161567039", email: "nermolenko@artmasters.ru", tg: true, max: true },
+      { name: "Жижневская Ксения Владимировна", role: "Шеф-редактор", phone: "+79055099087", email: "kzhizhnevskaya@artmasters.ru", tg: true, max: true },
+      { name: "Зёма Елизавета Алексеевна", role: "Специалист первичного контроля", phone: "+79261873271", email: "hr@artmasters.ru", tg: false, max: false },
+      { name: "Зломанов Олег Викторович", role: "Административно-технический директор", phone: "+79206931013", email: "ozlomanov@artmasters.ru", tg: true, max: true },
+      { name: "Иванова Александра Ивановна", role: "Линейный продюсер по направлению «Кино»", phone: "+79888800577", email: "aivanova@artmasters.ru", tg: true, max: true },
+      { name: "Иванова Вероника Ивановна", role: "Секретарь", phone: "+79245486320", email: "vivanova@artmasters.ru", tg: true, max: true },
+      { name: "Казакова Лариса Анастольевна", role: "Руководитель производственного департамента", phone: "+79161245600", email: "lkazakova@artmasters.ru", tg: false, max: false },
+      { name: "Казаченко Владимир Анатольевич", role: "Исполнительный директор", phone: "+79138200218", email: "vkazachenko@artmasters.ru", tg: true, max: true },
+      { name: "Капура Елена Николаевна", role: "Руководитель департамента образовательных программ", phone: "+79851968561", email: "ekapura@artmasters.ru", tg: true, max: true },
+      { name: "Караулова Татьяна", role: "Специалист информационно-аналитического отдела", phone: "+79267076336", email: "tkaraulova@artmasters.ru", tg: false, max: false },
+      { name: "Кирьяненко Татьяна Викторовна", role: "Руководитель финансово-юридического департамента", phone: "+79167256902", email: "tkirianenko@artmasters.ru", tg: false, max: false },
+      { name: "Кличко Анастасия Витальевна", role: "Линейный продюсер по направлению «Театр»", phone: "+79647087343", email: "aklichko@artmasters.ru", tg: false, max: false },
+      { name: "Колпаков Никита Александрович", role: "Продюсер внутреннего медиапроизводства", phone: "+79164300216", email: "nkolpakov@artmasters.ru", tg: true, max: true },
+      { name: "Кочеткова Алёна Алексеевна", role: "", phone: "+79850501690", email: "akochetkova@artmasters.ru", tg: true, max: true },
+      { name: "Криштоб Арина Петровна", role: "Дизайнер", phone: "+79035681699", email: "akrishtob@artmasters.ru", tg: true, max: true },
+      { name: "Кудасова Екатерина Владимировна", role: "Юрист", phone: "+79521662000", email: "legal@artmasters.ru", tg: false, max: false },
+      { name: "Левченко Екатерина Анатольевна", role: "Линейный продюсер", phone: "+79168430171", email: "elevchenko@artmasters.ru", tg: true, max: true },
+      { name: "Лукьянчикова Евгения Васильевна", role: "Секретарь-координатор Экспертного совета", phone: "+79606859282", email: "elukyanchikova@artmasters.ru", tg: false, max: false },
+      { name: "Лютикова Маргарита Ефимовна", role: "Старший менеджер компетенций", phone: "+79601291238", email: "mlutikova@artmasters.ru", tg: false, max: false },
+      { name: "Малашенко Александр Сергеевич", role: "Фотограф", phone: "+79773060506", email: "", tg: false, max: false },
+      { name: "Матвеева Виктория Игоревна", role: "Специалист операционного отдела", phone: "+79832227633", email: "vmatveeva@artmasters.ru", tg: false, max: false },
+      { name: "Минаева Ольга Анатольевна", role: "Главный бухгалтер", phone: "+79037692342", email: "ominaeva@artmasters.ru", tg: false, max: false },
+      { name: "Московкина Ксения", role: "", phone: "+79267256262", email: "kmoskovkina@artmasters.ru", tg: true, max: true },
+      { name: "Невзорова Александра Кирилловна", role: "Заместитель руководителя департамента по работе с партнёрами", phone: "+79262499722", email: "anevzorova@artmasters.ru", tg: true, max: true },
+      { name: "Новикова Анастасия Владимировна", role: "Старший продюсер", phone: "+79629964020", email: "anovikova@artmasters.ru", tg: true, max: true },
+      { name: "Омельченко Елена Евгеньевна", role: "Руководитель операционного отдела", phone: "+79851442930", email: "eomelchenko@artmasters.ru", tg: true, max: true },
+      { name: "Орлов Денис Игоревич", role: "Специалист по договорной работе и отчетности", phone: "+79778099594", email: "dorlov@artmasters.ru", tg: false, max: false },
+      { name: "Осипова Аксинья Сергеевна", role: "Специалист-модератор", phone: "+79998579335", email: "aosipova@artmasters.ru", tg: true, max: true },
+      { name: "Плотникова Елена Вадимовна", role: "Арт-директор", phone: "+79153154720", email: "eplotnikova@artmasters.ru", tg: true, max: true },
+      { name: "Полякова Дарья Александровна", role: "Редактор по работе с участниками", phone: "+79096688887", email: "dpolyakova@artmasters.ru", tg: false, max: false },
+      { name: "Посякина Татьяна Александровна", role: "Ведущий специалист операционного отдела", phone: "+79167867799", email: "tposyakina@artmasters.ru", tg: false, max: false },
+      { name: "Пригарин Алексей Вячеславович", role: "", phone: "+79037240052", email: "aprigarin@artmasters.ru", tg: false, max: false },
+      { name: "Разыграев Андрей Викторович", role: "Креативный директор", phone: "+79255890909", email: "arazygraev@artmasters.ru", tg: true, max: true },
+      { name: "Саламатова Екатерина Константиновна", role: "Руководитель информационно-аналитического отдела, председатель счетной комиссии", phone: "+79124535791", email: "esalamatova@artmasters.ru", tg: true, max: true },
+      { name: "Сафин Матвей Эдуардович", role: "Видеооператор", phone: "+79995668275", email: "", tg: false, max: false },
+      { name: "Селецкая Валерия Валентиновна", role: "Заместитель руководителя департамента образовательных программ", phone: "+79147552035", email: "vseleckaya@artmasters.ru", tg: true, max: true },
+      { name: "Сиверс Юлия Александровна", role: "Ведущий специалист отдела методики", phone: "+79858815399", email: "usivers@artmasters.ru", tg: true, max: true },
+      { name: "Сидоренко Артём Валерьевич", role: "Старший технический менеджер", phone: "+79772772750", email: "sav@artmasters.ru", tg: true, max: false },
+      { name: "Сиропова Евгения Владимировна", role: "Старший координатор", phone: "+79046281466", email: "esiropova@artmasters.ru", tg: true, max: true },
+      { name: "Смутный Богдан Сергеевич", role: "Технический менеджер", phone: "+79601805290", email: "bsmutny@artmasters.ru", tg: true, max: true },
+      { name: "Талеб Лина Сид-Ахмедовна", role: "Менеджер по работе с органами государственной власти", phone: "+79632225826", email: "ltaleb@artmasters.ru", tg: true, max: true },
+      { name: "Тетеря Валерия Сергеевна", role: "Помощник редактора по работе с участниками", phone: "+79104074291", email: "", tg: false, max: false },
+      { name: "Чикунова Анна Алексеевна", role: "Редактор по работе с участниками", phone: "+79851360339", email: "achikunova@artmasters.ru", tg: true, max: true },
+      { name: "Чурилина Екатерина Владимировна", role: "Руководитель отдела методики и конкурсной документации", phone: "+79031408395", email: "echurilina@artmasters.ru", tg: true, max: true }
+    ];
+
+    let EMPLOYEES_LIST = [];
+
+    function initEmployeesList() {
+      const saved = localStorage.getItem('artmasters_employees_list');
+      if (saved) {
+        try {
+          EMPLOYEES_LIST = JSON.parse(saved);
+        } catch (e) {
+          EMPLOYEES_LIST = [...DEFAULT_EMPLOYEES_LIST];
+        }
+      } else {
+        EMPLOYEES_LIST = [...DEFAULT_EMPLOYEES_LIST];
+      }
+    }
+
+    function saveEmployeesList() {
+      localStorage.setItem('artmasters_employees_list', JSON.stringify(EMPLOYEES_LIST));
+    }
+
+    initEmployeesList();
+
+    // --- УПРАВЛЕНИЕ ПЛОЩАДКАМИ ЧЕМПИОНАТА (ИЗ EXCEL) ---
+    const DEFAULT_VENUES_LIST = [
+      { name: "Хабаровск / Полигон креативных компетенций", address: "г. Хабаровск", manager: "Дарья Поляков", phone: "", status: "Активна" },
+      { name: "Студия", address: "Москва", manager: "Маргарита Макарова", phone: "", status: "Активна" },
+      { name: "Офис группы компаний ПИК", address: "Москва", manager: "Маргарита Макарова", phone: "", status: "Активна" },
+      { name: "Мастерская 12 Никиты Михалкова", address: "Москва", manager: "Маргарита Макарова", phone: "", status: "Активна" },
+      { name: "Театр «Маска»", address: "Москва", manager: "Владислав Скрипко", phone: "", status: "Активна" },
+      { name: "Школа кино и телевидения «Индустрия»", address: "Москва", manager: "Мария Фёдорова", phone: "", status: "Активна" },
+      { name: "Студия звукозаписи Игоря Матвиенко М.А.М.А.", address: "Москва", manager: "Арина Дьяконова", phone: "", status: "Активна" },
+      { name: "Universal University", address: "ул. Нижняя Сыромятническая, д.10", manager: "Арина Дьяконова", phone: "", status: "Активна" },
+      { name: "«КреаТех» МГТУ им. Н.Э. Баумана", address: "Москва", manager: "Оксана Ласточкина", phone: "", status: "Активна" },
+      { name: "ВК", address: "Москва", manager: "Степан Новиков", phone: "", status: "Активна" },
+      { name: "Фотостудии", address: "Москва", manager: "Ангелина Битарова", phone: "", status: "Активна" },
+      { name: "Боярские палаты", address: "Москва", manager: "Мария Фёдорова", phone: "", status: "Активна" },
+      { name: "Кинотеатр Художественный", address: "Москва", manager: "Александр Дьяченко", phone: "", status: "Активна" },
+      { name: "Мосфильм", address: "ул. Мосфильмовская, д. 1", manager: "Владислав Скрипко", phone: "", status: "Активна" },
+      { name: "Геликон-опера", address: "Москва", manager: "", phone: "", status: "Церемония открытия" },
+      { name: "Бетховенский зал БТ", address: "Москва", manager: "", phone: "", status: "Церемония награждения" },
+      { name: "Новая сцена БТ", address: "Москва", manager: "", phone: "", status: "Церемония закрытия" }
+    ];
+
+    let VENUES_LIST = [];
+
+    function initVenuesList() {
+      const saved = localStorage.getItem('artmasters_venues_list');
+      if (saved) {
+        try {
+          VENUES_LIST = JSON.parse(saved);
+        } catch (e) {
+          VENUES_LIST = [...DEFAULT_VENUES_LIST];
+        }
+      } else {
+        VENUES_LIST = [...DEFAULT_VENUES_LIST];
+      }
+    }
+
+    function saveVenuesList() {
+      localStorage.setItem('artmasters_venues_list', JSON.stringify(VENUES_LIST));
+    }
+
+    initVenuesList();
+
+    function openVenuesModal() {
+      renderVenuesTable();
+      document.getElementById('venuesModal').style.display = 'flex';
+    }
+
+    function closeVenuesModal() {
+      document.getElementById('venuesModal').style.display = 'none';
+    }
+
+    function openVenueEditorModal(index = -1) {
+      document.getElementById('edit-venue-index').value = index;
+      if (index >= 0) {
+        document.getElementById('venueEditorTitle').innerText = 'Редактировать площадку';
+        const v = VENUES_LIST[index];
+        document.getElementById('edit-venue-name').value = v.name || '';
+        document.getElementById('edit-venue-address').value = v.address || '';
+        document.getElementById('edit-venue-manager').value = v.manager || '';
+        document.getElementById('edit-venue-phone').value = formatPhoneNumberStr(v.phone || '');
+        document.getElementById('edit-venue-status').value = v.status || '';
+      } else {
+        document.getElementById('venueEditorTitle').innerText = 'Добавить площадку';
+        document.getElementById('edit-venue-name').value = '';
+        document.getElementById('edit-venue-address').value = '';
+        document.getElementById('edit-venue-manager').value = '';
+        document.getElementById('edit-venue-phone').value = '';
+        document.getElementById('edit-venue-status').value = 'Монтаж / Застройка';
+      }
+      document.getElementById('venueEditorModal').style.display = 'flex';
+    }
+
+    function closeVenueEditorModal() {
+      document.getElementById('venueEditorModal').style.display = 'none';
+    }
+
+    function saveVenueData() {
+      const idx = parseInt(document.getElementById('edit-venue-index').value);
+      const name = document.getElementById('edit-venue-name').value.trim();
+      const address = document.getElementById('edit-venue-address').value.trim();
+      const manager = document.getElementById('edit-venue-manager').value.trim();
+      const phone = document.getElementById('edit-venue-phone').value.trim();
+      const status = document.getElementById('edit-venue-status').value.trim();
+
+      if (!name) {
+        alert('Укажите название площадки!');
+        return;
+      }
+
+      const venueObj = { name, address, manager, phone, status };
+
+      if (idx >= 0) {
+        VENUES_LIST[idx] = venueObj;
+      } else {
+        VENUES_LIST.unshift(venueObj);
+      }
+
+      saveVenuesList();
+      closeVenueEditorModal();
+      renderVenuesTable();
+    }
+
+    function deleteVenue(index) {
+      if (confirm(`Удалить площадку "${VENUES_LIST[index].name}"?`)) {
+        VENUES_LIST.splice(index, 1);
+        saveVenuesList();
+        renderVenuesTable();
+      }
+    }
+
+    function renderVenuesTable() {
+      const tbody = document.getElementById('venuesTableBody');
+      const search = document.getElementById('venuesSearchInput').value.toLowerCase().trim();
+      tbody.innerHTML = '';
+
+      const filtered = VENUES_LIST.map((venue, originalIndex) => ({ venue, originalIndex })).filter(({ venue }) => {
+        const text = `${venue.name} ${venue.address} ${venue.manager} ${venue.status}`.toLowerCase();
+        return !search || text.includes(search);
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px; color: var(--text-muted);">Площадки не найдены</td></tr>';
+        return;
+      }
+
+      filtered.forEach(({ venue, originalIndex }) => {
+        const phoneFormatted = formatPhoneNumberStr(venue.phone);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><b>${venue.name}</b></td>
+          <td>${venue.address || '—'}</td>
+          <td>${venue.manager || '—'}</td>
+          <td>${phoneFormatted ? `<a href="tel:${venue.phone}" style="color:var(--am-cyan); text-decoration:none; font-family:'JetBrains Mono';">${phoneFormatted}</a>` : '—'}</td>
+          <td><span class="badge-status free">${venue.status || 'Активна'}</span></td>
+          <td>
+            <div style="display:flex;gap:6px;">
+              <button class="select-btn" onclick="openVenueEditorModal(${originalIndex})">✏️</button>
+              <button class="delete-btn" onclick="deleteVenue(${originalIndex})">🗑️</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // --- УПРАВЛЕНИЕ РАСПИСАНИЕМ ЗАЩИТ (ИЗ EXCEL) ---
+    const DEFAULT_SCHEDULE_LIST = [
+      { time: "23 августа", comp: "Художник-аниматор", participant: "Участники", location: "Хабаровск", desc: "Защита кейса (регламент: 7 мин)" },
+      { time: "12:00 - 14:00 (26 авг)", comp: "Куратор выставочных пространств", participant: "Участники", location: "Государственный музей архитектуры им. Щусева", desc: "Защита проектов" },
+      { time: "16:00 - 18:00", comp: "Оператор механики сцены", participant: "Участники", location: "Мастерская 12 Никиты Михалкова", desc: "Практическая защита" },
+      { time: "19:00 - 21:00", comp: "Художник по свету", participant: "Участники", location: "Студия", desc: "Защита проекта" },
+      { time: "18:00 - 21:00 (27 авг)", comp: "Звукорежиссёр (FOH)", participant: "Участники", location: "Театр «Маска»", desc: "Защита и саундчек" },
+      { time: "11:00 - 13:00 (28 авг)", comp: "Драматург театра и кино", participant: "Участники", location: "Дом Пашкова", desc: "Защита сценариев" },
+      { time: "13:00 - 17:00", comp: "Креативный продюсер", participant: "Участники", location: "Школа «Индустрия»", desc: "Защита проектов" },
+      { time: "18:00 - 19:00", comp: "Композитор популярной музыки", participant: "Участники", location: "Мастерская 12 Никиты Михалкова", desc: "Презентация треков" },
+      { time: "Не раньше 14:00 (29 авг)", comp: "Технический продюсер", participant: "Участники", location: "КРЕАТЕХ", desc: "Защита технических решений" },
+      { time: "11:00 - 13:00 (30 авг)", comp: "Веб-дизайнер (UX/UI)", participant: "Участники", location: "ВК", desc: "Защита интерфейсов и клипов" },
+      { time: "12:00 - 14:00", comp: "Графический дизайнер", participant: "Участники", location: "Арт-Центр ИСИ", desc: "Презентация айдентики" },
+      { time: "15:00 - 17:00", comp: "Геймдизайнер", participant: "Участники", location: "Universal University", desc: "Презентация игровых билдов" },
+      { time: "18:00 - 21:00", comp: "Фотограф", participant: "Участники", location: "Студия", desc: "Защита фотопортфолио" },
+      { time: "31 августа", comp: "Сценограф", participant: "Участники", location: "Боярские палаты", desc: "Защита макетов и сценографии" }
+    ];
+
+    let SCHEDULE_LIST = [];
+
+    function initScheduleList() {
+      const saved = localStorage.getItem('artmasters_schedule_list');
+      if (saved) {
+        try {
+          SCHEDULE_LIST = JSON.parse(saved);
+        } catch (e) {
+          SCHEDULE_LIST = [...DEFAULT_SCHEDULE_LIST];
+        }
+      } else {
+        SCHEDULE_LIST = [...DEFAULT_SCHEDULE_LIST];
+      }
+    }
+
+    function saveScheduleList() {
+      localStorage.setItem('artmasters_schedule_list', JSON.stringify(SCHEDULE_LIST));
+    }
+
+    initScheduleList();
+
+    function openScheduleModal() {
+      renderScheduleTable();
+      document.getElementById('scheduleModal').style.display = 'flex';
+    }
+
+    function closeScheduleModal() {
+      document.getElementById('scheduleModal').style.display = 'none';
+    }
+
+    function openScheduleEditorModal(index = -1) {
+      document.getElementById('edit-schedule-index').value = index;
+      if (index >= 0) {
+        document.getElementById('scheduleEditorTitle').innerText = 'Редактировать защиту';
+        const s = SCHEDULE_LIST[index];
+        document.getElementById('edit-schedule-time').value = s.time || '';
+        document.getElementById('edit-schedule-comp').value = s.comp || '';
+        document.getElementById('edit-schedule-participant').value = s.participant || '';
+        document.getElementById('edit-schedule-location').value = s.location || '';
+        document.getElementById('edit-schedule-desc').value = s.desc || '';
+      } else {
+        document.getElementById('scheduleEditorTitle').innerText = 'Добавить защиту';
+        document.getElementById('edit-schedule-time').value = '';
+        document.getElementById('edit-schedule-comp').value = '';
+        document.getElementById('edit-schedule-participant').value = '';
+        document.getElementById('edit-schedule-location').value = '';
+        document.getElementById('edit-schedule-desc').value = '';
+      }
+      document.getElementById('scheduleEditorModal').style.display = 'flex';
+    }
+
+    function closeScheduleEditorModal() {
+      document.getElementById('scheduleEditorModal').style.display = 'none';
+    }
+
+    function saveScheduleData() {
+      const idx = parseInt(document.getElementById('edit-schedule-index').value);
+      const time = document.getElementById('edit-schedule-time').value.trim();
+      const comp = document.getElementById('edit-schedule-comp').value.trim();
+      const participant = document.getElementById('edit-schedule-participant').value.trim();
+      const location = document.getElementById('edit-schedule-location').value.trim();
+      const desc = document.getElementById('edit-schedule-desc').value.trim();
+
+      if (!time || !comp) {
+        alert('Заполните обязательные поля: Время и Компетенция!');
+        return;
+      }
+
+      const schedObj = { time, comp, participant, location, desc };
+
+      if (idx >= 0) {
+        SCHEDULE_LIST[idx] = schedObj;
+      } else {
+        SCHEDULE_LIST.unshift(schedObj);
+      }
+
+      saveScheduleList();
+      closeScheduleEditorModal();
+      renderScheduleTable();
+    }
+
+    function deleteSchedule(index) {
+      if (confirm(`Удалить защиту по компетенции "${SCHEDULE_LIST[index].comp}"?`)) {
+        SCHEDULE_LIST.splice(index, 1);
+        saveScheduleList();
+        renderScheduleTable();
+      }
+    }
+
+    function renderScheduleTable() {
+      const tbody = document.getElementById('scheduleTableBody');
+      const search = document.getElementById('scheduleSearchInput').value.toLowerCase().trim();
+      tbody.innerHTML = '';
+
+      const filtered = SCHEDULE_LIST.map((item, originalIndex) => ({ item, originalIndex })).filter(({ item }) => {
+        const text = `${item.time} ${item.comp} ${item.participant} ${item.location} ${item.desc}`.toLowerCase();
+        return !search || text.includes(search);
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px; color: var(--text-muted);">Защиты не найдены</td></tr>';
+        return;
+      }
+
+      filtered.forEach(({ item, originalIndex }) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><b style="color: var(--am-cyan); font-family: 'JetBrains Mono';">${item.time}</b></td>
+          <td><b>${item.comp}</b></td>
+          <td>${item.participant || '—'}</td>
+          <td>${item.location || '—'}</td>
+          <td>${item.desc || '—'}</td>
+          <td>
+            <div style="display:flex;gap:6px;">
+              <button class="select-btn" onclick="openScheduleEditorModal(${originalIndex})">✏️</button>
+              <button class="delete-btn" onclick="deleteSchedule(${originalIndex})">🗑️</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // --- ОПЕРАТИВНЫЕ КОНТАКТЫ ЧЕМПИОНАТА (ИЗ EXCEL) ---
+    const DEFAULT_CHAMP_CONTACTS = [
+      { dept: "Техническая служба", name: "Зломанов Олег Викторович", task: "Административно-технический директор", phone: "+79206931013" },
+      { dept: "Служба логистики", name: "Смутный Богдан Сергеевич", task: "Технический менеджер", phone: "+79601805290" },
+      { dept: "Координация компетенций", name: "Маргарита Лютикова", task: "Старший менеджер компетенций", phone: "+79601291238" },
+      { dept: "Менеджмент", name: "Александр Дьяченко", task: "Менеджер (Оператор кино и ТВ)", phone: "+79139281656" },
+      { dept: "Менеджмент", name: "Ангелина Битарова", task: "Менеджер (Фотограф)", phone: "+79194260664" },
+      { dept: "Менеджмент", name: "Арина Дьяконова", task: "Менеджер (Композитор популярной музыки)", phone: "+79055851865" },
+      { dept: "Менеджмент", name: "Владислав Скрипко", task: "Менеджер (Звукорежиссёр FOH)", phone: "+79194112728" },
+      { dept: "Менеджмент", name: "Дарья Поляков", task: "Менеджер (Драматург театра и кино)", phone: "+79251277703" },
+      { dept: "Менеджмент", name: "Иван Кондратенко", task: "Менеджер (Геймдизайнер)", phone: "+79038118802" },
+      { dept: "Менеджмент", name: "Маргарита Макарова", task: "Менеджер (Куратор выставочных пространств)", phone: "+79261000043" },
+      { dept: "Менеджмент", name: "Мария Фёдорова", task: "Менеджер (Креативный продюсер)", phone: "+79179461932" },
+      { dept: "Менеджмент", name: "Оксана Ласточкина", task: "Менеджер (Стилист)", phone: "+79818629867" },
+      { dept: "Менеджмент", name: "Степан Новиков", task: "Менеджер (Веб-дизайнер UX/UI)", phone: "+79154039226" }
+    ];
+
+    let CHAMP_CONTACTС_LIST = [];
+
+    function initChampContactsList() {
+      const saved = localStorage.getItem('artmasters_champ_contacts');
+      if (saved) {
+        try {
+          CHAMP_CONTACTС_LIST = JSON.parse(saved);
+        } catch (e) {
+          CHAMP_CONTACTС_LIST = [...DEFAULT_CHAMP_CONTACTS];
+        }
+      } else {
+        CHAMP_CONTACTС_LIST = [...DEFAULT_CHAMP_CONTACTS];
+      }
+    }
+
+    function saveChampContactsList() {
+      localStorage.setItem('artmasters_champ_contacts', JSON.stringify(CHAMP_CONTACTС_LIST));
+    }
+
+    initChampContactsList();
+
+    function openChampContactsModal() {
+      renderChampContactsTable();
+      document.getElementById('champContactsModal').style.display = 'flex';
+    }
+
+    function closeChampContactsModal() {
+      document.getElementById('champContactsModal').style.display = 'none';
+    }
+
+    function openChampContactEditorModal(index = -1) {
+      document.getElementById('edit-champ-contact-index').value = index;
+      if (index >= 0) {
+        document.getElementById('champContactEditorTitle').innerText = 'Редактировать контакт';
+        const c = CHAMP_CONTACTС_LIST[index];
+        document.getElementById('edit-champ-dept').value = c.dept || '';
+        document.getElementById('edit-champ-name').value = c.name || '';
+        document.getElementById('edit-champ-task').value = c.task || '';
+        document.getElementById('edit-champ-phone').value = formatPhoneNumberStr(c.phone || '');
+      } else {
+        document.getElementById('champContactEditorTitle').innerText = 'Добавить контакт';
+        document.getElementById('edit-champ-dept').value = '';
+        document.getElementById('edit-champ-name').value = '';
+        document.getElementById('edit-champ-task').value = '';
+        document.getElementById('edit-champ-phone').value = '';
+      }
+      document.getElementById('champContactEditorModal').style.display = 'flex';
+    }
+
+    function closeChampContactEditorModal() {
+      document.getElementById('champContactEditorModal').style.display = 'none';
+    }
+
+    function saveChampContactData() {
+      const idx = parseInt(document.getElementById('edit-champ-contact-index').value);
+      const dept = document.getElementById('edit-champ-dept').value.trim();
+      const name = document.getElementById('edit-champ-name').value.trim();
+      const task = document.getElementById('edit-champ-task').value.trim();
+      const phone = document.getElementById('edit-champ-phone').value.trim();
+
+      if (!dept || !name || !phone) {
+        alert('Заполните обязательные поля: Служба, ФИО и Телефон!');
+        return;
+      }
+
+      const contactObj = { dept, name, task, phone };
+
+      if (idx >= 0) {
+        CHAMP_CONTACTС_LIST[idx] = contactObj;
+      } else {
+        CHAMP_CONTACTС_LIST.unshift(contactObj);
+      }
+
+      saveChampContactsList();
+      closeChampContactEditorModal();
+      renderChampContactsTable();
+    }
+
+    function deleteChampContact(index) {
+      if (confirm(`Удалить контакт "${CHAMP_CONTACTС_LIST[index].name}"?`)) {
+        CHAMP_CONTACTС_LIST.splice(index, 1);
+        saveChampContactsList();
+        renderChampContactsTable();
+      }
+    }
+
+    function renderChampContactsTable() {
+      const tbody = document.getElementById('champContactsTableBody');
+      const search = document.getElementById('champContactsSearchInput').value.toLowerCase().trim();
+      tbody.innerHTML = '';
+
+      const filtered = CHAMP_CONTACTС_LIST.map((item, originalIndex) => ({ item, originalIndex })).filter(({ item }) => {
+        const text = `${item.dept} ${item.name} ${item.task} ${item.phone}`.toLowerCase();
+        return !search || text.includes(search);
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px; color: var(--text-muted);">Контакты не найдены</td></tr>';
+        return;
+      }
+
+      filtered.forEach(({ item, originalIndex }) => {
+        const phoneFormatted = formatPhoneNumberStr(item.phone);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><b>${item.dept}</b></td>
+          <td>${item.name}</td>
+          <td>${item.task || '—'}</td>
+          <td>${phoneFormatted ? `<a href="tel:${item.phone}" style="color:var(--am-cyan); text-decoration:none; font-family:'JetBrains Mono';">${phoneFormatted}</a>` : '—'}</td>
+          <td>
+            <div style="display:flex;gap:6px;">
+              <button class="select-btn" onclick="openChampContactEditorModal(${originalIndex})">✏️</button>
+              <button class="delete-btn" onclick="deleteChampContact(${originalIndex})">🗑️</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openContactsModal() {
+      renderEmployeesDirectory();
+      document.getElementById('contactsModal').style.display = 'flex';
+    }
+
+    function closeContactsModal() {
+      document.getElementById('contactsModal').style.display = 'none';
+    }
+
+    function openContactEditorModal(index = -1) {
+      document.getElementById('edit-contact-index').value = index;
+      if (index >= 0) {
+        document.getElementById('contactEditorTitle').innerText = 'Редактировать сотрудника';
+        const emp = EMPLOYEES_LIST[index];
+        document.getElementById('edit-contact-name').value = emp.name || '';
+        document.getElementById('edit-contact-role').value = emp.role || '';
+        document.getElementById('edit-contact-phone').value = formatPhoneNumberStr(emp.phone || '');
+        document.getElementById('edit-contact-email').value = emp.email || '';
+        document.getElementById('edit-contact-tg').checked = !!emp.tg;
+        document.getElementById('edit-contact-max').checked = !!emp.max;
+      } else {
+        document.getElementById('contactEditorTitle').innerText = 'Добавить сотрудника';
+        document.getElementById('edit-contact-name').value = '';
+        document.getElementById('edit-contact-role').value = '';
+        document.getElementById('edit-contact-phone').value = '';
+        document.getElementById('edit-contact-email').value = '';
+        document.getElementById('edit-contact-tg').checked = false;
+        document.getElementById('edit-contact-max').checked = false;
+      }
+      document.getElementById('contactEditorModal').style.display = 'flex';
+    }
+
+    function closeContactEditorModal() {
+      document.getElementById('contactEditorModal').style.display = 'none';
+    }
+
+    function saveContactData() {
+      const idx = parseInt(document.getElementById('edit-contact-index').value);
+      const name = document.getElementById('edit-contact-name').value.trim();
+      const role = document.getElementById('edit-contact-role').value.trim();
+      const phone = document.getElementById('edit-contact-phone').value.trim();
+      const email = document.getElementById('edit-contact-email').value.trim();
+      const tg = document.getElementById('edit-contact-tg').checked;
+      const max = document.getElementById('edit-contact-max').checked;
+
+      if (!name || !phone) {
+        alert('Заполните обязательные поля: ФИО и Телефон!');
+        return;
+      }
+
+      const contactObj = { name, role, phone, email, tg, max };
+
+      if (idx >= 0) {
+        EMPLOYEES_LIST[idx] = contactObj;
+      } else {
+        EMPLOYEES_LIST.unshift(contactObj);
+      }
+
+      saveEmployeesList();
+      closeContactEditorModal();
+      renderEmployeesDirectory();
+    }
+
+    function deleteContact(index) {
+      if (confirm(`Удалить контакт сотрудника "${EMPLOYEES_LIST[index].name}"?`)) {
+        EMPLOYEES_LIST.splice(index, 1);
+        saveEmployeesList();
+        renderEmployeesDirectory();
+      }
+    }
+
+    function renderEmployeesDirectory() {
+      const container = document.getElementById('contactsGridContainer');
+      const search = document.getElementById('contactsSearchInput').value.toLowerCase().trim();
+      container.innerHTML = '';
+
+      const filtered = EMPLOYEES_LIST.map((emp, originalIndex) => ({ emp, originalIndex })).filter(({ emp }) => {
+        const text = `${emp.name} ${emp.role} ${emp.phone} ${emp.email || ''}`.toLowerCase();
+        return !search || text.includes(search);
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 20px;">Сотрудники не найдены</p>';
+        return;
+      }
+
+      filtered.forEach(({ emp, originalIndex }) => {
+        const phoneFormatted = formatPhoneNumberStr(emp.phone);
+        const cleanPhoneDigits = emp.phone ? emp.phone.replace(/\D/g, '') : '';
+        const card = document.createElement('div');
+        card.className = 'contact-card';
+        
+        let badgesHtml = '';
+        if (emp.tg && cleanPhoneDigits) {
+          badgesHtml += `<a href="https://t.me/+${cleanPhoneDigits}" target="_blank" class="contact-badge badge-tg">Telegram</a>`;
+        } else if (emp.tg) {
+          badgesHtml += `<span class="contact-badge badge-tg">Telegram</span>`;
+        }
+
+        if (emp.max) {
+          badgesHtml += '<span class="contact-badge badge-max">MAX</span>';
+        }
+
+        card.innerHTML = `
+          <div class="contact-actions">
+            <button class="action-icon-btn" onclick="openContactEditorModal(${originalIndex})" title="Редактировать">✏️</button>
+            <button class="action-icon-btn delete" onclick="deleteContact(${originalIndex})" title="Удалить">🗑️</button>
+          </div>
+          <div class="contact-name">${emp.name}</div>
+          ${emp.role ? `<div class="contact-role">${emp.role}</div>` : ''}
+          <div class="contact-info">
+            <div>📞 Тел: <a href="tel:${emp.phone}">${phoneFormatted}</a></div>
+            ${emp.email ? `<div>✉️ Почта: <a href="mailto:${emp.email}">${emp.email}</a></div>` : ''}
+          </div>
+          ${badgesHtml ? `<div class="contact-badges">${badgesHtml}</div>` : ''}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function formatPhoneNumberStr(rawPhone) {
+      if (!rawPhone) return '';
+      const digits = String(rawPhone).replace(/\D/g, '');
+      if (!digits) return rawPhone;
+
+      let cleanDigits = digits;
+      if (cleanDigits.startsWith('7') || cleanDigits.startsWith('8')) {
+        cleanDigits = cleanDigits.substring(1);
+      }
+
+      let formatted = '+7';
+      if (cleanDigits.length > 0) formatted += ' ' + cleanDigits.substring(0, 3);
+      if (cleanDigits.length >= 4) formatted += ' ' + cleanDigits.substring(3, 6);
+      if (cleanDigits.length >= 7) formatted += ' ' + cleanDigits.substring(6, 8);
+      if (cleanDigits.length >= 9) formatted += ' ' + cleanDigits.substring(8, 10);
+
+      return formatted;
+    }
+
+    let currentStatusFilter = 'all';
+    let currentActItems = [];
+    let onlineWeatherData = { temp: '', weather: '', sunrise: '', sunset: '' };
+
+    async function fetchOnlineWeatherAndSun() {
+      let rawCity = document.getElementById('cs-city').value.trim() || 'Москва';
+      const cleanCity = rawCity.replace(/^(г\.|город)\s*/i, '').trim();
+      const dateInput = document.getElementById('cs-date').value || new Date().toISOString().slice(0,10);
+      const infoText = document.getElementById('weather-info-text');
+
+      infoText.innerHTML = `Запрос данных для ${cleanCity}...`;
+
+      try {
+        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cleanCity)}&count=1&language=ru&format=json`);
+        const geoData = await geoRes.json();
+
+        if (!geoData.results || geoData.results.length === 0) {
+          infoText.innerHTML = `Город "${cleanCity}" не найден, погода недоступна`;
+          return;
+        }
+
+        const { latitude, longitude, name } = geoData.results[0];
+
+        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=sunrise,sunset,temperature_2m_max,weathercode&timezone=auto&start_date=${dateInput}&end_date=${dateInput}`);
+        const weatherData = await weatherRes.json();
+
+        if (weatherData.daily && weatherData.daily.sunrise && weatherData.daily.sunrise.length > 0) {
+          const sunriseIso = weatherData.daily.sunrise[0];
+          const sunsetIso = weatherData.daily.sunset[0];
+          const maxTemp = weatherData.daily.temperature_2m_max[0];
+          
+          const sunriseTime = sunriseIso.split('T')[1].substring(0, 5);
+          const sunsetTime = sunsetIso.split('T')[1].substring(0, 5);
+
+          onlineWeatherData = {
+            temp: maxTemp !== undefined ? `${maxTemp > 0 ? '+' : ''}${maxTemp}°C` : '',
+            sunrise: sunriseTime,
+            sunset: sunsetTime
+          };
+
+          infoText.innerHTML = `📍 ${name} | Темп: <b>${onlineWeatherData.temp}</b> | 🌅 Восход: <b>${sunriseTime}</b> | 🌇 Закат: <b>${sunsetTime}</b>`;
+        } else {
+          infoText.innerHTML = `Данные о погоде временно недоступны`;
+        }
+      } catch (e) {
+        console.error('Ошибка получения погоды:', e);
+        infoText.innerHTML = `Ошибка онлайн-подключения к сервису погоды`;
+      }
+    }
+
+    function appendWeatherToNotes() {
+      if (!onlineWeatherData.sunrise) {
+        alert('Данные погоды и солнца еще не загружены!');
+        return;
+      }
+      const notesArea = document.getElementById('cs-notes');
+      const weatherString = `Погода: ${onlineWeatherData.temp}. Восход солнца: ${onlineWeatherData.sunrise}, Закат: ${onlineWeatherData.sunset}.`;
+      if (!notesArea.value.includes(weatherString)) {
+        notesArea.value = notesArea.value ? notesArea.value + '\n' + weatherString : weatherString;
+        alert('Данные о погоде и световом дне добавлены в примечания!');
+      } else {
+        alert('Эти данные уже добавлены в примечания.');
+      }
+    }
+
+    function getRecipientRoleTitle(role, participantName) {
+      if (role === 'Сотрудник' && participantName) {
+        const emp = EMPLOYEES_LIST.find(e => e.name === participantName);
+        if (emp && emp.role) return emp.role;
+      }
+      return role || 'Участник';
+    }
+
+    function getActSubtitleText(role, participant, comp) {
+      if (role === 'Сотрудник') {
+        const emp = EMPLOYEES_LIST.find(e => e.name === participant);
+        if (emp && emp.role) {
+          return `Выдано сотруднику Артмастерс: <b>${emp.role} — ${participant}</b>`;
+        }
+        return `Выдано сотруднику Артмастерс — <b>${participant}</b>`;
+      } else if (role === 'Менеджер компетенции') {
+        return `Менеджер компетенции — <b>${comp}</b>`;
+      } else {
+        return `Участник компетенции — <b>${comp}</b>`;
+      }
+    }
+
+    function toggleNoReturnDate(checked) {
+      const dateInput = document.getElementById('return-date-input');
+      if (checked) {
+        dateInput.value = '';
+        dateInput.disabled = true;
+      } else {
+        dateInput.disabled = false;
+        setDefaultReturnDate();
+      }
+    }
+
+    function setDefaultReturnDate() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      document.getElementById('return-date-input').value = `${year}-${month}-${day}`;
+    }
+
+    function getUnderlineDateStr(dateStr) {
+      if (!dateStr || dateStr === '—') {
+        return `«___» ___________ 20___ г.`;
+      }
+
+      let d = new Date();
+      if (dateStr.includes('.')) {
+        const parts = dateStr.split('.');
+        if (parts.length === 3) d = new Date(parts[2], parts[1] - 1, parts[0]);
+      } else {
+        d = new Date(dateStr);
+      }
+
+      if (isNaN(d.getTime())) {
+        return `«___» ___________ 20___ г.`;
+      }
+
+      const months = [
+        "января", "февраля", "марта", "апреля", "мая", "июня",
+        "июля", "августа", "сентября", "октября", "ноября", "декабря"
+      ];
+
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = months[d.getMonth()];
+      const year = d.getFullYear();
+
+      return `«${day}» ${month} ${year} г.`;
+    }
+
+    function getFormattedDate(dateObj = new Date()) {
+      const months = [
+        "января", "февраля", "марта", "апреля", "мая", "июня",
+        "июля", "августа", "сентября", "октября", "ноября", "декабря"
+      ];
+      return `${dateObj.getDate()} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()} г.`;
+    }
+
+    function initEquipmentDb() {
+      const savedDb = localStorage.getItem('artmasters_equipment_db');
+      if (savedDb) {
+        try {
+          window.EQUIPMENT_DB = JSON.parse(savedDb);
+        } catch (e) {
+          console.error('Ошибка чтения базы из localStorage:', e);
+        }
+      }
+    }
+
+    function saveDbToLocalStorage() {
+      if (window.EQUIPMENT_DB) {
+        localStorage.setItem('artmasters_equipment_db', JSON.stringify(window.EQUIPMENT_DB));
+      }
+    }
+
+    initEquipmentDb();
+    setDefaultReturnDate();
+
+    function onCountryCodeChange() {
+      const input = document.getElementById('contact-input');
+      formatPhoneNumber(input);
+    }
+
+    function formatPhoneNumber(input) {
+      let val = input.value;
+      if (val.trim().startsWith('@') || /[a-zA-Z]/.test(val)) return;
+
+      const digits = val.replace(/\D/g, '');
+      const codeSel = document.getElementById('country-code-select') ? document.getElementById('country-code-select').value : '+7';
+      
+      if (!digits) {
+        input.value = '';
+        return;
+      }
+
+      let prefix = '+7';
+      if (codeSel === '+375') prefix = '+375';
+      else if (codeSel === '+998') prefix = '+998';
+      else if (codeSel === '+374') prefix = '+374';
+      else if (codeSel === '+995') prefix = '+995';
+      else if (codeSel === '+996') prefix = '+996';
+      else if (codeSel === '+373') prefix = '+373';
+      else if (codeSel === '+993') prefix = '+993';
+      else if (codeSel === '+992') prefix = '+993';
+      else if (codeSel === 'other') prefix = '';
+
+      if (codeSel === '+7' || codeSel === '+7_KZ') {
+        input.value = formatPhoneNumberStr(val);
+      } else if (prefix) {
+        let parts = digits.match(/.{1,3}/g) || [];
+        input.value = prefix + (parts.length > 0 ? ' ' + parts.join(' ') : '');
+      }
+    }
+
+    function getFullContactValue() {
+      const inputVal = document.getElementById('contact-input').value.trim();
+      return inputVal || '—';
+    }
+
+    function onRoleChange(role) {
+      document.getElementById('participant-label').innerText = `ФИО (${role})`;
+      const container = document.getElementById('participant-container');
+
+      const compLabel = document.getElementById('competence-label');
+      const compSelect = document.getElementById('competence-select');
+      const officeOption = document.getElementById('office-option');
+      const compOptions = document.querySelectorAll('.comp-opt');
+
+      if (role === 'Сотрудник') {
+        compLabel.innerText = 'Офис';
+        compOptions.forEach(opt => opt.style.display = 'none');
+        officeOption.style.display = 'block';
+        compSelect.value = 'Офис';
+
+        let selectHtml = `<select id="participant-name" onchange="onEmployeeSelect(this.value)">
+          <option value="">-- Выберите сотрудника --</option>`;
+        EMPLOYEES_LIST.forEach(emp => {
+          selectHtml += `<option value="${emp.name}">${emp.name}</option>`;
+        });
+        selectHtml += `</select>`;
+        container.innerHTML = selectHtml;
+
+      } else {
+        compLabel.innerText = 'Компетенция';
+        compOptions.forEach(opt => opt.style.display = 'block');
+        officeOption.style.display = 'none';
+        if (compSelect.value === 'Офис') {
+          compSelect.selectedIndex = 0;
+        }
+
+        container.innerHTML = `<input type="text" id="participant-name" placeholder="Введите ФИО (${role.toLowerCase()})...">`;
+      }
+    }
+
+    function onEmployeeSelect(empName) {
+      if (!empName) return;
+      const emp = EMPLOYEES_LIST.find(e => e.name === empName);
+      if (emp) {
+        if (emp.phone) {
+          document.getElementById('country-code-select').value = '+7';
+          document.getElementById('contact-input').value = formatPhoneNumberStr(emp.phone);
+        } else {
+          document.getElementById('contact-input').value = '';
+        }
+      }
+    }
+
+    function getParticipantValue() {
+      const el = document.getElementById('participant-name');
+      return el ? el.value.trim() : '';
+    }
+
+    function updateInvActionButton() {
+      const invVal = document.getElementById('inv-input').value.trim();
+      const btnContainer = document.getElementById('inv-action-btn-container');
+      
+      if (invVal.length > 0) {
+        btnContainer.innerHTML = `<button class="add-quick-btn" onclick="addItemToCurrentAct()">+ Добавить</button>`;
+      } else {
+        btnContainer.innerHTML = `<button class="db-quick-btn" onclick="openDbModal()">📋 База МТБ</button>`;
+      }
+    }
+
+    function onInventoryChange(invVal) {
+      updateInvActionButton();
+      if (typeof findEquipment === 'function') {
+        const found = findEquipment(invVal);
+        if (found) document.getElementById('equipment-name').value = found.name;
+      }
+    }
+
+    function onScanSuccess(decodedText) {
+      const scannedInv = decodedText.trim();
+      document.getElementById('inv-input').value = scannedInv;
+      updateInvActionButton();
+      
+      let equipName = 'Оборудование';
+      if (typeof findEquipment === 'function') {
+        const found = findEquipment(scannedInv);
+        if (found) {
+          equipName = found.name;
+        }
+      }
+
+      if (!equipName || equipName === 'Оборудование') {
+        if (window.EQUIPMENT_DB) {
+          let key = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === scannedInv);
+          if (key && window.EQUIPMENT_DB[key].name) {
+            equipName = window.EQUIPMENT_DB[key].name;
+          }
+        }
+      }
+
+      document.getElementById('equipment-name').value = equipName;
+
+      if (scannedInv && equipName) {
+        if (!currentActItems.some(item => item.inv === scannedInv)) {
+          currentActItems.push({ inv: scannedInv, name: equipName });
+          renderSelectedItems();
+          
+          document.getElementById('inv-input').value = '';
+          document.getElementById('equipment-name').value = '';
+          updateInvActionButton();
+        } else {
+          alert(`Позиция с инвентарным номером ${scannedInv} уже добавлена!`);
+        }
+      }
+    }
+
+    const html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
+      fps: 10, 
+      qrbox: { width: 220, height: 220 } 
+    });
+    html5QrcodeScanner.render(onScanSuccess);
+
+    function addItemToCurrentAct() {
+      const inv = document.getElementById('inv-input').value.trim();
+      const name = document.getElementById('equipment-name').value.trim();
+
+      if (!inv || !name) {
+        alert('Укажите инвентарный номер и наименование оборудования!');
+        return;
+      }
+
+      if (currentActItems.some(item => item.inv === inv)) {
+        alert('Это оборудование уже добавлено в список!');
+        return;
+      }
+
+      currentActItems.push({ inv: inv, name: name });
+      
+      document.getElementById('inv-input').value = '';
+      document.getElementById('equipment-name').value = '';
+      updateInvActionButton();
+      
+      renderSelectedItems();
+    }
+
+    function removeItemFromAct(index) {
+      currentActItems.splice(index, 1);
+      renderSelectedItems();
+    }
+
+    function renderSelectedItems() {
+      const container = document.getElementById('selected-items-container');
+      document.getElementById('items-count').innerText = currentActItems.length;
+
+      if (currentActItems.length === 0) {
+        container.innerHTML = `<p style="font-size: 13px; color: var(--text-muted);">Сканируйте QR или введите инвентарный номер и нажмите кнопку выше</p>`;
+        return;
+      }
+
+      container.innerHTML = '';
+      currentActItems.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'item-row';
+        div.innerHTML = `
+          <div>
+            <b style="font-family: 'JetBrains Mono'; font-size: 13px; color: var(--am-cyan);">${item.inv}</b> — ${item.name}
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button class="add-row-btn" onclick="addSingleItemToCallSheet('${item.inv}', '${item.name.replace(/'/g, "\\'")}')" style="font-size: 11px; padding: 4px 8px;">+ В вызывной</button>
+            <button class="delete-btn" onclick="removeItemFromAct(${index})">✕</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addSingleItemToCallSheet(inv, name) {
+      if (callSheetData.equipment.some(e => e.inv === inv)) {
+        alert(`Оборудование ${inv} уже есть в Вызывном листе!`);
+        return;
+      }
+      
+      let sn = '';
+      if (window.EQUIPMENT_DB) {
+        let key = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === inv);
+        if (key && window.EQUIPMENT_DB[key].sn) {
+          sn = window.EQUIPMENT_DB[key].sn;
+        }
+      }
+
+      callSheetData.equipment.push({
+        name: name,
+        inv: inv,
+        sn: sn || '—',
+        count: '1'
+      });
+
+      alert(`Позиция "${name}" (${inv}) добавлена в Вызывной лист!`);
+    }
+
+    function importCurrentActItemsToCallSheet() {
+      if (currentActItems.length === 0) {
+        alert('В текущем Акте нет добавленного оборудования для импорта!');
+        return;
+      }
+
+      let addedCount = 0;
+      currentActItems.forEach(item => {
+        if (!callSheetData.equipment.some(e => e.inv === item.inv)) {
+          let sn = '';
+          if (window.EQUIPMENT_DB) {
+            let key = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === item.inv);
+            if (key && window.EQUIPMENT_DB[key].sn) {
+              sn = window.EQUIPMENT_DB[key].sn;
+            }
+          }
+
+          callSheetData.equipment.push({
+            name: item.name,
+            inv: item.inv,
+            sn: sn || '—',
+            count: '1'
+          });
+          addedCount++;
+        }
+      });
+
+      renderCsEquipment();
+      alert(`Успешно импортировано ${addedCount} позиций из текущего Акта!`);
+    }
+
+    function openDbModal() { 
+      renderDbTable(); 
+      document.getElementById('dbModal').style.display = 'flex'; 
+    }
+
+    function closeDbModal() { 
+      document.getElementById('dbModal').style.display = 'none'; 
+    }
+
+    function setDbStatusFilter(type) {
+      currentStatusFilter = type;
+      document.getElementById('tab-all').className = 'filter-tab' + (type === 'all' ? ' active' : '');
+      document.getElementById('tab-free').className = 'filter-tab' + (type === 'free' ? ' active' : '');
+      document.getElementById('tab-busy').className = 'filter-tab' + (type === 'busy' ? ' active' : '');
+      renderDbTable();
+    }
+
+    function returnEquipmentToOffice(inv) {
+      if (window.EQUIPMENT_DB) {
+        let key = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === inv);
+        if (key) { 
+          window.EQUIPMENT_DB[key].status = 'В офисе'; 
+          saveDbToLocalStorage();
+          renderDbTable(); 
+        }
+      }
+    }
+
+    function renderDbTable(filterText = '') {
+      const tbody = document.getElementById('dbTableBody');
+      tbody.innerHTML = '';
+      if (!window.EQUIPMENT_DB) return;
+      const search = (filterText || document.getElementById('dbSearchInput').value).toLowerCase().trim();
+
+      Object.values(window.EQUIPMENT_DB).forEach(item => {
+        const rawStatus = item.status || 'В офисе';
+        const isFree = rawStatus.toLowerCase().includes('свобод') || rawStatus.toLowerCase().includes('офис');
+        if (currentStatusFilter === 'free' && !isFree) return;
+        if (currentStatusFilter === 'busy' && isFree) return;
+
+        const text = `${item.inv} ${item.category} ${item.name} ${item.sn} ${rawStatus}`.toLowerCase();
+        if (!search || text.includes(search)) {
+          const badge = isFree ? 'free' : 'busy';
+          const returnBtn = !isFree ? `<button class="return-btn" onclick="returnEquipmentToOffice('${item.inv}')">📥 Вернуть</button>` : '';
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><b style="color: var(--am-cyan);">${item.inv}</b></td>
+            <td>${item.category}</td>
+            <td>${item.name}</td>
+            <td>${item.sn || '—'}</td>
+            <td><span class="badge-status ${badge}">${rawStatus}</span></td>
+            <td>
+              <div style="display:flex;gap:6px;">
+                <button class="select-btn" onclick="selectEquipment('${item.inv}')">Выбрать</button>
+                ${returnBtn}
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+    }
+
+    function filterDbTable() { renderDbTable(); }
+
+    function selectEquipment(inv) { 
+      document.getElementById('inv-input').value = inv; 
+      onInventoryChange(inv); 
+      closeDbModal(); 
+    }
+
+    function getActsHistory() { 
+      return JSON.parse(localStorage.getItem('artmasters_acts_history') || '[]'); 
+    }
+
+    function saveActToHistory(act) { 
+      const h = getActsHistory(); 
+      h.unshift(act); 
+      localStorage.setItem('artmasters_acts_history', JSON.stringify(h)); 
+    }
+
+    function deleteActFromHistory(actNum) {
+      if (confirm(`Удалить Акт № ${actNum}?`)) {
+        let h = getActsHistory().filter(a => a.num !== actNum);
+        localStorage.setItem('artmasters_acts_history', JSON.stringify(h));
+        renderHistoryTable();
+      }
+    }
+
+    function openHistoryModal() { 
+      renderHistoryTable(); 
+      document.getElementById('historyModal').style.display = 'flex'; 
+    }
+
+    function closeHistoryModal() { 
+      document.getElementById('historyModal').style.display = 'none'; 
+    }
+
+    function renderHistoryTable() {
+      const tbody = document.getElementById('historyTableBody');
+      tbody.innerHTML = '';
+      const h = getActsHistory();
+      const filter = document.getElementById('historySearchInput').value.toLowerCase().trim();
+      if (h.length === 0) { 
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;">История пуста</td></tr>'; 
+        return; 
+      }
+
+      h.forEach(act => {
+        const itemsList = act.items ? act.items.map(i => i.name).join(', ') : act.name;
+        const invsList = act.items ? act.items.map(i => i.inv).join(', ') : act.inv;
+        const countStr = act.items ? ` (${act.items.length} шт.)` : '';
+
+        const searchStr = `${act.num} ${act.date} ${act.role || ''} ${act.participant} ${act.contact || ''} ${itemsList} ${invsList} ${act.manager}`.toLowerCase();
+        if (!filter || searchStr.includes(filter)) {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><b>№ ${act.num}</b></td>
+            <td>${act.date}</td>
+            <td><span class="badge-status free">${act.role || 'Участник'}</span></td>
+            <td>${act.participant}</td>
+            <td>${act.contact || '—'}</td>
+            <td>${itemsList}${countStr}</td>
+            <td>${invsList}</td>
+            <td>
+              <div style="display:flex;gap:6px;">
+                <button class="select-btn" onclick="reprintAct('${act.num}')">🖨️ Печать</button>
+                <button class="delete-btn" onclick="deleteActFromHistory('${act.num}')">🗑️ Удалить</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+    }
+
+    function reprintAct(actNum) {
+      const act = getActsHistory().find(a => a.num === actNum);
+      if (!act) return;
+      const role = act.role || 'Участник';
+      document.getElementById('print-act-num').innerText = act.num;
+
+      const underlineDateStrIssue = getUnderlineDateStr(act.date);
+      const underlineDateStrReturn = getUnderlineDateStr(act.returnDate);
+      const currentDateFormatted = act.dateIntro || (act.date ? `${act.date} г.` : getFormattedDate());
+
+      document.querySelectorAll('.print-underline-date-issue').forEach(el => {
+        el.innerHTML = underlineDateStrIssue;
+      });
+
+      document.querySelectorAll('.print-underline-date-return').forEach(el => {
+        el.innerHTML = underlineDateStrReturn;
+      });
+
+      const managerTitleStr = getManagerTitle(act.manager);
+      document.getElementById('print-manager-title-out').innerText = `Выдал ${managerTitleStr.toLowerCase()}`;
+      document.getElementById('print-manager-title-in').innerText = `Принял ${managerTitleStr.toLowerCase()}`;
+
+      const recipientTitle = getRecipientRoleTitle(role, act.participant);
+      document.getElementById('print-recipient-role-grid1').innerText = recipientTitle;
+      document.getElementById('print-recipient-role-grid2').innerText = recipientTitle;
+
+      const safetyWrapper = document.getElementById('safety-rules-wrapper');
+      if (role === 'Сотрудник') {
+        safetyWrapper.classList.add('active');
+        const emp = EMPLOYEES_LIST.find(e => e.name === act.participant);
+        const empRoleStr = emp && emp.role ? `${emp.role} АНО «Артмастерс»` : 'Сотрудник АНО «Артмастерс»';
+        document.getElementById('safety-employee-title').innerText = empRoleStr;
+        document.getElementById('safety-employee-name').innerText = act.participant !== '—' ? act.participant : '__________________________';
+        document.getElementById('safety-date-intro').innerText = currentDateFormatted;
+      } else {
+        safetyWrapper.classList.remove('active');
+      }
+      
+      const subtitleContainer = document.getElementById('print-subtitle-container');
+      subtitleContainer.innerHTML = getActSubtitleText(role, act.participant, act.comp);
+
+      document.getElementById('print-header-role').innerText = `${role} ФИО`;
+      document.getElementById('print-sig-role-label').innerText = role.toLowerCase();
+      document.getElementById('print-manager-out').innerText = act.manager;
+      document.getElementById('print-manager-in').innerText = act.manager;
+      const sigText = act.participant !== '—' ? act.participant : '__________________________';
+      document.getElementById('print-participant-sig').innerText = sigText;
+      document.getElementById('print-competence-mgr1').innerText = sigText;
+      document.getElementById('print-competence-mgr2').innerText = sigText;
+
+      const printTbody = document.getElementById('print-table-tbody');
+      printTbody.innerHTML = '';
+      
+      const itemsToPrint = act.items || [{ inv: act.inv, name: act.name }];
+      
+      itemsToPrint.forEach((item, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td style="text-align: left;">${item.name}</td>
+          <td>${item.inv}</td>
+          <td>${act.participant}</td>
+          <td>${act.contact || '—'}</td>
+          <td>1</td>
+          <td>${act.date}</td>
+          <td>${act.returnDate}</td>
+          <td style="text-align: left;">${act.comment}</td>
+        `;
+        printTbody.appendChild(tr);
+      });
+
+      document.getElementById('callsheet-print-area').classList.remove('active-print');
+      document.getElementById('act-print-area').classList.add('active-print');
+
+      closeHistoryModal();
+      window.print();
+    }
+
+    function resetForm() {
+      document.getElementById('inv-input').value = '';
+      document.getElementById('equipment-name').value = '';
+      updateInvActionButton();
+      
+      const pName = document.getElementById('participant-name');
+      if (pName) pName.value = '';
+
+      document.getElementById('contact-input').value = '';
+      document.getElementById('comment-input').value = '';
+      
+      const noReturnBox = document.getElementById('no-return-date-checkbox');
+      if (noReturnBox) {
+        noReturnBox.checked = false;
+        toggleNoReturnDate(false);
+      }
+    }
+
+    function generateAndPrintAct() {
+      const currentInv = document.getElementById('inv-input').value.trim();
+      const currentName = document.getElementById('equipment-name').value.trim();
+      
+      if (currentInv && currentName && !currentActItems.some(i => i.inv === currentInv)) {
+        currentActItems.push({ inv: currentInv, name: currentName });
+      }
+
+      if (currentActItems.length === 0) {
+        alert('Добавьте хотя бы одну позицию оборудования для печати Акта!');
+        return;
+      }
+
+      const today = new Date().toLocaleDateString('ru-RU');
+      const todayFormatted = getFormattedDate();
+      const underlineDateStrIssue = getUnderlineDateStr(today);
+
+      const comp = document.getElementById('competence-select').value;
+      const manager = document.getElementById('manager-select').value;
+      const role = document.getElementById('recipient-role-select').value;
+      const participant = getParticipantValue() || '—';
+      const contact = getFullContactValue();
+      const comment = document.getElementById('comment-input').value || '—';
+
+      const noReturnChecked = document.getElementById('no-return-date-checkbox').checked;
+      const rawDate = document.getElementById('return-date-input').value;
+      let returnDate = '—';
+      if (!noReturnChecked && rawDate) {
+        const p = rawDate.split('-');
+        returnDate = `${p[2]}.${p[1]}.${p[0]}`;
+      }
+
+      const underlineDateStrReturn = getUnderlineDateStr(returnDate);
+
+      document.querySelectorAll('.print-underline-date-issue').forEach(el => {
+        el.innerHTML = underlineDateStrIssue;
+      });
+
+      document.querySelectorAll('.print-underline-date-return').forEach(el => {
+        el.innerHTML = underlineDateStrReturn;
+      });
+
+      const managerTitleStr = getManagerTitle(manager);
+      document.getElementById('print-manager-title-out').innerText = `Выдал ${managerTitleStr.toLowerCase()}`;
+      document.getElementById('print-manager-title-in').innerText = `Принял ${managerTitleStr.toLowerCase()}`;
+
+      const recipientTitle = getRecipientRoleTitle(role, participant);
+      document.getElementById('print-recipient-role-grid1').innerText = recipientTitle;
+      document.getElementById('print-recipient-role-grid2').innerText = recipientTitle;
+
+      const safetyWrapper = document.getElementById('safety-rules-wrapper');
+      if (role === 'Сотрудник') {
+        safetyWrapper.classList.add('active');
+        const emp = EMPLOYEES_LIST.find(e => e.name === participant);
+        const empRoleStr = emp && emp.role ? `${emp.role} АНО «Артмастерс»` : 'Сотрудник АНО «Артмастерс»';
+        document.getElementById('safety-employee-title').innerText = empRoleStr;
+        document.getElementById('safety-employee-name').innerText = participant !== '—' ? participant : '__________________________';
+        document.getElementById('safety-date-intro').innerText = todayFormatted;
+      } else {
+        safetyWrapper.classList.remove('active');
+      }
+
+      const h = getActsHistory();
+      const actNum = `2026-${String(h.length + 1).padStart(3, '0')}`;
+
+      if (window.EQUIPMENT_DB) {
+        currentActItems.forEach(item => {
+          let key = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === item.inv);
+          if (key) {
+            const cInfo = contact !== '—' ? ` (${contact})` : '';
+            window.EQUIPMENT_DB[key].status = `На площадке (${participant !== '—' ? participant : 'Занят'}${cInfo})`;
+          }
+        });
+        saveDbToLocalStorage();
+      }
+
+      document.getElementById('print-act-num').innerText = actNum;
+
+      const subtitleContainer = document.getElementById('print-subtitle-container');
+      subtitleContainer.innerHTML = getActSubtitleText(role, participant, comp);
+
+      document.getElementById('print-header-role').innerText = `${role} ФИО`;
+      document.getElementById('print-sig-role-label').innerText = role.toLowerCase();
+      document.getElementById('print-manager-out').innerText = manager;
+      document.getElementById('print-manager-in').innerText = manager;
+      const sigText = participant !== '—' ? participant : '__________________________';
+      document.getElementById('print-participant-sig').innerText = sigText;
+      document.getElementById('print-competence-mgr1').innerText = sigText;
+      document.getElementById('print-competence-mgr2').innerText = sigText;
+
+      const printTbody = document.getElementById('print-table-tbody');
+      printTbody.innerHTML = '';
+      
+      currentActItems.forEach((item, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td style="text-align: left;">${item.name}</td>
+          <td>${item.inv}</td>
+          <td>${participant}</td>
+          <td>${contact}</td>
+          <td>1</td>
+          <td>${today}</td>
+          <td>${returnDate}</td>
+          <td style="text-align: left;">${comment}</td>
+        `;
+        printTbody.appendChild(tr);
+      });
+
+      saveActToHistory({ 
+        num: actNum, 
+        date: today, 
+        dateIntro: todayFormatted,
+        returnDate: returnDate, 
+        items: currentActItems,
+        comp: comp, 
+        manager: manager, 
+        role: role, 
+        participant: participant, 
+        contact: contact, 
+        comment: comment 
+      });
+      
+      document.getElementById('callsheet-print-area').classList.remove('active-print');
+      document.getElementById('act-print-area').classList.add('active-print');
+
+      window.print();
+
+      currentActItems = [];
+      renderSelectedItems();
+      resetForm();
+    }
+
+    function downloadActWord() {
+      const currentInv = document.getElementById('inv-input').value.trim();
+      const currentName = document.getElementById('equipment-name').value.trim();
+      
+      if (currentInv && currentName && !currentActItems.some(i => i.inv === currentInv)) {
+        currentActItems.push({ inv: currentInv, name: currentName });
+      }
+
+      if (currentActItems.length === 0) {
+        alert('Добавьте хотя бы одну позицию оборудования для скачивания Акта!');
+        return;
+      }
+
+      const today = new Date().toLocaleDateString('ru-RU');
+      const todayFormatted = getFormattedDate();
+      const underlineDateStrIssue = getUnderlineDateStr(today);
+
+      const comp = document.getElementById('competence-select').value;
+      const manager = document.getElementById('manager-select').value;
+      const role = document.getElementById('recipient-role-select').value;
+      const participant = getParticipantValue() || '—';
+      const contact = getFullContactValue();
+      const comment = document.getElementById('comment-input').value || '—';
+
+      const noReturnChecked = document.getElementById('no-return-date-checkbox').checked;
+      const rawDate = document.getElementById('return-date-input').value;
+      let returnDate = '—';
+      if (!noReturnChecked && rawDate) {
+        const p = rawDate.split('-');
+        returnDate = `${p[2]}.${p[1]}.${p[0]}`;
+      }
+
+      const underlineDateStrReturn = getUnderlineDateStr(returnDate);
+      const managerTitleStr = getManagerTitle(manager);
+      const managerTitleOut = `Выдал ${managerTitleStr.toLowerCase()}`;
+      const managerTitleIn = `Принял ${managerTitleStr.toLowerCase()}`;
+      const recipientTitle = getRecipientRoleTitle(role, participant);
+      const sigText = participant !== '—' ? participant : '__________________________';
+
+      const h = getActsHistory();
+      const actNum = `2026-${String(h.length + 1).padStart(3, '0')}`;
+
+      if (window.EQUIPMENT_DB) {
+        currentActItems.forEach(item => {
+          let key = Object.keys(window.EQUIPMENT_DB).find(k => window.EQUIPMENT_DB[k].inv === item.inv);
+          if (key) {
+            const cInfo = contact !== '—' ? ` (${contact})` : '';
+            window.EQUIPMENT_DB[key].status = `На площадке (${participant !== '—' ? participant : 'Занят'}${cInfo})`;
+          }
+        });
+        saveDbToLocalStorage();
+      }
+
+      let subtitleHtml = role === 'Сотрудник' ? `Выдано сотруднику Артмастерс: <b>${recipientTitle} — ${participant}</b>` : (role === 'Менеджер компетенции' ? `Менеджер компетенции — <b>${comp}</b>` : `Участник компетенции — <b>${comp}</b>`);
+
+      let safetyHtml = '';
+      if (role === 'Сотрудник') {
+        const emp = EMPLOYEES_LIST.find(e => e.name === participant);
+        const empRoleStr = emp && emp.role ? `${emp.role} АНО «Артмастерс»` : 'Сотрудник АНО «Артмастерс»';
+        safetyHtml = `
+          <br clear="all" style="mso-special-character:line-break; page-break-before:always;" />
+          <div style="font-size: 9pt; line-height: 1.25; font-family: Arial, sans-serif;">
+            <p style="text-align: center; font-size: 10pt; font-weight: bold; margin-bottom: 8px;">ПРАВИЛА ТЕХНИКИ БЕЗОПАСНОСТИ ПРИ РАБОТЕ С КОМПЬЮТЕРНОЙ ТЕХНИКОЙ</p>
+            <p><b>Организация:</b> АНО «АртМастерс»<br><b>Дата введения:</b> ${todayFormatted}<br><b>Ответственный:</b> Технический директор - Зломанов Олег Викторович</p>
+            
+            <p style="font-weight: bold; margin-top: 6px; margin-bottom: 2px;">1. Общие положения</p>
+            <p>1.1. Правила обязательны для всех сотрудников офиса, стажёров, подрядчиков и иных лиц, использующих компьютерную технику (ПК, ноутбуки, мониторы, периферию, док-станции, сетевые фильтры).</p>
+            <p>1.2. Цель правил — предотвратить повреждение техники, исключить риск поражения электрическим током, снизить риски для здоровья при длительной работе за компьютером.</p>
+            <p>1.3. Допуск к работе возможен только после прохождения вводного инструктажа по охране труда и ознакомления с этими правилами под подпись.</p>
+
+            <p style="font-weight: bold; margin-top: 6px; margin-bottom: 2px;">2. Подготовка рабочего места</p>
+            <p>2.1. Перед началом работы осмотрите технику: нет ли видимых повреждений корпуса, экрана, кабелей, разъёмов.</p>
+            <p>2.2. Проверьте исправность розетки и сетевого фильтра; не используйте повреждённые удлинители и самодельные переходники.</p>
+            <p>2.3. Разместите кабели так, чтобы они не мешали проходу; используйте кабель-менеджмент (стяжки, каналы) — это критично для безопасности в активных зонах офиса.</p>
+            <p>2.4. Настройте эргономику: расстояние от глаз до экрана — 50–70 см; верхняя треть экрана — на уровне глаз или чуть ниже; спина опирается на спинку кресла, локти под углом ~90°, стопы на полу или на подставке.</p>
+            <p>2.5. Проверьте освещение: на экране не должно быть сильных бликов; при необходимости отрегулируйте жалюзи или яркость монитора.</p>
+
+            <p style="font-weight: bold; margin-top: 6px; margin-bottom: 2px;">3. Работа с техникой</p>
+            <p>3.1. Включение: сначала сетевой фильтр/ИБП, затем периферия, затем ПК/ноутбук.</p>
+            <p>3.2. Не допускайте попадания жидкостей на технику; не ставьте рядом напитки, не работайте мокрыми руками.</p>
+            <p>3.3. Не вскрывайте корпуса устройств и не производите самостоятельный ремонт. При неисправности — сразу сообщите ИТ-отделу или ответственному.</p>
+            <p>3.4. Не перекрывайте вентиляционные отверстия; не кладите на технику бумаги, папки и иные предметы.</p>
+            <p>3.5. Не подключайте и не отключайте кабели при включённом питании, кроме случаев «горячей» замены (USB, наушники и т. п.), разрешённых производителем.</p>
+            <p>3.6. Используйте только штатные и сертифицированные блоки питания и зарядные устройства.</p>
+            <p>3.7. Не используйте технику при явных признаках неисправности (странный запах, шум, перегрев, мерцание экрана).</p>
+
+            <p style="font-weight: bold; margin-top: 6px; margin-bottom: 2px;">4. Режим труда и профилактика утомления</p>
+            <p>4.1. Делайте перерывы каждые 50–60 минут: 10–15 минут на разминку и гимнастику для глаз.</p>
+            <p>4.2. Во время перерыва отводите взгляд от экрана, смотрите вдаль, моргайте чаще, чтобы снизить риск «синдрома сухого глаза».</p>
+            <p>4.3. При длительной работе чередуйте задачи: часть времени — за экраном, часть — на обсуждение, проверку распечаток, ходьбу по офису.</p>
+
+            <p style="font-weight: bold; margin-top: 6px; margin-bottom: 2px;">5. Действия при нештатных ситуациях</p>
+            <p>5.1. При появлении запаха гари, искрения, необычного шума, перегрева — немедленно отключите питание на сетевом фильтре/автомате и сообщите ответственному. Не пытайтесь устранять неисправность самостоятельно.</p>
+            <p>5.2. При поражении электрическим током: не прикасайтесь к пострадавшему до снятия напряжения; вызовите скорую помощь (112); окажите первую помощь по инструкции.</p>
+            <p>5.3. При сбое ПО или потере данных: не выполняйте произвольных действий; зафиксируйте симптомы (ошибка, время, что делали) и обратитесь в ИТ-поддержку.</p>
+            <p>5.4. При возгорании техники: обесточьте, используйте огнетушитель, эвакуируйтесь по плану и сообщите охране/администратору.</p>
+
+            <p style="font-weight: bold; margin-top: 6px; margin-bottom: 2px;">6. Завершение работы</p>
+            <p>6.1. Корректно завершите все программы, сохраните данные.</p>
+            <p>6.2. Выключите технику в порядке, обратном включению: ПК/ноутбук → периферия → сетевой фильтр/ИБП.</p>
+            <p>6.3. Осмотрите рабочее место: кабели не натянуты, техника не перегрета, нет посторонних предметов на устройствах.</p>
+            <p>6.4. Если техника передаётся другому сотруднику, передайте её по краткой проверке и отметьте в журнале/чате ИТ-поддержки.</p>
+
+            <p style="font-weight: bold; margin-top: 6px; margin-bottom: 2px;">7. Ответственность и контроль</p>
+            <p>7.1. Контроль соблюдения правил возлагается на руководителей подразделений и технического директора.</p>
+            <p>7.2. Нарушение правил может служить основанием для отстранения от работы и привлечения к дисциплинарной ответственности.</p>
+            <p>7.3. Факт ознакомления подтверждается подписью в журнале инструктажа либо в электронной форме.</p>
+
+            <br>
+            <table style="width: 100%; border: none; margin-top: 15px;">
+              <tr>
+                <td style="width: 50%; border: none; font-size: 8.5pt; text-align: left; vertical-align: top;">
+                  <b>Инструктаж провел:</b><br>
+                  Технический директор АНО «Артмастерс»<br>
+                  Зломанов Олег Викторович<br><br>
+                  ______________________ / ${underlineDateStrIssue}
+                </td>
+                <td style="width: 50%; border: none; font-size: 8.5pt; text-align: left; vertical-align: top;">
+                  <b>С правилами техники безопасности ознакомлен(а), обязуюсь выполнять:</b><br>
+                  ${empRoleStr}<br>
+                  ${participant !== '—' ? participant : '__________________________'}<br><br>
+                  ______________________ / ${underlineDateStrIssue}
+                </td>
+              </tr>
+            </table>
+          </div>
+        `;
+      }
+
+      let htmlContent = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+          <meta charset="utf-8">
+          <title>Акт № ${actNum}</title>
+          <style>
+            @page Section1 {
+              size: 841.7pt 595.3pt;
+              mso-page-orientation: landscape;
+              margin: 36pt 36pt 36pt 36pt;
+            }
+            div.Section1 { page: Section1; }
+            body { font-family: 'Arial', sans-serif; font-size: 9pt; color: #000; line-height: 1.2; }
+            h2 { text-align: center; font-size: 13pt; text-transform: uppercase; margin: 0 0 5px 0; }
+            .sub { text-align: center; font-size: 10.5pt; margin-bottom: 15px; }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 10px; mso-yfti-tbllook: 1184; }
+            th, td { border: 1px solid #000; padding: 4px 6px; font-size: 8.5pt; text-align: center; vertical-align: middle; }
+            th { background-color: #f2f2f2; font-weight: bold; }
+            .rules { font-size: 8pt; line-height: 1.25; margin-bottom: 12px; }
+            .rules ul { margin: 3px 0 0 16px; padding: 0; }
+            .sig-line { margin-top: 10px; font-size: 9pt; }
+            .sig-grid { width: 100%; border-collapse: collapse; margin-top: 10px; border: none; }
+            .sig-grid td { border: none; width: 50%; font-size: 9pt; padding: 5px 0; text-align: left; vertical-align: top; }
+          </style>
+        </head>
+        <body>
+          <div class="Section1">
+            <h2>АНО «АртМастерс»</h2>
+            <div style="text-align: center; font-size: 11pt; font-weight: bold; margin-bottom: 4px;">Акт приема-передачи оборудования № ${actNum}</div>
+            <div class="sub">${subtitleHtml}</div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 4%;">№</th>
+                  <th style="width: 30%;">Наименование</th>
+                  <th style="width: 14%;">Инвентарный номер</th>
+                  <th style="width: 18%;">${role} ФИО</th>
+                  <th style="width: 15%;">Телефон / Telegram / MAX</th>
+                  <th style="width: 5%;">Кол-во</th>
+                  <th style="width: 9%;">Дата выдачи</th>
+                  <th style="width: 9%;">Дата возврата</th>
+                  <th style="width: 16%;">Комментарии</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${currentActItems.map((item, idx) => `
+                  <tr>
+                    <td>${idx + 1}</td>
+                    <td style="text-align: left;">${item.name}</td>
+                    <td>${item.inv}</td>
+                    <td>${participant}</td>
+                    <td>${contact}</td>
+                    <td>1</td>
+                    <td>${today}</td>
+                    <td>${returnDate}</td>
+                    <td style="text-align: left;">${comment}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+
+            <div class="rules">
+              <b>Просим обратить внимание:</b>
+              <ul>
+                <li>На технику, чёрный диск и упаковку не допускается наклеивать какие‑либо стикеры, бирки, надписи или иные маркировочные материалы.</li>
+                <li>В случае необходимости идентификации содержимого диска/накопителя следует создать отдельную папку с фамилией ответственного сотрудника.</li>
+                <li>Перед переносом информации диски должны быть отформатированы в exFAT.</li>
+                <li>Оборудование и диски сдаются с полностью отснятым/рабочим материалом — ничего не удаляется.</li>
+              </ul>
+            </div>
+
+            <div class="sig-line">
+              С правилами выдачи ознакомлен (а), ${role.toLowerCase()}: <b>${sigText}</b> ______________________ (подпись) / ${underlineDateStrIssue}
+            </div>
+
+            <table class="sig-grid">
+              <tr>
+                <td>${managerTitleOut}: <b>${manager}</b><br>______________________ (подпись) / ${underlineDateStrIssue}</td>
+                <td>${managerTitleIn}: <b>${manager}</b><br>______________________ (подпись) / ${underlineDateStrReturn}</td>
+              </tr>
+              <tr>
+                <td><br>Получил (а) ${recipientTitle}: <b>${sigText}</b><br>______________________ (подпись) / ${underlineDateStrIssue}</td>
+                <td><br>Сдал (а) ${recipientTitle}: <b>${sigText}</b><br>______________________ (подпись) / ${underlineDateStrReturn}</td>
+              </tr>
+            </table>
+
+            ${safetyHtml}
+          </div>
+        </body>
+        </html>
+      `;
+
+      saveActToHistory({ 
+        num: actNum, 
+        date: today, 
+        dateIntro: todayFormatted,
+        returnDate: returnDate, 
+        items: currentActItems,
+        comp: comp, 
+        manager: manager, 
+        role: role, 
+        participant: participant, 
+        contact: contact, 
+        comment: comment 
+      });
+
+      const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Act_${actNum.replace(/[^а-яА-Яa-zA-Z0-9]/g, '_')}_${today.replace(/\./g, '-')}.doc`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      currentActItems = [];
+      renderSelectedItems();
+      resetForm();
+    }
+
+    function downloadCSV(filename, rows) {
+      let csvContent = "\uFEFF";
+      rows.forEach(row => {
+        let rowStr = row.map(val => `"${String(val).replace(/"/g, '""')}"`).join(';');
+        csvContent += rowStr + "\r\n";
+      });
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function exportDbToCSV() {
+      if (!window.EQUIPMENT_DB) {
+        alert("База оборудования пуста");
+        return;
+      }
+      const headers = ["Инвентарный №", "Категория", "Наименование / Модель", "Серийный №", "Статус"];
+      const rows = [headers];
+
+      Object.values(window.EQUIPMENT_DB).forEach(item => {
+        rows.push([
+          item.inv || "",
+          item.category || "",
+          item.name || "",
+          item.sn || "",
+          item.status || "В офисе"
+        ]);
+      });
+
+      downloadCSV(`MTB_Equipment_DB_${new Date().toISOString().slice(0,10)}.csv`, rows);
+    }
+
+    function exportActsToCSV() {
+      const history = getActsHistory();
+      if (history.length === 0) {
+        alert("Реестр актов пуст");
+        return;
+      }
+      const headers = ["№ Накладной", "Дата выдачи", "Планируемая дата возврата", "Компетенция", "Отдел", "Роль", "Получатель (ФИО)", "Контакты", "Инвентарные №", "Наименования оборудования", "Кол-во предметов", "Комментарии"];
+      const rows = [headers];
+
+      history.forEach(act => {
+        const itemsList = act.items ? act.items.map(i => i.name).join(', ') : act.name;
+        const invsList = act.items ? act.items.map(i => i.inv).join(', ') : act.inv;
+        const itemCount = act.items ? act.items.length : 1;
+
+        rows.push([
+          act.num || "",
+          act.date || "",
+          act.returnDate || "",
+          act.comp || "",
+          act.manager || "",
+          act.role || "",
+          act.participant || "",
+          act.contact || "",
+          invsList || "",
+          itemsList || "",
+          itemCount,
+          act.comment || ""
+        ]);
+      });
+
+      downloadCSV(`Acts_Registry_${new Date().toISOString().slice(0,10)}.csv`, rows);
+    }
+
+    // --- ЛОГИКА ВЫЗЫВНОГО ЛИСТА (CALL SHEET) ---
+    let callSheetData = {
+      city: "Москва",
+      compMgrName: "—",
+      compMgrPhone: "—",
+      techDirRoleTitle: "Технический директор (АртМастерс)",
+      techDirStr: "Зломанов Олег Викторович (+7 920 693 10 13)",
+      stageMgrRoleTitle: "Шеф-редактор",
+      stageMgrStr: "Жижневская Ксения Владимировна (+7 905 509 90 87)",
+      venueTechDirName: "",
+      venueTechDirPhone: "",
+      venueMgrName: "",
+      venueMgrPhone: "",
+      extraInfo: [],
+      milestones: [
+        { time: '08:00', event: 'Заезд автотранспорта, сбор технической группы' },
+        { time: '09:00', event: 'Начало монтажных работ и разворачивание сетей' },
+        { time: '13:00', event: 'Обед' },
+        { time: '18:00', event: 'Технический прогон и саундчек' },
+        { time: '21:00', event: 'Завершение работ, передача площадки охране' }
+      ],
+      crew: [
+        { type: 'manual', time: '08:00', dept: 'Звук', name: 'Иванов Иван', phone: '+7 900 000 00 01', task: 'Монтаж FOH, размотка мультикора' },
+        { type: 'manual', time: '08:30', dept: 'Свет', name: 'Петров Петр', phone: '+7 900 000 00 02', task: 'Развеска приборов, юстировка' },
+        { type: 'manual', time: '09:00', dept: 'Видео', name: 'Сидоров Сергей', phone: '+7 900 000 00 03', task: 'Сетап LED-экрана, пультовая' }
+      ],
+      equipment: [
+        { name: 'Микшерный пульт Yamaha QL5', inv: 'AM-00123', sn: 'SN987654', count: '1' },
+        { name: 'Комплект радиосистем Shure ULXD', inv: 'AM-00456', sn: 'SN123456', count: '4' }
+      ],
+      transport: [
+        { model: 'Газель NEXT', plate: 'А 123 АА 777', driver: 'Иванов Алексей', phone: '+7 999 111 22 33', task: 'Доставка звукового оборудования' }
+      ]
+    };
+
+    function renderCsExtraInfo() {
+      const container = document.getElementById('cs-extra-info-container');
+      container.innerHTML = '';
+      callSheetData.extraInfo.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background: rgba(25, 34, 60, 0.4); padding: 10px; border-radius: 12px; border: 1px solid var(--glass-border);';
+        const formattedPhone = formatPhoneNumberStr(item.phone);
+        div.innerHTML = `
+          <input type="text" value="${item.position}" style="flex: 1; min-width: 160px;" placeholder="Должность" onchange="callSheetData.extraInfo[${idx}].position = this.value">
+          <input type="text" value="${item.name}" style="flex: 1.5; min-width: 180px;" placeholder="Введите ФИО" onchange="callSheetData.extraInfo[${idx}].name = this.value">
+          <input type="text" value="${formattedPhone}" style="width: 170px;" placeholder="+7 900 00 00" oninput="formatPhoneNumber(this); callSheetData.extraInfo[${idx}].phone = this.value">
+          <button class="delete-btn" onclick="removeCsExtraInfo(${idx})">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addCsExtraInfoRow() {
+      callSheetData.extraInfo.push({ position: '', name: '', phone: '' });
+      renderCsExtraInfo();
+    }
+
+    function removeCsExtraInfo(idx) {
+      callSheetData.extraInfo.splice(idx, 1);
+      renderCsExtraInfo();
+    }
+
+    function getCallSheetHistory() {
+      return JSON.parse(localStorage.getItem('artmasters_callsheet_history') || '[]');
+    }
+
+    function saveCallSheetToHistory(cs) {
+      const h = getCallSheetHistory();
+      h.unshift(cs);
+      localStorage.setItem('artmasters_callsheet_history', JSON.stringify(h));
+    }
+
+    function deleteCallSheetFromHistory(id) {
+      if (confirm(`Удалить Вызывной лист из архива?`)) {
+        let h = getCallSheetHistory().filter(c => c.id !== id);
+        localStorage.setItem('artmasters_callsheet_history', JSON.stringify(h));
+        renderCallSheetHistoryTable();
+      }
+    }
+
+    function openCallSheetHistoryModal() {
+      renderCallSheetHistoryTable();
+      document.getElementById('csHistoryModal').style.display = 'flex';
+    }
+
+    function closeCallSheetHistoryModal() {
+      document.getElementById('csHistoryModal').style.display = 'none';
+    }
+
+    function renderCallSheetHistoryTable() {
+      const tbody = document.getElementById('csHistoryTableBody');
+      tbody.innerHTML = '';
+      const h = getCallSheetHistory();
+      const filter = document.getElementById('csHistorySearchInput').value.toLowerCase().trim();
+
+      if (h.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;">Архив вызывных пуст</td></tr>';
+        return;
+      }
+
+      h.forEach(cs => {
+        const searchStr = `${cs.projectName} ${cs.date} ${cs.city || ''} ${cs.location} ${cs.compMgrName || ''}`.toLowerCase();
+        if (!filter || searchStr.includes(filter)) {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><b>${cs.projectName}</b></td>
+            <td>${cs.date}</td>
+            <td>${cs.city || 'Москва'}</td>
+            <td>${cs.location}</td>
+            <td>${cs.compMgrName || '—'} (${cs.compMgrPhone || '—'})</td>
+            <td>
+              <div style="display:flex;gap:6px;">
+                <button class="select-btn" onclick="reprintCallSheet('${cs.id}')">🖨️ Печать</button>
+                <button class="delete-btn" onclick="deleteCallSheetFromHistory('${cs.id}')">🗑️ Удалить</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+    }
+
+    function reprintCallSheet(csId) {
+      const cs = getCallSheetHistory().find(c => c.id === csId);
+      if (!cs) return;
+
+      document.getElementById('csp-project-name').innerText = cs.projectName;
+      document.getElementById('csp-date').innerText = cs.date;
+      document.getElementById('csp-shift-num').innerText = cs.shiftNum;
+      
+      const weatherLineEl = document.getElementById('csp-weather-line');
+      if (cs.weatherInfo) {
+        weatherLineEl.innerText = cs.weatherInfo;
+        weatherLineEl.style.display = 'block';
+      } else {
+        weatherLineEl.innerText = '';
+        weatherLineEl.style.display = 'none';
+      }
+
+      document.getElementById('csp-print-city').innerText = cs.city || 'Москва';
+      document.getElementById('csp-print-location').innerText = cs.location || '—';
+      document.getElementById('csp-print-address').innerText = cs.address || '—';
+
+      document.getElementById('csp-tech-dir-label-print').innerText = `${cs.techDirRoleTitle || 'Тех. Директор'}:`;
+      document.getElementById('csp-tech-dir').innerText = cs.techDirStr;
+      
+      document.getElementById('csp-stage-mgr-label-print').innerText = `${cs.stageMgrRoleTitle || 'Продюсер / Выпускающий'}:`;
+      document.getElementById('csp-stage-mgr').innerText = cs.stageMgrStr;
+      
+      const phoneFormatted = formatPhoneNumberStr(cs.compMgrPhone);
+      const phoneStr = phoneFormatted ? ` (${phoneFormatted})` : '';
+      document.getElementById('csp-comp-mgr-full').innerText = `${cs.compMgrName || '—'}${phoneStr}`;
+      
+      const venueTDPhoneF = formatPhoneNumberStr(cs.venueTechDirPhone);
+      document.getElementById('csp-venue-td-print').innerText = cs.venueTechDirName ? `${cs.venueTechDirName}${venueTDPhoneF ? ' / ' + venueTDPhoneF : ''}` : '—';
+
+      const venueMgrPhoneF = formatPhoneNumberStr(cs.venueMgrPhone);
+      document.getElementById('csp-venue-mgr-print').innerText = cs.venueMgrName ? `${cs.venueMgrName}${venueMgrPhoneF ? ' / ' + venueMgrPhoneF : ''}` : '—';
+
+      const extraTbody = document.getElementById('csp-extra-info-tbody');
+      const extraTable = document.getElementById('csp-extra-info-table');
+      extraTbody.innerHTML = '';
+      if (cs.extraInfo && cs.extraInfo.length > 0) {
+        extraTable.style.display = 'table';
+        cs.extraInfo.forEach(item => {
+          const tr = document.createElement('tr');
+          const pFormatted = formatPhoneNumberStr(item.phone);
+          tr.innerHTML = `
+            <td style="width: 18%; font-weight: bold; background: #f2f2f2; text-align: left;">${item.position || 'Должность'}:</td>
+            <td colspan="3" style="text-align: left;"><b>${item.name || '—'}</b>${pFormatted ? ' (' + pFormatted + ')' : ''}</td>
+          `;
+          extraTbody.appendChild(tr);
+        });
+      } else {
+        extraTable.style.display = 'none';
+      }
+
+      document.getElementById('csp-notes').innerText = cs.notes;
+
+      const msTbody = document.getElementById('csp-milestones-tbody');
+      msTbody.innerHTML = '';
+      cs.milestones.forEach(m => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td style="font-weight: bold; font-family: Arial, sans-serif;">${m.time}</td><td style="text-align: left;">${m.event}</td>`;
+        msTbody.appendChild(tr);
+      });
+
+      const crewTbody = document.getElementById('csp-crew-tbody');
+      crewTbody.innerHTML = '';
+      cs.crew.forEach(c => {
+        const tr = document.createElement('tr');
+        const printPhone = formatPhoneNumberStr(c.phone);
+        tr.innerHTML = `
+          <td style="font-weight: bold; color: #b91c1c; font-family: Arial, sans-serif;">${c.time}</td>
+          <td style="text-align: left; font-weight: bold;">${c.dept}</td>
+          <td style="text-align: left;">${c.name}</td>
+          <td style="font-family: Arial, sans-serif;">${printPhone}</td>
+          <td style="text-align: left;">${c.task}</td>
+        `;
+        crewTbody.appendChild(tr);
+      });
+
+      const eqTbody = document.getElementById('csp-equipment-tbody');
+      eqTbody.innerHTML = '';
+      cs.equipment.forEach((eq, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-family: Arial, sans-serif;">${idx + 1}</td>
+          <td style="text-align: left; font-weight: bold;">${eq.name}</td>
+          <td style="font-family: Arial, sans-serif;">${eq.inv || '—'}</td>
+          <td style="font-family: Arial, sans-serif;">${eq.sn || '—'}</td>
+          <td style="font-family: Arial, sans-serif;">${eq.count || '1'}</td>
+        `;
+        eqTbody.appendChild(tr);
+      });
+
+      const trTbody = document.getElementById('csp-transport-tbody');
+      trTbody.innerHTML = '';
+      cs.transport.forEach(trItem => {
+        const tr = document.createElement('tr');
+        const printPhone = formatPhoneNumberStr(trItem.phone);
+        tr.innerHTML = `
+          <td style="font-weight: bold;">${trItem.model}</td>
+          <td style="font-weight: bold; font-family: Arial, sans-serif;">${trItem.plate}</td>
+          <td style="text-align: left;">${trItem.driver}</td>
+          <td style="font-family: Arial, sans-serif;">${printPhone}</td>
+          <td style="text-align: left;">${trItem.task}</td>
+        `;
+        trTbody.appendChild(tr);
+      });
+
+      document.getElementById('act-print-area').classList.remove('active-print');
+      document.getElementById('callsheet-print-area').classList.add('active-print');
+
+      closeCallSheetHistoryModal();
+      window.print();
+    }
+
+    function initTechDirSelect() {
+      const select = document.getElementById('cs-tech-dir-select');
+      select.innerHTML = '';
+      const atoList = [
+        "Зломанов Олег Викторович",
+        "Смутный Богдан Сергеевич",
+        "Белоусов Алексей Алексеевич",
+        "Белоусова Анастасия Константиновна",
+        "Сидоренко Артем Валерьевич"
+      ];
+      
+      atoList.forEach(name => {
+        const emp = EMPLOYEES_LIST.find(e => e.name === name);
+        const role = MANAGER_TITLES[name] || (emp ? emp.role : "Административно-технический отдел");
+        const option = document.createElement('option');
+        option.value = name;
+        option.innerText = `${name} — ${role}`;
+        if (name === "Зломанов Олег Викторович") option.selected = true;
+        select.appendChild(option);
+      });
+      onTechDirSelect(select.value);
+    }
+
+    function initStageMgrSelect() {
+      const select = document.getElementById('cs-stage-mgr-select');
+      select.innerHTML = '';
+      EMPLOYEES_LIST.forEach(emp => {
+        const option = document.createElement('option');
+        option.value = emp.name;
+        option.innerText = `${emp.name} — ${emp.role}`;
+        if (emp.name === "Жижневская Ксения Владимировна") option.selected = true;
+        select.appendChild(option);
+      });
+      onStageMgrSelect(select.value);
+    }
+
+    function onTechDirSelect(val) {
+      const emp = EMPLOYEES_LIST.find(e => e.name === val);
+      const title = MANAGER_TITLES[val] || (emp ? emp.role : "Технический директор");
+      const phone = emp && emp.phone ? `, ${formatPhoneNumberStr(emp.phone)}` : '';
+      callSheetData.techDirRoleTitle = title;
+      callSheetData.techDirStr = `${val}${phone}`;
+      
+      const labelEl = document.getElementById('cs-tech-dir-label');
+      if (labelEl) labelEl.innerText = `${title} (АртМастерс)`;
+    }
+
+    function onStageMgrSelect(empName) {
+      const emp = EMPLOYEES_LIST.find(e => e.name === empName);
+      if (emp) {
+        const phoneStr = emp.phone ? `, ${formatPhoneNumberStr(emp.phone)}` : '';
+        callSheetData.stageMgrRoleTitle = emp.role || "Продюсер / Шеф-редактор";
+        callSheetData.stageMgrStr = `${emp.name}${phoneStr}`;
+        
+        const labelEl = document.getElementById('cs-stage-mgr-label');
+        if (labelEl) labelEl.innerText = `${emp.role} (АртМастерс)`;
+      } else {
+        callSheetData.stageMgrRoleTitle = "Продюсер / Шеф-редактор";
+        callSheetData.stageMgrStr = empName;
+      }
+    }
+
+    function openCallSheetModal() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      document.getElementById('cs-date').value = `${year}-${month}-${day}`;
+      initTechDirSelect();
+      initStageMgrSelect();
+      renderCsExtraInfo();
+      renderCsMilestones();
+      renderCsCrew();
+      renderCsEquipment();
+      renderCsTransport();
+      document.getElementById('callSheetModal').style.display = 'flex';
+      fetchOnlineWeatherAndSun();
+    }
+
+    function closeCallSheetModal() {
+      document.getElementById('callSheetModal').style.display = 'none';
+    }
+
+    function renderCsMilestones() {
+      const container = document.getElementById('cs-milestones-container');
+      container.innerHTML = '';
+      callSheetData.milestones.forEach((m, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display:flex; gap:10px; align-items:center;';
+        div.innerHTML = `
+          <input type="text" value="${m.time}" style="width: 100px; font-family: Arial, sans-serif;" onchange="callSheetData.milestones[${idx}].time = this.value">
+          <input type="text" value="${m.event}" style="flex: 1;" onchange="callSheetData.milestones[${idx}].event = this.value">
+          <button class="delete-btn" onclick="removeCsMilestone(${idx})">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addCsMilestoneRow() {
+      callSheetData.milestones.push({ time: '12:00', event: 'Новый этап работ' });
+      renderCsMilestones();
+    }
+
+    function removeCsMilestone(idx) {
+      callSheetData.milestones.splice(idx, 1);
+      renderCsMilestones();
+    }
+
+    function renderCsCrew() {
+      const container = document.getElementById('cs-crew-container');
+      container.innerHTML = '';
+      callSheetData.crew.forEach((c, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display:flex; gap:10px; align-items:center; flex-wrap:wrap;';
+
+        let nameFieldHtml = '';
+        if (c.type === 'ato') {
+          const atoList = ["Зломанов Олег Викторович", "Смутный Богдан Сергеевич", "Белоусов Алексей Алексеевич", "Белоусова Анастасия Константиновна", "Сидоренко Артем Валерьевич"];
+          let opts = atoList.map(n => `<option value="${n}" ${n === c.name ? 'selected' : ''}>${n}</option>`).join('');
+          nameFieldHtml = `<select style="width: 210px;" onchange="onCsCrewAtoChange(${idx}, this.value)">${opts}</select>`;
+        } else if (c.type === 'emp') {
+          let opts = EMPLOYEES_LIST.map(e => `<option value="${e.name}" ${e.name === c.name ? 'selected' : ''}>${e.name}</option>`).join('');
+          nameFieldHtml = `<select style="width: 210px;" onchange="onCsCrewEmpChange(${idx}, this.value)">${opts}</select>`;
+        } else {
+          nameFieldHtml = `<input type="text" value="${c.name}" style="width: 190px;" placeholder="ФИО сотрудника" onchange="callSheetData.crew[${idx}].name = this.value">`;
+        }
+
+        const formattedPhone = formatPhoneNumberStr(c.phone);
+
+        div.innerHTML = `
+          <input type="text" value="${c.time}" style="width: 85px; font-family: Arial, sans-serif;" onchange="callSheetData.crew[${idx}].time = this.value">
+          <input type="text" value="${c.dept}" style="width: 140px;" placeholder="Департамент/Роль" onchange="callSheetData.crew[${idx}].dept = this.value">
+          ${nameFieldHtml}
+          <input type="text" value="${formattedPhone}" style="width: 160px; font-family: Arial, sans-serif;" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this); callSheetData.crew[${idx}].phone = this.value">
+          <input type="text" value="${c.task}" style="flex: 1; min-width: 180px;" placeholder="Задача на смене" onchange="callSheetData.crew[${idx}].task = this.value">
+          <button class="delete-btn" onclick="removeCsCrew(${idx})">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function onCsCrewAtoChange(idx, val) {
+      const emp = EMPLOYEES_LIST.find(e => e.name === val);
+      callSheetData.crew[idx].name = val;
+      callSheetData.crew[idx].dept = MANAGER_TITLES[val] || "Тех. отдел";
+      callSheetData.crew[idx].phone = emp && emp.phone ? formatPhoneNumberStr(emp.phone) : '';
+      renderCsCrew();
+    }
+
+    function onCsCrewEmpChange(idx, val) {
+      const emp = EMPLOYEES_LIST.find(e => e.name === val);
+      if (emp) {
+        callSheetData.crew[idx].name = emp.name;
+        callSheetData.crew[idx].dept = emp.role;
+        callSheetData.crew[idx].phone = emp.phone ? formatPhoneNumberStr(emp.phone) : '';
+      }
+      renderCsCrew();
+    }
+
+    function addCsCrewMemberFromAto() {
+      const atoList = ["Зломанов Олег Викторович", "Смутный Богдан Сергеевич", "Белоусов Алексей Алексеевич", "Белоусова Анастасия Константиновна", "Сидоренко Артем Валерьевич"];
+      const name = atoList[0];
+      const emp = EMPLOYEES_LIST.find(e => e.name === name);
+      
+      callSheetData.crew.push({
+        type: 'ato',
+        time: '08:00',
+        dept: MANAGER_TITLES[name] || 'Тех. отдел',
+        name: name,
+        phone: emp && emp.phone ? formatPhoneNumberStr(emp.phone) : '',
+        task: 'Координация площадки'
+      });
+      renderCsCrew();
+    }
+
+    function addCsCrewMemberFromEmployees() {
+      const emp = EMPLOYEES_LIST[0];
+      callSheetData.crew.push({
+        type: 'emp',
+        time: '09:00',
+        dept: emp.role,
+        name: emp.name,
+        phone: emp.phone ? formatPhoneNumberStr(emp.phone) : '',
+        task: ''
+      });
+      renderCsCrew();
+    }
+
+    function addCsCrewRow() {
+      callSheetData.crew.push({ 
+        type: 'manual', 
+        time: '09:00', 
+        dept: 'Департамент', 
+        name: '', 
+        phone: '', 
+        task: '' 
+      });
+      renderCsCrew();
+    }
+
+    function removeCsCrew(idx) {
+      callSheetData.crew.splice(idx, 1);
+      renderCsCrew();
+    }
+
+    function renderCsEquipment() {
+      const container = document.getElementById('cs-equipment-container');
+      container.innerHTML = '';
+      callSheetData.equipment.forEach((eq, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display:flex; gap:10px; align-items:center; flex-wrap:wrap;';
+        div.innerHTML = `
+          <input type="text" value="${eq.name}" style="flex: 2; min-width: 200px;" placeholder="Наименование / Модель" onchange="callSheetData.equipment[${idx}].name = this.value">
+          <input type="text" value="${eq.inv}" style="width: 140px; font-family: Arial, sans-serif;" placeholder="Инв. №" onchange="callSheetData.equipment[${idx}].inv = this.value">
+          <input type="text" value="${eq.sn}" style="width: 140px; font-family: Arial, sans-serif;" placeholder="Серийный №" onchange="callSheetData.equipment[${idx}].sn = this.value">
+          <input type="text" value="${eq.count}" style="width: 70px; text-align: center; font-family: Arial, sans-serif;" placeholder="Кол-во" onchange="callSheetData.equipment[${idx}].count = this.value">
+          <button class="delete-btn" onclick="removeCsEquipment(${idx})">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addCsEquipmentRow() {
+      callSheetData.equipment.push({ name: '', inv: '', sn: '', count: '1' });
+      renderCsEquipment();
+    }
+
+    function removeCsEquipment(idx) {
+      callSheetData.equipment.splice(idx, 1);
+      renderCsEquipment();
+    }
+
+    function renderCsTransport() {
+      const container = document.getElementById('cs-transport-container');
+      container.innerHTML = '';
+      callSheetData.transport.forEach((tr, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display:flex; gap:10px; align-items:center; flex-wrap:wrap;';
+        const formattedPhone = formatPhoneNumberStr(tr.phone);
+
+        div.innerHTML = `
+          <input type="text" value="${tr.model}" style="width: 140px;" placeholder="Марка / Модель" onchange="callSheetData.transport[${idx}].model = this.value">
+          <input type="text" value="${tr.plate}" style="width: 120px; font-family: Arial, sans-serif;" placeholder="Гос. номер" onchange="callSheetData.transport[${idx}].plate = this.value">
+          <input type="text" value="${tr.driver}" style="width: 180px;" placeholder="ФИО Водителя" onchange="callSheetData.transport[${idx}].driver = this.value">
+          <input type="text" value="${formattedPhone}" style="width: 160px; font-family: Arial, sans-serif;" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this); callSheetData.transport[${idx}].phone = this.value">
+          <input type="text" value="${tr.task}" style="flex: 1; min-width: 160px;" placeholder="Цель / Задача" onchange="callSheetData.transport[${idx}].task = this.value">
+          <button class="delete-btn" onclick="removeCsTransport(${idx})">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function addCsTransportRow() {
+      callSheetData.transport.push({ model: '', plate: '', driver: '', phone: '', task: '' });
+      renderCsTransport();
+    }
+
+    function removeCsTransport(idx) {
+      callSheetData.transport.splice(idx, 1);
+      renderCsTransport();
+    }
+
+    function saveCurrentCallSheetManually() {
+      const projName = document.getElementById('cs-project-name').value;
+      const rawDate = document.getElementById('cs-date').value;
+      let formattedDate = rawDate;
+      if (rawDate) {
+        const p = rawDate.split('-');
+        formattedDate = `${p[2]}.${p[1]}.${p[0]}`;
+      }
+      const shiftNum = document.getElementById('cs-shift-num').value;
+      const cityVal = document.getElementById('cs-city').value;
+      const locationVal = document.getElementById('cs-location').value;
+      const addressVal = document.getElementById('cs-address').value;
+      const notesVal = document.getElementById('cs-notes').value;
+
+      const compMgrNameVal = document.getElementById('cs-comp-mgr-name').value.trim();
+      const compMgrPhoneVal = document.getElementById('cs-comp-mgr-phone').value.trim();
+      const venueTDName = document.getElementById('cs-venue-tech-dir-name').value.trim();
+      const venueTDPhone = document.getElementById('cs-venue-tech-dir-phone').value.trim();
+      const venueMgrName = document.getElementById('cs-venue-mgr-name').value.trim();
+      const venueMgrPhone = document.getElementById('cs-venue-mgr-phone').value.trim();
+
+      saveCallSheetToHistory({
+        id: 'CS-' + Date.now(),
+        projectName: projName,
+        date: formattedDate,
+        shiftNum: shiftNum,
+        city: cityVal,
+        location: locationVal,
+        address: addressVal,
+        compMgrName: compMgrNameVal,
+        compMgrPhone: compMgrPhoneVal,
+        techDirRoleTitle: callSheetData.techDirRoleTitle,
+        techDirStr: callSheetData.techDirStr,
+        stageMgrRoleTitle: callSheetData.stageMgrRoleTitle,
+        stageMgrStr: callSheetData.stageMgrStr,
+        venueTechDirName: venueTDName,
+        venueTechDirPhone: venueTDPhone,
+        venueMgrName: venueMgrName,
+        venueMgrPhone: venueMgrPhone,
+        extraInfo: callSheetData.extraInfo,
+        notes: notesVal,
+        milestones: callSheetData.milestones,
+        crew: callSheetData.crew,
+        equipment: callSheetData.equipment,
+        transport: callSheetData.transport,
+        weatherInfo: onlineWeatherData.sunrise ? `Погода: ${onlineWeatherData.temp} | Восход: ${onlineWeatherData.sunrise} | Закат: ${onlineWeatherData.sunset}` : ''
+      });
+
+      alert('Вызывной лист успешно сохранен в архив!');
+      openCallSheetHistoryModal();
+    }
+
+    function printCallSheet() {
+      const projName = document.getElementById('cs-project-name').value;
+      const rawDate = document.getElementById('cs-date').value;
+      let formattedDate = rawDate;
+      if (rawDate) {
+        const p = rawDate.split('-');
+        formattedDate = `${p[2]}.${p[1]}.${p[0]}`;
+      }
+      const shiftNum = document.getElementById('cs-shift-num').value;
+      const cityVal = document.getElementById('cs-city').value;
+      const locationVal = document.getElementById('cs-location').value;
+      const addressVal = document.getElementById('cs-address').value;
+      const notesVal = document.getElementById('cs-notes').value;
+
+      const compMgrNameVal = document.getElementById('cs-comp-mgr-name').value.trim();
+      const compMgrPhoneVal = document.getElementById('cs-comp-mgr-phone').value.trim();
+
+      const venueTDName = document.getElementById('cs-venue-tech-dir-name').value.trim();
+      const venueTDPhone = document.getElementById('cs-venue-tech-dir-phone').value.trim();
+      const venueMgrName = document.getElementById('cs-venue-mgr-name').value.trim();
+      const venueMgrPhone = document.getElementById('cs-venue-mgr-phone').value.trim();
+
+      callSheetData.city = cityVal;
+      callSheetData.compMgrName = compMgrNameVal;
+      callSheetData.compMgrPhone = compMgrPhoneVal;
+      callSheetData.venueTechDirName = venueTDName;
+      callSheetData.venueTechDirPhone = venueTDPhone;
+      callSheetData.venueMgrName = venueMgrName;
+      callSheetData.venueMgrPhone = venueMgrPhone;
+
+      document.getElementById('csp-project-name').innerText = projName;
+      document.getElementById('csp-date').innerText = formattedDate;
+      document.getElementById('csp-shift-num').innerText = shiftNum;
+
+      const weatherLineEl = document.getElementById('csp-weather-line');
+      let weatherStr = '';
+      if (onlineWeatherData.sunrise) {
+        weatherStr = `Погода: ${onlineWeatherData.temp} | Восход: ${onlineWeatherData.sunrise} | Закат: ${onlineWeatherData.sunset}`;
+        weatherLineEl.innerText = weatherStr;
+        weatherLineEl.style.display = 'block';
+      } else {
+        weatherLineEl.innerText = '';
+        weatherLineEl.style.display = 'none';
+      }
+      
+      document.getElementById('csp-print-city').innerText = cityVal;
+      document.getElementById('csp-print-location').innerText = locationVal;
+      document.getElementById('csp-print-address').innerText = addressVal;
+
+      document.getElementById('csp-tech-dir-label-print').innerText = `${callSheetData.techDirRoleTitle || 'Тех. Директор'}:`;
+      document.getElementById('csp-tech-dir').innerText = callSheetData.techDirStr;
+      
+      document.getElementById('csp-stage-mgr-label-print').innerText = `${callSheetData.stageMgrRoleTitle || 'Продюсер / Выпускающий'}:`;
+      document.getElementById('csp-stage-mgr').innerText = callSheetData.stageMgrStr;
+      
+      const phoneFormatted = formatPhoneNumberStr(compMgrPhoneVal);
+      const phoneStr = phoneFormatted ? ` (${phoneFormatted})` : '';
+      document.getElementById('csp-comp-mgr-full').innerText = `${compMgrNameVal || '—'}${phoneStr}`;
+      
+      const venueTDPhoneF = formatPhoneNumberStr(venueTDPhone);
+      document.getElementById('csp-venue-td-print').innerText = venueTDName ? `${venueTDName}${venueTDPhoneF ? ' / ' + venueTDPhoneF : ''}` : '—';
+
+      const venueMgrPhoneF = formatPhoneNumberStr(venueMgrPhone);
+      document.getElementById('csp-venue-mgr-print').innerText = venueMgrName ? `${venueMgrName}${venueMgrPhoneF ? ' / ' + venueMgrPhoneF : ''}` : '—';
+
+      const extraTbody = document.getElementById('csp-extra-info-tbody');
+      const extraTable = document.getElementById('csp-extra-info-table');
+      extraTbody.innerHTML = '';
+      if (callSheetData.extraInfo && callSheetData.extraInfo.length > 0) {
+        extraTable.style.display = 'table';
+        callSheetData.extraInfo.forEach(item => {
+          const tr = document.createElement('tr');
+          const pFormatted = formatPhoneNumberStr(item.phone);
+          tr.innerHTML = `
+            <td style="width: 18%; font-weight: bold; background: #f2f2f2; text-align: left;">${item.position || 'Должность'}:</td>
+            <td colspan="3" style="text-align: left;"><b>${item.name || '—'}</b>${pFormatted ? ' (' + pFormatted + ')' : ''}</td>
+          `;
+          extraTbody.appendChild(tr);
+        });
+      } else {
+        extraTable.style.display = 'none';
+      }
+
+      document.getElementById('csp-notes').innerText = notesVal;
+
+      const msTbody = document.getElementById('csp-milestones-tbody');
+      msTbody.innerHTML = '';
+      callSheetData.milestones.forEach(m => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td style="font-weight: bold; font-family: Arial, sans-serif;">${m.time}</td><td style="text-align: left;">${m.event}</td>`;
+        msTbody.appendChild(tr);
+      });
+
+      const crewTbody = document.getElementById('csp-crew-tbody');
+      crewTbody.innerHTML = '';
+      callSheetData.crew.forEach(c => {
+        const tr = document.createElement('tr');
+        const printPhone = formatPhoneNumberStr(c.phone);
+        tr.innerHTML = `
+          <td style="font-weight: bold; color: #b91c1c; font-family: Arial, sans-serif;">${c.time}</td>
+          <td style="text-align: left; font-weight: bold;">${c.dept}</td>
+          <td style="text-align: left;">${c.name}</td>
+          <td style="font-family: Arial, sans-serif;">${printPhone}</td>
+          <td style="text-align: left;">${c.task}</td>
+        `;
+        crewTbody.appendChild(tr);
+      });
+
+      const eqTbody = document.getElementById('csp-equipment-tbody');
+      eqTbody.innerHTML = '';
+      callSheetData.equipment.forEach((eq, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-family: Arial, sans-serif;">${idx + 1}</td>
+          <td style="text-align: left; font-weight: bold;">${eq.name}</td>
+          <td style="font-family: Arial, sans-serif;">${eq.inv || '—'}</td>
+          <td style="font-family: Arial, sans-serif;">${eq.sn || '—'}</td>
+          <td style="font-family: Arial, sans-serif;">${eq.count || '1'}</td>
+        `;
+        eqTbody.appendChild(tr);
+      });
+
+      const trTbody = document.getElementById('csp-transport-tbody');
+      trTbody.innerHTML = '';
+      callSheetData.transport.forEach(trItem => {
+        const tr = document.createElement('tr');
+        const printPhone = formatPhoneNumberStr(trItem.phone);
+        tr.innerHTML = `
+          <td style="font-weight: bold;">${trItem.model}</td>
+          <td style="font-weight: bold; font-family: Arial, sans-serif;">${trItem.plate}</td>
+          <td style="text-align: left;">${trItem.driver}</td>
+          <td style="font-family: Arial, sans-serif;">${printPhone}</td>
+          <td style="text-align: left;">${trItem.task}</td>
+        `;
+        trTbody.appendChild(tr);
+      });
+
+      saveCallSheetToHistory({
+        id: 'CS-' + Date.now(),
+        projectName: projName,
+        date: formattedDate,
+        shiftNum: shiftNum,
+        city: cityVal,
+        location: locationVal,
+        address: addressVal,
+        compMgrName: compMgrNameVal,
+        compMgrPhone: compMgrPhoneVal,
+        techDirRoleTitle: callSheetData.techDirRoleTitle,
+        techDirStr: callSheetData.techDirStr,
+        stageMgrRoleTitle: callSheetData.stageMgrRoleTitle,
+        stageMgrStr: callSheetData.stageMgrStr,
+        venueTechDirName: venueTDName,
+        venueTechDirPhone: venueTDPhone,
+        venueMgrName: venueMgrName,
+        venueMgrPhone: venueMgrPhone,
+        extraInfo: callSheetData.extraInfo,
+        notes: notesVal,
+        milestones: callSheetData.milestones,
+        crew: callSheetData.crew,
+        equipment: callSheetData.equipment,
+        transport: callSheetData.transport,
+        weatherInfo: weatherStr
+      });
+
+      document.getElementById('act-print-area').classList.remove('active-print');
+      document.getElementById('callsheet-print-area').classList.add('active-print');
+
+      closeCallSheetHistoryModal();
+      window.print();
+    }
+
+    function downloadCallSheetWord() {
+      const projName = document.getElementById('cs-project-name').value;
+      const rawDate = document.getElementById('cs-date').value;
+      let formattedDate = rawDate;
+      if (rawDate) {
+        const p = rawDate.split('-');
+        formattedDate = `${p[2]}.${p[1]}.${p[0]}`;
+      }
+      const shiftNum = document.getElementById('cs-shift-num').value;
+      const cityVal = document.getElementById('cs-city').value;
+      const locationVal = document.getElementById('cs-location').value;
+      const addressVal = document.getElementById('cs-address').value;
+      const notesVal = document.getElementById('cs-notes').value;
+
+      const compMgrNameVal = document.getElementById('cs-comp-mgr-name').value.trim();
+      const compMgrPhoneVal = document.getElementById('cs-comp-mgr-phone').value.trim();
+      const phoneFormatted = formatPhoneNumberStr(compMgrPhoneVal);
+      const compMgrFull = `${compMgrNameVal || '—'}${phoneFormatted ? ' (' + phoneFormatted + ')' : ''}`;
+
+      const venueTDName = document.getElementById('cs-venue-tech-dir-name').value.trim();
+      const venueTDPhone = formatPhoneNumberStr(document.getElementById('cs-venue-tech-dir-phone').value.trim());
+      const venueTDStr = venueTDName ? `${venueTDName}${venueTDPhone ? ' / ' + venueTDPhone : ''}` : '—';
+
+      const venueMgrName = document.getElementById('cs-venue-mgr-name').value.trim();
+      const venueMgrPhone = formatPhoneNumberStr(document.getElementById('cs-venue-mgr-phone').value.trim());
+      const venueMgrStr = venueMgrName ? `${venueMgrName}${venueMgrPhone ? ' / ' + venueMgrPhone : ''}` : '—';
+
+      const techDirStr = callSheetData.techDirStr || '—';
+      const techDirTitle = callSheetData.techDirRoleTitle || 'Тех. Директор';
+      const stageMgrStr = callSheetData.stageMgrStr || '—';
+      const stageMgrTitle = callSheetData.stageMgrRoleTitle || 'Продюсер / Выпускающий';
+
+      let weatherWordHtml = '';
+      if (onlineWeatherData.sunrise) {
+        weatherWordHtml = `<div style="text-align: center; font-size: 8.5pt; margin-bottom: 6px; color: #333;">Погода: ${onlineWeatherData.temp} | Восход: ${onlineWeatherData.sunrise} | Закат: ${onlineWeatherData.sunset}</div>`;
+      }
+
+      let extraRowsHtml = '';
+      if (callSheetData.extraInfo && callSheetData.extraInfo.length > 0) {
+        callSheetData.extraInfo.forEach(item => {
+          const pF = formatPhoneNumberStr(item.phone);
+          extraRowsHtml += `
+            <tr>
+              <td style="width: 18%; font-weight: bold; background: #f2f2f2;">${item.position || 'Должность'}:</td>
+              <td colspan="3"><b>${item.name || '—'}</b>${pF ? ' (' + pF + ')' : ''}</td>
+            </tr>
+          `;
+        });
+      }
+
+      let htmlContent = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+          <meta charset="utf-8">
+          <title>${projName}</title>
+          <style>
+            @page Section1 {
+              size: 841.7pt 595.3pt;
+              mso-page-orientation: landscape;
+              margin: 36pt 36pt 36pt 36pt;
+            }
+            div.Section1 { page: Section1; }
+            body { font-family: 'Arial', sans-serif; font-size: 8.5pt; color: #000; line-height: 1.15; }
+            h1 { text-align: center; font-size: 12pt; text-transform: uppercase; margin: 0 0 3px 0; }
+            .sub-header { text-align: center; font-size: 9pt; margin-bottom: 8px; color: #444; }
+            h3 { font-size: 9pt; text-transform: uppercase; margin-top: 8px; margin-bottom: 3px; background: #f2f2f2; padding: 3px 5px; }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 5px; mso-yfti-tbllook: 1184; }
+            th, td { border: 1px solid #000; padding: 3px 5px; font-size: 8pt; text-align: left; vertical-align: middle; }
+            th { background-color: #f2f2f2; text-align: center; }
+            .notes-box { border: 1px solid #000; padding: 5px; font-size: 8pt; line-height: 1.2; background: #fafafa; }
+          </style>
+        </head>
+        <body>
+          <div class="Section1">
+            <h1>CALL SHEET / ВЫЗЫВНОЙ ЛИСТ</h1>
+            <div class="sub-header"><b>${projName}</b> | Дата: ${formattedDate} | ${shiftNum}</div>
+            ${weatherWordHtml}
+
+            <table>
+              <tr>
+                <td style="width: 18%; font-weight: bold; background: #f2f2f2;">Город:</td>
+                <td style="width: 32%;">${cityVal}</td>
+                <td style="width: 18%; font-weight: bold; background: #f2f2f2;">${techDirTitle}:</td>
+                <td style="width: 32%;">${techDirStr}</td>
+              </tr>
+              <tr>
+                <td style="font-weight: bold; background: #f2f2f2;">Локация / Павильон:</td>
+                <td>${locationVal}</td>
+                <td style="font-weight: bold; background: #f2f2f2;">${stageMgrTitle}:</td>
+                <td>${stageMgrStr}</td>
+              </tr>
+              <tr>
+                <td style="font-weight: bold; background: #f2f2f2;">Точный адрес:</td>
+                <td>${addressVal}</td>
+                <td style="font-weight: bold; background: #f2f2f2;">От Площадки (ТД):</td>
+                <td>${venueTDStr}</td>
+              </tr>
+              <tr>
+                <td style="font-weight: bold; background: #f2f2f2;">Менеджер компетенции:</td>
+                <td>${compMgrFull}</td>
+                <td style="font-weight: bold; background: #f2f2f2;">От Площадки (Менеджер):</td>
+                <td>${venueMgrStr}</td>
+              </tr>
+              ${extraRowsHtml}
+            </table>
+
+            <h3>1. Общий тайминг смены</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 15%;">Время</th>
+                  <th>Событие / Этап работ</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${callSheetData.milestones.map(m => `<tr><td style="text-align: center; font-weight: bold;">${m.time}</td><td>${m.event}</td></tr>`).join('')}
+              </tbody>
+            </table>
+
+            <h3>2. Вызов персонала и департаментов</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 12%;">Время</th>
+                  <th style="width: 22%;">Департамент / Роль</th>
+                  <th style="width: 26%;">ФИО</th>
+                  <th style="width: 20%;">Телефон</th>
+                  <th>Задача</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${callSheetData.crew.map(c => `<tr><td style="text-align: center; font-weight: bold; color: #b91c1c;">${c.time}</td><td><b>${c.dept}</b></td><td>${c.name}</td><td>${formatPhoneNumberStr(c.phone)}</td><td>${c.task}</td></tr>`).join('')}
+              </tbody>
+            </table>
+
+            <h3>3. Важные примечания и регламент</h3>
+            <div class="notes-box">${notesVal.replace(/\n/g, '<br>')}</div>
+
+            <h3>4. Перечень ввозимого и вывозимого оборудования</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 5%;">№</th>
+                  <th style="width: 45%;">Наименование / Модель</th>
+                  <th style="width: 20%;">Инв. №</th>
+                  <th style="width: 20%;">Серийный №</th>
+                  <th style="width: 10%;">Кол-во</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${callSheetData.equipment.map((eq, idx) => `<tr><td style="text-align: center;">${idx + 1}</td><td><b>${eq.name}</b></td><td style="text-align: center;">${eq.inv || '—'}</td><td style="text-align: center;">${eq.sn || '—'}</td><td style="text-align: center;">${eq.count || '1'}</td></tr>`).join('')}
+              </tbody>
+            </table>
+
+            <h3>5. Автотранспорт</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 25%;">Марка / Модель</th>
+                  <th style="width: 18%;">Гос. номер</th>
+                  <th style="width: 25%;">Водитель</th>
+                  <th style="width: 32%;">Телефон / Задача</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${callSheetData.transport.map(t => `<tr><td><b>${t.model}</b></td><td style="text-align: center; font-weight: bold;">${t.plate}</td><td>${t.driver}</td><td>${formatPhoneNumberStr(t.phone)} / ${t.task}</td></tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `CallSheet_${projName.replace(/[^а-яА-Яa-zA-Z0-9]/g, '_')}_${formattedDate.replace(/\./g, '-')}.doc`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function exportCallSheetToCSV() {
+      const proj = document.getElementById('cs-project-name').value;
+      const headers = ["Тип", "Параметр 1", "Параметр 2", "Параметр 3", "Телефон / Серийник", "Задача / Кол-во"];
+      const rows = [
+        ["ПРОЕКТ", proj, "", "", "", ""],
+        ["ДАТА", document.getElementById('cs-date').value, "", "", "", ""],
+        ["ГОРОД", document.getElementById('cs-city').value, "", "", "", ""],
+        ["ЛОКАЦИЯ", document.getElementById('cs-location').value, "", "", "", ""],
+        ["АДРЕС", document.getElementById('cs-address').value, "", "", "", ""],
+        ["МЕНЕДЖЕР КОМПЕТЕНЦИИ", `${callSheetData.compMgrName} (${callSheetData.compMgrPhone})`, "", "", "", ""],
+        ["ОТВЕТСТВЕННЫЕ АРТМАСТЕРС", `${callSheetData.techDirRoleTitle}: ${callSheetData.techDirStr}`, `${callSheetData.stageMgrRoleTitle}: ${callSheetData.stageMgrStr}`, "", "", ""],
+        ["ОТВЕТСТВЕННЫЕ ПЛОЩАДКА", `ТД: ${callSheetData.venueTechDirName} (${callSheetData.venueTechDirPhone})`, `Менеджер: ${callSheetData.venueMgrName} (${callSheetData.venueMgrPhone})`, "", "", ""]
+      ];
+
+      if (onlineWeatherData.sunrise) {
+        rows.push(["ПОГОДА И СОЛНЦЕ", `Темп: ${onlineWeatherData.temp}`, `Восход: ${onlineWeatherData.sunrise}`, `Закат: ${onlineWeatherData.sunset}`, "", ""]);
+      }
+
+      if (callSheetData.extraInfo && callSheetData.extraInfo.length > 0) {
+        callSheetData.extraInfo.forEach(item => {
+          rows.push(["ДОП. ОТВЕТСТВЕННЫЙ", item.position, item.name, formatPhoneNumberStr(item.phone), "", ""]);
+        });
+      }
+
+      rows.push([]);
+      rows.push(headers);
+
+      callSheetData.milestones.forEach(m => {
+        rows.push(["Тайминг", m.time, "Этап", m.event, "", ""]);
+      });
+
+      callSheetData.crew.forEach(c => {
+        rows.push(["Персонал", c.time, c.dept, c.name, formatPhoneNumberStr(c.phone), c.task]);
+      });
+
+      callSheetData.equipment.forEach(e => {
+        rows.push(["Оборудование", e.name, e.inv, e.sn, "", e.count]);
+      });
+
+      callSheetData.transport.forEach(t => {
+        rows.push(["Транспорт", t.model, t.plate, t.driver, formatPhoneNumberStr(t.phone), t.task]);
+      });
+
+      downloadCSV(`CallSheet_${proj.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.csv`, rows);
+    }
 
   </script>
 </body>
