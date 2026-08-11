@@ -1955,5 +1955,27 @@
 
   <script src="equipment.js"></script>
   <script src="app.js" defer></script>
+  
+  <!-- Исправление для закрытия модального окна архива вызывных листов -->
+  <script>
+    function openCallSheetHistoryModal() {
+      const modal = document.getElementById('csHistoryModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        if (typeof renderCallSheetHistoryTable === 'function') {
+          renderCallSheetHistoryTable();
+        }
+      }
+    }
+
+    function closeCallSheetHistoryModal() {
+      const modal = document.getElementById('csHistoryModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+  </script>
 </body>
 </html>
+
+```
