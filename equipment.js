@@ -2282,14 +2282,3 @@ window.EQUIPMENT_DB = {
     "status": "Свободен"
   }
 };
-
-/**
- * Функция поиска оборудования по инвентарному номеру
- * @param {string} invInput - Инвентарный номер для поиска
- * @returns {Object|null} - Объект оборудования или null
- */
-function findEquipment(invInput) {
-  if (!invInput) return null;
-  const key = invInput.trim().toUpperCase();
-  return window.EQUIPMENT_DB[key] || null;
-}
