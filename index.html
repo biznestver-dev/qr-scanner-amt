@@ -188,36 +188,28 @@
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    .neon-card.card-mtb {
-      border-color: rgba(0, 240, 255, 0.4);
-    }
+    .neon-card.card-mtb { border-color: rgba(0, 240, 255, 0.4); }
     .neon-card.card-mtb:hover {
       border-color: var(--am-cyan);
       box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7), 0 0 35px rgba(0, 240, 255, 0.35), inset 0 0 15px rgba(0, 240, 255, 0.15);
       transform: translateY(-6px);
     }
 
-    .neon-card.card-champ {
-      border-color: rgba(255, 170, 0, 0.4);
-    }
+    .neon-card.card-champ { border-color: rgba(255, 170, 0, 0.4); }
     .neon-card.card-champ:hover {
       border-color: var(--am-orange);
       box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7), 0 0 35px rgba(255, 170, 0, 0.35), inset 0 0 15px rgba(255, 170, 0, 0.15);
       transform: translateY(-6px);
     }
 
-    .neon-card.card-callsheet {
-      border-color: rgba(112, 0, 255, 0.5);
-    }
+    .neon-card.card-callsheet { border-color: rgba(112, 0, 255, 0.5); }
     .neon-card.card-callsheet:hover {
       border-color: #7000ff;
       box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7), 0 0 35px rgba(112, 0, 255, 0.4), inset 0 0 15px rgba(112, 0, 255, 0.2);
       transform: translateY(-6px);
     }
 
-    .neon-card.card-contacts {
-      border-color: rgba(255, 0, 67, 0.4);
-    }
+    .neon-card.card-contacts { border-color: rgba(255, 0, 67, 0.4); }
     .neon-card.card-contacts:hover {
       border-color: var(--am-magenta);
       box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7), 0 0 35px rgba(255, 0, 67, 0.35), inset 0 0 15px rgba(255, 0, 67, 0.15);
@@ -241,9 +233,7 @@
     .card-callsheet .neon-card-icon { box-shadow: 0 0 20px rgba(112, 0, 255, 0.2); }
     .card-contacts .neon-card-icon { box-shadow: 0 0 20px rgba(255, 0, 67, 0.15); }
 
-    .neon-card:hover .neon-card-icon {
-      transform: scale(1.1);
-    }
+    .neon-card:hover .neon-card-icon { transform: scale(1.1); }
 
     .neon-card-title {
       font-size: 16px;
@@ -288,12 +278,8 @@
       color: var(--am-cyan);
     }
 
-    .app-section {
-      display: none;
-    }
-    .app-section.active-section {
-      display: block;
-    }
+    .app-section { display: none; }
+    .app-section.active-section { display: block; }
 
     #reader {
       width: 100%;
@@ -313,19 +299,14 @@
     }
 
     @media (max-width: 680px) {
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
+      .form-grid { grid-template-columns: 1fr; }
     }
 
     .form-group {
       display: flex;
       flex-direction: column;
     }
-
-    .form-group.full-width {
-      grid-column: 1 / -1;
-    }
+    .form-group.full-width { grid-column: 1 / -1; }
 
     label {
       font-size: 11px;
@@ -348,10 +329,7 @@
       transition: all 0.25s ease;
     }
 
-    .inv-input-group {
-      display: flex;
-      gap: 10px;
-    }
+    .inv-input-group { display: flex; gap: 10px; }
 
     .db-quick-btn, .add-quick-btn {
       height: 52px;
@@ -375,12 +353,7 @@
       border: 1px solid rgba(0, 240, 255, 0.3);
       color: var(--am-cyan);
     }
-
-    .db-quick-btn:hover {
-      background: var(--am-purple);
-      color: #fff;
-      border-color: var(--am-cyan);
-    }
+    .db-quick-btn:hover { background: var(--am-purple); color: #fff; border-color: var(--am-cyan); }
 
     .add-quick-btn {
       background: var(--accent-gradient);
@@ -388,30 +361,12 @@
       color: #fff;
       box-shadow: 0 4px 15px var(--accent-glow);
     }
+    .add-quick-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px var(--accent-glow); }
 
-    .add-quick-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px var(--accent-glow);
-    }
+    .phone-input-group { display: flex; gap: 10px; }
+    .phone-country-select { width: 115px !important; flex-shrink: 0; font-size: 13px; padding: 15px 10px; cursor: pointer; }
 
-    .phone-input-group {
-      display: flex;
-      gap: 10px;
-    }
-
-    .phone-country-select {
-      width: 115px !important;
-      flex-shrink: 0;
-      font-size: 13px;
-      padding: 15px 10px;
-      cursor: pointer;
-    }
-
-    input[type="date"]::-webkit-calendar-picker-indicator {
-      filter: invert(1);
-      cursor: pointer;
-    }
-
+    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
     input[type="text"]:focus, input[type="date"]:focus, select:focus, textarea:focus {
       outline: none;
       border-color: var(--am-magenta);
@@ -426,10 +381,7 @@
       color: var(--am-cyan);
     }
 
-    select option {
-      background-color: #090c15;
-      color: var(--text-primary);
-    }
+    select option { background-color: #090c15; color: var(--text-primary); }
 
     .selected-items-list {
       grid-column: 1 / -1;
@@ -458,7 +410,6 @@
       border-radius: 12px;
       margin-bottom: 10px;
     }
-
     .item-row:last-child { margin-bottom: 0; }
 
     .control-panels-wrapper {
@@ -490,7 +441,6 @@
       overflow: hidden;
       white-space: nowrap;
     }
-
     .btn:hover {
       background: var(--accent-gradient);
       color: white;
@@ -498,22 +448,8 @@
       transform: translateY(-2px);
       box-shadow: 0 10px 30px var(--accent-glow);
     }
-
-    .btn:active {
-      transform: translateY(0);
-      box-shadow: 0 4px 15px var(--accent-glow);
-    }
-
-    .btn-act-row {
-      display: flex;
-      gap: 12px;
-    }
-
-    @media (max-width: 480px) {
-      .btn-act-row {
-        flex-direction: column;
-      }
-    }
+    .btn-act-row { display: flex; gap: 12px; }
+    @media (max-width: 480px) { .btn-act-row { flex-direction: column; } }
 
     .modal {
       display: none;
@@ -546,7 +482,6 @@
       align-items: center;
       margin-bottom: 24px;
     }
-
     .modal-header h3 {
       font-size: 20px;
       font-weight: 800;
@@ -554,12 +489,7 @@
       text-transform: uppercase;
       letter-spacing: -0.01em;
     }
-
-    .modal-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .modal-actions { display: flex; align-items: center; gap: 12px; }
 
     .close-btn {
       font-size: 22px;
@@ -575,13 +505,9 @@
       justify-content: center;
       transition: all 0.2s;
     }
+    .close-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
 
-    .close-btn:hover {
-      background: rgba(255,255,255,0.15);
-      color: #fff;
-    }
-
-    .contacts-grid {
+    .contacts-grid, .venues-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
@@ -590,11 +516,10 @@
       padding-right: 4px;
     }
     @media (max-width: 768px) {
-      .contacts-grid {
-        grid-template-columns: 1fr;
-      }
+      .contacts-grid, .venues-grid { grid-template-columns: 1fr; }
     }
-    .contact-card {
+
+    .contact-card, .venue-card {
       background: rgba(9, 12, 21, 0.6);
       border: 1px solid var(--glass-border);
       border-radius: 16px;
@@ -605,20 +530,13 @@
       transition: all 0.2s;
       position: relative;
     }
-    .contact-card:hover {
+    .contact-card:hover, .venue-card:hover {
       border-color: rgba(0, 240, 255, 0.3);
       background: rgba(25, 34, 60, 0.5);
     }
-    .contact-name {
-      font-size: 15px;
-      font-weight: 800;
-      color: #fff;
-    }
-    .contact-role {
-      font-size: 12px;
-      color: var(--am-cyan);
-      font-weight: 600;
-    }
+
+    .contact-name { font-size: 15px; font-weight: 800; color: #fff; }
+    .contact-role { font-size: 12px; color: var(--am-cyan); font-weight: 600; }
     .contact-info {
       font-size: 13px;
       color: var(--text-secondary);
@@ -631,16 +549,9 @@
       text-decoration: none;
       font-family: 'JetBrains Mono', monospace;
     }
-    .contact-info a:hover {
-      color: var(--am-cyan);
-      text-decoration: underline;
-    }
-    .contact-badges {
-      display: flex;
-      gap: 6px;
-      margin-top: 4px;
-      flex-wrap: wrap;
-    }
+    .contact-info a:hover { color: var(--am-cyan); text-decoration: underline; }
+
+    .contact-badges { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
     .contact-badge {
       font-size: 10px;
       font-weight: 700;
@@ -648,10 +559,8 @@
       border-radius: 6px;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      text-decoration: none;
       display: inline-flex;
       align-items: center;
-      cursor: pointer;
     }
     .badge-tg { background: rgba(0, 240, 255, 0.15); color: var(--am-cyan); border: 1px solid rgba(0, 240, 255, 0.3); }
     .badge-max { background: rgba(255, 0, 67, 0.15); color: var(--am-magenta); border: 1px solid rgba(255, 0, 67, 0.3); }
@@ -677,22 +586,10 @@
       font-size: 12px;
       transition: all 0.2s;
     }
-    .action-icon-btn:hover {
-      background: rgba(255,255,255,0.15);
-      color: #fff;
-    }
-    .action-icon-btn.delete:hover {
-      background: var(--status-busy-bg);
-      color: var(--status-busy);
-      border-color: rgba(255, 42, 109, 0.4);
-    }
+    .action-icon-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+    .action-icon-btn.delete:hover { background: var(--status-busy-bg); color: var(--status-busy); border-color: rgba(255, 42, 109, 0.4); }
 
-    .filter-tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
+    .filter-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
     .filter-tab {
       padding: 10px 20px;
       font-size: 12px;
@@ -706,7 +603,6 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-
     .filter-tab.active {
       background: var(--accent-gradient);
       color: #fff;
@@ -714,29 +610,11 @@
       box-shadow: 0 0 20px var(--accent-glow);
     }
 
-    .search-bar {
-      margin-bottom: 20px;
-    }
+    .search-bar { margin-bottom: 20px; }
+    .table-wrapper { overflow-y: auto; flex: 1; border: 1px solid var(--glass-border); border-radius: 16px; }
 
-    .table-wrapper {
-      overflow-y: auto;
-      flex: 1;
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
-    }
-
-    table.db-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-      text-align: left;
-    }
-
-    table.db-table th, table.db-table td {
-      padding: 16px 18px;
-      border-bottom: 1px solid var(--glass-border);
-    }
-
+    table.db-table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: left; }
+    table.db-table th, table.db-table td { padding: 16px 18px; border-bottom: 1px solid var(--glass-border); }
     table.db-table th {
       background: #0f1526;
       color: var(--text-secondary);
@@ -757,18 +635,8 @@
       font-size: 12px;
       font-weight: 700;
     }
-
-    .badge-status.free {
-      background: var(--status-free-bg);
-      color: var(--status-free);
-      border: 1px solid rgba(16, 185, 129, 0.4);
-    }
-
-    .badge-status.busy {
-      background: var(--status-busy-bg);
-      color: var(--status-busy);
-      border: 1px solid rgba(255, 42, 109, 0.4);
-    }
+    .badge-status.free { background: var(--status-free-bg); color: var(--status-free); border: 1px solid rgba(16, 185, 129, 0.4); }
+    .badge-status.busy { background: var(--status-busy-bg); color: var(--status-busy); border: 1px solid rgba(255, 42, 109, 0.4); }
 
     .select-btn, .return-btn, .delete-btn, .export-btn, .add-row-btn {
       padding: 8px 14px;
@@ -782,7 +650,6 @@
       align-items: center;
       gap: 6px;
     }
-
     .select-btn { background: var(--am-purple); color: white; }
     .return-btn { background: var(--status-free); color: white; }
     .delete-btn { background: var(--status-busy); color: white; }
@@ -790,14 +657,6 @@
     .export-btn:hover { background: #0077b6; }
     .add-row-btn { background: rgba(0, 240, 255, 0.2); color: var(--am-cyan); border: 1px solid rgba(0, 240, 255, 0.4); }
     .add-row-btn:hover { background: rgba(0, 240, 255, 0.05); }
-
-    #callSheetModal input[type="text"], 
-    #callSheetModal input[type="date"], 
-    #callSheetModal select, 
-    #callSheetModal textarea {
-      font-family: Arial, sans-serif !important;
-      font-variant-numeric: tabular-nums;
-    }
 
     .cs-section {
       background: rgba(9, 12, 21, 0.6);
@@ -820,17 +679,6 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 8px;
-      order: 1;
-    }
-    .cs-section-content {
-      order: 2;
-    }
-    .cs-section-actions {
-      order: 3;
-      margin-top: 14px;
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
     }
 
     .weather-widget-box {
@@ -848,61 +696,29 @@
     }
 
     @media (max-width: 768px) {
-      body {
-        padding: 8px 4px !important;
-      }
-      .container {
-        padding: 16px 12px !important;
-        border-radius: 16px !important;
-      }
-      .app-header {
-        margin-bottom: 20px !important;
-        padding-bottom: 14px !important;
-      }
-      .app-title-text h2 {
-        font-size: 18px !important;
-      }
-      .form-grid {
-        grid-template-columns: 1fr !important;
-        gap: 14px !important;
-      }
-      .control-panels-wrapper {
-        margin-top: 20px !important;
-      }
-      .modal-content {
-        padding: 16px !important;
-        max-height: 94vh !important;
-        border-radius: 20px !important;
-      }
+      body { padding: 8px 4px !important; }
+      .container { padding: 16px 12px !important; border-radius: 16px !important; }
+      .app-header { margin-bottom: 20px !important; padding-bottom: 14px !important; }
+      .app-title-text h2 { font-size: 18px !important; }
+      .form-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
+      .modal-content { padding: 16px !important; max-height: 94vh !important; border-radius: 20px !important; }
     }
 
     #act-print-area, #callsheet-print-area { display: none; }
 
     @media print {
-      @page { 
-        size: A4 landscape !important; 
-        margin: 3mm 4mm !important; 
-      }
+      @page { size: A4 landscape !important; margin: 3mm 4mm !important; }
       html, body {
-        width: 100% !important;
-        height: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        background: #fff !important;
-        color: #000 !important;
+        width: 100% !important; height: 100% !important;
+        margin: 0 !important; padding: 0 !important;
+        background: #fff !important; color: #000 !important;
         font-family: Arial, sans-serif !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact; print-color-adjust: exact;
       }
       .container, .modal, #reader, .form-group, .control-panels-wrapper, .app-header { display: none !important; }
       
       #act-print-area.active-print { display: block !important; width: 100% !important; color: #000 !important; }
-      #callsheet-print-area.active-print { 
-        display: block !important; 
-        width: 100% !important; 
-        color: #000 !important; 
-        font-size: 7.5pt !important; 
-      }
+      #callsheet-print-area.active-print { display: block !important; width: 100% !important; color: #000 !important; font-size: 7.5pt !important; }
 
       .cs-print-header { border-bottom: 2px solid #000; padding-bottom: 3px; margin-bottom: 6px; }
       .cs-print-title { font-size: 12pt; font-weight: bold; text-transform: uppercase; }
@@ -911,23 +727,6 @@
       table.act-table th, table.act-table td { border: 1px solid #000 !important; padding: 2px 4px !important; font-size: 7.5pt !important; text-align: center; }
       table.act-table th { background-color: #f2f2f2 !important; font-weight: bold; }
       
-      #callsheet-print-area div[style*="font-weight: bold"] {
-        font-size: 8pt !important;
-        margin-top: 4px !important;
-        margin-bottom: 2px !important;
-      }
-
-      #csp-notes {
-        padding: 4px 6px !important;
-        font-size: 7.5pt !important;
-        margin-bottom: 6px !important;
-      }
-
-      #callsheet-print-area * {
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
-      }
-
       .act-header { text-align: center; font-weight: bold; font-size: 12pt; margin-bottom: 10px; }
       .act-header .subtitle { font-size: 10.5pt; margin-top: 3px; }
       .rules-block { border: none !important; padding: 4px 0; font-size: 7.5pt; line-height: 1.25; margin-bottom: 8px; }
@@ -1293,21 +1092,7 @@
       <div class="search-bar">
         <input type="text" id="venuesSearchInput" placeholder="Поиск по площадкам и адресам..." oninput="renderVenuesTable()">
       </div>
-      <div class="table-wrapper">
-        <table class="db-table">
-          <thead>
-            <tr>
-              <th>Название площадки / Павильон</th>
-              <th>Адрес / КПП</th>
-              <th>Ответственный (Площадка)</th>
-              <th>Телефон</th>
-              <th>Статус / Застройка</th>
-              <th>Действия</th>
-            </tr>
-          </thead>
-          <tbody id="venuesTableBody"></tbody>
-        </table>
-      </div>
+      <div class="venues-grid" id="venuesGridContainer"></div>
     </div>
   </div>
 
@@ -1507,9 +1292,7 @@
         </div>
 
         <div class="cs-section">
-          <div class="cs-section-title">
-            <span>Основная информация о смене</span>
-          </div>
+          <div class="cs-section-title"><span>Основная информация о смене</span></div>
           <div class="cs-section-content">
             <div class="form-grid">
               <div class="form-group">
@@ -1571,31 +1354,27 @@
             </div>
             <div id="cs-extra-info-container" style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;"></div>
           </div>
-          <div class="cs-section-actions">
+          <div class="cs-section-actions" style="margin-top:10px; display:flex; justify-content:flex-end;">
             <button class="add-row-btn" onclick="addCsExtraInfoRow()">+ Добавить пункт</button>
           </div>
         </div>
 
         <div class="cs-section">
-          <div class="cs-section-title">
-            <span>1. Тайминг смены</span>
-          </div>
+          <div class="cs-section-title"><span>1. Тайминг смены</span></div>
           <div class="cs-section-content">
             <div id="cs-milestones-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
           </div>
-          <div class="cs-section-actions">
+          <div class="cs-section-actions" style="margin-top:10px; display:flex; justify-content:flex-end;">
             <button class="add-row-btn" onclick="addCsMilestoneRow()">+ Добавить пункт</button>
           </div>
         </div>
 
         <div class="cs-section">
-          <div class="cs-section-title">
-            <span>2. Вызов персонала и команды</span>
-          </div>
+          <div class="cs-section-title"><span>2. Вызов персонала и команды</span></div>
           <div class="cs-section-content">
             <div id="cs-crew-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
           </div>
-          <div class="cs-section-actions">
+          <div class="cs-section-actions" style="margin-top:10px; display:flex; justify-content:flex-end; gap:8px;">
             <button class="add-row-btn" onclick="addCsCrewMemberFromAto()" style="background: rgba(59, 38, 166, 0.4); color: #fff;">+ Из Тех. отдела</button>
             <button class="add-row-btn" onclick="addCsCrewMemberFromEmployees()">+ Из Сотрудников</button>
             <button class="add-row-btn" onclick="addCsCrewRow()">+ Вручную</button>
@@ -1603,35 +1382,29 @@
         </div>
 
         <div class="cs-section">
-          <div class="cs-section-title">
-            <span>3. Важные примечания и Дресс-код</span>
-          </div>
+          <div class="cs-section-title"><span>3. Важные примечания и Дресс-код</span></div>
           <div class="cs-section-content">
             <textarea id="cs-notes" rows="3">Форма одежды: Total Black. На площадке обязательно наличие защитной обуви на застройке.</textarea>
           </div>
         </div>
 
         <div class="cs-section">
-          <div class="cs-section-title">
-            <span>4. Перечень ввозимого и вывозимого оборудования</span>
-          </div>
+          <div class="cs-section-title"><span>4. Перечень ввозимого и вывозимого оборудования</span></div>
           <div class="cs-section-content">
             <div id="cs-equipment-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
           </div>
-          <div class="cs-section-actions">
+          <div class="cs-section-actions" style="margin-top:10px; display:flex; justify-content:flex-end; gap:8px;">
             <button class="add-row-btn" onclick="importCurrentActItemsToCallSheet()" style="background: rgba(0, 240, 255, 0.3); color: #fff;">📥 + Импорт из Акта</button>
             <button class="add-row-btn" onclick="addCsEquipmentRow()">+ Вручную</button>
           </div>
         </div>
 
         <div class="cs-section">
-          <div class="cs-section-title">
-            <span>5. Автотранспорт</span>
-          </div>
+          <div class="cs-section-title"><span>5. Автотранспорт</span></div>
           <div class="cs-section-content">
             <div id="cs-transport-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
           </div>
-          <div class="cs-section-actions">
+          <div class="cs-section-actions" style="margin-top:10px; display:flex; justify-content:flex-end;">
             <button class="add-row-btn" onclick="addCsTransportRow()">+ Добавить автомобиль</button>
           </div>
         </div>
@@ -1658,7 +1431,7 @@
         </div>
       </div>
       <div class="search-bar">
-        <input type="text" id="csHistorySearchInput" placeholder="Поиск по архиву вызывных..." oninput="renderCallSheetHistoryTable()">
+        <input type="text" id="csHistorySearchInput" placeholder="Поиск по архиву вызывных..." oninput="openCallSheetHistoryModal()">
       </div>
       <div class="table-wrapper">
         <table class="db-table">
@@ -1789,10 +1562,6 @@
         <td style="font-weight: bold; background: #f2f2f2; text-align: left;">От Площадки (Менеджер):</td>
         <td style="text-align: left;" id="csp-venue-mgr-print"></td>
       </tr>
-    </table>
-
-    <table class="act-table" id="csp-extra-info-table" style="margin-bottom: 12px; display: none;">
-      <tbody id="csp-extra-info-tbody"></tbody>
     </table>
 
     <div style="font-weight: bold; font-size: 10pt; margin-bottom: 4px; text-transform: uppercase;">1. Общий тайминг смены</div>
@@ -1967,25 +1736,5 @@
 
   <script src="equipment.js"></script>
   <script src="app.js" defer></script>
-  
-  <!-- Исправление для закрытия модального окна архива вызывных листов -->
-  <script>
-    function openCallSheetHistoryModal() {
-      const modal = document.getElementById('csHistoryModal');
-      if (modal) {
-        modal.style.display = 'flex';
-        if (typeof renderCallSheetHistoryTable === 'function') {
-          renderCallSheetHistoryTable();
-        }
-      }
-    }
-
-    function closeCallSheetHistoryModal() {
-      const modal = document.getElementById('csHistoryModal');
-      if (modal) {
-        modal.style.display = 'none';
-      }
-    }
-  </script>
 </body>
 </html>

@@ -702,24 +702,40 @@ function openVenuesModal() { renderVenuesTable(); document.getElementById('venue
 function closeVenuesModal() { document.getElementById('venuesModal').style.display = 'none'; }
 
 function renderVenuesTable() {
-    const tbody = document.getElementById('venuesTableBody');
-    if (!tbody) return;
+    const container = document.getElementById('venuesGridContainer');
+    if (!container) return;
     const search = (document.getElementById('venuesSearchInput')?.value || '').toLowerCase().trim();
-    tbody.innerHTML = '';
-    VENUES_LIST.forEach((v, idx) => {
+    container.innerHTML = '';
+    
+    const filtered = VENUES_LIST.map((v, originalIndex) => ({ v, originalIndex })).filter(({ v }) => {
         const text = `${v.name} ${v.address} ${v.manager} ${v.status}`.toLowerCase();
-        if (!search || text.includes(search)) {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><b>${v.name}</b></td>
-                <td>${v.address || '—'}</td>
-                <td>${v.manager || '—'}</td>
-                <td>${v.phone ? `<a href="tel:${v.phone}">${formatPhoneNumberStr(v.phone)}</a>` : '—'}</td>
-                <td><span class="badge-status free">${v.status}</span></td>
-                <td><div style="display:flex;gap:6px;"><button class="select-btn" onclick="openVenueEditorModal(${idx})">✏️</button><button class="delete-btn" onclick="deleteVenue(${idx})">🗑️</button></div></td>
-            `;
-            tbody.appendChild(tr);
-        }
+        return !search || text.includes(search);
+    });
+
+    if (filtered.length === 0) {
+        container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:20px;">Ничего не найдено</p>';
+        return;
+    }
+
+    filtered.forEach(({ v, originalIndex }) => {
+        const card = document.createElement('div');
+        card.className = 'venue-card';
+        card.innerHTML = `
+            <div class="contact-actions">
+                <button class="action-icon-btn" onclick="openVenueEditorModal(${originalIndex})" title="Редактировать">✏️</button>
+                <button class="action-icon-btn delete" onclick="deleteVenue(${originalIndex})" title="Удалить">🗑️</button>
+            </div>
+            <div class="contact-name">${v.name}</div>
+            <div class="contact-role">${v.address || '—'}</div>
+            <div class="contact-info">
+                <div>👤 <b>Ответственный:</b> ${v.manager || '—'}</div>
+                ${v.phone ? `<div>📞 <a href="tel:${v.phone}">${formatPhoneNumberStr(v.phone)}</a></div>` : ''}
+            </div>
+            <div class="contact-badges" style="margin-top: 6px;">
+                <span class="contact-badge badge-tg" style="background: rgba(0, 240, 255, 0.15); color: var(--am-cyan); border: 1px solid rgba(0, 240, 255, 0.3);">${v.status || 'Активна'}</span>
+            </div>
+        `;
+        container.appendChild(card);
     });
 }
 
@@ -1197,7 +1213,21 @@ function openCallSheetHistoryModal() {
     const tbody = document.getElementById('csHistoryTableBody');
     if (!tbody) return;
     const h = getCsHistory();
-    tbody.innerHTML = h.map(cs => `
+    const search = (document.getElementById('csHistorySearchInput')?.value || '').toLowerCase().trim();
+    tbody.innerHTML = '';
+    
+    const filtered = h.filter(cs => {
+        const text = `${cs.projectName} ${cs.date} ${cs.city} ${cs.location} ${cs.compMgrName}`.toLowerCase();
+        return !search || text.includes(search);
+    });
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;">Архив пуст</td></tr>';
+        document.getElementById('csHistoryModal').style.display = 'flex';
+        return;
+    }
+
+    tbody.innerHTML = filtered.map(cs => `
         <tr>
             <td><b>${cs.projectName}</b></td>
             <td>${cs.date}</td>
