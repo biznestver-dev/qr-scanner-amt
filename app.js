@@ -684,7 +684,7 @@ function deleteContact(idx) {
 }
 
 // ==========================================
-// 7. ПЛОЩАДКИ, РАСПИСАНИЕ И МЕНЕДЖЕРЫ КОМПЕТЕНЦИЙ (КАРТОЧКИ)
+// 7. ПЛОЩАДКИ, РАСПИСАНИЕ И МЕНЕДЖЕРЫ КОМПЕТЕНЦИЙ (КАРТОЧКИ С ГЕО-ССЫЛКАМИ)
 // ==========================================
 
 function openVenuesModal() { renderVenuesTable(); document.getElementById('venuesModal').style.display = 'flex'; }
@@ -707,6 +707,9 @@ function renderVenuesTable() {
     }
 
     filtered.forEach(({ v, originalIndex }) => {
+        const addressText = v.address || '—';
+        const mapsUrl = `https://yandex.ru/maps/?text=${encodeURIComponent(v.name + ', ' + addressText)}`;
+
         const card = document.createElement('div');
         card.className = 'venue-card';
         card.innerHTML = `
@@ -715,7 +718,9 @@ function renderVenuesTable() {
                 <button class="action-icon-btn delete" onclick="deleteVenue(${originalIndex})" title="Удалить">🗑️</button>
             </div>
             <div class="contact-name">${v.name}</div>
-            <div class="contact-role">${v.address || '—'}</div>
+            <div class="contact-role">
+                📍 <a href="${mapsUrl}" target="_blank" style="color: var(--am-cyan); text-decoration: none;" title="Открыть на карте">${addressText}</a>
+            </div>
             <div class="contact-info">
                 <div>👤 <b>Ответственный:</b> ${v.manager || '—'}</div>
                 ${v.phone ? `<div>📞 <a href="tel:${v.phone}">${formatPhoneNumberStr(v.phone)}</a></div>` : ''}
@@ -771,7 +776,7 @@ function deleteVenue(idx) {
     }
 }
 
-// -- Расписание (Карточки) --
+// -- Расписание (Карточки с гео-ссылками) --
 
 function openScheduleModal() { renderScheduleTable(); document.getElementById('scheduleModal').style.display = 'flex'; }
 function closeScheduleModal() { document.getElementById('scheduleModal').style.display = 'none'; }
@@ -793,6 +798,9 @@ function renderScheduleTable() {
     }
 
     filtered.forEach(({ s, originalIndex }) => {
+        const locationText = s.location || '—';
+        const mapsUrl = `https://yandex.ru/maps/?text=${encodeURIComponent(locationText)}`;
+
         const card = document.createElement('div');
         card.className = 'schedule-card';
         card.innerHTML = `
@@ -803,7 +811,7 @@ function renderScheduleTable() {
             <div class="contact-role" style="font-family:'JetBrains Mono';">${s.time}</div>
             <div class="contact-name">${s.comp}</div>
             <div class="contact-info">
-                <div>📍 <b>Локация:</b> ${s.location}</div>
+                <div>📍 <b>Локация:</b> <a href="${mapsUrl}" target="_blank" style="color: var(--am-cyan); text-decoration: none;" title="Открыть на карте">${locationText}</a></div>
                 <div>👤 <b>Участники:</b> ${s.participant}</div>
                 <div style="margin-top: 4px; color: var(--text-primary); font-size: 12px;">📝 ${s.desc}</div>
             </div>
