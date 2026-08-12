@@ -477,8 +477,9 @@ function renderHistoryTable() {
                 <td>${invsList}</td>
                 <td>
                     <div style="display:flex;gap:6px;">
-                        <button class="select-btn" onclick="reprintAct('${act.num}')">🖨️</button>
-                        <button class="delete-btn" onclick="deleteActFromHistory('${act.num}')">🗑️</button>
+                        <button class="select-btn" onclick="editActFromHistory('${act.num}')" title="Редактировать">✏️</button>
+                        <button class="select-btn" onclick="reprintAct('${act.num}')" title="Печать">🖨️</button>
+                        <button class="delete-btn" onclick="deleteActFromHistory('${act.num}')" title="Удалить">🗑️</button>
                     </div>
                 </td>
             `;
@@ -1203,7 +1204,13 @@ function openCallSheetHistoryModal() {
             <td>${cs.city}</td>
             <td>${cs.location}</td>
             <td>${cs.compMgrName}</td>
-            <td><div style="display:flex; gap:6px;"><button class="select-btn" onclick="reprintCallSheet('${cs.id}')">🖨️</button><button class="delete-btn" onclick="deleteCallSheetFromHistory('${cs.id}')">🗑️</button></div></td>
+            <td>
+                <div style="display:flex; gap:6px;">
+                    <button class="select-btn" onclick="editCallSheetFromHistory('${cs.id}')" title="Редактировать">✏️</button>
+                    <button class="select-btn" onclick="reprintCallSheet('${cs.id}')" title="Печать">🖨️</button>
+                    <button class="delete-btn" onclick="deleteCallSheetFromHistory('${cs.id}')" title="Удалить">🗑️</button>
+                </div>
+            </td>
         </tr>
     `).join('');
     document.getElementById('csHistoryModal').style.display = 'flex';
@@ -1224,6 +1231,91 @@ function deleteCallSheetFromHistory(id) {
         saveToStore(APP_STORAGE_KEYS.CS_HISTORY, h);
         openCallSheetHistoryModal();
     }
+}
+
+// РЕДАКТИРОВАНИЕ ВЫЗЫВНОГО ИЗ АРХИВА
+function editCallSheetFromHistory(id) {
+    const history = getCsHistory();
+    const cs = history.find(c => c.id === id);
+    if (!cs) {
+        alert('Вызывной лист не найден в архиве!');
+        return;
+    }
+
+    document.getElementById('cs-project-name').value = cs.projectName || '';
+    if (cs.date) {
+        const parts = cs.date.split('.');
+        if (parts.length === 3) {
+            document.getElementById('cs-date').value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+        }
+    }
+    document.getElementById('cs-shift-num').value = cs.shiftNum || '';
+    document.getElementById('cs-city').value = cs.city || 'Москва';
+    document.getElementById('cs-location').value = cs.location || '';
+    document.getElementById('cs-address').value = cs.address || '';
+    document.getElementById('cs-comp-mgr-name').value = cs.compMgrName || '';
+    document.getElementById('cs-comp-mgr-phone').value = cs.compMgrPhone || '';
+    document.getElementById('cs-venue-tech-dir-name').value = cs.venueTechDirName || '';
+    document.getElementById('cs-venue-tech-dir-phone').value = cs.venueTechDirPhone || '';
+    document.getElementById('cs-venue-mgr-name').value = cs.venueMgrName || '';
+    document.getElementById('cs-venue-mgr-phone').value = cs.venueMgrPhone || '';
+    document.getElementById('cs-notes').value = cs.notes || '';
+
+    callSheetData.extraInfo = cs.extraInfo ? [...cs.extraInfo] : [];
+    callSheetData.milestones = cs.milestones ? [...cs.milestones] : [];
+    callSheetData.crew = cs.crew ? [...cs.crew] : [];
+    callSheetData.equipment = cs.equipment ? [...cs.equipment] : [];
+    callSheetData.transport = cs.transport ? [...cs.transport] : [];
+
+    renderCsExtraInfo();
+    renderCsMilestones();
+    renderCsCrew();
+    renderCsEquipment();
+    renderCsTransport();
+
+    closeCallSheetHistoryModal();
+    document.getElementById('callSheetModal').style.display = 'flex';
+    
+    const updatedHistory = history.filter(c => c.id !== id);
+    saveToStore(APP_STORAGE_KEYS.CS_HISTORY, updatedHistory);
+
+    alert('Вызывной лист загружен для редактирования. Старая версия удалена из архива.');
+}
+
+// РЕДАКТИРОВАНИЕ АКТА ИЗ АРХИВА
+function editActFromHistory(actNum) {
+    const history = getActsHistory();
+    const act = history.find(a => a.num === actNum);
+    if (!act) {
+        alert('Акт не найден в архиве!');
+        return;
+    }
+
+    document.getElementById('competence-select').value = act.comp || '';
+    document.getElementById('manager-select').value = act.manager || '';
+    document.getElementById('recipient-role-select').value = act.role || 'Участник';
+    
+    onRoleChange(act.role || 'Участник');
+    
+    const partInput = document.getElementById('participant-name');
+    if (partInput) partInput.value = act.participant !== '—' ? act.participant : '';
+    
+    const contactInput = document.getElementById('contact-input');
+    if (contactInput) contactInput.value = act.contact !== '—' ? act.contact : '';
+    
+    const commentInput = document.getElementById('comment-input');
+    if (commentInput) commentInput.value = act.comment !== '—' ? act.comment : '';
+
+    currentActItems = act.items ? [...act.items] : [];
+    renderSelectedItems();
+
+    closeHistoryModal();
+    switchAppSection('section-mtb');
+
+    const updatedHistory = history.filter(a => a.num !== actNum);
+    saveToStore(APP_STORAGE_KEYS.ACTS_HISTORY, updatedHistory);
+
+    alert(`Акт № ${actNum} загружен в форму для редактирования.`);
 }
 
 async function fetchOnlineWeatherAndSun() {
