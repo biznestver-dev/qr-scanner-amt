@@ -616,7 +616,7 @@
     </div>
   </div>
 
-  <!-- Редактор площадки -->
+  <!-- Редактор площадки (с обновленными статусами) -->
   <div id="venueEditorModal" class="modal" style="z-index: 1020;">
     <div class="modal-content" style="max-width: 520px; max-height: auto;">
       <div class="modal-header">
@@ -629,7 +629,14 @@
         <div class="form-group"><label>Точный адрес / КПП</label><input type="text" id="edit-venue-address" placeholder="ул. Варварка, д. 6 (КПП №2)"></div>
         <div class="form-group"><label>Ответственный от площадки (ФИО)</label><input type="text" id="edit-venue-manager" placeholder="Петров П.П."></div>
         <div class="form-group"><label>Телефон ответственного</label><input type="text" id="edit-venue-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)"></div>
-        <div class="form-group"><label>Статус / Режим работы</label><input type="text" id="edit-venue-status" value="Монтаж / Застройка"></div>
+        <div class="form-group">
+          <label>Статус / Режим работы</label>
+          <select id="edit-venue-status">
+            <option value="Активна">Активна</option>
+            <option value="В работе">В работе</option>
+            <option value="В процессе согласования">В процессе согласования</option>
+          </select>
+        </div>
         <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 15px;">
           <button class="btn" onclick="closeVenueEditorModal()" style="background: rgba(255,255,255,0.05); border-color: var(--glass-border); min-width: 120px;">Отмена</button>
           <button class="btn" onclick="saveVenueData()" style="background: var(--accent-gradient); min-width: 150px;">Сохранить</button>
