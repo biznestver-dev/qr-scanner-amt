@@ -1288,8 +1288,52 @@ function exportCallSheetToCSV() {
     downloadCSV(`CallSheet_${cs.projectName}.csv`, rows);
 }
 
-function downloadActWord() { alert('Используйте Печать -> Сохранить как PDF'); }
-function downloadCallSheetWord() { alert('Используйте Печать -> Сохранить как PDF'); }
+function downloadActWord() {
+    const actData = collectActData();
+    if (!actData) return;
+    
+    preparePrintArea(actData);
+    const printArea = document.getElementById('act-print-area').innerHTML;
+    
+    const htmlContent = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/1999/xlink'>
+        <head><meta charset='utf-8'><title>Акт № ${actData.num}</title></head>
+        <body>${printArea}</body>
+        </html>
+    `;
+    
+    const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Akt_${actData.num}.doc`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function downloadCallSheetWord() {
+    const cs = collectCsData();
+    fillCsPrintArea(cs);
+    
+    const printArea = document.getElementById('callsheet-print-area').innerHTML;
+    
+    const htmlContent = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/1999/xlink'>
+        <head><meta charset='utf-8'><title>Вызывной лист — ${cs.projectName}</title></head>
+        <body>${printArea}</body>
+        </html>
+    `;
+    
+    const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `CallSheet_${cs.projectName.replace(/\s+/g, '_')}.doc`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
 
 function onRoleChange(role) {
     const label = document.getElementById('participant-label');
