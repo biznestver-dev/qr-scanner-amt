@@ -1297,7 +1297,20 @@ function downloadActWord() {
     
     const htmlContent = `
         <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/1999/xlink'>
-        <head><meta charset='utf-8'><title>Акт № ${actData.num}</title></head>
+        <head>
+            <meta charset='utf-8'>
+            <title>Акт № ${actData.num}</title>
+            <style>
+                body { font-family: Arial, sans-serif; color: #000; font-size: 10pt; line-height: 1.3; }
+                table.act-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+                table.act-table th, table.act-table td { border: 1px solid #000; padding: 4px 6px; font-size: 9pt; text-align: center; }
+                table.act-table th { background-color: #f2f2f2; font-weight: bold; }
+                .act-header { text-align: center; font-weight: bold; font-size: 12pt; margin-bottom: 15px; }
+                .rules-block { font-size: 8.5pt; margin-bottom: 10px; }
+                .signatures-grid { width: 100%; margin-top: 15px; border-collapse: collapse; }
+                .signatures-grid td { width: 50%; font-size: 9pt; padding: 5px 0; vertical-align: top; }
+            </style>
+        </head>
         <body>${printArea}</body>
         </html>
     `;
@@ -1320,7 +1333,18 @@ function downloadCallSheetWord() {
     
     const htmlContent = `
         <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/1999/xlink'>
-        <head><meta charset='utf-8'><title>Вызывной лист — ${cs.projectName}</title></head>
+        <head>
+            <meta charset='utf-8'>
+            <title>Вызывной лист — ${cs.projectName}</title>
+            <style>
+                body { font-family: Arial, sans-serif; color: #000; font-size: 9pt; line-height: 1.3; }
+                table.act-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+                table.act-table th, table.act-table td { border: 1px solid #000; padding: 4px 6px; font-size: 8.5pt; text-align: center; }
+                table.act-table th { background-color: #f2f2f2; font-weight: bold; }
+                .cs-print-header { border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 10px; }
+                .cs-print-title { font-size: 14pt; font-weight: bold; text-transform: uppercase; }
+            </style>
+        </head>
         <body>${printArea}</body>
         </html>
     `;
