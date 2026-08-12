@@ -21,10 +21,12 @@
       --am-purple: #3b26a6;
       --am-magenta: #ff0043;
       --am-cyan: #00f0ff;
+      --am-orange: #ffaa00;
       
       --accent-gradient: linear-gradient(135deg, #ff0043 0%, #7000ff 50%, #3b26a6 100%);
       --accent-glow: rgba(255, 0, 67, 0.35);
       --cyan-glow: rgba(0, 240, 255, 0.3);
+      --orange-glow: rgba(255, 170, 0, 0.35);
       
       --text-primary: #ffffff;
       --text-secondary: #94a3b8;
@@ -195,6 +197,15 @@
       transform: translateY(-6px);
     }
 
+    .neon-card.card-champ {
+      border-color: rgba(255, 170, 0, 0.4);
+    }
+    .neon-card.card-champ:hover {
+      border-color: var(--am-orange);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7), 0 0 35px rgba(255, 170, 0, 0.35), inset 0 0 15px rgba(255, 170, 0, 0.15);
+      transform: translateY(-6px);
+    }
+
     .neon-card.card-callsheet {
       border-color: rgba(112, 0, 255, 0.5);
     }
@@ -226,6 +237,7 @@
     }
 
     .card-mtb .neon-card-icon { box-shadow: 0 0 20px rgba(0, 240, 255, 0.15); }
+    .card-champ .neon-card-icon { box-shadow: 0 0 20px rgba(255, 170, 0, 0.15); }
     .card-callsheet .neon-card-icon { box-shadow: 0 0 20px rgba(112, 0, 255, 0.2); }
     .card-contacts .neon-card-icon { box-shadow: 0 0 20px rgba(255, 0, 67, 0.15); }
 
@@ -977,8 +989,8 @@
             <div class="neon-card-desc">Сканирование QR, выдача оборудования, реестр актов и справочник склада</div>
           </div>
 
-          <div class="neon-card" style="border-color: rgba(255, 170, 0, 0.4);" onclick="switchAppSection('section-main-champ')">
-            <div class="neon-card-icon" style="box-shadow: 0 0 20px rgba(255, 170, 0, 0.15);">
+          <div class="neon-card card-champ" onclick="switchAppSection('section-main-champ')">
+            <div class="neon-card-icon">
               <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#ffaa00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
                 <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
@@ -1977,5 +1989,3 @@
   </script>
 </body>
 </html>
-
-```
