@@ -109,20 +109,18 @@ const DEFAULT_VENUES_LIST = [
 ];
 
 const DEFAULT_SCHEDULE_LIST = [
-    { time: "23 августа", comp: "Художник-аниматор", participant: "Участники", location: "Хабаровск", desc: "Защита кейса (регламент: 7 мин)" },
-    { time: "12:00 - 14:00 (26 авг)", comp: "Куратор выставочных пространств", participant: "Участники", location: "Государственный музей архитектуры им. Щусева", desc: "Защита проектов" },
-    { time: "16:00 - 18:00", comp: "Оператор механики сцены", participant: "Участники", location: "Мастерская 12 Никиты Михалкова", desc: "Практическая защита" },
-    { time: "19:00 - 21:00", comp: "Художник по свету", participant: "Участники", location: "Студия", desc: "Защита проекта" },
-    { time: "18:00 - 21:00 (27 авг)", comp: "Звукорежиссёр (FOH)", participant: "Участники", location: "Театр «Маска»", desc: "Защита и саундчек" },
-    { time: "11:00 - 13:00 (28 авг)", comp: "Драматург театра и кино", participant: "Участники", location: "Дом Пашкова", desc: "Защита сценариев" },
-    { time: "13:00 - 17:00", comp: "Креативный продюсер", participant: "Участники", location: "Школа «Индустрия»", desc: "Защита проектов" },
-    { time: "18:00 - 19:00", comp: "Композитор популярной музыки", participant: "Участники", location: "Мастерская 12 Никиты Михалкова", desc: "Презентация треков" },
-    { time: "Не раньше 14:00 (29 авг)", comp: "Технический продюсер", participant: "Участники", location: "КРЕАТЕХ", desc: "Защита технических решений" },
-    { time: "11:00 - 13:00 (30 авг)", comp: "Веб-дизайнер (UX/UI)", participant: "Участники", location: "ВК", desc: "Защита интерфейсов и клипов" },
-    { time: "12:00 - 14:00", comp: "Графический дизайнер", participant: "Участники", location: "Арт-Центр ИСИ", desc: "Презентация айдентики" },
-    { time: "15:00 - 17:00", comp: "Геймдизайнер", participant: "Участники", location: "Universal University", desc: "Презентация игровых билдов" },
-    { time: "18:00 - 21:00", comp: "Фотограф", participant: "Участники", location: "Студия", desc: "Защита фотопортфолио" },
-    { time: "31 августа", comp: "Сценограф", participant: "Участники", location: "Боярские палаты", desc: "Защита макетов и сценографии" }
+    { time: "23 августа (15:00 - 17:00)", comp: "Художник-аниматор", participant: "Участники", location: "Молодежный досуговый центр, Хабаровск, ул. Шевченко, 7а", desc: "Прибытие: 14:30 | Защита кейса" },
+    { time: "26 августа (12:00 - 14:00)", comp: "Куратор выставочных пространств", participant: "Участники", location: "Музей архитектуры им. Щусева", desc: "Прибытие: 11:30 | Защита проектов" },
+    { time: "26 августа (16:00 - 18:00)", comp: "Оператор механики сцены", participant: "Участники", location: "Мастерская 12 Никиты Михалкова, ул. Поварская, 33, стр. 1", desc: "Прибытие: 15:30 | Практическая защита" },
+    { time: "26 августа (19:00 - 21:00)", comp: "Художник по свету", participant: "Участники", location: "Электротеатр Станиславский, Тверская ул., 23, стр. 1", desc: "Прибытие: 18:30 | Защита проекта" },
+    { time: "27 августа (18:00 - 21:00)", comp: "Звукорежиссёр (FOH)", participant: "Участники", location: "Театр «Маска», Комсомольский проспект, 28", desc: "Прибытие: 17:30 | Защита и саундчек" },
+    { time: "28 августа (11:00 - 13:00)", comp: "Драматург театра и кино", participant: "Участники", location: "Дом Пашкова, ул. Воздвиженка, 3/5 стр 1", desc: "Прибытие: 10:30 | Защита сценариев" },
+    { time: "28 августа (13:00 - 17:00)", comp: "Креативный продюсер", participant: "Участники", location: "Школа «Индустрия», Подсосенский пер., 26, стр. 1", desc: "Прибытие: 12:30 | Защита проектов" },
+    { time: "28 августа (18:00 - 19:00)", comp: "Композитор популярной музыки", participant: "Участники", location: "Мастерская 12 Никиты Михалкова (Шоу «Голоса земли»)", desc: "Прибытие: 17:00 | Презентация треков" },
+    { time: "29 августа (14:00 - 16:00)", comp: "Технический продюсер", participant: "Участники", location: "«КреаТех» МГТУ им. Н.Э. Баумана, 2-я Бауманская, 5, стр. 4", desc: "Прибытие: 13:30 | Защита решений" },
+    { time: "30 августа (11:00 - 13:00)", comp: "Веб-дизайнер (UX/UI)", participant: "Участники", location: "Офис ВКонтакте, Ленинградский просп., 39, стр. 79", desc: "Прибытие: 10:30 | Защита интерфейсов" },
+    { time: "30 августа (12:00 - 14:00)", comp: "Графический дизайнер", participant: "Участники", location: "Арт-Центр ИСИ, Берсеневская наб., 8, стр. 1", desc: "Прибытие: 11:30 | Презентация айдентики" },
+    { time: "31 августа (12:00 - 15:00)", comp: "Сценограф", participant: "Участники", location: "Боярские палаты, Сретенский бульвар, 10", desc: "Прибытие: 11:30 | Защита макетов" }
 ];
 
 const DEFAULT_CHAMP_CONTACTS = [
@@ -562,14 +560,6 @@ function preparePrintArea(act) {
     document.getElementById('print-table-tbody').innerHTML = act.items.map((it, idx) => `
         <tr><td>${idx+1}</td><td style="text-align:left;">${it.name}</td><td>${it.inv}</td><td>${act.participant}</td><td>${act.contact}</td><td>1</td><td>${act.date}</td><td>${act.returnDate}</td><td style="text-align:left;">${act.comment}</td></tr>
     `).join('');
-    const sw = document.getElementById('safety-rules-wrapper');
-    if (act.role === 'Сотрудник') {
-        sw.classList.add('active');
-        const emp = EMPLOYEES_LIST.find(e => e.name === act.participant);
-        document.getElementById('safety-employee-title').innerText = emp && emp.role ? `${emp.role} АНО «Артмастерс»` : 'Сотрудник АНО «Артмастерс»';
-        document.getElementById('safety-employee-name').innerText = sn;
-        document.getElementById('safety-date-intro').innerText = act.dateIntro;
-    } else sw.classList.remove('active');
 }
 
 function reprintAct(num) {
@@ -667,7 +657,6 @@ function openContactEditorModal(index = -1) {
     }
     document.getElementById('contactEditorModal').style.display = 'flex';
 }
-
 function closeContactEditorModal() { document.getElementById('contactEditorModal').style.display = 'none'; }
 
 function saveContactData() {
@@ -695,7 +684,7 @@ function deleteContact(idx) {
 }
 
 // ==========================================
-// 7. ПЛОЩАДКИ И РАСПИСАНИЕ
+// 7. ПЛОЩАДКИ, РАСПИСАНИЕ И МЕНЕДЖЕРЫ КОМПЕТЕНЦИЙ (КАРТОЧКИ)
 // ==========================================
 
 function openVenuesModal() { renderVenuesTable(); document.getElementById('venuesModal').style.display = 'flex'; }
@@ -757,7 +746,6 @@ function openVenueEditorModal(idx = -1) {
     }
     document.getElementById('venueEditorModal').style.display = 'flex';
 }
-
 function closeVenueEditorModal() { document.getElementById('venueEditorModal').style.display = 'none'; }
 
 function saveVenueData() {
@@ -783,30 +771,44 @@ function deleteVenue(idx) {
     }
 }
 
-// -- Расписание --
+// -- Расписание (Карточки) --
 
 function openScheduleModal() { renderScheduleTable(); document.getElementById('scheduleModal').style.display = 'flex'; }
 function closeScheduleModal() { document.getElementById('scheduleModal').style.display = 'none'; }
 
 function renderScheduleTable() {
-    const tbody = document.getElementById('scheduleTableBody');
-    if (!tbody) return;
+    const container = document.getElementById('scheduleGridContainer');
+    if (!container) return;
     const search = (document.getElementById('scheduleSearchInput')?.value || '').toLowerCase().trim();
-    tbody.innerHTML = '';
-    SCHEDULE_LIST.forEach((s, idx) => {
-        const text = `${s.time} ${s.comp} ${s.participant} ${s.location}`.toLowerCase();
-        if (!search || text.includes(search)) {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><b style="color:var(--am-cyan);">${s.time}</b></td>
-                <td><b>${s.comp}</b></td>
-                <td>${s.participant}</td>
-                <td>${s.location}</td>
-                <td>${s.desc}</td>
-                <td><div style="display:flex;gap:6px;"><button class="select-btn" onclick="openScheduleEditorModal(${idx})">✏️</button><button class="delete-btn" onclick="deleteSchedule(${idx})">🗑️</button></div></td>
-            `;
-            tbody.appendChild(tr);
-        }
+    container.innerHTML = '';
+    
+    const filtered = SCHEDULE_LIST.map((s, originalIndex) => ({ s, originalIndex })).filter(({ s }) => {
+        const text = `${s.time} ${s.comp} ${s.participant} ${s.location} ${s.desc}`.toLowerCase();
+        return !search || text.includes(search);
+    });
+
+    if (filtered.length === 0) {
+        container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:20px;">Ничего не найдено</p>';
+        return;
+    }
+
+    filtered.forEach(({ s, originalIndex }) => {
+        const card = document.createElement('div');
+        card.className = 'schedule-card';
+        card.innerHTML = `
+            <div class="contact-actions">
+                <button class="action-icon-btn" onclick="openScheduleEditorModal(${originalIndex})" title="Редактировать">✏️</button>
+                <button class="action-icon-btn delete" onclick="deleteSchedule(${originalIndex})" title="Удалить">🗑️</button>
+            </div>
+            <div class="contact-role" style="font-family:'JetBrains Mono';">${s.time}</div>
+            <div class="contact-name">${s.comp}</div>
+            <div class="contact-info">
+                <div>📍 <b>Локация:</b> ${s.location}</div>
+                <div>👤 <b>Участники:</b> ${s.participant}</div>
+                <div style="margin-top: 4px; color: var(--text-primary); font-size: 12px;">📝 ${s.desc}</div>
+            </div>
+        `;
+        container.appendChild(card);
     });
 }
 
@@ -828,7 +830,6 @@ function openScheduleEditorModal(idx = -1) {
     }
     document.getElementById('scheduleEditorModal').style.display = 'flex';
 }
-
 function closeScheduleEditorModal() { document.getElementById('scheduleEditorModal').style.display = 'none'; }
 
 function saveScheduleData() {
@@ -854,29 +855,43 @@ function deleteSchedule(idx) {
     }
 }
 
-// -- Оперативные контакты --
+// -- Менеджеры компетенций (Карточки) --
 
 function openChampContactsModal() { renderChampContactsTable(); document.getElementById('champContactsModal').style.display = 'flex'; }
 function closeChampContactsModal() { document.getElementById('champContactsModal').style.display = 'none'; }
 
 function renderChampContactsTable() {
-    const tbody = document.getElementById('champContactsTableBody');
-    if (!tbody) return;
+    const container = document.getElementById('champContactsGridContainer');
+    if (!container) return;
     const search = (document.getElementById('champContactsSearchInput')?.value || '').toLowerCase().trim();
-    tbody.innerHTML = '';
-    CHAMP_CONTACTS_LIST.forEach((c, idx) => {
+    container.innerHTML = '';
+
+    const filtered = CHAMP_CONTACTS_LIST.map((c, originalIndex) => ({ c, originalIndex })).filter(({ c }) => {
         const text = `${c.dept} ${c.name} ${c.task} ${c.phone}`.toLowerCase();
-        if (!search || text.includes(search)) {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><b>${c.dept}</b></td>
-                <td>${c.name}</td>
-                <td>${c.task}</td>
-                <td><a href="tel:${c.phone}">${formatPhoneNumberStr(c.phone)}</a></td>
-                <td><div style="display:flex;gap:6px;"><button class="select-btn" onclick="openChampContactEditorModal(${idx})">✏️</button><button class="delete-btn" onclick="deleteChampContact(${idx})">🗑️</button></div></td>
-            `;
-            tbody.appendChild(tr);
-        }
+        return !search || text.includes(search);
+    });
+
+    if (filtered.length === 0) {
+        container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:20px;">Ничего не найдено</p>';
+        return;
+    }
+
+    filtered.forEach(({ c, originalIndex }) => {
+        const card = document.createElement('div');
+        card.className = 'champ-contact-card';
+        card.innerHTML = `
+            <div class="contact-actions">
+                <button class="action-icon-btn" onclick="openChampContactEditorModal(${originalIndex})" title="Редактировать">✏️</button>
+                <button class="action-icon-btn delete" onclick="deleteChampContact(${originalIndex})" title="Удалить">🗑️</button>
+            </div>
+            <div class="contact-role">${c.dept}</div>
+            <div class="contact-name">${c.name}</div>
+            <div class="contact-info">
+                <div>📌 <b>Задача:</b> ${c.task}</div>
+                <div>📞 <a href="tel:${c.phone}">${formatPhoneNumberStr(c.phone)}</a></div>
+            </div>
+        `;
+        container.appendChild(card);
     });
 }
 
@@ -896,7 +911,6 @@ function openChampContactEditorModal(idx = -1) {
     }
     document.getElementById('champContactEditorModal').style.display = 'flex';
 }
-
 function closeChampContactEditorModal() { document.getElementById('champContactEditorModal').style.display = 'none'; }
 
 function saveChampContactData() {
@@ -1209,6 +1223,7 @@ function fillCsPrintArea(cs) {
     document.getElementById('csp-transport-tbody').innerHTML = cs.transport.map(t => `<tr><td>${t.model}</td><td>${t.plate}</td><td>${t.driver}</td><td>${formatPhoneNumberStr(t.phone)}</td><td style="text-align:left;">${t.task}</td></tr>`).join('');
 }
 
+// Открытие и закрытие архива вызывных листов
 function openCallSheetHistoryModal() {
     const tbody = document.getElementById('csHistoryTableBody');
     if (!tbody) return;
@@ -1244,6 +1259,10 @@ function openCallSheetHistoryModal() {
         </tr>
     `).join('');
     document.getElementById('csHistoryModal').style.display = 'flex';
+}
+
+function closeCallSheetHistoryModal() {
+    document.getElementById('csHistoryModal').style.display = 'none';
 }
 
 function reprintCallSheet(id) {
@@ -1413,72 +1432,34 @@ function exportCallSheetToCSV() {
 function downloadActWord() {
     const actData = collectActData();
     if (!actData) return;
-    
     preparePrintArea(actData);
     const printArea = document.getElementById('act-print-area').innerHTML;
-    
     const htmlContent = `
         <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/1999/xlink'>
-        <head>
-            <meta charset='utf-8'>
-            <title>Акт № ${actData.num}</title>
-            <style>
-                body { font-family: Arial, sans-serif; color: #000; font-size: 10pt; line-height: 1.3; }
-                table.act-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-                table.act-table th, table.act-table td { border: 1px solid #000; padding: 4px 6px; font-size: 9pt; text-align: center; }
-                table.act-table th { background-color: #f2f2f2; font-weight: bold; }
-                .act-header { text-align: center; font-weight: bold; font-size: 12pt; margin-bottom: 15px; }
-                .rules-block { font-size: 8.5pt; margin-bottom: 10px; }
-                .signatures-grid { width: 100%; margin-top: 15px; border-collapse: collapse; }
-                .signatures-grid td { width: 50%; font-size: 9pt; padding: 5px 0; vertical-align: top; }
-            </style>
-        </head>
-        <body>${printArea}</body>
-        </html>
+        <head><meta charset='utf-8'><title>Акт № ${actData.num}</title>
+        <style>body { font-family: Arial, sans-serif; color: #000; font-size: 10pt; line-height: 1.3; } table.act-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; } table.act-table th, table.act-table td { border: 1px solid #000; padding: 4px 6px; font-size: 9pt; text-align: center; } table.act-table th { background-color: #f2f2f2; font-weight: bold; } .act-header { text-align: center; font-weight: bold; font-size: 12pt; margin-bottom: 15px; } .rules-block { font-size: 8.5pt; margin-bottom: 10px; } .signatures-grid { width: 100%; margin-top: 15px; border-collapse: collapse; } .signatures-grid td { width: 50%; font-size: 9pt; padding: 5px 0; vertical-align: top; }</style></head>
+        <body>${printArea}</body></html>
     `;
-    
     const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `Akt_${actData.num}.doc`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const link = document.createElement('a'); link.href = url; link.download = `Akt_${actData.num}.doc`;
+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
 }
 
 function downloadCallSheetWord() {
     const cs = collectCsData();
     fillCsPrintArea(cs);
-    
     const printArea = document.getElementById('callsheet-print-area').innerHTML;
-    
     const htmlContent = `
         <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/1999/xlink'>
-        <head>
-            <meta charset='utf-8'>
-            <title>Вызывной лист — ${cs.projectName}</title>
-            <style>
-                body { font-family: Arial, sans-serif; color: #000; font-size: 9pt; line-height: 1.3; }
-                table.act-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-                table.act-table th, table.act-table td { border: 1px solid #000; padding: 4px 6px; font-size: 8.5pt; text-align: center; }
-                table.act-table th { background-color: #f2f2f2; font-weight: bold; }
-                .cs-print-header { border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 10px; }
-                .cs-print-title { font-size: 14pt; font-weight: bold; text-transform: uppercase; }
-            </style>
-        </head>
-        <body>${printArea}</body>
-        </html>
+        <head><meta charset='utf-8'><title>Вызывной лист — ${cs.projectName}</title>
+        <style>body { font-family: Arial, sans-serif; color: #000; font-size: 9pt; line-height: 1.3; } table.act-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; } table.act-table th, table.act-table td { border: 1px solid #000; padding: 4px 6px; font-size: 8.5pt; text-align: center; } table.act-table th { background-color: #f2f2f2; font-weight: bold; } .cs-print-header { border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 10px; } .cs-print-title { font-size: 14pt; font-weight: bold; text-transform: uppercase; }</style></head>
+        <body>${printArea}</body></html>
     `;
-    
     const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `CallSheet_${cs.projectName.replace(/\s+/g, '_')}.doc`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const link = document.createElement('a'); link.href = url; link.download = `CallSheet_${cs.projectName.replace(/\s+/g, '_')}.doc`;
+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
 }
 
 function onRoleChange(role) {
