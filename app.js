@@ -1,10 +1,6 @@
 /**
- * ТЕХОТДЕЛ AM — ОСНОВНОЙ СКРИПТ ПРИЛОЖЕНИЯ (ОБНОВЛЕННАЯ ВЕРСИЯ С ШАБЛОНАМИ И СЕТЬЮ)
+ * ТЕХОТДЕЛ AM — ОСНОВНОЙ СКРИПТ ПРИЛОЖЕНИЯ (ОБНОВЛЕННАЯ ВЕРСИЯ С ДОПОЛНЕНИЯМИ)
  */
-
-// ==========================================
-// 1. КОНСТАНТЫ И ДЕФОЛТНЫЕ ДАННЫЕ
-// ==========================================
 
 const APP_STORAGE_KEYS = {
     EMPLOYEES: 'artmasters_employees_list',
@@ -140,7 +136,6 @@ const DEFAULT_CHAMP_CONTACTS = [
     { dept: "Менеджмент", name: "Степан Новиков", task: "Менеджер (Веб-дизайнер UX/UI)", phone: "+79154039226" }
 ];
 
-// Дефолтные шаблоны вызывных листов
 const DEFAULT_CS_TEMPLATES = [
     {
         name: "День застройки площадки",
@@ -180,10 +175,6 @@ const DEFAULT_CS_TEMPLATES = [
     }
 ];
 
-// ==========================================
-// 2. ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
-// ==========================================
-
 let EMPLOYEES_LIST = [];
 let VENUES_LIST = [];
 let SCHEDULE_LIST = [];
@@ -194,6 +185,8 @@ let onlineWeatherData = { temp: '', weather: '', sunrise: '', sunset: '' };
 let currentStatusFilter = 'all';
 let lastScannedCode = '';
 let scanTimeout = null;
+let isMassReturnActive = false; // Режим массовой приёмки
+let html5QrcodeScanner = null;
 
 let callSheetData = {
     city: "Москва",
@@ -224,10 +217,6 @@ let callSheetData = {
     notes: DEFAULT_CS_TEMPLATES[0].notes
 };
 
-// ==========================================
-// 3. ИНИЦИАЛИЗАЦИЯ
-// ==========================================
-
 document.addEventListener('DOMContentLoaded', () => {
     initData();
     initUI();
@@ -253,15 +242,15 @@ function initUI() {
     updateInvActionButton();
     
     if (typeof Html5QrcodeScanner !== 'undefined') {
-        const html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
+        html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
             fps: 10, 
-            qrbox: { width: 220, height: 220 } 
+            qrbox: { width: 220, height: 220 },
+            supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
         }, false);
         html5QrcodeScanner.render(onScanSuccess, (err) => {});
     }
 }
 
-// Индикатор сети (Online / Offline)
 function initNetworkStatusListener() {
     const headerEl = document.querySelector('.app-header');
     if (!headerEl) return;
@@ -292,10 +281,6 @@ function initNetworkStatusListener() {
     window.addEventListener('offline', updateStatus);
     updateStatus();
 }
-
-// ==========================================
-// 4. НАВИГАЦИЯ И УТИЛИТЫ
-// ==========================================
 
 function switchAppSection(sectionId) {
     document.querySelectorAll('.app-section').forEach(sec => sec.classList.remove('active-section'));
@@ -371,9 +356,13 @@ function toggleNoReturnDate(checked) {
     }
 }
 
-// ==========================================
-// 5. ЛОГИКА МТБ (ВЫДАЧА, СКЛАД, АКТЫ)
-// ==========================================
+// Режим массового возврата (приёмки)
+function toggleMassReturnMode() {
+    isMassReturnActive = !isMassReturnActive;
+    const banner = document.getElementById('mass-return-banner');
+    if (banner) banner.style.display = isMassReturnActive ? 'flex' : 'none';
+    if (isMassReturnActive) openDbModal();
+}
 
 function findEquipment(invInput) {
     if (!invInput || !window.EQUIPMENT_DB) return null;
@@ -398,8 +387,26 @@ function updateInvActionButton() {
     }
 }
 
+// Обработчик сканирования с поддержкой массового приёма
 function onScanSuccess(decodedText) {
     const scannedInv = decodedText.trim();
+    
+    if (isMassReturnActive) {
+        if (window.EQUIPMENT_DB && window.EQUIPMENT_DB[scannedInv]) {
+            window.EQUIPMENT_DB[scannedInv].status = 'В офисе';
+            saveToStore(APP_STORAGE_KEYS.EQUIPMENT_DB, window.EQUIPMENT_DB);
+            renderDbTable();
+            console.log(`Принято на склад: ${scannedInv}`);
+        } else {
+            alert(`Оборудование ${scannedInv} не найдено в базе МТБ!`);
+        }
+        return;
+    }
+
+    processStandardScan(scannedInv);
+}
+
+function processStandardScan(scannedInv) {
     if (scannedInv === lastScannedCode) return;
     lastScannedCode = scannedInv;
     clearTimeout(scanTimeout);
@@ -422,8 +429,6 @@ function onScanSuccess(decodedText) {
             if (invInput) invInput.value = '';
             if (nameInput) nameInput.value = '';
             updateInvActionButton();
-        } else {
-            alert(`Позиция ${scannedInv} уже добавлена!`);
         }
     }
 }
@@ -552,35 +557,52 @@ function returnEquipmentToOffice(inv) {
     }
 }
 
-// -- Накладные (Акты) --
-
 function getActsHistory() { return loadFromStore(APP_STORAGE_KEYS.ACTS_HISTORY, []); }
 function saveActToHistory(act) { const h = getActsHistory(); h.unshift(act); saveToStore(APP_STORAGE_KEYS.ACTS_HISTORY, h); }
 
 function openHistoryModal() { renderHistoryTable(); document.getElementById('historyModal').style.display = 'flex'; }
 function closeHistoryModal() { document.getElementById('historyModal').style.display = 'none'; }
 
+// Реестр актов с подсветкой просроченных возвратов
 function renderHistoryTable() {
     const tbody = document.getElementById('historyTableBody');
     if (!tbody) return;
     const h = getActsHistory();
     const filter = (document.getElementById('historySearchInput')?.value || '').toLowerCase().trim();
     tbody.innerHTML = '';
-    if (h.length === 0) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;">История пуста</td></tr>'; return; }
+    
+    if (h.length === 0) { 
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;">История пуста</td></tr>'; 
+        return; 
+    }
+
     h.forEach(act => {
+        const isOverdue = act.returnDate && act.returnDate !== '—' && (() => {
+            const p = act.returnDate.split('.');
+            if (p.length === 3) {
+                const retDate = new Date(p[2], p[1] - 1, p[0]);
+                return retDate < new Date();
+            }
+            return false;
+        })();
+
+        const rowStyle = isOverdue ? 'background: rgba(255, 42, 109, 0.1); border-left: 4px solid var(--status-busy);' : '';
+
         const itemsList = act.items ? act.items.map(i => i.name).join(', ') : act.name;
         const invsList = act.items ? act.items.map(i => i.inv).join(', ') : act.inv;
         const searchStr = `${act.num} ${act.date} ${act.participant} ${itemsList} ${invsList}`.toLowerCase();
+        
         if (!filter || searchStr.includes(filter)) {
             const tr = document.createElement('tr');
+            tr.style.cssText = rowStyle;
             tr.innerHTML = `
                 <td><b>№ ${act.num}</b></td>
                 <td>${act.date}</td>
+                <td>${act.returnDate}</td>
                 <td><span class="badge-status free">${act.role || 'Участник'}</span></td>
                 <td>${act.participant}</td>
                 <td>${act.contact || '—'}</td>
                 <td>${itemsList} (${act.items ? act.items.length : 1} шт.)</td>
-                <td>${invsList}</td>
                 <td>
                     <div style="display:flex;gap:6px;">
                         <button class="select-btn" onclick="editActFromHistory('${act.num}')" title="Редактировать">✏️</button>
@@ -654,7 +676,7 @@ function preparePrintArea(act) {
     const rdat = getUnderlineDateStr(act.returnDate);
     document.querySelectorAll('.print-underline-date-issue').forEach(e => e.innerHTML = idat);
     document.querySelectorAll('.print-underline-date-return').forEach(e => e.innerHTML = rdat);
-    const mt = getManagerTitle(act.manager);
+    const mt = MANAGER_TITLES[act.manager] || "Административно-технический отдел";
     document.getElementById('print-manager-title-out').innerText = `Выдал ${mt.toLowerCase()}`;
     document.getElementById('print-manager-title-in').innerText = `Принял ${mt.toLowerCase()}`;
     document.getElementById('print-manager-out').innerText = act.manager;
@@ -691,7 +713,6 @@ function resetForm() {
 function getFullContactValue() { return document.getElementById('contact-input')?.value.trim() || '—'; }
 function getParticipantValue() { const el = document.getElementById('participant-name'); return el ? el.value.trim() : ''; }
 
-function MANAGER_TITLES_FN(mgr) { return MANAGER_TITLES[mgr] || "Административно-технический отдел"; }
 function getRecipientRoleTitle(role, name) {
     if (role === 'Сотрудник') {
         const emp = EMPLOYEES_LIST.find(e => e.name === name);
@@ -703,10 +724,6 @@ function getActSubtitleText(role, part, comp) {
     if (role === 'Сотрудник') return `Выдано сотруднику Артмастерс: <b>${getRecipientRoleTitle(role, part)} — ${part}</b>`;
     return `${role} компетенции — <b>${comp}</b>`;
 }
-
-// ==========================================
-// 6. КОНТАКТЫ СОТРУДНИКОВ
-// ==========================================
 
 function openContactsModal() { renderEmployeesDirectory(); document.getElementById('contactsModal').style.display = 'flex'; }
 function closeContactsModal() { document.getElementById('contactsModal').style.display = 'none'; }
@@ -791,10 +808,6 @@ function deleteContact(idx) {
     }
 }
 
-// ==========================================
-// 7. ПЛОЩАДКИ, РАСПИСАНИЕ И МЕНЕДЖЕРЫ КОМПЕТЕНЦИЙ
-// ==========================================
-
 function openVenuesModal() { renderVenuesTable(); document.getElementById('venuesModal').style.display = 'flex'; }
 function closeVenuesModal() { document.getElementById('venuesModal').style.display = 'none'; }
 
@@ -803,7 +816,6 @@ function renderVenuesTable() {
     if (!container) return;
     const search = (document.getElementById('venuesSearchInput')?.value || '').toLowerCase().trim();
     container.innerHTML = '';
-    
     const filtered = VENUES_LIST.map((v, originalIndex) => ({ v, originalIndex })).filter(({ v }) => {
         const text = `${v.name} ${v.address} ${v.manager} ${v.status}`.toLowerCase();
         return !search || text.includes(search);
@@ -817,24 +829,18 @@ function renderVenuesTable() {
     filtered.forEach(({ v, originalIndex }) => {
         const addressText = v.address || '—';
         const mapsUrl = `https://yandex.ru/maps/?text=${encodeURIComponent(v.name + ', ' + addressText)}`;
-
         const card = document.createElement('div');
         card.className = 'venue-card';
         card.innerHTML = `
             <div class="contact-actions">
-                <button class="action-icon-btn" onclick="openVenueEditorModal(${originalIndex})" title="Редактировать">✏️</button>
-                <button class="action-icon-btn delete" onclick="deleteVenue(${originalIndex})" title="Удалить">🗑️</button>
+                <button class="action-icon-btn" onclick="openVenueEditorModal(${originalIndex})">✏️</button>
+                <button class="action-icon-btn delete" onclick="deleteVenue(${originalIndex})">🗑️</button>
             </div>
             <div class="contact-name">${v.name}</div>
-            <div class="contact-role">
-                📍 <a href="${mapsUrl}" target="_blank" style="color: var(--am-cyan); text-decoration: none;" title="Открыть на карте">${addressText}</a>
-            </div>
+            <div class="contact-role">📍 <a href="${mapsUrl}" target="_blank" style="color: var(--am-cyan); text-decoration: none;">${addressText}</a></div>
             <div class="contact-info">
                 <div>👤 <b>Ответственный:</b> ${v.manager || '—'}</div>
                 ${v.phone ? `<div>📞 <a href="tel:${v.phone}">${formatPhoneNumberStr(v.phone)}</a></div>` : ''}
-            </div>
-            <div class="contact-badges" style="margin-top: 6px;">
-                <span class="contact-badge badge-tg" style="background: rgba(0, 240, 255, 0.15); color: var(--am-cyan); border: 1px solid rgba(0, 240, 255, 0.3);">${v.status || 'Активна'}</span>
             </div>
         `;
         container.appendChild(card);
@@ -884,8 +890,6 @@ function deleteVenue(idx) {
     }
 }
 
-// -- Расписание --
-
 function openScheduleModal() { renderScheduleTable(); document.getElementById('scheduleModal').style.display = 'flex'; }
 function closeScheduleModal() { document.getElementById('scheduleModal').style.display = 'none'; }
 
@@ -894,7 +898,6 @@ function renderScheduleTable() {
     if (!container) return;
     const search = (document.getElementById('scheduleSearchInput')?.value || '').toLowerCase().trim();
     container.innerHTML = '';
-    
     const filtered = SCHEDULE_LIST.map((s, originalIndex) => ({ s, originalIndex })).filter(({ s }) => {
         const text = `${s.time} ${s.comp} ${s.participant} ${s.location} ${s.desc}`.toLowerCase();
         return !search || text.includes(search);
@@ -908,18 +911,17 @@ function renderScheduleTable() {
     filtered.forEach(({ s, originalIndex }) => {
         const locationText = s.location || '—';
         const mapsUrl = `https://yandex.ru/maps/?text=${encodeURIComponent(locationText)}`;
-
         const card = document.createElement('div');
         card.className = 'schedule-card';
         card.innerHTML = `
             <div class="contact-actions">
-                <button class="action-icon-btn" onclick="openScheduleEditorModal(${originalIndex})" title="Редактировать">✏️</button>
-                <button class="action-icon-btn delete" onclick="deleteSchedule(${originalIndex})" title="Удалить">🗑️</button>
+                <button class="action-icon-btn" onclick="openScheduleEditorModal(${originalIndex})">✏️</button>
+                <button class="action-icon-btn delete" onclick="deleteSchedule(${originalIndex})">🗑️</button>
             </div>
             <div class="contact-role" style="font-family:'JetBrains Mono';">${s.time}</div>
             <div class="contact-name">${s.comp}</div>
             <div class="contact-info">
-                <div>📍 <b>Локация:</b> <a href="${mapsUrl}" target="_blank" style="color: var(--am-cyan); text-decoration: none;" title="Открыть на карте">${locationText}</a></div>
+                <div>📍 <b>Локация:</b> <a href="${mapsUrl}" target="_blank" style="color: var(--am-cyan); text-decoration: none;">${locationText}</a></div>
                 <div>👤 <b>Участники:</b> ${s.participant}</div>
                 <div style="margin-top: 4px; color: var(--text-primary); font-size: 12px;">📝 ${s.desc}</div>
             </div>
@@ -971,8 +973,6 @@ function deleteSchedule(idx) {
     }
 }
 
-// -- Менеджеры компетенций --
-
 function openChampContactsModal() { renderChampContactsTable(); document.getElementById('champContactsModal').style.display = 'flex'; }
 function closeChampContactsModal() { document.getElementById('champContactsModal').style.display = 'none'; }
 
@@ -981,7 +981,6 @@ function renderChampContactsTable() {
     if (!container) return;
     const search = (document.getElementById('champContactsSearchInput')?.value || '').toLowerCase().trim();
     container.innerHTML = '';
-
     const filtered = CHAMP_CONTACTS_LIST.map((c, originalIndex) => ({ c, originalIndex })).filter(({ c }) => {
         const text = `${c.dept} ${c.name} ${c.task} ${c.phone}`.toLowerCase();
         return !search || text.includes(search);
@@ -997,8 +996,8 @@ function renderChampContactsTable() {
         card.className = 'champ-contact-card';
         card.innerHTML = `
             <div class="contact-actions">
-                <button class="action-icon-btn" onclick="openChampContactEditorModal(${originalIndex})" title="Редактировать">✏️</button>
-                <button class="action-icon-btn delete" onclick="deleteChampContact(${originalIndex})" title="Удалить">🗑️</button>
+                <button class="action-icon-btn" onclick="openChampContactEditorModal(${originalIndex})">✏️</button>
+                <button class="action-icon-btn delete" onclick="deleteChampContact(${originalIndex})">🗑️</button>
             </div>
             <div class="contact-role">${c.dept}</div>
             <div class="contact-name">${c.name}</div>
@@ -1051,10 +1050,6 @@ function deleteChampContact(idx) {
     }
 }
 
-// ==========================================
-// 8. ВЫЗЫВНОЙ ЛИСТ (CALL SHEET) И ШАБЛОНЫ
-// ==========================================
-
 function openCallSheetModal() {
     const now = new Date();
     document.getElementById('cs-date').value = now.toISOString().slice(0, 10);
@@ -1072,7 +1067,6 @@ function openCallSheetModal() {
 
 function closeCallSheetModal() { document.getElementById('callSheetModal').style.display = 'none'; }
 
-// Рендер выпадающего списка шаблонов вызывных в модалке
 function renderCsTemplatesDropdown() {
     let container = document.getElementById('cs-templates-selector-container');
     if (!container) {
@@ -1403,9 +1397,9 @@ function openCallSheetHistoryModal() {
             <td>${cs.compMgrName}</td>
             <td>
                 <div style="display:flex; gap:6px;">
-                    <button class="select-btn" onclick="editCallSheetFromHistory('${cs.id}')" title="Редактировать">✏️</button>
-                    <button class="select-btn" onclick="reprintCallSheet('${cs.id}')" title="Печать">🖨️</button>
-                    <button class="delete-btn" onclick="deleteCallSheetFromHistory('${cs.id}')" title="Удалить">🗑️</button>
+                    <button class="select-btn" onclick="editCallSheetFromHistory('${cs.id}')">✏️</button>
+                    <button class="select-btn" onclick="reprintCallSheet('${cs.id}')">🖨️</button>
+                    <button class="delete-btn" onclick="deleteCallSheetFromHistory('${cs.id}')">🗑️</button>
                 </div>
             </td>
         </tr>
@@ -1413,9 +1407,7 @@ function openCallSheetHistoryModal() {
     document.getElementById('csHistoryModal').style.display = 'flex';
 }
 
-function closeCallSheetHistoryModal() {
-    document.getElementById('csHistoryModal').style.display = 'none';
-}
+function closeCallSheetHistoryModal() { document.getElementById('csHistoryModal').style.display = 'none'; }
 
 function reprintCallSheet(id) {
     const cs = getCsHistory().find(c => c.id === id);
@@ -1539,8 +1531,6 @@ function appendWeatherToNotes() {
     const str = `Погода: ${onlineWeatherData.temp}. Восход: ${onlineWeatherData.sunrise}, Закат: ${onlineWeatherData.sunset}.`;
     if (!notes.value.includes(str)) notes.value += (notes.value ? '\n' : '') + str;
 }
-
-// -- Экспорт --
 
 function downloadCSV(filename, rows) {
     let content = "\uFEFF" + rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(';')).join("\r\n");
