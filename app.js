@@ -1,5 +1,5 @@
 /**
- * ТЕХОТДЕЛ AM — ОСНОВНОЙ СКРИПТ ПРИЛОЖЕНИЯ (ОБНОВЛЕННАЯ ВЕРСИЯ С ДОПОЛНЕНИЯМИ)
+ * ТЕХОТДЕЛ AM — ПОЛНЫЙ ОБЪЕДИНЕННЫЙ СКРИПТ ПРИЛОЖЕНИЯ (APP.JS)
  */
 
 const APP_STORAGE_KEYS = {
@@ -1617,3 +1617,55 @@ function onEmployeeSelect(name) {
 }
 
 function onCountryCodeChange() { const i = document.getElementById('contact-input'); if (i) formatPhoneNumber(i); }
+
+/**
+ * НОВЫЕ ФУНКЦИИ ИНТЕГРАЦИИ С TELEGRAM И FIREBASE ДЛЯ ОТПРАВКИ УВЕДОМЛЕНИЙ
+ */
+async function sendTelegramNotificationFromApp(chatId, textMessage) {
+    const botToken = "ВАШ_ТОКЕН_БОТА"; // Укажите токен вашего бота
+    if (!chatId) {
+        alert('Не указан Telegram Chat ID получателя!');
+        return;
+    }
+
+    try {
+        const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: textMessage,
+                parse_mode: 'HTML'
+            })
+        });
+        const data = await response.json();
+        if (data.ok) {
+            alert('Уведомление успешно доставлено в Telegram!');
+        } else {
+            alert('Ошибка отправки: ' + data.description);
+        }
+    } catch (e) {
+        console.error(e);
+        alert('Ошибка сети при отправке сообщения в Telegram.');
+    }
+}
+
+function checkEquipmentReturnDeadlines() {
+    const history = getActsHistory();
+    const today = new Date();
+
+    history.forEach(act => {
+        if (act.returnDate && act.returnDate !== '—') {
+            const parts = act.returnDate.split('.');
+            if (parts.length === 3) {
+                const returnDateObj = new Date(parts[2], parts[1] - 1, parts[0]);
+                const diffTime = returnDateObj - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays <= 0) {
+                    console.warn(`Внимание! По акту № ${act.num} истек срок возврата оборудования (${act.returnDate}). Получатель: ${act.participant}`);
+                }
+            }
+        }
+    });
+}
