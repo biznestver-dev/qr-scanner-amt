@@ -1,5 +1,5 @@
 /**
- * ТЕХОТДЕЛ AM — ОСНОВНОЙ СКРИПТ ПРИЛОЖЕНИЯ (ОБНОВЛЕННАЯ ВЕРСИЯ)
+ * ТЕХОТДЕЛ AM — ОСНОВНОЙ СКРИПТ ПРИЛОЖЕНИЯ (ОБНОВЛЕННАЯ ВЕРСИЯ С ШАБЛОНАМИ И СЕТЬЮ)
  */
 
 // ==========================================
@@ -13,7 +13,8 @@ const APP_STORAGE_KEYS = {
     CHAMP_CONTACTS: 'artmasters_champ_contacts',
     EQUIPMENT_DB: 'artmasters_equipment_db',
     ACTS_HISTORY: 'artmasters_acts_history',
-    CS_HISTORY: 'artmasters_callsheet_history'
+    CS_HISTORY: 'artmasters_callsheet_history',
+    CS_TEMPLATES: 'artmasters_cs_templates'
 };
 
 const MANAGER_TITLES = {
@@ -139,6 +140,46 @@ const DEFAULT_CHAMP_CONTACTS = [
     { dept: "Менеджмент", name: "Степан Новиков", task: "Менеджер (Веб-дизайнер UX/UI)", phone: "+79154039226" }
 ];
 
+// Дефолтные шаблоны вызывных листов
+const DEFAULT_CS_TEMPLATES = [
+    {
+        name: "День застройки площадки",
+        shiftNum: "День монтажа и застройки",
+        milestones: [
+            { time: '08:00', event: 'Заезд автотранспорта, сбор технической группы' },
+            { time: '09:00', event: 'Начало монтажных работ и разворачивание сетей' },
+            { time: '13:00', event: 'Обед' },
+            { time: '18:00', event: 'Проверка оборудования' },
+            { time: '21:00', event: 'Завершение монтажа, сдача смены' }
+        ],
+        notes: "Форма одежды: Total Black. На площадке строго обязательна защитная обувь."
+    },
+    {
+        name: "Соревновательный день",
+        shiftNum: "Соревновательный день (Защиты кейсов)",
+        milestones: [
+            { time: '08:30', event: 'Сбор техгруппы на площадке, проверка связи' },
+            { time: '09:30', event: 'Саундчек и тестирование экранов' },
+            { time: '10:00', event: 'Старт защиты проектов участников' },
+            { time: '14:00', event: 'Обеденный перерыв' },
+            { time: '19:00', event: 'Подведение итогов, резервное копирование дисков' }
+        ],
+        notes: "Внимание: Во время защит соблюдать тишину в зоне пульта."
+    },
+    {
+        name: "Церемония закрытия / награждения",
+        shiftNum: "Церемония награждения победителей",
+        milestones: [
+            { time: '12:00', event: 'Монтаж света и звука на сценической площадке' },
+            { time: '15:00', event: 'Генеральный прогон церемонии' },
+            { time: '18:00', event: 'Сбор гостей и участников' },
+            { time: '19:00', event: 'Начало прямой трансляции и церемонии' },
+            { time: '22:00', event: 'Демонтаж оборудования, выезд' }
+        ],
+        notes: "Дресс-код: Строгий деловой / Total Black для технической службы."
+    }
+];
+
 // ==========================================
 // 2. ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
 // ==========================================
@@ -147,6 +188,7 @@ let EMPLOYEES_LIST = [];
 let VENUES_LIST = [];
 let SCHEDULE_LIST = [];
 let CHAMP_CONTACTS_LIST = [];
+let CS_TEMPLATES_LIST = [];
 let currentActItems = [];
 let onlineWeatherData = { temp: '', weather: '', sunrise: '', sunset: '' };
 let currentStatusFilter = 'all';
@@ -166,13 +208,7 @@ let callSheetData = {
     venueMgrName: "",
     venueMgrPhone: "",
     extraInfo: [],
-    milestones: [
-        { time: '08:00', event: 'Заезд автотранспорта, сбор технической группы' },
-        { time: '09:00', event: 'Начало монтажных работ и разворачивание сетей' },
-        { time: '13:00', event: 'Обед' },
-        { time: '18:00', event: 'Технический прогон и саундчек' },
-        { time: '21:00', event: 'Завершение работ, передача площадки охране' }
-    ],
+    milestones: [...DEFAULT_CS_TEMPLATES[0].milestones],
     crew: [
         { type: 'manual', time: '08:00', dept: 'Звук', name: 'Иванов Иван', phone: '+7 900 000 00 01', task: 'Монтаж FOH, размотка мультикора' },
         { type: 'manual', time: '08:30', dept: 'Свет', name: 'Петров Петр', phone: '+7 900 000 00 02', task: 'Развеска приборов, юстировка' },
@@ -185,7 +221,7 @@ let callSheetData = {
     transport: [
         { model: 'Газель NEXT', plate: 'А 123 АА 777', driver: 'Иванов Алексей', phone: '+7 999 111 22 33', task: 'Доставка звукового оборудования' }
     ],
-    notes: "Форма одежды: Total Black. На площадке обязательно наличие защитной обуви на застройке."
+    notes: DEFAULT_CS_TEMPLATES[0].notes
 };
 
 // ==========================================
@@ -195,6 +231,7 @@ let callSheetData = {
 document.addEventListener('DOMContentLoaded', () => {
     initData();
     initUI();
+    initNetworkStatusListener();
 });
 
 function initData() {
@@ -202,6 +239,7 @@ function initData() {
     VENUES_LIST = loadFromStore(APP_STORAGE_KEYS.VENUES, DEFAULT_VENUES_LIST);
     SCHEDULE_LIST = loadFromStore(APP_STORAGE_KEYS.SCHEDULE, DEFAULT_SCHEDULE_LIST);
     CHAMP_CONTACTS_LIST = loadFromStore(APP_STORAGE_KEYS.CHAMP_CONTACTS, DEFAULT_CHAMP_CONTACTS);
+    CS_TEMPLATES_LIST = loadFromStore(APP_STORAGE_KEYS.CS_TEMPLATES, DEFAULT_CS_TEMPLATES);
 
     const savedDb = localStorage.getItem(APP_STORAGE_KEYS.EQUIPMENT_DB);
     if (savedDb) {
@@ -219,10 +257,40 @@ function initUI() {
             fps: 10, 
             qrbox: { width: 220, height: 220 } 
         }, false);
-        html5QrcodeScanner.render(onScanSuccess, (err) => {
-            // Игнорируем частые ошибки сканирования пустых кадров для стабильности
-        });
+        html5QrcodeScanner.render(onScanSuccess, (err) => {});
     }
+}
+
+// Индикатор сети (Online / Offline)
+function initNetworkStatusListener() {
+    const headerEl = document.querySelector('.app-header');
+    if (!headerEl) return;
+
+    let badge = document.getElementById('network-status-badge');
+    if (!badge) {
+        badge = document.createElement('div');
+        badge.id = 'network-status-badge';
+        badge.style.cssText = 'font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px; text-transform: uppercase;';
+        headerEl.appendChild(badge);
+    }
+
+    const updateStatus = () => {
+        if (navigator.onLine) {
+            badge.style.background = 'rgba(16, 185, 129, 0.15)';
+            badge.style.color = '#10b981';
+            badge.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+            badge.innerHTML = '🟢 Онлайн';
+        } else {
+            badge.style.background = 'rgba(255, 42, 109, 0.15)';
+            badge.style.color = '#ff2a6d';
+            badge.style.border = '1px solid rgba(255, 42, 109, 0.3)';
+            badge.innerHTML = '🔴 Офлайн';
+        }
+    };
+
+    window.addEventListener('online', updateStatus);
+    window.addEventListener('offline', updateStatus);
+    updateStatus();
 }
 
 // ==========================================
@@ -330,7 +398,6 @@ function updateInvActionButton() {
     }
 }
 
-// Защита от дубликатов при сканировании (debounce 1.5 сек)
 function onScanSuccess(decodedText) {
     const scannedInv = decodedText.trim();
     if (scannedInv === lastScannedCode) return;
@@ -356,7 +423,7 @@ function onScanSuccess(decodedText) {
             if (nameInput) nameInput.value = '';
             updateInvActionButton();
         } else {
-            alert(`Позиция ${scannedInv} уже добавлена в текущий акт!`);
+            alert(`Позиция ${scannedInv} уже добавлена!`);
         }
     }
 }
@@ -433,7 +500,7 @@ function renderDbTable() {
                 <td><span class="badge-status ${badge}">${rawStatus}</span></td>
                 <td>
                     <div style="display:flex;gap:6px;align-items:center;">
-                        <input type="checkbox" class="db-item-checkbox" data-inv="${item.inv}" style="width:16px;height:16px;cursor:pointer;" title="Выбрать для массового добавления">
+                        <input type="checkbox" class="db-item-checkbox" data-inv="${item.inv}" style="width:16px;height:16px;cursor:pointer;">
                         <button class="select-btn" onclick="selectEquipment('${item.inv}')">Выбрать</button>
                         ${!isFree ? `<button class="return-btn" onclick="returnEquipmentToOffice('${item.inv}')">📥 Вернуть</button>` : ''}
                     </div>
@@ -443,7 +510,6 @@ function renderDbTable() {
         }
     });
 
-    // Добавляем панель массового импорта вверху таблицы, если ее еще нет
     let massPanel = document.getElementById('db-mass-actions-panel');
     const tableWrapper = tbody.closest('.table-wrapper');
     if (!massPanel && tableWrapper) {
@@ -461,13 +527,9 @@ function renderDbTable() {
 function filterDbTable() { renderDbTable(); }
 function selectEquipment(inv) { document.getElementById('inv-input').value = inv; onInventoryChange(inv); closeDbModal(); }
 
-// Массовое добавление выбранных галочками позиций из базы МТБ в текущий акт
 function addSelectedItemsToActFromDb() {
     const checkboxes = document.querySelectorAll('.db-item-checkbox:checked');
-    if (checkboxes.length === 0) {
-        alert('Отметьте галочками позиции в таблице базы МТБ!');
-        return;
-    }
+    if (checkboxes.length === 0) { alert('Отметьте галочками позиции в таблице базы МТБ!'); return; }
     let addedCount = 0;
     checkboxes.forEach(cb => {
         const inv = cb.getAttribute('data-inv');
@@ -479,7 +541,7 @@ function addSelectedItemsToActFromDb() {
     });
     renderSelectedItems();
     closeDbModal();
-    alert(`Успешно добавлено позиций в акт: ${addedCount}`);
+    alert(`Добавлено позиций в акт: ${addedCount}`);
 }
 
 function returnEquipmentToOffice(inv) {
@@ -629,7 +691,7 @@ function resetForm() {
 function getFullContactValue() { return document.getElementById('contact-input')?.value.trim() || '—'; }
 function getParticipantValue() { const el = document.getElementById('participant-name'); return el ? el.value.trim() : ''; }
 
-function getManagerTitle(mgr) { return MANAGER_TITLES[mgr] || "Административно-технический отдел"; }
+function MANAGER_TITLES_FN(mgr) { return MANAGER_TITLES[mgr] || "Административно-технический отдел"; }
 function getRecipientRoleTitle(role, name) {
     if (role === 'Сотрудник') {
         const emp = EMPLOYEES_LIST.find(e => e.name === name);
@@ -990,7 +1052,7 @@ function deleteChampContact(idx) {
 }
 
 // ==========================================
-// 8. ВЫЗЫВНОЙ ЛИСТ (CALL SHEET)
+// 8. ВЫЗЫВНОЙ ЛИСТ (CALL SHEET) И ШАБЛОНЫ
 // ==========================================
 
 function openCallSheetModal() {
@@ -998,6 +1060,7 @@ function openCallSheetModal() {
     document.getElementById('cs-date').value = now.toISOString().slice(0, 10);
     initTechDirSelect();
     initStageMgrSelect();
+    renderCsTemplatesDropdown();
     renderCsExtraInfo();
     renderCsMilestones();
     renderCsCrew();
@@ -1008,6 +1071,42 @@ function openCallSheetModal() {
 }
 
 function closeCallSheetModal() { document.getElementById('callSheetModal').style.display = 'none'; }
+
+// Рендер выпадающего списка шаблонов вызывных в модалке
+function renderCsTemplatesDropdown() {
+    let container = document.getElementById('cs-templates-selector-container');
+    if (!container) {
+        const headerEl = document.querySelector('#callSheetModal .modal-header');
+        if (headerEl) {
+            container = document.createElement('div');
+            container.id = 'cs-templates-selector-container';
+            container.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-right: 10px;';
+            container.innerHTML = `
+                <select id="cs-template-select" style="padding: 8px 12px; font-size: 12px; border-radius: 10px; width: 180px;">
+                    <option value="">-- Шаблоны смен --</option>
+                    ${CS_TEMPLATES_LIST.map((t, i) => `<option value="${i}">${t.name}</option>`).join('')}
+                </select>
+                <button class="add-row-btn" onclick="applySelectedCsTemplate()" style="padding: 8px 12px; font-size: 11px;">Применить</button>
+            `;
+            headerEl.querySelector('.modal-actions').prepend(container);
+        }
+    }
+}
+
+function applySelectedCsTemplate() {
+    const sel = document.getElementById('cs-template-select');
+    if (!sel || sel.value === "") { alert('Выберите шаблон из списка!'); return; }
+    const template = CS_TEMPLATES_LIST[parseInt(sel.value)];
+    if (!template) return;
+
+    document.getElementById('cs-shift-num').value = template.shiftNum || '';
+    callSheetData.milestones = template.milestones ? JSON.parse(JSON.stringify(template.milestones)) : [];
+    callSheetData.notes = template.notes || '';
+    document.getElementById('cs-notes').value = template.notes || '';
+
+    renderCsMilestones();
+    alert(`Шаблон «${template.name}» успешно применен!`);
+}
 
 function initTechDirSelect() {
     const select = document.getElementById('cs-tech-dir-select');
