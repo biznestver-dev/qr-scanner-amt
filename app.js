@@ -185,7 +185,7 @@ let onlineWeatherData = { temp: '', weather: '', sunrise: '', sunset: '' };
 let currentStatusFilter = 'all';
 let lastScannedCode = '';
 let scanTimeout = null;
-let isMassReturnActive = false; // Режим массовой приёмки
+let isMassReturnActive = false; 
 let html5QrcodeScanner = null;
 
 let callSheetData = {
@@ -356,7 +356,6 @@ function toggleNoReturnDate(checked) {
     }
 }
 
-// Режим массового возврата (приёмки)
 function toggleMassReturnMode() {
     isMassReturnActive = !isMassReturnActive;
     const banner = document.getElementById('mass-return-banner');
@@ -387,22 +386,18 @@ function updateInvActionButton() {
     }
 }
 
-// Обработчик сканирования с поддержкой массового приёма
 function onScanSuccess(decodedText) {
     const scannedInv = decodedText.trim();
-    
     if (isMassReturnActive) {
         if (window.EQUIPMENT_DB && window.EQUIPMENT_DB[scannedInv]) {
             window.EQUIPMENT_DB[scannedInv].status = 'В офисе';
             saveToStore(APP_STORAGE_KEYS.EQUIPMENT_DB, window.EQUIPMENT_DB);
             renderDbTable();
-            console.log(`Принято на склад: ${scannedInv}`);
         } else {
             alert(`Оборудование ${scannedInv} не найдено в базе МТБ!`);
         }
         return;
     }
-
     processStandardScan(scannedInv);
 }
 
@@ -563,7 +558,6 @@ function saveActToHistory(act) { const h = getActsHistory(); h.unshift(act); sav
 function openHistoryModal() { renderHistoryTable(); document.getElementById('historyModal').style.display = 'flex'; }
 function closeHistoryModal() { document.getElementById('historyModal').style.display = 'none'; }
 
-// Реестр актов с подсветкой просроченных возвратов
 function renderHistoryTable() {
     const tbody = document.getElementById('historyTableBody');
     if (!tbody) return;
@@ -587,7 +581,6 @@ function renderHistoryTable() {
         })();
 
         const rowStyle = isOverdue ? 'background: rgba(255, 42, 109, 0.1); border-left: 4px solid var(--status-busy);' : '';
-
         const itemsList = act.items ? act.items.map(i => i.name).join(', ') : act.name;
         const invsList = act.items ? act.items.map(i => i.inv).join(', ') : act.inv;
         const searchStr = `${act.num} ${act.date} ${act.participant} ${itemsList} ${invsList}`.toLowerCase();

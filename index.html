@@ -682,37 +682,93 @@
     </div>
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО ДЛЯ РЕДАКТИРОВАНИЯ КОНТАКТОВ МЕНЕДЖЕРОВ -->
+  <!-- МОДАЛЬНЫЕ ОКНА РЕДАКТИРОВАНИЯ (КОНТАКТЫ, ПЛОЩАДКИ, РАСПИСАНИЕ) -->
   <div id="champContactEditorModal" class="modal">
     <div class="modal-content" style="max-width: 500px;">
         <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h3 style="font-size: 18px; color: white;">Редактировать контакт</h3>
             <button class="close-btn" onclick="closeChampContactEditorModal()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">&times;</button>
         </div>
-        
         <input type="hidden" id="edit-champ-contact-index" value="-1">
-        
         <div class="form-group" style="margin-bottom: 15px;">
             <label style="display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-secondary);">Департамент / Служба</label>
             <input type="text" id="edit-champ-dept" placeholder="Например: Менеджмент" style="width: 100%; padding: 12px; background: rgba(9, 12, 21, 0.7); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
         </div>
-        
         <div class="form-group" style="margin-bottom: 15px;">
             <label style="display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-secondary);">ФИО</label>
             <input type="text" id="edit-champ-name" placeholder="Иван Иванов" style="width: 100%; padding: 12px; background: rgba(9, 12, 21, 0.7); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
         </div>
-        
         <div class="form-group" style="margin-bottom: 15px;">
             <label style="display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-secondary);">Задача / Компетенция</label>
             <input type="text" id="edit-champ-task" placeholder="Менеджер (...)" style="width: 100%; padding: 12px; background: rgba(9, 12, 21, 0.7); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
         </div>
-        
         <div class="form-group" style="margin-bottom: 15px;">
             <label style="display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-secondary);">Телефон</label>
             <input type="text" id="edit-champ-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)" style="width: 100%; padding: 12px; background: rgba(9, 12, 21, 0.7); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
         </div>
-        
         <button class="btn" onclick="saveChampContactData()" style="width: 100%; background: var(--am-magenta); color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; font-weight: bold;">Сохранить контакт</button>
+    </div>
+  </div>
+
+  <div id="venueEditorModal" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="font-size: 18px; color: white;">Редактировать площадку</h3>
+            <button class="close-btn" onclick="closeVenueEditorModal()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">&times;</button>
+        </div>
+        <input type="hidden" id="edit-venue-index" value="-1">
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-secondary);">Название площадки</label>
+            <input type="text" id="edit-venue-name" placeholder="Например: Театр «Маска»" style="width: 100%; padding: 12px; background: rgba(9, 12, 21, 0.7); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-secondary);">Адрес / Локация</label>
+            <input type="text" id="edit-venue-address" placeholder="Москва, ул. ..." style="width: 100%; padding: 12px; background: rgba(9, 12, 21, 0.7); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-secondary);">Ответственный менеджер</label>
+            <input type="text" id="edit-venue-manager" placeholder="ФИО менеджера" style="width: 100%; padding: 12px; background: rgba(9, 12, 21, 0.7); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-secondary);">Телефон</label>
+            <input type="text" id="edit-venue-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)" style="width: 100%; padding: 12px; background: rgba(9, 12, 21, 0.7); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-secondary);">Статус</label>
+            <input type="text" id="edit-venue-status" placeholder="Активна" style="width: 100%; padding: 12px; background: rgba(9, 12, 21, 0.7); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+        </div>
+        <button class="btn" onclick="saveVenueData()" style="width: 100%; background: var(--am-magenta); color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; font-weight: bold;">Сохранить площадку</button>
+    </div>
+  </div>
+
+  <div id="scheduleEditorModal" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="font-size: 18px; color: white;">Редактировать расписание защиты</h3>
+            <button class="close-btn" onclick="closeScheduleEditorModal()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">&times;</button>
+        </div>
+        <input type="hidden" id="edit-schedule-index" value="-1">
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-secondary);">Дата и время</label>
+            <input type="text" id="edit-schedule-time" placeholder="23 августа (15:00 - 17:00)" style="width: 100%; padding: 12px; background: rgba(9, 12, 21, 0.7); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-secondary);">Компетенция</label>
+            <input type="text" id="edit-schedule-comp" placeholder="Например: Художник-аниматор" style="width: 100%; padding: 12px; background: rgba(9, 12, 21, 0.7); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-secondary);">Участники</label>
+            <input type="text" id="edit-schedule-participant" placeholder="Участники" style="width: 100%; padding: 12px; background: rgba(9, 12, 21, 0.7); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-secondary);">Локация / Адрес</label>
+            <input type="text" id="edit-schedule-location" placeholder="Адрес проведения" style="width: 100%; padding: 12px; background: rgba(9, 12, 21, 0.7); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-secondary);">Описание / Регламент</label>
+            <input type="text" id="edit-schedule-desc" placeholder="Прибытие: 14:30 | Защита кейса" style="width: 100%; padding: 12px; background: rgba(9, 12, 21, 0.7); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+        </div>
+        <button class="btn" onclick="saveScheduleData()" style="width: 100%; background: var(--am-magenta); color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; font-weight: bold;">Сохранить защиту</button>
     </div>
   </div>
 
