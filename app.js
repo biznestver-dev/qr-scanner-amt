@@ -1,5 +1,5 @@
 /**
- * ТЕХОТДЕЛ AM — ОСНОВНОЙ СКРИПТ ПРИЛОЖЕНИЯ
+ * ТЕХОТДЕЛ AM — ОСНОВНОЙ СКРИПТ ПРИЛОЖЕНИЯ (ОБНОВЛЕННАЯ ВЕРСИЯ)
  */
 
 // ==========================================
@@ -89,7 +89,7 @@ const DEFAULT_EMPLOYEES_LIST = [
 ];
 
 const DEFAULT_VENUES_LIST = [
-    { name: "Хабаровск / Полигон креативных компетенций", address: "г. Хабаровск", manager: "Дарья Поляков", phone: "", status: "Активна" },
+    { name: "Хабаровск / Полигон креативных компетенций", address: "г. Хабаровск", manager: "Дарья Полякова", phone: "", status: "Активна" },
     { name: "Студия", address: "Москва", manager: "Маргарита Макарова", phone: "", status: "Активна" },
     { name: "Офис группы компаний ПИК", address: "Москва", manager: "Маргарита Макарова", phone: "", status: "Активна" },
     { name: "Мастерская 12 Никиты Михалкова", address: "Москва", manager: "Маргарита Макарова", phone: "", status: "Активна" },
@@ -131,7 +131,7 @@ const DEFAULT_CHAMP_CONTACTS = [
     { dept: "Менеджмент", name: "Ангелина Битарова", task: "Менеджер (Фотограф)", phone: "+79194260664" },
     { dept: "Менеджмент", name: "Арина Дьяконова", task: "Менеджер (Композитор популярной музыки)", phone: "+79055851865" },
     { dept: "Менеджмент", name: "Владислав Скрипко", task: "Менеджер (Звукорежиссёр FOH)", phone: "+79194112728" },
-    { dept: "Менеджмент", name: "Дарья Поляков", task: "Менеджер (Драматург театра и кино)", phone: "+79251277703" },
+    { dept: "Менеджмент", name: "Дарья Полякова", task: "Менеджер (Драматург театра и кино)", phone: "+79251277703" },
     { dept: "Менеджмент", name: "Иван Кондратенко", task: "Менеджер (Геймдизайнер)", phone: "+79038118802" },
     { dept: "Менеджмент", name: "Маргарита Макарова", task: "Менеджер (Куратор выставочных пространств)", phone: "+79261000043" },
     { dept: "Менеджмент", name: "Мария Фёдорова", task: "Менеджер (Креативный продюсер)", phone: "+79179461932" },
@@ -150,6 +150,8 @@ let CHAMP_CONTACTS_LIST = [];
 let currentActItems = [];
 let onlineWeatherData = { temp: '', weather: '', sunrise: '', sunset: '' };
 let currentStatusFilter = 'all';
+let lastScannedCode = '';
+let scanTimeout = null;
 
 let callSheetData = {
     city: "Москва",
@@ -216,8 +218,10 @@ function initUI() {
         const html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
             fps: 10, 
             qrbox: { width: 220, height: 220 } 
+        }, false);
+        html5QrcodeScanner.render(onScanSuccess, (err) => {
+            // Игнорируем частые ошибки сканирования пустых кадров для стабильности
         });
-        html5QrcodeScanner.render(onScanSuccess);
     }
 }
 
@@ -326,8 +330,14 @@ function updateInvActionButton() {
     }
 }
 
+// Защита от дубликатов при сканировании (debounce 1.5 сек)
 function onScanSuccess(decodedText) {
     const scannedInv = decodedText.trim();
+    if (scannedInv === lastScannedCode) return;
+    lastScannedCode = scannedInv;
+    clearTimeout(scanTimeout);
+    scanTimeout = setTimeout(() => { lastScannedCode = ''; }, 1500);
+
     const invInput = document.getElementById('inv-input');
     if (invInput) invInput.value = scannedInv;
     updateInvActionButton();
@@ -346,7 +356,7 @@ function onScanSuccess(decodedText) {
             if (nameInput) nameInput.value = '';
             updateInvActionButton();
         } else {
-            alert(`Позиция ${scannedInv} уже добавлена!`);
+            alert(`Позиция ${scannedInv} уже добавлена в текущий акт!`);
         }
     }
 }
@@ -422,7 +432,8 @@ function renderDbTable() {
                 <td>${item.sn || '—'}</td>
                 <td><span class="badge-status ${badge}">${rawStatus}</span></td>
                 <td>
-                    <div style="display:flex;gap:6px;">
+                    <div style="display:flex;gap:6px;align-items:center;">
+                        <input type="checkbox" class="db-item-checkbox" data-inv="${item.inv}" style="width:16px;height:16px;cursor:pointer;" title="Выбрать для массового добавления">
                         <button class="select-btn" onclick="selectEquipment('${item.inv}')">Выбрать</button>
                         ${!isFree ? `<button class="return-btn" onclick="returnEquipmentToOffice('${item.inv}')">📥 Вернуть</button>` : ''}
                     </div>
@@ -431,10 +442,45 @@ function renderDbTable() {
             tbody.appendChild(tr);
         }
     });
+
+    // Добавляем панель массового импорта вверху таблицы, если ее еще нет
+    let massPanel = document.getElementById('db-mass-actions-panel');
+    const tableWrapper = tbody.closest('.table-wrapper');
+    if (!massPanel && tableWrapper) {
+        massPanel = document.createElement('div');
+        massPanel.id = 'db-mass-actions-panel';
+        massPanel.style.cssText = 'padding: 10px 18px; background: rgba(59,38,166,0.2); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border);';
+        massPanel.innerHTML = `
+            <span style="font-size: 12px; color: var(--text-secondary);">Массовые действия с выбранным:</span>
+            <button class="add-row-btn" onclick="addSelectedItemsToActFromDb()">+ Добавить отмеченные в акт</button>
+        `;
+        tableWrapper.parentNode.insertBefore(massPanel, tableWrapper);
+    }
 }
 
 function filterDbTable() { renderDbTable(); }
 function selectEquipment(inv) { document.getElementById('inv-input').value = inv; onInventoryChange(inv); closeDbModal(); }
+
+// Массовое добавление выбранных галочками позиций из базы МТБ в текущий акт
+function addSelectedItemsToActFromDb() {
+    const checkboxes = document.querySelectorAll('.db-item-checkbox:checked');
+    if (checkboxes.length === 0) {
+        alert('Отметьте галочками позиции в таблице базы МТБ!');
+        return;
+    }
+    let addedCount = 0;
+    checkboxes.forEach(cb => {
+        const inv = cb.getAttribute('data-inv');
+        const found = findEquipment(inv);
+        if (found && !currentActItems.some(i => i.inv === inv)) {
+            currentActItems.push({ inv: found.inv, name: found.name });
+            addedCount++;
+        }
+    });
+    renderSelectedItems();
+    closeDbModal();
+    alert(`Успешно добавлено позиций в акт: ${addedCount}`);
+}
 
 function returnEquipmentToOffice(inv) {
     if (window.EQUIPMENT_DB && window.EQUIPMENT_DB[inv]) {
@@ -684,7 +730,7 @@ function deleteContact(idx) {
 }
 
 // ==========================================
-// 7. ПЛОЩАДКИ, РАСПИСАНИЕ И МЕНЕДЖЕРЫ КОМПЕТЕНЦИЙ (КАРТОЧКИ С ГЕО-ССЫЛКАМИ)
+// 7. ПЛОЩАДКИ, РАСПИСАНИЕ И МЕНЕДЖЕРЫ КОМПЕТЕНЦИЙ
 // ==========================================
 
 function openVenuesModal() { renderVenuesTable(); document.getElementById('venuesModal').style.display = 'flex'; }
@@ -776,7 +822,7 @@ function deleteVenue(idx) {
     }
 }
 
-// -- Расписание (Карточки с гео-ссылками) --
+// -- Расписание --
 
 function openScheduleModal() { renderScheduleTable(); document.getElementById('scheduleModal').style.display = 'flex'; }
 function closeScheduleModal() { document.getElementById('scheduleModal').style.display = 'none'; }
@@ -863,7 +909,7 @@ function deleteSchedule(idx) {
     }
 }
 
-// -- Менеджеры компетенций (Карточки) --
+// -- Менеджеры компетенций --
 
 function openChampContactsModal() { renderChampContactsTable(); document.getElementById('champContactsModal').style.display = 'flex'; }
 function closeChampContactsModal() { document.getElementById('champContactsModal').style.display = 'none'; }
@@ -1231,7 +1277,6 @@ function fillCsPrintArea(cs) {
     document.getElementById('csp-transport-tbody').innerHTML = cs.transport.map(t => `<tr><td>${t.model}</td><td>${t.plate}</td><td>${t.driver}</td><td>${formatPhoneNumberStr(t.phone)}</td><td style="text-align:left;">${t.task}</td></tr>`).join('');
 }
 
-// Открытие и закрытие архива вызывных листов
 function openCallSheetHistoryModal() {
     const tbody = document.getElementById('csHistoryTableBody');
     if (!tbody) return;
@@ -1290,14 +1335,10 @@ function deleteCallSheetFromHistory(id) {
     }
 }
 
-// РЕДАКТИРОВАНИЕ ВЫЗЫВНОГО ИЗ АРХИВА
 function editCallSheetFromHistory(id) {
     const history = getCsHistory();
     const cs = history.find(c => c.id === id);
-    if (!cs) {
-        alert('Вызывной лист не найден в архиве!');
-        return;
-    }
+    if (!cs) { alert('Вызывной лист не найден в архиве!'); return; }
 
     document.getElementById('cs-project-name').value = cs.projectName || '';
     if (cs.date) {
@@ -1335,18 +1376,13 @@ function editCallSheetFromHistory(id) {
     
     const updatedHistory = history.filter(c => c.id !== id);
     saveToStore(APP_STORAGE_KEYS.CS_HISTORY, updatedHistory);
-
-    alert('Вызывной лист загружен для редактирования. Старая версия удалена из архива.');
+    alert('Вызывной лист загружен для редактирования.');
 }
 
-// РЕДАКТИРОВАНИЕ АКТА ИЗ АРХИВА
 function editActFromHistory(actNum) {
     const history = getActsHistory();
     const act = history.find(a => a.num === actNum);
-    if (!act) {
-        alert('Акт не найден в архиве!');
-        return;
-    }
+    if (!act) { alert('Акт не найден в архиве!'); return; }
 
     document.getElementById('competence-select').value = act.comp || '';
     document.getElementById('manager-select').value = act.manager || '';
@@ -1371,7 +1407,6 @@ function editActFromHistory(actNum) {
 
     const updatedHistory = history.filter(a => a.num !== actNum);
     saveToStore(APP_STORAGE_KEYS.ACTS_HISTORY, updatedHistory);
-
     alert(`Акт № ${actNum} загружен в форму для редактирования.`);
 }
 
