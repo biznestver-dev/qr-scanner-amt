@@ -325,14 +325,19 @@ function getFormattedDate(d = new Date()) {
     return `${d.getDate()} ${m[d.getMonth()]} ${d.getFullYear()} г.`;
 }
 
+function parseCustomDate(dateStr) {
+    if (!dateStr || dateStr === '—') return null;
+    let parts;
+    if (dateStr.includes('.')) parts = dateStr.split('.'); 
+    else if (dateStr.includes('-')) parts = dateStr.split('-').reverse(); 
+    else return new Date(dateStr);
+    
+    return new Date(parts[2], parts[1] - 1, parts[0]);
+}
+
 function getUnderlineDateStr(dateStr) {
-    if (!dateStr || dateStr === '—') return `«___» ___________ 20___ г.`;
-    let d = new Date();
-    if (dateStr.includes('.')) {
-        const p = dateStr.split('.');
-        d = new Date(p[2], p[1]-1, p[0]);
-    } else d = new Date(dateStr);
-    if (isNaN(d.getTime())) return `«___» ___________ 20___ г.`;
+    let d = parseCustomDate(dateStr);
+    if (!d || isNaN(d.getTime())) return `«___» ___________ 20___ г.`;
     const m = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
     return `«${String(d.getDate()).padStart(2,'0')}» ${m[d.getMonth()]} ${d.getFullYear()} г.`;
 }
@@ -571,14 +576,8 @@ function renderHistoryTable() {
     }
 
     h.forEach(act => {
-        const isOverdue = act.returnDate && act.returnDate !== '—' && (() => {
-            const p = act.returnDate.split('.');
-            if (p.length === 3) {
-                const retDate = new Date(p[2], p[1] - 1, p[0]);
-                return retDate < new Date();
-            }
-            return false;
-        })();
+        const retDateObj = parseCustomDate(act.returnDate);
+        const isOverdue = retDateObj && retDateObj < new Date();
 
         const rowStyle = isOverdue ? 'background: rgba(255, 42, 109, 0.1); border-left: 4px solid var(--status-busy);' : '';
         const itemsList = act.items ? act.items.map(i => i.name).join(', ') : act.name;
@@ -1618,53 +1617,18 @@ function onEmployeeSelect(name) {
 
 function onCountryCodeChange() { const i = document.getElementById('contact-input'); if (i) formatPhoneNumber(i); }
 
-/**
- * НОВЫЕ ФУНКЦИИ ИНТЕГРАЦИИ С TELEGRAM И FIREBASE ДЛЯ ОТПРАВКИ УВЕДОМЛЕНИЙ
- */
-async function sendTelegramNotificationFromApp(chatId, textMessage) {
-    const botToken = "ВАШ_ТОКЕН_БОТА"; // Укажите токен вашего бота
-    if (!chatId) {
-        alert('Не указан Telegram Chat ID получателя!');
-        return;
-    }
-
-    try {
-        const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: chatId,
-                text: textMessage,
-                parse_mode: 'HTML'
-            })
-        });
-        const data = await response.json();
-        if (data.ok) {
-            alert('Уведомление успешно доставлено в Telegram!');
-        } else {
-            alert('Ошибка отправки: ' + data.description);
-        }
-    } catch (e) {
-        console.error(e);
-        alert('Ошибка сети при отправке сообщения в Telegram.');
-    }
-}
-
 function checkEquipmentReturnDeadlines() {
     const history = getActsHistory();
     const today = new Date();
 
     history.forEach(act => {
-        if (act.returnDate && act.returnDate !== '—') {
-            const parts = act.returnDate.split('.');
-            if (parts.length === 3) {
-                const returnDateObj = new Date(parts[2], parts[1] - 1, parts[0]);
-                const diffTime = returnDateObj - today;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const retDateObj = parseCustomDate(act.returnDate);
+        if (retDateObj) {
+            const diffTime = retDateObj - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-                if (diffDays <= 0) {
-                    console.warn(`Внимание! По акту № ${act.num} истек срок возврата оборудования (${act.returnDate}). Получатель: ${act.participant}`);
-                }
+            if (diffDays <= 0) {
+                console.warn(`Внимание! По акту № ${act.num} истек срок возврата оборудования (${act.returnDate}). Получатель: ${act.participant}`);
             }
         }
     });

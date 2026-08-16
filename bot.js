@@ -2,7 +2,7 @@ const { Telegraf, Markup } = require('telegraf');
 require('dotenv').config();
 
 const { initializeApp } = require("firebase/app");
-const { getFirestore, doc, setDoc } = require("firebase/firestore");
+const { getFirestore, doc, setDoc, getDoc } = require("firebase/firestore");
 
 const firebaseConfig = {
   apiKey: "AIzaSyBU7kaVEoJ57SuDEJMev5W8t26K9Tl5vPA",
@@ -56,7 +56,6 @@ async function showMenu(ctx, text, keyboard) {
     });
 }
 
-// Регистрация пользователя и сохранение chat_id в Firebase при старте
 bot.start(async (ctx) => {
     const chatId = ctx.chat.id;
     const username = ctx.from.username || '';
@@ -142,12 +141,25 @@ bot.on('text', async (ctx) => {
         await ctx.deleteMessage(ctx.message.message_id);
     } catch (e) {}
 
-    if (text.toUpperCase().startsWith('AM-')) {
-        await showMenu(
-            ctx,
-            `🔍 Запрос по инвентарному номеру: <b>${text.toUpperCase()}</b>\nСтатус: <i>Проверяется в базе МТБ...</i>`,
-            backToMenuInline
-        );
+    const upperText = text.toUpperCase();
+    if (upperText.startsWith('AM-')) {
+        try {
+            const docRef = doc(db, "equipment", upperText);
+            const docSnap = await getDoc(docRef);
+            
+            let replyText = '';
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                replyText = `🔍 Инвентарный номер: <b>${upperText}</b>\n📦 Наименование: <b>${data.name || '—'}</b>\n📌 Статус: <b>${data.status || 'В офисе'}</b>`;
+            } else {
+                replyText = `❌ Оборудование с номером <b>${upperText}</b> не найдено в базе Firestore.`;
+            }
+
+            await showMenu(ctx, replyText, backToMenuInline);
+        } catch (e) {
+            console.error(e);
+            await showMenu(ctx, `⚠️ Ошибка при запросе статуса для <b>${upperText}</b> в базе данных.`, backToMenuInline);
+        }
     }
 });
 
