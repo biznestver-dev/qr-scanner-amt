@@ -1,8 +1,8 @@
 const { Telegraf, Markup } = require('telegraf');
 require('dotenv').config();
 
-// Ваш новый URL веб-приложения
-const BOT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwlAgpVSw_rsVuMxDxKQ2hl7xLhUJFq3J8ppk5o-8ujNWygEfzxwj227BbDrkoIelP4lA/exec";
+// Обновленный URL вашего веб-приложения Google Apps Script
+const BOT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwPUdxMacIQYJ5N-xuZ1b_uLCElzB4hVBljor6urnmTHg3Idl79Bu52e2PMMc_rTZx6bQ/exec";
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -40,7 +40,7 @@ bot.start(async (ctx) => {
         });
     } catch (e) { console.error("Ошибка синхронизации пользователя:", e); }
 
-    await showMenu(ctx, `🛠 <b>Техотдел AM</b>\n\nПривет, ${ctx.from.first_name}! Бот переведен на Google Таблицы.`, mainInlineMenu);
+    await showMenu(ctx, `🛠 <b>Техотдел AM</b>\n\nПривет, ${ctx.from.first_name}! Бот подключен к Google Таблицам.`, mainInlineMenu);
 });
 
 bot.action('main_menu', async (ctx) => await showMenu(ctx, '🛠 <b>Главное меню:</b>', mainInlineMenu));
