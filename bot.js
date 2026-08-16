@@ -1,7 +1,7 @@
 const { Telegraf, Markup } = require('telegraf');
 require('dotenv').config();
 
-// Обновленный URL вашего веб-приложения Google Apps Script
+// Актуальный URL вашего веб-приложения Google Apps Script (Версия 3)
 const BOT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwPUdxMacIQYJ5N-xuZ1b_uLCElzB4hVBljor6urnmTHg3Idl79Bu52e2PMMc_rTZx6bQ/exec";
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
