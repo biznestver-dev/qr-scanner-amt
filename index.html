@@ -682,6 +682,187 @@
     </div>
   </div>
 
+  <!-- МОДАЛЬНОЕ ОКНО КОНСТРУКТОРА ВЫЗЫВНОГО ЛИСТА -->
+  <div id="callSheetModal" class="modal">
+    <div class="modal-content" style="max-width: 900px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="back-menu-btn" onclick="closeCallSheetModal()">← Закрыть</button>
+          <h3>Конструктор вызывного листа</h3>
+        </div>
+        <div class="modal-actions">
+          <button class="export-btn" onclick="openCallSheetHistoryModal()">📜 Архив</button>
+          <button class="close-btn" onclick="closeCallSheetModal()">&times;</button>
+        </div>
+      </div>
+      
+      <div style="overflow-y: auto; flex: 1; padding-right: 5px; display: flex; flex-direction: column; gap: 20px;">
+        <!-- Основная информация -->
+        <div class="cs-section">
+          <div class="cs-section-title">1. Основная информация о смене</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Название проекта / Площадки</label>
+              <input type="text" id="cs-project-name" value="АртМастерс 2026 — Финал">
+            </div>
+            <div class="form-group">
+              <label>Дата смены</label>
+              <input type="date" id="cs-date" onchange="fetchOnlineWeatherAndSun()">
+            </div>
+            <div class="form-group">
+              <label>Номер смены / Этап</label>
+              <input type="text" id="cs-shift-num" value="Соревновательный день">
+            </div>
+            <div class="form-group">
+              <label>Город</label>
+              <input type="text" id="cs-city" value="Москва" onchange="fetchOnlineWeatherAndSun()">
+            </div>
+            <div class="form-group">
+              <label>Локация (Место)</label>
+              <input type="text" id="cs-location" placeholder="Например: Театр «Маска»">
+            </div>
+            <div class="form-group">
+              <label>Адрес</label>
+              <input type="text" id="cs-address" placeholder="Улица, дом...">
+            </div>
+          </div>
+        </div>
+
+        <!-- Виджет погоды -->
+        <div class="weather-widget-box">
+          <span id="weather-info-text">📍 Определение погоды и солнца...</span>
+          <button class="add-row-btn" onclick="appendWeatherToNotes()" style="font-size: 11px;">+ Добавить в примечания</button>
+        </div>
+
+        <!-- Руководство и менеджеры -->
+        <div class="cs-section">
+          <div class="cs-section-title">2. Руководство и ответственные лица</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label id="cs-tech-dir-label">Технический директор</label>
+              <select id="cs-tech-dir-select" onchange="onTechDirSelect(this.value)"></select>
+            </div>
+            <div class="form-group">
+              <label id="cs-stage-mgr-label">Шеф-редактор / Продюсер</label>
+              <select id="cs-stage-mgr-select" onchange="onStageMgrSelect(this.value)"></select>
+            </div>
+            <div class="form-group">
+              <label>Менеджер компетенции (ФИО)</label>
+              <input type="text" id="cs-comp-mgr-name" placeholder="ФИО менеджера...">
+            </div>
+            <div class="form-group">
+              <label>Телефон менеджера компетенции</label>
+              <input type="text" id="cs-comp-mgr-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)">
+            </div>
+            <div class="form-group">
+              <label>Тех. директор площадки (ФИО)</label>
+              <input type="text" id="cs-venue-tech-dir-name" placeholder="ФИО...">
+            </div>
+            <div class="form-group">
+              <label>Телефон тех. директора площадки</label>
+              <input type="text" id="cs-venue-tech-dir-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)">
+            </div>
+            <div class="form-group">
+              <label>Директор / Администратор площадки (ФИО)</label>
+              <input type="text" id="cs-venue-mgr-name" placeholder="ФИО...">
+            </div>
+            <div class="form-group">
+              <label>Телефон директора площадки</label>
+              <input type="text" id="cs-venue-mgr-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)">
+            </div>
+          </div>
+        </div>
+
+        <!-- Дополнительные контакты -->
+        <div class="cs-section">
+          <div class="cs-section-title">
+            <span>3. Дополнительные контакты в вызывном</span>
+            <button class="add-row-btn" onclick="addCsExtraInfoRow()">+ Добавить строку</button>
+          </div>
+          <div id="cs-extra-info-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+
+        <!-- Тайминг / Вехи -->
+        <div class="cs-section">
+          <div class="cs-section-title">
+            <span>4. Тайминг смены (Основные этапы)</span>
+            <button class="add-row-btn" onclick="addCsMilestoneRow()">+ Добавить этап</button>
+          </div>
+          <div id="cs-milestones-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+
+        <!-- Съемочная / Техническая группа -->
+        <div class="cs-section">
+          <div class="cs-section-title">
+            <span>5. Персонал и техническая группа</span>
+            <div style="display: flex; gap: 6px;">
+              <button class="add-row-btn" onclick="addCsCrewMemberFromAto()">+ Из АТО</button>
+              <button class="add-row-btn" onclick="addCsCrewMemberFromEmployees()">+ Из сотрудников</button>
+              <button class="add-row-btn" onclick="addCsCrewRow()">+ Вручную</button>
+            </div>
+          </div>
+          <div id="cs-crew-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+
+        <!-- Оборудование вызывного -->
+        <div class="cs-section">
+          <div class="cs-section-title">
+            <span>6. Оборудование на смену</span>
+            <div style="display: flex; gap: 6px;">
+              <button class="add-row-btn" onclick="importCurrentActItemsToCallSheet()">📥 Импорт из текущего Акта</button>
+              <button class="add-row-btn" onclick="addCsEquipmentRow()">+ Добавить позицию</button>
+            </div>
+          </div>
+          <div id="cs-equipment-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+
+        <!-- Транспорт -->
+        <div class="cs-section">
+          <div class="cs-section-title">
+            <span>7. Транспортная логистика</span>
+            <button class="add-row-btn" onclick="addCsTransportRow()">+ Добавить транспорт</button>
+          </div>
+          <div id="cs-transport-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+
+        <!-- Примечания -->
+        <div class="cs-section">
+          <div class="cs-section-title">8. Важные примечания и дресс-код</div>
+          <textarea id="cs-notes" rows="3" placeholder="Форма одежды, правила безопасности..."></textarea>
+        </div>
+
+        <!-- Кнопки действий -->
+        <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+          <button class="btn" onclick="printCallSheet()" style="background: var(--am-purple);">🖨️ Напечатать вызывной</button>
+          <button class="btn" onclick="downloadCallSheetWord()">📥 Скачать Word</button>
+          <button class="btn" onclick="saveCurrentCallSheetManually()" style="background: var(--status-free);">💾 Сохранить в архив</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно архива вызывных -->
+  <div id="csHistoryModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="back-menu-btn" onclick="closeCallSheetHistoryModal()">← Назад</button>
+          <h3>Архив вызывных листов</h3>
+        </div>
+        <button class="close-btn" onclick="closeCallSheetHistoryModal()">&times;</button>
+      </div>
+      <div class="search-bar"><input type="text" id="csHistorySearchInput" placeholder="Поиск по архиву вызывных..." oninput="openCallSheetHistoryModal()"></div>
+      <div class="table-wrapper">
+        <table class="db-table">
+          <thead>
+            <tr><th>Проект</th><th>Дата</th><th>Город</th><th>Локация</th><th>Менеджер</th><th>Действия</th></tr>
+          </thead>
+          <tbody id="csHistoryTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <!-- МОДАЛЬНЫЕ ОКНА РЕДАКТИРОВАНИЯ -->
   <div id="champContactEditorModal" class="modal">
     <div class="modal-content" style="max-width: 500px;">
@@ -772,8 +953,157 @@
     </div>
   </div>
 
-  <div id="act-print-area"></div>
-  <div id="callsheet-print-area"></div>
+  <!-- ОБЛАСТИ ПЕЧАТИ (СКРЫТЫЕ) -->
+  <div id="act-print-area">
+    <div style="padding: 20px; font-family: Arial, sans-serif; color: #000;">
+      <div class="act-header" style="text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 5px;">
+        АКТ ПРИЕМА-ПЕРЕДАЧИ ОБОРУДОВАНИЯ № <span id="print-act-num"></span>
+      </div>
+      <div style="text-align: center; font-size: 10pt; margin-bottom: 15px;">
+        к Договору об организации участия в Национальном открытом чемпионате творческих компетенций «АртМастерс (ArtMasters)»
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 10pt; margin-bottom: 15px;">
+        <div>г. Москва</div>
+        <div class="print-underline-date-issue"></div>
+      </div>
+      <div style="margin-bottom: 15px; font-size: 10pt;" id="print-subtitle-container"></div>
+      
+      <table class="act-table" style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <thead>
+          <tr style="background: #f2f2f2;">
+            <th style="border: 1px solid #000; padding: 6px; font-size: 9pt;">№</th>
+            <th style="border: 1px solid #000; padding: 6px; font-size: 9pt;">Наименование оборудования</th>
+            <th style="border: 1px solid #000; padding: 6px; font-size: 9pt;">Инв. №</th>
+            <th style="border: 1px solid #000; padding: 6px; font-size: 9pt;">Получатель</th>
+            <th style="border: 1px solid #000; padding: 6px; font-size: 9pt;">Контакты</th>
+            <th style="border: 1px solid #000; padding: 6px; font-size: 9pt;">Кол-во</th>
+            <th style="border: 1px solid #000; padding: 6px; font-size: 9pt;">Дата выдачи</th>
+            <th style="border: 1px solid #000; padding: 6px; font-size: 9pt;">Срок возврата</th>
+            <th style="border: 1px solid #000; padding: 6px; font-size: 9pt;">Примечание</th>
+          </tr>
+        </thead>
+        <tbody id="print-table-tbody"></tbody>
+      </table>
+
+      <div style="font-size: 9pt; margin-bottom: 25px;" class="rules-block">
+        <b>Особые условия:</b> Получатель несет полную материальную ответственность за сохранность выданного оборудования...
+      </div>
+
+      <table class="signatures-grid" style="width: 100%; margin-top: 30px; border-collapse: collapse;">
+        <tr>
+          <td style="width: 50%; vertical-align: top; font-size: 10pt;">
+            <b>ВЫДАЛ:</b><br>
+            <span id="print-manager-title-out"></span><br><br>
+            ___________________ / <span id="print-manager-out"></span> /<br><br>
+            <div class="print-underline-date-issue"></div>
+          </td>
+          <td style="width: 50%; vertical-align: top; font-size: 10pt;">
+            <b>ПРИНЯЛ:</b><br>
+            <span id="print-recipient-role-grid">Участник</span><br><br>
+            ___________________ / <span id="print-participant-sig"></span> /<br><br>
+            <div class="print-underline-date-issue"></div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div id="callsheet-print-area">
+    <div style="padding: 20px; font-family: Arial, sans-serif; color: #000; font-size: 9pt;">
+      <div class="cs-print-header" style="border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-end;">
+        <div>
+          <div style="font-size: 10pt; font-weight: bold; color: #555;">НАЦИОНАЛЬНЫЙ ЧЕМПИОНАТ АРТМАСТЕРС</div>
+          <div class="cs-print-title" id="csp-project-name" style="font-size: 15pt; font-weight: bold; text-transform: uppercase;"></div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 11pt; font-weight: bold;" id="csp-date"></div>
+          <div style="font-size: 9pt; color: #333;" id="csp-shift-num"></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 10px; font-size: 8.5pt; background: #f9f9f9; padding: 6px; border: 1px solid #ddd;" id="csp-weather-line"></div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; font-size: 9pt;">
+        <div><b>Город:</b> <span id="csp-print-city"></span></div>
+        <div><b>Локация:</b> <span id="csp-print-location"></span></div>
+        <div style="grid-column: 1/-1;"><b>Адрес:</b> <span id="csp-print-address"></span></div>
+      </div>
+
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 8.5pt;">
+        <tr>
+          <td style="border: 1px solid #000; padding: 5px; width: 50%;">
+            <b id="csp-tech-dir-label-print">Технический директор:</b> <span id="csp-tech-dir"></span>
+          </td>
+          <td style="border: 1px solid #000; padding: 5px; width: 50%;">
+            <b id="csp-stage-mgr-label-print">Шеф-редактор:</b> <span id="csp-stage-mgr"></span>
+          </td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #000; padding: 5px;">
+            <b>Менеджер компетенции:</b> <span id="csp-comp-mgr-full"></span>
+          </td>
+          <td style="border: 1px solid #000; padding: 5px;">
+            <b>Площадка (Тех. дир / Менеджер):</b><br>
+            <span id="csp-venue-td-print"></span><br>
+            <span id="csp-venue-mgr-print"></span>
+          </td>
+        </tr>
+      </table>
+
+      <div style="font-weight: bold; margin-bottom: 4px; font-size: 9pt; text-transform: uppercase;">Тайминг смены</div>
+      <table class="act-table" style="width: 100%; border-collapse: collapse; margin-bottom: 12px;">
+        <thead>
+          <tr style="background: #f2f2f2;"><th style="border: 1px solid #000; padding: 4px; width: 80px;">Время</th><th style="border: 1px solid #000; padding: 4px;">Событие / Этап</th></tr>
+        </thead>
+        <tbody id="csp-milestones-tbody"></tbody>
+      </table>
+
+      <div style="font-weight: bold; margin-bottom: 4px; font-size: 9pt; text-transform: uppercase;">Техническая и съемочная группа</div>
+      <table class="act-table" style="width: 100%; border-collapse: collapse; margin-bottom: 12px;">
+        <thead>
+          <tr style="background: #f2f2f2;">
+            <th style="border: 1px solid #000; padding: 4px; width: 70px;">Время</th>
+            <th style="border: 1px solid #000; padding: 4px; width: 120px;">Департамент</th>
+            <th style="border: 1px solid #000; padding: 4px; width: 150px;">ФИО</th>
+            <th style="border: 1px solid #000; padding: 4px; width: 110px;">Телефон</th>
+            <th style="border: 1px solid #000; padding: 4px;">Задача</th>
+          </tr>
+        </thead>
+        <tbody id="csp-crew-tbody"></tbody>
+      </table>
+
+      <div style="font-weight: bold; margin-bottom: 4px; font-size: 9pt; text-transform: uppercase;">Оборудование на площадке</div>
+      <table class="act-table" style="width: 100%; border-collapse: collapse; margin-bottom: 12px;">
+        <thead>
+          <tr style="background: #f2f2f2;">
+            <th style="border: 1px solid #000; padding: 4px; width: 40px;">№</th>
+            <th style="border: 1px solid #000; padding: 4px;">Наименование</th>
+            <th style="border: 1px solid #000; padding: 4px; width: 110px;">Инв. №</th>
+            <th style="border: 1px solid #000; padding: 4px; width: 110px;">SN</th>
+            <th style="border: 1px solid #000; padding: 4px; width: 60px;">Кол-во</th>
+          </tr>
+        </thead>
+        <tbody id="csp-equipment-tbody"></tbody>
+      </table>
+
+      <div style="font-weight: bold; margin-bottom: 4px; font-size: 9pt; text-transform: uppercase;">Транспорт</div>
+      <table class="act-table" style="width: 100%; border-collapse: collapse; margin-bottom: 12px;">
+        <thead>
+          <tr style="background: #f2f2f2;">
+            <th style="border: 1px solid #000; padding: 4px; width: 110px;">Марка</th>
+            <th style="border: 1px solid #000; padding: 4px; width: 90px;">Номер</th>
+            <th style="border: 1px solid #000; padding: 4px; width: 130px;">Водитель</th>
+            <th style="border: 1px solid #000; padding: 4px; width: 110px;">Телефон</th>
+            <th style="border: 1px solid #000; padding: 4px;">Задача</th>
+          </tr>
+        </thead>
+        <tbody id="csp-transport-tbody"></tbody>
+      </table>
+
+      <div style="font-weight: bold; margin-bottom: 4px; font-size: 9pt; text-transform: uppercase;">Примечания</div>
+      <div id="csp-notes" style="border: 1px solid #000; padding: 8px; font-size: 8.5pt; white-space: pre-wrap; background: #fff;"></div>
+    </div>
+  </div>
 
   <script src="equipment.js"></script>
   <script type="module">
