@@ -616,7 +616,7 @@ function deleteActFromHistory(actNum) {
     }
 }
 
-// Функция генерации и печати акта (с предварительным просмотром через window.print)
+// ИСПРАВЛЕННАЯ ФУНКЦИЯ ПЕЧАТИ АКТА В МТБ
 function generateAndPrintAct() {
     const data = collectActData();
     if (!data) return;
@@ -632,12 +632,15 @@ function generateAndPrintAct() {
     saveActToHistory(data);
     preparePrintArea(data);
     
+    // Включаем нужную область печати для акта
     document.getElementById('callsheet-print-area').classList.remove('active-print');
     document.getElementById('act-print-area').classList.add('active-print');
     
     window.print();
     
-    currentActItems = []; renderSelectedItems(); resetForm();
+    currentActItems = []; 
+    renderSelectedItems(); 
+    resetForm();
 }
 
 function collectActData() {
@@ -1339,7 +1342,6 @@ function collectCsData() {
     };
 }
 
-// Функция печати вызывного листа (с поддержкой предпросмотра)
 function printCallSheet() {
     const cs = collectCsData();
     fillCsPrintArea(cs);
