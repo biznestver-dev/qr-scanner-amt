@@ -1140,6 +1140,7 @@
         if (data && Object.keys(data).length > 0) {
           window.EQUIPMENT_DB = data;
           if (typeof renderDbTable === 'function') renderDbTable();
+          console.log("База МТБ успешно загружена из Google Таблиц!");
         }
       } catch (e) {
         console.error("Ошибка загрузки базы из Google Таблиц:", e);
