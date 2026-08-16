@@ -283,28 +283,36 @@
       .app-header { margin-bottom: 20px !important; padding-bottom: 14px !important; }
     }
 
-    /* СТИЛИ ПЕЧАТИ (ОБЕСПЕЧИВАЮТ ПРЕДВАРИТЕЛЬНЫЙ ПРОСМОТР И ПЕЧАТЬ) */
+    /* ИСПРАВЛЕННЫЕ СТИЛИ ПЕЧАТИ (СКРЫВАЮТ ВСЁ, КРОМЕ ЦЕЛЕВОГО ДОКУМЕНТА) */
     @media print {
       body * {
-        visibility: hidden !important;
+        display: none !important;
       }
       #act-print-area.active-print,
       #act-print-area.active-print *,
       #callsheet-print-area.active-print,
       #callsheet-print-area.active-print * {
+        display: block !important;
         visibility: visible !important;
+      }
+      #act-print-area.active-print table,
+      #act-print-area.active-print tr,
+      #act-print-area.active-print td,
+      #act-print-area.active-print th,
+      #callsheet-print-area.active-print table,
+      #callsheet-print-area.active-print tr,
+      #callsheet-print-area.active-print td,
+      #callsheet-print-area.active-print th {
+        display: table !important;
       }
       #act-print-area.active-print,
       #callsheet-print-area.active-print {
-        display: block !important;
         position: absolute;
         left: 0;
         top: 0;
         width: 100%;
-        background: #fff !important;
-      }
-      .modal {
-        display: none !important;
+        background: #ffffff !important;
+        color: #000000 !important;
       }
     }
 
