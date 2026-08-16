@@ -616,7 +616,7 @@ function deleteActFromHistory(actNum) {
     }
 }
 
-// РАБОЧАЯ ФУНКЦИЯ ПЕЧАТИ АКТА С ПРИНУДИТЕЛЬНЫМ ОТОБРАЖЕНИЕМ
+// РАБОЧАЯ ФУНКЦИЯ ПЕЧАТИ АКТА
 function generateAndPrintAct() {
     const data = collectActData();
     if (!data) return;
@@ -697,8 +697,7 @@ function preparePrintArea(act) {
     document.querySelectorAll('[id^="print-recipient-role-grid"]').forEach(e => e.innerText = rt);
     const sn = act.participant !== '—' ? act.participant : '__________________________';
     document.getElementById('print-participant-sig').innerText = sn;
-    document.getElementById('print-competence-mgr1').innerText = sn;
-    document.getElementById('print-competence-mgr2').innerText = sn;
+    
     document.getElementById('print-table-tbody').innerHTML = act.items.map((it, idx) => `
         <tr><td>${idx+1}</td><td style="text-align:left;">${it.name}</td><td>${it.inv}</td><td>${act.participant}</td><td>${act.contact}</td><td>1</td><td>${act.date}</td><td>${act.returnDate}</td><td style="text-align:left;">${act.comment}</td></tr>
     `).join('');
