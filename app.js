@@ -616,7 +616,7 @@ function deleteActFromHistory(actNum) {
     }
 }
 
-// ИСПРАВЛЕННАЯ ФУНКЦИЯ ПЕЧАТИ АКТА В МТБ
+// РАБОЧАЯ ФУНКЦИЯ ПЕЧАТИ АКТА С ПРИНУДИТЕЛЬНЫМ ОТОБРАЖЕНИЕМ
 function generateAndPrintAct() {
     const data = collectActData();
     if (!data) return;
@@ -632,11 +632,24 @@ function generateAndPrintAct() {
     saveActToHistory(data);
     preparePrintArea(data);
     
-    // Включаем нужную область печати для акта
-    document.getElementById('callsheet-print-area').classList.remove('active-print');
-    document.getElementById('act-print-area').classList.add('active-print');
+    const printArea = document.getElementById('act-print-area');
+    const callsheetArea = document.getElementById('callsheet-print-area');
+    
+    if (callsheetArea) {
+        callsheetArea.classList.remove('active-print');
+        callsheetArea.style.display = 'none';
+    }
+    if (printArea) {
+        printArea.classList.add('active-print');
+        printArea.style.display = 'block';
+    }
     
     window.print();
+    
+    if (printArea) {
+        printArea.classList.remove('active-print');
+        printArea.style.display = 'none';
+    }
     
     currentActItems = []; 
     renderSelectedItems(); 
@@ -696,11 +709,25 @@ function reprintAct(num) {
     if (!act) return;
     preparePrintArea(act);
     
-    document.getElementById('callsheet-print-area').classList.remove('active-print');
-    document.getElementById('act-print-area').classList.add('active-print');
+    const printArea = document.getElementById('act-print-area');
+    const callsheetArea = document.getElementById('callsheet-print-area');
+    
+    if (callsheetArea) {
+        callsheetArea.classList.remove('active-print');
+        callsheetArea.style.display = 'none';
+    }
+    if (printArea) {
+        printArea.classList.add('active-print');
+        printArea.style.display = 'block';
+    }
     
     closeHistoryModal(); 
     window.print();
+    
+    if (printArea) {
+        printArea.classList.remove('active-print');
+        printArea.style.display = 'none';
+    }
 }
 
 function resetForm() {
@@ -1346,10 +1373,24 @@ function printCallSheet() {
     const cs = collectCsData();
     fillCsPrintArea(cs);
     
-    document.getElementById('act-print-area').classList.remove('active-print');
-    document.getElementById('callsheet-print-area').classList.add('active-print');
+    const printArea = document.getElementById('callsheet-print-area');
+    const actArea = document.getElementById('act-print-area');
+    
+    if (actArea) {
+        actArea.classList.remove('active-print');
+        actArea.style.display = 'none';
+    }
+    if (printArea) {
+        printArea.classList.add('active-print');
+        printArea.style.display = 'block';
+    }
     
     window.print();
+    
+    if (printArea) {
+        printArea.classList.remove('active-print');
+        printArea.style.display = 'none';
+    }
 }
 
 function fillCsPrintArea(cs) {
@@ -1418,10 +1459,24 @@ function reprintCallSheet(id) {
     if (!cs) return;
     fillCsPrintArea(cs);
     
-    document.getElementById('act-print-area').classList.remove('active-print');
-    document.getElementById('callsheet-print-area').classList.add('active-print');
+    const printArea = document.getElementById('callsheet-print-area');
+    const actArea = document.getElementById('act-print-area');
+    
+    if (actArea) {
+        actArea.classList.remove('active-print');
+        actArea.style.display = 'none';
+    }
+    if (printArea) {
+        printArea.classList.add('active-print');
+        printArea.style.display = 'block';
+    }
     
     window.print();
+    
+    if (printArea) {
+        printArea.classList.remove('active-print');
+        printArea.style.display = 'none';
+    }
 }
 
 function deleteCallSheetFromHistory(id) {
