@@ -1131,27 +1131,24 @@
     </div>
   </div>
 
-  <script src="equipment.js"></script>
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBU7kaVEoJ57SuDEJMev5W8t26K9Tl5vPA",
-      authDomain: "base-expert.firebaseapp.com",
-      databaseURL: "https://base-expert-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "base-expert",
-      storageBucket: "base-expert.firebasestorage.app",
-      messagingSenderId: "828487534852",
-      appId: "1:828487534852:web:ceac10e3b923c8c1ff6851",
-      measurementId: "G-377EP3V7JP"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    window.db = getFirestore(app);
-    window.firebaseEnabled = true;
-    console.log("Firebase успешно подключен к проекту base-expert!");
+  <!-- Скрипт автоматической загрузки базы МТБ из Google Таблиц -->
+  <script>
+    async function loadDbFromGoogleSheets() {
+      try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbwlAgpVSw_rsVuMxDxKQ2hl7xLhUJFq3J8ppk5o-8ujNWygEfzxwj227BbDrkoIelP4lA/exec?action=getEquipment");
+        const data = await response.json();
+        if (data && Object.keys(data).length > 0) {
+          window.EQUIPMENT_DB = data;
+          if (typeof renderDbTable === 'function') renderDbTable();
+          console.log("База МТБ успешно загружена из Google Таблиц!");
+        }
+      } catch (e) {
+        console.error("Ошибка загрузки базы из Google Таблиц:", e);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', loadDbFromGoogleSheets);
   </script>
+
   <script src="app.js" defer></script>
 </body>
 </html>
