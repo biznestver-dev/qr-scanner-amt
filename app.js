@@ -616,6 +616,7 @@ function deleteActFromHistory(actNum) {
     }
 }
 
+// Функция генерации и печати акта (с предварительным просмотром через window.print)
 function generateAndPrintAct() {
     const data = collectActData();
     if (!data) return;
@@ -630,9 +631,12 @@ function generateAndPrintAct() {
     }
     saveActToHistory(data);
     preparePrintArea(data);
+    
     document.getElementById('callsheet-print-area').classList.remove('active-print');
     document.getElementById('act-print-area').classList.add('active-print');
+    
     window.print();
+    
     currentActItems = []; renderSelectedItems(); resetForm();
 }
 
@@ -688,9 +692,12 @@ function reprintAct(num) {
     const act = getActsHistory().find(a => a.num === num);
     if (!act) return;
     preparePrintArea(act);
+    
     document.getElementById('callsheet-print-area').classList.remove('active-print');
     document.getElementById('act-print-area').classList.add('active-print');
-    closeHistoryModal(); window.print();
+    
+    closeHistoryModal(); 
+    window.print();
 }
 
 function resetForm() {
@@ -1332,11 +1339,14 @@ function collectCsData() {
     };
 }
 
+// Функция печати вызывного листа (с поддержкой предпросмотра)
 function printCallSheet() {
     const cs = collectCsData();
     fillCsPrintArea(cs);
+    
     document.getElementById('act-print-area').classList.remove('active-print');
     document.getElementById('callsheet-print-area').classList.add('active-print');
+    
     window.print();
 }
 
@@ -1405,8 +1415,10 @@ function reprintCallSheet(id) {
     const cs = getCsHistory().find(c => c.id === id);
     if (!cs) return;
     fillCsPrintArea(cs);
+    
     document.getElementById('act-print-area').classList.remove('active-print');
     document.getElementById('callsheet-print-area').classList.add('active-print');
+    
     window.print();
 }
 

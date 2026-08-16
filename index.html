@@ -282,6 +282,32 @@
       .container { padding: 16px 12px !important; border-radius: 16px !important; }
       .app-header { margin-bottom: 20px !important; padding-bottom: 14px !important; }
     }
+
+    /* СТИЛИ ПЕЧАТИ (ОБЕСПЕЧИВАЮТ ПРЕДВАРИТЕЛЬНЫЙ ПРОСМОТР И ПЕЧАТЬ) */
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #act-print-area.active-print,
+      #act-print-area.active-print *,
+      #callsheet-print-area.active-print,
+      #callsheet-print-area.active-print * {
+        visibility: visible !important;
+      }
+      #act-print-area.active-print,
+      #callsheet-print-area.active-print {
+        display: block !important;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: #fff !important;
+      }
+      .modal {
+        display: none !important;
+      }
+    }
+
     #act-print-area, #callsheet-print-area { display: none; }
   </style>
 </head>
