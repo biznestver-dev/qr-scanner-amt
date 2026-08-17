@@ -13,6 +13,8 @@ const APP_STORAGE_KEYS = {
     CS_TEMPLATES: 'artmasters_cs_templates'
 };
 
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWGs6aS01pteGoBSebUNBHNsKv_BL82e1QOGjYPepl2bZQov1zeR-zXasv8H4yQPo0yA/exec";
+
 const MANAGER_TITLES = {
     "Зломанов Олег Викторович": "Административно-технический директор",
     "Белоусов Алексей Алексеевич": "Системный администратор",
@@ -300,6 +302,25 @@ function loadFromStore(key, def) {
 
 function saveToStore(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
 
+// Функция отправки обновленного статуса в Google Таблицу
+async function syncEquipmentStatusToGoogle(inv, newStatus) {
+    try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                type: 'updateEquipmentStatus',
+                inv: inv,
+                status: newStatus
+            })
+        });
+        console.log(`Статус оборудования ${inv} (${newStatus}) отправлен в Google Таблицу.`);
+    } catch (e) {
+        console.error("Ошибка синхронизации статуса с Google Таблицей:", e);
+    }
+}
+
 function formatPhoneNumber(input) {
     let val = input.value;
     if (val.trim().startsWith('@')) return;
@@ -398,6 +419,7 @@ function onScanSuccess(decodedText) {
             window.EQUIPMENT_DB[scannedInv].status = 'В офисе';
             saveToStore(APP_STORAGE_KEYS.EQUIPMENT_DB, window.EQUIPMENT_DB);
             renderDbTable();
+            syncEquipmentStatusToGoogle(scannedInv, 'В офисе');
         } else {
             alert(`Оборудование ${scannedInv} не найдено в базе МТБ!`);
         }
@@ -554,6 +576,7 @@ function returnEquipmentToOffice(inv) {
         window.EQUIPMENT_DB[inv].status = 'В офисе';
         saveToStore(APP_STORAGE_KEYS.EQUIPMENT_DB, window.EQUIPMENT_DB);
         renderDbTable();
+        syncEquipmentStatusToGoogle(inv, 'В офисе');
     }
 }
 
@@ -616,7 +639,6 @@ function deleteActFromHistory(actNum) {
     }
 }
 
-// ИСПРАВЛЕННАЯ ФУНКЦИЯ ПЕЧАТИ АКТА
 function generateAndPrintAct() {
     const data = collectActData();
     if (!data) {
@@ -628,7 +650,9 @@ function generateAndPrintAct() {
         data.items.forEach(item => {
             if (window.EQUIPMENT_DB[item.inv]) {
                 const cInfo = data.contact !== '—' ? ` (${data.contact})` : '';
-                window.EQUIPMENT_DB[item.inv].status = `На площадке (${data.participant}${cInfo})`;
+                const statusStr = `На площадке (${data.participant}${cInfo})`;
+                window.EQUIPMENT_DB[item.inv].status = statusStr;
+                syncEquipmentStatusToGoogle(item.inv, statusStr);
             }
         });
         saveToStore(APP_STORAGE_KEYS.EQUIPMENT_DB, window.EQUIPMENT_DB);
@@ -711,7 +735,6 @@ function preparePrintArea(act) {
     `).join('');
 }
 
-// ИСПРАВЛЕННАЯ ФУНКЦИЯ ПЕЧАТИ ИЗ РЕЕСТРА АКТОВ
 function reprintAct(num) {
     const act = getActsHistory().find(a => a.num === num);
     if (!act) {
