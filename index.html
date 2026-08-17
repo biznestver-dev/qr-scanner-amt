@@ -1136,7 +1136,7 @@
     </div>
   </div>
 
-  <!-- Скрипт автоматической загрузки базы МТБ из Google Таблиц -->
+  <!-- Скрипт безопасной загрузки базы МТБ с fallback на локальный equipment.js -->
   <script>
     async function loadDbFromGoogleSheets() {
       try {
@@ -1144,12 +1144,13 @@
         const data = await response.json();
         if (data && Object.keys(data).length > 0) {
           window.EQUIPMENT_DB = data;
-          if (typeof renderDbTable === 'function') renderDbTable();
           console.log("База МТБ успешно загружена из Google Таблиц!");
         }
       } catch (e) {
-        console.error("Ошибка загрузки базы из Google Таблиц:", e);
+        console.warn("Облачная база заблокирована CORS, используется локальный equipment.js", e);
       }
+      
+      if (typeof renderDbTable === 'function') renderDbTable();
     }
     document.addEventListener('DOMContentLoaded', loadDbFromGoogleSheets);
   </script>
