@@ -13,8 +13,6 @@ const APP_STORAGE_KEYS = {
     CS_TEMPLATES: 'artmasters_cs_templates'
 };
 
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxFUgNM3R6u6m9JURaF9Aizis1NXlkWNc1xSD_-kJkSZIY2H8PU5kxWCW2cA/exec";
-
 const MANAGER_TITLES = {
     "Зломанов Олег Викторович": "Административно-технический директор",
     "Белоусов Алексей Алексеевич": "Системный администратор",
@@ -303,21 +301,8 @@ function loadFromStore(key, def) {
 function saveToStore(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
 
 async function syncEquipmentStatusToGoogle(inv, newStatus) {
-    try {
-        await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                type: 'updateEquipmentStatus',
-                inv: inv,
-                status: newStatus
-            })
-        });
-        console.log(`Статус оборудования ${inv} (${newStatus}) отправлен в Google Таблицу.`);
-    } catch (e) {
-        console.error("Ошибка синхронизации статуса с Google Таблицей:", e);
-    }
+    // Автономный режим (запросы к облачному скрипту отключены для стабильной работы)
+    console.log(`Статус оборудования ${inv} обновлен локально: ${newStatus}`);
 }
 
 function formatPhoneNumber(input) {
@@ -418,7 +403,6 @@ function onScanSuccess(decodedText) {
             window.EQUIPMENT_DB[scannedInv].status = 'В офисе';
             saveToStore(APP_STORAGE_KEYS.EQUIPMENT_DB, window.EQUIPMENT_DB);
             renderDbTable();
-            syncEquipmentStatusToGoogle(scannedInv, 'В офисе');
         } else {
             alert(`Оборудование ${scannedInv} не найдено в базе МТБ!`);
         }
@@ -575,7 +559,6 @@ function returnEquipmentToOffice(inv) {
         window.EQUIPMENT_DB[inv].status = 'В офисе';
         saveToStore(APP_STORAGE_KEYS.EQUIPMENT_DB, window.EQUIPMENT_DB);
         renderDbTable();
-        syncEquipmentStatusToGoogle(inv, 'В офисе');
     }
 }
 
@@ -651,7 +634,6 @@ function generateAndPrintAct() {
                 const cInfo = data.contact !== '—' ? ` (${data.contact})` : '';
                 const statusStr = `На площадке (${data.participant}${cInfo})`;
                 window.EQUIPMENT_DB[item.inv].status = statusStr;
-                syncEquipmentStatusToGoogle(item.inv, statusStr);
             }
         });
         saveToStore(APP_STORAGE_KEYS.EQUIPMENT_DB, window.EQUIPMENT_DB);
@@ -713,25 +695,44 @@ function collectActData() {
 }
 
 function preparePrintArea(act) {
-    document.getElementById('print-act-num').innerText = act.num;
-    document.getElementById('print-subtitle-container').innerHTML = getActSubtitleText(act.role, act.participant, act.comp);
+    const numEl = document.getElementById('print-act-num');
+    if (numEl) numEl.innerText = act.num;
+
+    const subEl = document.getElementById('print-subtitle-container');
+    if (subEl) subEl.innerHTML = getActSubtitleText(act.role, act.participant, act.comp);
+
     const idat = getUnderlineDateStr(act.date);
     const rdat = getUnderlineDateStr(act.returnDate);
     document.querySelectorAll('.print-underline-date-issue').forEach(e => e.innerHTML = idat);
     document.querySelectorAll('.print-underline-date-return').forEach(e => e.innerHTML = rdat);
+
     const mt = MANAGER_TITLES[act.manager] || "Административно-технический отдел";
-    document.getElementById('print-manager-title-out').innerText = `Выдал ${mt.toLowerCase()}`;
-    document.getElementById('print-manager-title-in').innerText = `Принял ${mt.toLowerCase()}`;
-    document.getElementById('print-manager-out').innerText = act.manager;
-    document.getElementById('print-manager-in').innerText = act.manager;
+    
+    const mgrTitleOut = document.getElementById('print-manager-title-out');
+    if (mgrTitleOut) mgrTitleOut.innerText = `Выдал ${mt.toLowerCase()}`;
+
+    const mgrTitleIn = document.getElementById('print-manager-title-in');
+    if (mgrTitleIn) mgrTitleIn.innerText = `Принял ${mt.toLowerCase()}`;
+
+    const mgrOut = document.getElementById('print-manager-out');
+    if (mgrOut) mgrOut.innerText = act.manager;
+
+    const mgrIn = document.getElementById('print-manager-in');
+    if (mgrIn) mgrIn.innerText = act.manager;
+
     const rt = getRecipientRoleTitle(act.role, act.participant);
     document.querySelectorAll('[id^="print-recipient-role-grid"]').forEach(e => e.innerText = rt);
+
     const sn = act.participant !== '—' ? act.participant : '__________________________';
-    document.getElementById('print-participant-sig').innerText = sn;
+    const sigEl = document.getElementById('print-participant-sig');
+    if (sigEl) sigEl.innerText = sn;
     
-    document.getElementById('print-table-tbody').innerHTML = act.items.map((it, idx) => `
-        <tr><td>${idx+1}</td><td style="text-align:left;">${it.name}</td><td>${it.inv}</td><td>${act.participant}</td><td>${act.contact}</td><td>1</td><td>${act.date}</td><td>${act.returnDate}</td><td style="text-align:left;">${act.comment}</td></tr>
-    `).join('');
+    const tbodyEl = document.getElementById('print-table-tbody');
+    if (tbodyEl) {
+        tbodyEl.innerHTML = act.items.map((it, idx) => `
+            <tr><td>${idx+1}</td><td style="text-align:left;">${it.name}</td><td>${it.inv}</td><td>${act.participant}</td><td>${act.contact}</td><td>1</td><td>${act.date}</td><td>${act.returnDate}</td><td style="text-align:left;">${act.comment}</td></tr>
+        `).join('');
+    }
 }
 
 function reprintAct(num) {
