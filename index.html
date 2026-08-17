@@ -1138,23 +1138,14 @@
     </div>
   </div>
 
-  <!-- Скрипт безопасной загрузки базы МТБ с fallback на локальный equipment.js -->
+  <!-- Стабильная инициализация локальной базы оборудования -->
   <script>
-    async function loadDbFromGoogleSheets() {
-      try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbxFUgNM3R6u6m9JURaF9Aizis1NXlkWNc1xSD_-kJkSZIY2H8PU5kxWCW2cA/exec?action=getEquipment&v=4");
-        const data = await response.json();
-        if (data && Object.keys(data).length > 0) {
-          window.EQUIPMENT_DB = data;
-          console.log("База МТБ успешно загружена из Google Таблиц!");
-        }
-      } catch (e) {
-        console.warn("Облачная база заблокирована CORS, используется локальный equipment.js", e);
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof renderDbTable === 'function') {
+        renderDbTable();
       }
-      
-      if (typeof renderDbTable === 'function') renderDbTable();
-    }
-    document.addEventListener('DOMContentLoaded', loadDbFromGoogleSheets);
+      console.log("Приложение и локальная база МТБ успешно инициализированы!");
+    });
   </script>
 
   <script src="equipment.js"></script>
