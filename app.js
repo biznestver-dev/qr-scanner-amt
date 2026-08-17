@@ -711,9 +711,14 @@ function preparePrintArea(act) {
     `).join('');
 }
 
+// ИСПРАВЛЕННАЯ ФУНКЦИЯ ПЕЧАТИ ИЗ РЕЕСТРА АКТОВ
 function reprintAct(num) {
     const act = getActsHistory().find(a => a.num === num);
-    if (!act) return;
+    if (!act) {
+        alert('Акт не найден в истории!');
+        return;
+    }
+    
     preparePrintArea(act);
     
     const printArea = document.getElementById('act-print-area');
@@ -723,18 +728,24 @@ function reprintAct(num) {
         callsheetArea.classList.remove('active-print');
         callsheetArea.style.display = 'none';
     }
+    
     if (printArea) {
         printArea.classList.add('active-print');
         printArea.style.display = 'block';
+    } else {
+        alert('Ошибка: элемент области печати #act-print-area не найден!');
+        return;
     }
     
     closeHistoryModal(); 
-    window.print();
     
-    if (printArea) {
-        printArea.classList.remove('active-print');
-        printArea.style.display = 'none';
-    }
+    window.setTimeout(() => {
+        window.print();
+        if (printArea) {
+            printArea.classList.remove('active-print');
+            printArea.style.display = 'none';
+        }
+    }, 100);
 }
 
 function resetForm() {
@@ -1629,7 +1640,6 @@ function exportCallSheetToCSV() {
     downloadCSV(`CallSheet_${cs.projectName}.csv`, rows);
 }
 
-// ИСПРАВЛЕННАЯ ФУНКЦИЯ СКАЧИВАНИЯ WORD
 function downloadActWord() {
     const actData = collectActData();
     if (!actData) {
