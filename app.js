@@ -616,10 +616,14 @@ function deleteActFromHistory(actNum) {
     }
 }
 
-// РАБОЧАЯ ФУНКЦИЯ ПЕЧАТИ АКТА
+// ИСПРАВЛЕННАЯ ФУНКЦИЯ ПЕЧАТИ АКТА
 function generateAndPrintAct() {
     const data = collectActData();
-    if (!data) return;
+    if (!data) {
+        alert('Невозможно сформировать акт: проверьте, добавлено ли оборудование и заполнены ли обязательные поля.');
+        return;
+    }
+
     if (window.EQUIPMENT_DB) {
         data.items.forEach(item => {
             if (window.EQUIPMENT_DB[item.inv]) {
@@ -629,6 +633,7 @@ function generateAndPrintAct() {
         });
         saveToStore(APP_STORAGE_KEYS.EQUIPMENT_DB, window.EQUIPMENT_DB);
     }
+
     saveActToHistory(data);
     preparePrintArea(data);
     
@@ -642,18 +647,21 @@ function generateAndPrintAct() {
     if (printArea) {
         printArea.classList.add('active-print');
         printArea.style.display = 'block';
+    } else {
+        alert('Ошибка: элемент области печати #act-print-area не найден в DOM!');
+        return;
     }
     
-    window.print();
-    
-    if (printArea) {
-        printArea.classList.remove('active-print');
-        printArea.style.display = 'none';
-    }
-    
-    currentActItems = []; 
-    renderSelectedItems(); 
-    resetForm();
+    window.setTimeout(() => {
+        window.print();
+        if (printArea) {
+            printArea.classList.remove('active-print');
+            printArea.style.display = 'none';
+        }
+        currentActItems = []; 
+        renderSelectedItems(); 
+        resetForm();
+    }, 100);
 }
 
 function collectActData() {
@@ -1621,21 +1629,38 @@ function exportCallSheetToCSV() {
     downloadCSV(`CallSheet_${cs.projectName}.csv`, rows);
 }
 
+// ИСПРАВЛЕННАЯ ФУНКЦИЯ СКАЧИВАНИЯ WORD
 function downloadActWord() {
     const actData = collectActData();
-    if (!actData) return;
+    if (!actData) {
+        alert('Невозможно скачать акт: добавьте оборудование в список!');
+        return;
+    }
+    
     preparePrintArea(actData);
-    const printArea = document.getElementById('act-print-area').innerHTML;
+    const printAreaEl = document.getElementById('act-print-area');
+    if (!printAreaEl) {
+        alert('Ошибка: область печати акта не найдена.');
+        return;
+    }
+
+    const printAreaHtml = printAreaEl.innerHTML;
     const htmlContent = `
         <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/1999/xlink'>
         <head><meta charset='utf-8'><title>Акт № ${actData.num}</title>
         <style>body { font-family: Arial, sans-serif; color: #000; font-size: 10pt; line-height: 1.3; } table.act-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; } table.act-table th, table.act-table td { border: 1px solid #000; padding: 4px 6px; font-size: 9pt; text-align: center; } table.act-table th { background-color: #f2f2f2; font-weight: bold; } .act-header { text-align: center; font-weight: bold; font-size: 12pt; margin-bottom: 15px; } .rules-block { font-size: 8.5pt; margin-bottom: 10px; } .signatures-grid { width: 100%; margin-top: 15px; border-collapse: collapse; } .signatures-grid td { width: 50%; font-size: 9pt; padding: 5px 0; vertical-align: top; }</style></head>
-        <body>${printArea}</body></html>
+        <body>${printAreaHtml}</body></html>
     `;
+    
     const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a'); link.href = url; link.download = `Akt_${actData.num}.doc`;
-    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    const link = document.createElement('a'); 
+    link.href = url; 
+    link.download = `Akt_${actData.num}.doc`;
+    document.body.appendChild(link); 
+    link.click(); 
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 }
 
 function downloadCallSheetWord() {
