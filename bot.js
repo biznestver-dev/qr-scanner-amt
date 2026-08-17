@@ -1,8 +1,8 @@
 const { Telegraf, Markup } = require('telegraf');
 require('dotenv').config();
 
-// Актуальный URL вашего веб-приложения Google Apps Script (Версия 4)
-const BOT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzWGs6aS01pteGoBSebUNBHNsKv_BL82e1QOGjYPepl2bZQov1zeR-zXasv8H4yQPo0yA/exec";
+// Актуальный URL вашего веб-приложения Google Apps Script
+const BOT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxFUgNM3R6u6m9JURaF9Aizis1NXlkWNc1xSD_-kJkSZIY2H8PU5kxWCW2cA/exec";
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -66,4 +66,4 @@ bot.on('text', async (ctx) => {
 });
 
 bot.launch();
-console.log('🤖 Бот успешно запущен на Google-бэкенде!');
+console.log('🤖 Бот успешно запущен!');

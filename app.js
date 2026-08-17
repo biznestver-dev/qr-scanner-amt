@@ -13,7 +13,7 @@ const APP_STORAGE_KEYS = {
     CS_TEMPLATES: 'artmasters_cs_templates'
 };
 
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWGs6aS01pteGoBSebUNBHNsKv_BL82e1QOGjYPepl2bZQov1zeR-zXasv8H4yQPo0yA/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxFUgNM3R6u6m9JURaF9Aizis1NXlkWNc1xSD_-kJkSZIY2H8PU5kxWCW2cA/exec";
 
 const MANAGER_TITLES = {
     "Зломанов Олег Викторович": "Административно-технический директор",
@@ -302,7 +302,6 @@ function loadFromStore(key, def) {
 
 function saveToStore(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
 
-// Функция отправки обновленного статуса в Google Таблицу
 async function syncEquipmentStatusToGoogle(inv, newStatus) {
     try {
         await fetch(GOOGLE_SCRIPT_URL, {
