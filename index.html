@@ -296,14 +296,19 @@
         visibility: visible !important;
       }
       #act-print-area.active-print table,
-      #act-print-area.active-print tr,
-      #act-print-area.active-print td,
-      #act-print-area.active-print th,
-      #callsheet-print-area.active-print table,
-      #callsheet-print-area.active-print tr,
-      #callsheet-print-area.active-print td,
-      #callsheet-print-area.active-print th {
+      #callsheet-print-area.active-print table {
         display: table !important;
+        width: 100% !important;
+      }
+      #act-print-area.active-print tr,
+      #callsheet-print-area.active-print tr {
+        display: table-row !important;
+      }
+      #act-print-area.active-print th,
+      #act-print-area.active-print td,
+      #callsheet-print-area.active-print th,
+      #callsheet-print-area.active-print td {
+        display: table-cell !important;
       }
       #act-print-area.active-print,
       #callsheet-print-area.active-print {
