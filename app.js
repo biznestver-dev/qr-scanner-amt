@@ -13,6 +13,8 @@ const APP_STORAGE_KEYS = {
     CS_TEMPLATES: 'artmasters_cs_templates'
 };
 
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx6XQyX1upzSIrbq7zw37ZDi3F2giOy9ZbBY8VkjBkN8LiDkAXp0tXh85aKw9lDn8u2/exec";
+
 const MANAGER_TITLES = {
     "Зломанов Олег Викторович": "Административно-технический директор",
     "Белоусов Алексей Алексеевич": "Системный администратор",
@@ -232,8 +234,30 @@ function initData() {
 
     const savedDb = localStorage.getItem(APP_STORAGE_KEYS.EQUIPMENT_DB);
     if (savedDb) {
-        try { window.EQUIPMENT_DB = JSON.parse(savedDb); } 
-        catch (e) { console.error('Error loading DB from localStorage'); }
+        try { 
+            window.EQUIPMENT_DB = JSON.parse(savedDb); 
+        } catch (e) { 
+            console.error('Error loading DB from localStorage'); 
+        }
+    }
+    
+    loadDbFromCloud();
+}
+
+async function loadDbFromCloud() {
+    try {
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getEquipment`);
+        const data = await response.json();
+        if (data && typeof data === 'object') {
+            window.EQUIPMENT_DB = data;
+            saveToStore(APP_STORAGE_KEYS.EQUIPMENT_DB, data);
+            console.log('База МТБ синхронизирована с облаком');
+            if (document.getElementById('dbModal').style.display === 'flex') {
+                renderDbTable();
+            }
+        }
+    } catch (e) {
+        console.warn('Не удалось загрузить базу из облака, используем локальную копию');
     }
 }
 
@@ -301,8 +325,22 @@ function loadFromStore(key, def) {
 function saveToStore(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
 
 async function syncEquipmentStatusToGoogle(inv, newStatus) {
-    // Автономный режим (запросы к облачному скрипту отключены для стабильной работы)
-    console.log(`Статус оборудования ${inv} обновлен локально: ${newStatus}`);
+    try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors', 
+            body: JSON.stringify({
+                type: 'updateEquipmentStatus',
+                inv: inv,
+                status: newStatus,
+                timestamp: new Date().toISOString()
+            }),
+            headers: { 'Content-Type': 'application/json' }
+        });
+        console.log(`Статус ${inv} отправлен в облако: ${newStatus}`);
+    } catch (e) {
+        console.error('Ошибка онлайн-синхронизации:', e);
+    }
 }
 
 function formatPhoneNumber(input) {
@@ -400,8 +438,10 @@ function onScanSuccess(decodedText) {
     const scannedInv = decodedText.trim();
     if (isMassReturnActive) {
         if (window.EQUIPMENT_DB && window.EQUIPMENT_DB[scannedInv]) {
-            window.EQUIPMENT_DB[scannedInv].status = 'В офисе';
+            const newStatus = 'В офисе';
+            window.EQUIPMENT_DB[scannedInv].status = newStatus;
             saveToStore(APP_STORAGE_KEYS.EQUIPMENT_DB, window.EQUIPMENT_DB);
+            syncEquipmentStatusToGoogle(scannedInv, newStatus);
             renderDbTable();
         } else {
             alert(`Оборудование ${scannedInv} не найдено в базе МТБ!`);
@@ -556,8 +596,10 @@ function addSelectedItemsToActFromDb() {
 
 function returnEquipmentToOffice(inv) {
     if (window.EQUIPMENT_DB && window.EQUIPMENT_DB[inv]) {
-        window.EQUIPMENT_DB[inv].status = 'В офисе';
+        const newStatus = 'В офисе';
+        window.EQUIPMENT_DB[inv].status = newStatus;
         saveToStore(APP_STORAGE_KEYS.EQUIPMENT_DB, window.EQUIPMENT_DB);
+        syncEquipmentStatusToGoogle(inv, newStatus);
         renderDbTable();
     }
 }
@@ -634,6 +676,7 @@ function generateAndPrintAct() {
                 const cInfo = data.contact !== '—' ? ` (${data.contact})` : '';
                 const statusStr = `На площадке (${data.participant}${cInfo})`;
                 window.EQUIPMENT_DB[item.inv].status = statusStr;
+                syncEquipmentStatusToGoogle(item.inv, statusStr);
             }
         });
         saveToStore(APP_STORAGE_KEYS.EQUIPMENT_DB, window.EQUIPMENT_DB);
@@ -1457,6 +1500,11 @@ function fillCsPrintArea(cs) {
 }
 
 function openCallSheetHistoryModal() {
+    filterCsHistoryTable();
+    document.getElementById('csHistoryModal').style.display = 'flex';
+}
+
+function filterCsHistoryTable() {
     const tbody = document.getElementById('csHistoryTableBody');
     if (!tbody) return;
     const h = getCsHistory();
@@ -1470,7 +1518,6 @@ function openCallSheetHistoryModal() {
 
     if (filtered.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;">Архив пуст</td></tr>';
-        document.getElementById('csHistoryModal').style.display = 'flex';
         return;
     }
 
@@ -1490,7 +1537,6 @@ function openCallSheetHistoryModal() {
             </td>
         </tr>
     `).join('');
-    document.getElementById('csHistoryModal').style.display = 'flex';
 }
 
 function closeCallSheetHistoryModal() { document.getElementById('csHistoryModal').style.display = 'none'; }
@@ -1524,7 +1570,7 @@ function deleteCallSheetFromHistory(id) {
     if (confirm('Удалить вызывной из архива?')) {
         const h = getCsHistory().filter(c => c.id !== id);
         saveToStore(APP_STORAGE_KEYS.CS_HISTORY, h);
-        openCallSheetHistoryModal();
+        filterCsHistoryTable();
     }
 }
 
@@ -1742,20 +1788,3 @@ function onEmployeeSelect(name) {
 }
 
 function onCountryCodeChange() { const i = document.getElementById('contact-input'); if (i) formatPhoneNumber(i); }
-
-function checkEquipmentReturnDeadlines() {
-    const history = getActsHistory();
-    const today = new Date();
-
-    history.forEach(act => {
-        const retDateObj = parseCustomDate(act.returnDate);
-        if (retDateObj) {
-            const diffTime = retDateObj - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-            if (diffDays <= 0) {
-                console.warn(`Внимание! По акту № ${act.num} истек срок возврата оборудования (${act.returnDate}). Получатель: ${act.participant}`);
-            }
-        }
-    });
-}
