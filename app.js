@@ -8,12 +8,16 @@ const APP_STORAGE_KEYS = {
     SCHEDULE: 'artmasters_schedule_list',
     CHAMP_CONTACTS: 'artmasters_champ_contacts',
     EQUIPMENT_DB: 'artmasters_equipment_db',
+    OFFLINE_SYNC_QUEUE: 'artmasters_offline_sync_queue',
     ACTS_HISTORY: 'artmasters_acts_history',
     CS_HISTORY: 'artmasters_callsheet_history',
     CS_TEMPLATES: 'artmasters_cs_templates'
 };
 
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx6XQyX1upzSIrbq7zw37ZDi3F2giOy9ZbBY8VkjBkN8LiDkAXp0tXh85aKw9lDn8u2/exec";
+const EQUIPMENT_POLL_INTERVAL_MS = 150000;
+let currentAccessRole = 'admin';
+let equipmentPollingTimer = null;
 
 const MANAGER_TITLES = {
     "Зломанов Олег Викторович": "Административно-технический директор",
@@ -140,8 +144,8 @@ const DEFAULT_CHAMP_CONTACTS = [
 
 const DEFAULT_CS_TEMPLATES = [
     {
-        name: "День застройки площадки",
-        shiftNum: "День монтажа и застройки",
+        name: "Монтаж / Демонтаж",
+        shiftNum: "Монтаж и застройка площадки",
         milestones: [
             { time: '08:00', event: 'Заезд автотранспорта, сбор технической группы' },
             { time: '09:00', event: 'Начало монтажных работ и разворачивание сетей' },
@@ -152,8 +156,20 @@ const DEFAULT_CS_TEMPLATES = [
         notes: "Форма одежды: Total Black. На площадке строго обязательна защитная обувь."
     },
     {
-        name: "Соревновательный день",
-        shiftNum: "Соревновательный день (Защиты кейсов)",
+        name: "Монтаж",
+        shiftNum: "Монтаж и застройка площадки",
+        milestones: [
+            { time: '08:00', event: 'Заезд автотранспорта, сбор технической группы' },
+            { time: '09:00', event: 'Разгрузка и распределение оборудования по зонам' },
+            { time: '11:00', event: 'Монтаж света, звука, видео и сценических конструкций' },
+            { time: '15:00', event: 'Подключение сетей и первичная проверка оборудования' },
+            { time: '18:00', event: 'Тестирование систем и подготовка площадки к репетиции' }
+        ],
+        notes: "Форма одежды: Total Black. На площадке обязательна защитная обувь и соблюдение техники безопасности."
+    },
+    {
+        name: "Основной этап",
+        shiftNum: "Основной этап (Защиты кейсов)",
         milestones: [
             { time: '08:30', event: 'Сбор техгруппы на площадке, проверка связи' },
             { time: '09:30', event: 'Саундчек и тестирование экранов' },
@@ -162,6 +178,54 @@ const DEFAULT_CS_TEMPLATES = [
             { time: '19:00', event: 'Подведение итогов, резервное копирование дисков' }
         ],
         notes: "Внимание: Во время защит соблюдать тишину в зоне пульта."
+    },
+    {
+        name: "Демонтаж",
+        shiftNum: "Демонтаж площадки",
+        milestones: [
+            { time: '08:00', event: 'Сбор технической группы, отключение оборудования' },
+            { time: '09:00', event: 'Начало демонтажа света, звука и видео' },
+            { time: '13:00', event: 'Обед' },
+            { time: '17:00', event: 'Проверка комплектации и упаковка оборудования' },
+            { time: '20:00', event: 'Погрузка, уборка площадки, выезд' }
+        ],
+        notes: "Перед выездом проверить комплектацию, инвентарные номера и состояние оборудования."
+    },
+    {
+        name: "Церемония открытия",
+        shiftNum: "Церемония открытия чемпионата",
+        milestones: [
+            { time: '10:00', event: 'Сбор технической группы, проверка площадки' },
+            { time: '12:00', event: 'Монтаж и настройка света, звука и экранов' },
+            { time: '15:00', event: 'Генеральный прогон церемонии' },
+            { time: '18:00', event: 'Сбор гостей и участников' },
+            { time: '19:00', event: 'Начало церемонии открытия' }
+        ],
+        notes: "Во время церемонии соблюдать тишину в технической зоне и контролировать резервные источники питания."
+    },
+    {
+        name: "Питчинг",
+        shiftNum: "Питчинг проектов",
+        milestones: [
+            { time: '09:00', event: 'Сбор команды, проверка презентационной техники' },
+            { time: '10:00', event: 'Тестирование микрофонов, экранов и презентаций' },
+            { time: '11:00', event: 'Начало питчинга проектов' },
+            { time: '14:00', event: 'Перерыв' },
+            { time: '18:00', event: 'Завершение питчинга, резервное копирование материалов' }
+        ],
+        notes: "Перед началом проверить презентации участников, таймер и резервные копии файлов."
+    },
+    {
+        name: "Презентация",
+        shiftNum: "Презентация проектов",
+        milestones: [
+            { time: '09:00', event: 'Подготовка зала и технической зоны' },
+            { time: '10:00', event: 'Проверка презентаций и подключений участников' },
+            { time: '11:00', event: 'Начало презентаций' },
+            { time: '14:00', event: 'Перерыв' },
+            { time: '18:00', event: 'Завершение презентаций и сбор оборудования' }
+        ],
+        notes: "Подготовить резервные копии презентаций и проверить совместимость форматов файлов."
     },
     {
         name: "Церемония закрытия / награждения",
@@ -188,7 +252,10 @@ let currentStatusFilter = 'all';
 let lastScannedCode = '';
 let scanTimeout = null;
 let isMassReturnActive = false; 
-let html5QrcodeScanner = null;
+let html5Qrcode = null;
+let scannerCameras = [];
+let scannerCameraId = '';
+let scannerTorchEnabled = false;
 
 let callSheetData = {
     city: "Москва",
@@ -223,6 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initData();
     initUI();
     initNetworkStatusListener();
+    loadCallSheetViewFromUrl();
 });
 
 function initData() {
@@ -230,7 +298,8 @@ function initData() {
     VENUES_LIST = loadFromStore(APP_STORAGE_KEYS.VENUES, DEFAULT_VENUES_LIST);
     SCHEDULE_LIST = loadFromStore(APP_STORAGE_KEYS.SCHEDULE, DEFAULT_SCHEDULE_LIST);
     CHAMP_CONTACTS_LIST = loadFromStore(APP_STORAGE_KEYS.CHAMP_CONTACTS, DEFAULT_CHAMP_CONTACTS);
-    CS_TEMPLATES_LIST = loadFromStore(APP_STORAGE_KEYS.CS_TEMPLATES, DEFAULT_CS_TEMPLATES);
+    CS_TEMPLATES_LIST = normalizeCsTemplates(loadFromStore(APP_STORAGE_KEYS.CS_TEMPLATES, DEFAULT_CS_TEMPLATES));
+    saveToStore(APP_STORAGE_KEYS.CS_TEMPLATES, CS_TEMPLATES_LIST);
 
     const savedDb = localStorage.getItem(APP_STORAGE_KEYS.EQUIPMENT_DB);
     if (savedDb) {
@@ -242,11 +311,12 @@ function initData() {
     }
     
     loadDbFromCloud();
+    flushOfflineSyncQueue();
 }
 
 async function loadDbFromCloud() {
     try {
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getEquipment`);
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getEquipment&_=${Date.now()}`, { cache: 'no-store' });
         const data = await response.json();
         if (data && typeof data === 'object') {
             window.EQUIPMENT_DB = data;
@@ -264,14 +334,126 @@ async function loadDbFromCloud() {
 function initUI() {
     setDefaultReturnDate();
     updateInvActionButton();
-    
-    if (typeof Html5QrcodeScanner !== 'undefined') {
-        html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
-            fps: 10, 
-            qrbox: { width: 220, height: 220 },
-            supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
-        }, false);
-        html5QrcodeScanner.render(onScanSuccess, (err) => {});
+    initAccessMode();
+    registerServiceWorker();
+    startEquipmentPolling();
+    initTelegramWebApp();
+    initQrScanner();
+}
+
+function initAccessMode() {
+    const requestedRole = new URLSearchParams(window.location.search).get('access');
+    currentAccessRole = ['viewer', 'manager', 'admin'].includes(requestedRole) ? requestedRole : 'admin';
+    document.body.classList.add(`access-${currentAccessRole}`);
+    const label = document.getElementById('access-role-label');
+    if (label) label.innerText = currentAccessRole === 'viewer' ? 'Только чтение' : currentAccessRole === 'manager' ? 'Менеджер' : 'Полный доступ';
+}
+
+function requireAdmin() {
+    if (currentAccessRole === 'admin') return true;
+    alert('Это действие доступно только в режиме полного доступа.');
+    return false;
+}
+
+function registerServiceWorker() {
+    if ('serviceWorker' in navigator && /^https?:$/.test(window.location.protocol)) {
+        navigator.serviceWorker.register('./sw.js').catch(error => console.warn('PWA не зарегистрирована:', error));
+    }
+}
+
+function startEquipmentPolling() {
+    if (equipmentPollingTimer) clearInterval(equipmentPollingTimer);
+    equipmentPollingTimer = window.setInterval(() => {
+        if (navigator.onLine && document.visibilityState !== 'hidden') loadDbFromCloud();
+    }, EQUIPMENT_POLL_INTERVAL_MS);
+}
+
+function initTelegramWebApp() {
+    const telegram = window.Telegram?.WebApp;
+    if (!telegram) return;
+    telegram.ready();
+    telegram.expand();
+    const button = document.getElementById('telegram-scan-btn');
+    if (button) button.style.display = 'block';
+}
+
+function openTelegramQrScanner() {
+    const telegram = window.Telegram?.WebApp;
+    if (!telegram?.showScanQrPopup) {
+        alert('Сканер Telegram доступен только внутри Telegram WebApp.');
+        return;
+    }
+    telegram.showScanQrPopup({ text: 'Наведите камеру на QR-код оборудования' }, result => {
+        const scannedInv = String(result || '').trim();
+        if (!scannedInv) return false;
+        telegram.sendData(scannedInv);
+        telegram.close();
+        return true;
+    });
+}
+
+async function initQrScanner() {
+    if (typeof Html5Qrcode === 'undefined') return;
+    html5Qrcode = new Html5Qrcode('reader');
+    try {
+        scannerCameras = await Html5Qrcode.getCameras();
+        if (scannerCameras.length === 0) throw new Error('Камеры не найдены');
+        scannerCameraId = scannerCameras.find(camera => /back|rear|environment|задн/i.test(camera.label))?.id || scannerCameras[0].id;
+        renderScannerControls();
+        await startQrScanner(scannerCameraId);
+    } catch (error) {
+        console.warn('Не удалось запустить камеру:', error);
+    }
+}
+
+function renderScannerControls() {
+    const reader = document.getElementById('reader');
+    if (!reader || document.getElementById('scanner-controls')) return;
+    const controls = document.createElement('div');
+    controls.id = 'scanner-controls';
+    controls.innerHTML = `
+        <select id="scanner-camera-select" aria-label="Камера" onchange="switchScannerCamera(this.value)"></select>
+        <button type="button" class="add-row-btn" onclick="toggleScannerTorch()">Подсветка</button>
+    `;
+    reader.insertAdjacentElement('afterend', controls);
+    const select = document.getElementById('scanner-camera-select');
+    scannerCameras.forEach((camera, index) => {
+        const option = new Option(camera.label || `Камера ${index + 1}`, camera.id);
+        option.selected = camera.id === scannerCameraId;
+        select.add(option);
+    });
+}
+
+async function startQrScanner(cameraId) {
+    if (!html5Qrcode) return;
+    await html5Qrcode.start(
+        { deviceId: { exact: cameraId } },
+        { fps: 10, qrbox: { width: 220, height: 220 } },
+        onScanSuccess,
+        () => {}
+    );
+}
+
+async function switchScannerCamera(cameraId) {
+    if (!html5Qrcode || !cameraId || cameraId === scannerCameraId) return;
+    try {
+        await html5Qrcode.stop();
+        scannerCameraId = cameraId;
+        scannerTorchEnabled = false;
+        await startQrScanner(cameraId);
+    } catch (error) {
+        console.warn('Не удалось переключить камеру:', error);
+    }
+}
+
+async function toggleScannerTorch() {
+    if (!html5Qrcode) return;
+    try {
+        scannerTorchEnabled = !scannerTorchEnabled;
+        await html5Qrcode.applyVideoConstraints({ advanced: [{ torch: scannerTorchEnabled }] });
+    } catch (error) {
+        scannerTorchEnabled = false;
+        alert('Эта камера не поддерживает управление подсветкой.');
     }
 }
 
@@ -302,6 +484,7 @@ function initNetworkStatusListener() {
     };
 
     window.addEventListener('online', updateStatus);
+    window.addEventListener('online', flushOfflineSyncQueue);
     window.addEventListener('offline', updateStatus);
     updateStatus();
 }
@@ -324,23 +507,150 @@ function loadFromStore(key, def) {
 
 function saveToStore(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
 
-async function syncEquipmentStatusToGoogle(inv, newStatus) {
-    try {
-        await fetch(GOOGLE_SCRIPT_URL, {
+function normalizeCsTemplates(value) {
+    if (!Array.isArray(value)) return DEFAULT_CS_TEMPLATES.map(normalizeCsTemplate);
+    const templates = value.map(normalizeCsTemplate).filter(Boolean);
+    const legacyNames = {
+        'День застройки площадки': 'Монтаж / Демонтаж',
+        'Соревновательный день': 'Основной этап'
+    };
+    templates.forEach(template => {
+        if (legacyNames[template.name]) template.name = legacyNames[template.name];
+    });
+    const existingNames = new Set(templates.map(template => template.name));
+    DEFAULT_CS_TEMPLATES.forEach(defaultTemplate => {
+        const normalized = normalizeCsTemplate(defaultTemplate);
+        if (normalized && !existingNames.has(normalized.name)) {
+            templates.push(normalized);
+            existingNames.add(normalized.name);
+        }
+    });
+    return templates.length > 0 ? templates : DEFAULT_CS_TEMPLATES.map(normalizeCsTemplate);
+}
+
+function normalizeCsTemplate(template) {
+    if (!template || typeof template !== 'object') return null;
+    const name = String(template.name || '').trim().slice(0, 100);
+    if (!name) return null;
+    const milestones = Array.isArray(template.milestones) ? template.milestones
+        .filter(m => m && typeof m === 'object')
+        .slice(0, 100)
+        .map(m => ({
+            time: String(m.time || '').trim().slice(0, 20),
+            event: String(m.event || '').trim().slice(0, 300)
+        }))
+        .filter(m => m.time || m.event) : [];
+    return {
+        name,
+        shiftNum: String(template.shiftNum || '').trim().slice(0, 150),
+        milestones,
+        notes: String(template.notes || '').slice(0, 2000)
+    };
+}
+
+function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[char]));
+}
+
+let isOfflineSyncFlushing = false;
+
+function getOfflineSyncQueue() {
+    const queue = loadFromStore(APP_STORAGE_KEYS.OFFLINE_SYNC_QUEUE, []);
+    return Array.isArray(queue) ? queue : [];
+}
+
+function saveOfflineSyncQueue(queue) {
+    saveToStore(APP_STORAGE_KEYS.OFFLINE_SYNC_QUEUE, queue);
+}
+
+function enqueueEquipmentStatusSync(inv, newStatus) {
+    const queue = getOfflineSyncQueue();
+    const transaction = {
+        inv: String(inv).trim().toUpperCase(),
+        status: String(newStatus).trim(),
+        timestamp: new Date().toISOString()
+    };
+    const existingIndex = queue.findIndex(item => item.inv === transaction.inv);
+    if (existingIndex >= 0) queue[existingIndex] = transaction;
+    else queue.push(transaction);
+    saveOfflineSyncQueue(queue);
+}
+
+async function sendEquipmentStatusSync(transaction) {
+    await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors', 
             body: JSON.stringify({
                 type: 'updateEquipmentStatus',
-                inv: inv,
-                status: newStatus,
-                timestamp: new Date().toISOString()
+                inv: transaction.inv,
+                status: transaction.status,
+                timestamp: transaction.timestamp
             }),
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'text/plain' }
         });
-        console.log(`Статус ${inv} отправлен в облако: ${newStatus}`);
+}
+
+async function flushOfflineSyncQueue() {
+    if (isOfflineSyncFlushing || !navigator.onLine) return;
+    isOfflineSyncFlushing = true;
+    try {
+        const queue = getOfflineSyncQueue();
+        for (const transaction of queue) {
+            try {
+                await sendEquipmentStatusSync(transaction);
+                const currentQueue = getOfflineSyncQueue().filter(item =>
+                    !(item.inv === transaction.inv && item.timestamp === transaction.timestamp)
+                );
+                saveOfflineSyncQueue(currentQueue);
+                console.log(`Отложенный статус ${transaction.inv} отправлен в облако`);
+            } catch (e) {
+                console.warn(`Не удалось отправить статус ${transaction.inv}, оставляем в очереди`);
+                break;
+            }
+        }
+    } finally {
+        isOfflineSyncFlushing = false;
+    }
+}
+
+async function syncEquipmentStatusToGoogle(inv, newStatus) {
+    const transaction = {
+        inv: String(inv).trim().toUpperCase(),
+        status: String(newStatus).trim(),
+        timestamp: new Date().toISOString()
+    };
+    if (!navigator.onLine) {
+        enqueueEquipmentStatusSync(transaction.inv, transaction.status);
+        return;
+    }
+    try {
+        await sendEquipmentStatusSync(transaction);
+        console.log(`Статус ${transaction.inv} синхронизирован с облаком: ${transaction.status}`);
     } catch (e) {
+        enqueueEquipmentStatusSync(transaction.inv, transaction.status);
         console.error('Ошибка онлайн-синхронизации:', e);
     }
+}
+
+async function reserveNextActNumber() {
+    const year = String(new Date().getFullYear());
+    const localNextNumber = Number(getNextActNumber().split('-').pop()) || 1;
+    const response = await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'cors',
+        body: JSON.stringify({ type: 'reserveActNumber', year, minimum: localNextNumber }),
+        headers: { 'Content-Type': 'text/plain' }
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const result = await response.json();
+    if (!result.success || !result.num) throw new Error(result.error || 'Номер не получен');
+    return result.num;
 }
 
 function formatPhoneNumber(input) {
@@ -405,6 +715,7 @@ function toggleNoReturnDate(checked) {
 }
 
 function toggleMassReturnMode() {
+    if (currentAccessRole !== 'admin') { alert('Режим возврата доступен только технической дирекции.'); return; }
     isMassReturnActive = !isMassReturnActive;
     const banner = document.getElementById('mass-return-banner');
     if (banner) banner.style.display = isMassReturnActive ? 'flex' : 'none';
@@ -420,7 +731,10 @@ function findEquipment(invInput) {
 function onInventoryChange(invVal) {
     updateInvActionButton();
     const found = findEquipment(invVal);
-    if (found) document.getElementById('equipment-name').value = found.name;
+    const nameInput = document.getElementById('equipment-name');
+    if (nameInput) {
+        nameInput.value = found ? found.name : '';
+    }
 }
 
 function updateInvActionButton() {
@@ -437,11 +751,14 @@ function updateInvActionButton() {
 function onScanSuccess(decodedText) {
     const scannedInv = decodedText.trim();
     if (isMassReturnActive) {
-        if (window.EQUIPMENT_DB && window.EQUIPMENT_DB[scannedInv]) {
+        const equipment = findEquipment(scannedInv);
+        if (equipment) {
             const newStatus = 'В офисе';
-            window.EQUIPMENT_DB[scannedInv].status = newStatus;
+            const canonicalInv = equipment.inv;
+            window.EQUIPMENT_DB[canonicalInv].status = newStatus;
             saveToStore(APP_STORAGE_KEYS.EQUIPMENT_DB, window.EQUIPMENT_DB);
-            syncEquipmentStatusToGoogle(scannedInv, newStatus);
+            syncEquipmentStatusToGoogle(canonicalInv, newStatus);
+            updateActReturnStatus(canonicalInv);
             renderDbTable();
         } else {
             alert(`Оборудование ${scannedInv} не найдено в базе МТБ!`);
@@ -508,9 +825,9 @@ function renderSelectedItems() {
 
     container.innerHTML = currentActItems.map((item, index) => `
         <div class="item-row">
-            <div><b style="font-family:'JetBrains Mono'; color:var(--am-cyan);">${item.inv}</b> — ${item.name}</div>
+            <div><b style="font-family:'JetBrains Mono'; color:var(--am-cyan);">${escapeHtml(item.inv)}</b> — ${escapeHtml(item.name)}</div>
             <div style="display:flex; gap:8px;">
-                <button class="add-row-btn" style="font-size:11px;" onclick="addSingleItemToCallSheet('${item.inv}', '${item.name.replace(/'/g, "\\'")}')">+ В вызывной</button>
+                <button class="add-row-btn" style="font-size:11px;" onclick="addSingleItemToCallSheet(${escapeHtml(JSON.stringify(item.inv))}, ${escapeHtml(JSON.stringify(item.name))})">+ В вызывной</button>
                 <button class="delete-btn" onclick="removeItemFromAct(${index})">✕</button>
             </div>
         </div>
@@ -519,6 +836,43 @@ function renderSelectedItems() {
 
 function openDbModal() { renderDbTable(); document.getElementById('dbModal').style.display = 'flex'; }
 function closeDbModal() { document.getElementById('dbModal').style.display = 'none'; }
+
+function openEquipmentHistory(inv) {
+    const canonicalInv = String(inv).trim().toUpperCase();
+    const item = findEquipment(canonicalInv);
+    const title = document.getElementById('equipment-history-title');
+    const tbody = document.getElementById('equipmentHistoryTableBody');
+    if (!tbody) return;
+    if (title) title.innerText = `История: ${item?.name || canonicalInv} (${canonicalInv})`;
+    const movements = getActsHistory().flatMap(act => {
+        if (!Array.isArray(act.items)) return [];
+        return act.items.filter(entry => String(entry.inv).trim().toUpperCase() === canonicalInv).map(entry => ({
+            act,
+            entry,
+            location: act.venue || act.location || act.comp || 'Не указана'
+        }));
+    });
+    if (movements.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;">Перемещений по архиву не найдено</td></tr>';
+    } else {
+        tbody.innerHTML = movements.map(({ act, entry, location }) => {
+            const status = entry.status || getActStatus(act);
+            return `<tr>
+                <td><b>${escapeHtml(act.num)}</b></td>
+                <td>${escapeHtml(act.date || '—')}</td>
+                <td>${escapeHtml(act.participant || '—')}</td>
+                <td>${escapeHtml(location)}</td>
+                <td>${escapeHtml(entry.returnedAt || (status === 'Закрыт' ? 'Дата не зафиксирована' : '—'))}</td>
+                <td><span class="badge-status ${status === 'Закрыт' ? 'free' : 'busy'}">${escapeHtml(status)}</span></td>
+            </tr>`;
+        }).join('');
+    }
+    document.getElementById('equipmentHistoryModal').style.display = 'flex';
+}
+
+function closeEquipmentHistory() {
+    document.getElementById('equipmentHistoryModal').style.display = 'none';
+}
 
 function setDbStatusFilter(type) {
     currentStatusFilter = type;
@@ -543,16 +897,17 @@ function renderDbTable() {
             const badge = isFree ? 'free' : 'busy';
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><b style="color:var(--am-cyan);">${item.inv}</b></td>
-                <td>${item.category}</td>
-                <td>${item.name}</td>
-                <td>${item.sn || '—'}</td>
-                <td><span class="badge-status ${badge}">${rawStatus}</span></td>
+                <td><button class="select-btn" onclick="openEquipmentHistory(${escapeHtml(JSON.stringify(item.inv))})">${escapeHtml(item.inv)}</button></td>
+                <td>${escapeHtml(item.category)}</td>
+                <td>${escapeHtml(item.name)}</td>
+                <td>${escapeHtml(item.sn || '—')}</td>
+                <td><span class="badge-status ${badge}">${escapeHtml(rawStatus)}</span></td>
                 <td>
                     <div style="display:flex;gap:6px;align-items:center;">
-                        <input type="checkbox" class="db-item-checkbox" data-inv="${item.inv}" style="width:16px;height:16px;cursor:pointer;">
-                        <button class="select-btn" onclick="selectEquipment('${item.inv}')">Выбрать</button>
-                        ${!isFree ? `<button class="return-btn" onclick="returnEquipmentToOffice('${item.inv}')">📥 Вернуть</button>` : ''}
+                        <input type="checkbox" class="db-item-checkbox" data-inv="${escapeHtml(item.inv)}" style="width:16px;height:16px;cursor:pointer;">
+                        <button class="select-btn" onclick="selectEquipment(${escapeHtml(JSON.stringify(item.inv))})">Выбрать</button>
+                        <button class="add-row-btn" onclick="printEquipmentLabel(${escapeHtml(JSON.stringify(item.inv))})" title="Печать наклейки">🏷️</button>
+                        ${!isFree ? `<button class="return-btn" onclick="returnEquipmentToOffice(${escapeHtml(JSON.stringify(item.inv))})">📥 Вернуть</button>` : ''}
                     </div>
                 </td>
             `;
@@ -577,6 +932,29 @@ function renderDbTable() {
 function filterDbTable() { renderDbTable(); }
 function selectEquipment(inv) { document.getElementById('inv-input').value = inv; onInventoryChange(inv); closeDbModal(); }
 
+async function printEquipmentLabel(inv) {
+        const item = window.EQUIPMENT_DB?.[String(inv).trim().toUpperCase()];
+        if (!item) { alert('Оборудование не найдено в базе.'); return; }
+        if (typeof QRCode === 'undefined') { alert('Генератор QR-кодов не загружен.'); return; }
+        const size = prompt('Размер наклейки: введите 58x40 или 40x30', '58x40');
+        if (size !== '58x40' && size !== '40x30') return;
+        const [width, height] = size.split('x').map(Number);
+        const verificationUrl = `${GOOGLE_SCRIPT_URL}?action=checkEquipment&inv=${encodeURIComponent(item.inv)}`;
+        const qrDataUrl = await QRCode.toDataURL(verificationUrl, { width: size === '58x40' ? 150 : 105, margin: 1 });
+        const labelWindow = window.open('', '_blank', 'width=500,height=400');
+        if (!labelWindow) { alert('Разрешите открытие всплывающих окон для печати наклейки.'); return; }
+        labelWindow.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(item.inv)}</title><style>
+            @page { size: ${width}mm ${height}mm; margin: 0; }
+            * { box-sizing: border-box; }
+            body { width: ${width}mm; height: ${height}mm; margin: 0; padding: 2mm; font-family: Arial, sans-serif; color: #000; overflow: hidden; }
+            .label { width: 100%; height: 100%; display: flex; align-items: center; gap: 2mm; }
+            img { width: ${size === '58x40' ? 25 : 18}mm; height: ${size === '58x40' ? 25 : 18}mm; }
+            .info { min-width: 0; font-size: ${size === '58x40' ? 10 : 8}pt; line-height: 1.15; overflow-wrap: anywhere; }
+            .inv { font-size: ${size === '58x40' ? 14 : 11}pt; font-weight: 700; margin-bottom: 2mm; }
+        </style></head><body><div class="label"><img src="${qrDataUrl}" alt="QR"><div class="info"><div class="inv">${escapeHtml(item.inv)}</div><div>${escapeHtml(item.name)}</div></div></div><script>window.onload = () => { window.print(); };</script></body></html>`);
+        labelWindow.document.close();
+}
+
 function addSelectedItemsToActFromDb() {
     const checkboxes = document.querySelectorAll('.db-item-checkbox:checked');
     if (checkboxes.length === 0) { alert('Отметьте галочками позиции в таблице базы МТБ!'); return; }
@@ -595,17 +973,79 @@ function addSelectedItemsToActFromDb() {
 }
 
 function returnEquipmentToOffice(inv) {
+    if (currentAccessRole !== 'admin') { alert('Возврат доступен только технической дирекции.'); return; }
     if (window.EQUIPMENT_DB && window.EQUIPMENT_DB[inv]) {
         const newStatus = 'В офисе';
         window.EQUIPMENT_DB[inv].status = newStatus;
         saveToStore(APP_STORAGE_KEYS.EQUIPMENT_DB, window.EQUIPMENT_DB);
         syncEquipmentStatusToGoogle(inv, newStatus);
+        updateActReturnStatus(inv);
         renderDbTable();
     }
 }
 
 function getActsHistory() { return loadFromStore(APP_STORAGE_KEYS.ACTS_HISTORY, []); }
-function saveActToHistory(act) { const h = getActsHistory(); h.unshift(act); saveToStore(APP_STORAGE_KEYS.ACTS_HISTORY, h); }
+function saveActToHistory(act) {
+    const h = getActsHistory();
+    h.unshift(act);
+    saveToStore(APP_STORAGE_KEYS.ACTS_HISTORY, h);
+    syncActToGoogle(act);
+}
+
+function syncActToGoogle(act) {
+    if (!navigator.onLine) return;
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({ type: 'saveAct', act }),
+        headers: { 'Content-Type': 'text/plain' }
+    }).catch(error => console.warn('Не удалось сохранить акт в облаке:', error));
+}
+
+function syncActStatusToGoogle(act) {
+    if (!navigator.onLine) return;
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({ type: 'updateActStatus', num: act.num, status: getActStatus(act) }),
+        headers: { 'Content-Type': 'text/plain' }
+    }).catch(error => console.warn('Не удалось обновить статус акта в облаке:', error));
+}
+function getActStatus(act) {
+    const items = Array.isArray(act.items) ? act.items : [];
+    if (items.length > 0) {
+        const returnedCount = items.filter(item => item.status === 'Закрыт').length;
+        if (returnedCount > 0) return returnedCount === items.length ? 'Закрыт' : 'Частично сдано';
+    }
+    return act.status || 'Выдано';
+}
+
+function updateActReturnStatus(inv) {
+    const history = getActsHistory();
+    let changed = false;
+    history.forEach(act => {
+        if (changed || getActStatus(act) === 'Закрыт') return;
+        if (!Array.isArray(act.items)) return;
+        const item = act.items.find(entry => entry.inv === inv);
+        if (!item || item.status === 'Закрыт') return;
+        item.status = 'Закрыт';
+        item.returnedAt = new Date().toLocaleDateString('ru-RU');
+        act.status = getActStatus({ ...act, status: '', items: act.items });
+        syncActStatusToGoogle(act);
+        changed = true;
+    });
+    if (changed) {
+        saveToStore(APP_STORAGE_KEYS.ACTS_HISTORY, history);
+        if (document.getElementById('historyModal')?.style.display === 'flex') renderHistoryTable();
+    }
+}
+function getNextActNumber() {
+    const maxNumber = getActsHistory().reduce((max, act) => {
+        const match = String(act.num || '').match(/-(\d+)$/);
+        return match ? Math.max(max, Number(match[1])) : max;
+    }, 0);
+    return `2026-${String(maxNumber + 1).padStart(3, '0')}`;
+}
 
 function openHistoryModal() { renderHistoryTable(); document.getElementById('historyModal').style.display = 'flex'; }
 function closeHistoryModal() { document.getElementById('historyModal').style.display = 'none'; }
@@ -618,7 +1058,7 @@ function renderHistoryTable() {
     tbody.innerHTML = '';
     
     if (h.length === 0) { 
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;">История пуста</td></tr>'; 
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;">История пуста</td></tr>';
         return; 
     }
 
@@ -627,6 +1067,7 @@ function renderHistoryTable() {
         const isOverdue = retDateObj && retDateObj < new Date();
 
         const rowStyle = isOverdue ? 'background: rgba(255, 42, 109, 0.1); border-left: 4px solid var(--status-busy);' : '';
+        const actStatus = getActStatus(act);
         const itemsList = act.items ? act.items.map(i => i.name).join(', ') : act.name;
         const invsList = act.items ? act.items.map(i => i.inv).join(', ') : act.inv;
         const searchStr = `${act.num} ${act.date} ${act.participant} ${itemsList} ${invsList}`.toLowerCase();
@@ -635,18 +1076,19 @@ function renderHistoryTable() {
             const tr = document.createElement('tr');
             tr.style.cssText = rowStyle;
             tr.innerHTML = `
-                <td><b>№ ${act.num}</b></td>
-                <td>${act.date}</td>
-                <td>${act.returnDate}</td>
-                <td><span class="badge-status free">${act.role || 'Участник'}</span></td>
-                <td>${act.participant}</td>
-                <td>${act.contact || '—'}</td>
-                <td>${itemsList} (${act.items ? act.items.length : 1} шт.)</td>
+                <td><b>№ ${escapeHtml(act.num)}</b></td>
+                <td>${escapeHtml(act.date)}</td>
+                <td>${escapeHtml(act.returnDate)}</td>
+                <td><span class="badge-status ${actStatus === 'Закрыт' ? 'free' : 'busy'}">${escapeHtml(actStatus)}</span></td>
+                <td><span class="badge-status free">${escapeHtml(act.role || 'Участник')}</span></td>
+                <td>${escapeHtml(act.participant)}</td>
+                <td>${escapeHtml(act.contact || '—')}</td>
+                <td>${escapeHtml(itemsList)} (${act.items ? act.items.length : 1} шт.)</td>
                 <td>
                     <div style="display:flex;gap:6px;">
-                        <button class="select-btn" onclick="editActFromHistory('${act.num}')" title="Редактировать">✏️</button>
-                        <button class="select-btn" onclick="reprintAct('${act.num}')" title="Печать">🖨️</button>
-                        <button class="delete-btn" onclick="deleteActFromHistory('${act.num}')" title="Удалить">🗑️</button>
+                        <button class="select-btn" onclick="editActFromHistory(${escapeHtml(JSON.stringify(act.num))})" title="Редактировать">✏️</button>
+                        <button class="select-btn" onclick="reprintAct(${escapeHtml(JSON.stringify(act.num))})" title="Печать">🖨️</button>
+                        <button class="delete-btn" onclick="deleteActFromHistory(${escapeHtml(JSON.stringify(act.num))})" title="Удалить">🗑️</button>
                     </div>
                 </td>
             `;
@@ -663,10 +1105,19 @@ function deleteActFromHistory(actNum) {
     }
 }
 
-function generateAndPrintAct() {
+async function generateAndPrintAct() {
+    if (currentAccessRole === 'viewer') { alert('Режим только чтения не позволяет оформлять выдачу.'); return; }
     const data = collectActData();
     if (!data) {
         alert('Невозможно сформировать акт: проверьте, добавлено ли оборудование и заполнены ли обязательные поля.');
+        return;
+    }
+
+    try {
+        data.num = await reserveNextActNumber();
+    } catch (e) {
+        alert('Не удалось получить уникальный номер накладной. Проверьте интернет и повторите попытку.');
+        console.error('Ошибка резервирования номера накладной:', e);
         return;
     }
 
@@ -693,6 +1144,7 @@ function generateAndPrintAct() {
         callsheetArea.style.display = 'none';
     }
     if (printArea) {
+        document.body.classList.add('printing');
         printArea.classList.add('active-print');
         printArea.style.display = 'block';
     } else {
@@ -706,6 +1158,7 @@ function generateAndPrintAct() {
             printArea.classList.remove('active-print');
             printArea.style.display = 'none';
         }
+        document.body.classList.remove('printing');
         currentActItems = []; 
         renderSelectedItems(); 
         resetForm();
@@ -723,12 +1176,14 @@ function collectActData() {
     let retDate = '—';
     if (!noRet && rawDate) { const p = rawDate.split('-'); retDate = `${p[2]}.${p[1]}.${p[0]}`; }
     return {
-        num: `2026-${String(h.length + 1).padStart(3, '0')}`,
+        num: getNextActNumber(),
         date: new Date().toLocaleDateString('ru-RU'),
         dateIntro: getFormattedDate(),
         returnDate: retDate,
-        items: [...currentActItems],
+        items: currentActItems.map(item => ({ ...item, status: 'Выдано' })),
+        status: 'Выдано',
         comp: document.getElementById('competence-select').value,
+        location: document.getElementById('act-location-input')?.value.trim() || 'Не указана',
         manager: document.getElementById('manager-select').value,
         role: document.getElementById('recipient-role-select').value,
         participant: getParticipantValue() || '—',
@@ -754,17 +1209,12 @@ function preparePrintArea(act) {
     const mgrTitleOut = document.getElementById('print-manager-title-out');
     if (mgrTitleOut) mgrTitleOut.innerText = `Выдал ${mt.toLowerCase()}`;
 
-    const mgrTitleIn = document.getElementById('print-manager-title-in');
-    if (mgrTitleIn) mgrTitleIn.innerText = `Принял ${mt.toLowerCase()}`;
-
     const mgrOut = document.getElementById('print-manager-out');
     if (mgrOut) mgrOut.innerText = act.manager;
 
-    const mgrIn = document.getElementById('print-manager-in');
-    if (mgrIn) mgrIn.innerText = act.manager;
-
     const rt = getRecipientRoleTitle(act.role, act.participant);
-    document.querySelectorAll('[id^="print-recipient-role-grid"]').forEach(e => e.innerText = rt);
+    const roleGridEl = document.getElementById('print-recipient-role-grid');
+    if (roleGridEl) roleGridEl.innerText = rt;
 
     const sn = act.participant !== '—' ? act.participant : '__________________________';
     const sigEl = document.getElementById('print-participant-sig');
@@ -773,7 +1223,7 @@ function preparePrintArea(act) {
     const tbodyEl = document.getElementById('print-table-tbody');
     if (tbodyEl) {
         tbodyEl.innerHTML = act.items.map((it, idx) => `
-            <tr><td>${idx+1}</td><td style="text-align:left;">${it.name}</td><td>${it.inv}</td><td>${act.participant}</td><td>${act.contact}</td><td>1</td><td>${act.date}</td><td>${act.returnDate}</td><td style="text-align:left;">${act.comment}</td></tr>
+            <tr><td>${idx+1}</td><td style="text-align:left;">${escapeHtml(it.name)}</td><td>${escapeHtml(it.inv)}</td><td>${escapeHtml(act.participant)}</td><td>${escapeHtml(act.contact)}</td><td>1</td><td>${escapeHtml(act.date)}</td><td>${escapeHtml(act.returnDate)}</td><td>${escapeHtml(it.status || act.status || 'Выдано')}</td><td style="text-align:left;">${escapeHtml(act.comment)}</td></tr>
         `).join('');
     }
 }
@@ -796,6 +1246,7 @@ function reprintAct(num) {
     }
     
     if (printArea) {
+        document.body.classList.add('printing');
         printArea.classList.add('active-print');
         printArea.style.display = 'block';
     } else {
@@ -811,6 +1262,7 @@ function reprintAct(num) {
             printArea.classList.remove('active-print');
             printArea.style.display = 'none';
         }
+        document.body.classList.remove('printing');
     }, 100);
 }
 
@@ -819,6 +1271,7 @@ function resetForm() {
     const n = document.getElementById('equipment-name'); if (n) n.value = '';
     const p = document.getElementById('participant-name'); if (p) p.value = '';
     const c = document.getElementById('contact-input'); if (c) c.value = '';
+    const l = document.getElementById('act-location-input'); if (l) l.value = '';
     const m = document.getElementById('comment-input'); if (m) m.value = '';
     updateInvActionButton();
 }
@@ -860,11 +1313,11 @@ function renderEmployeesDirectory() {
                 <button class="action-icon-btn" onclick="openContactEditorModal(${originalIndex})">✏️</button>
                 <button class="action-icon-btn delete" onclick="deleteContact(${originalIndex})">🗑️</button>
             </div>
-            <div class="contact-name">${emp.name}</div>
-            <div class="contact-role">${emp.role || ''}</div>
+            <div class="contact-name">${escapeHtml(emp.name)}</div>
+            <div class="contact-role">${escapeHtml(emp.role || '')}</div>
             <div class="contact-info">
-                <div>📞 <a href="tel:${emp.phone}">${formatPhoneNumberStr(emp.phone)}</a></div>
-                ${emp.email ? `<div>✉️ <a href="mailto:${emp.email}">${emp.email}</a></div>` : ''}
+                <div>📞 <a href="tel:${escapeHtml(emp.phone)}">${escapeHtml(formatPhoneNumberStr(emp.phone))}</a></div>
+                ${emp.email ? `<div>✉️ <a href="mailto:${escapeHtml(emp.email)}">${escapeHtml(emp.email)}</a></div>` : ''}
             </div>
             <div class="contact-badges">
                 ${emp.tg ? `<a href="https://t.me/+${cleanPhone}" target="_blank" class="contact-badge badge-tg">Telegram</a>` : ''}
@@ -898,6 +1351,7 @@ function openContactEditorModal(index = -1) {
 function closeContactEditorModal() { document.getElementById('contactEditorModal').style.display = 'none'; }
 
 function saveContactData() {
+    if (!requireAdmin()) return;
     const idx = parseInt(document.getElementById('edit-contact-index').value);
     const data = {
         name: document.getElementById('edit-contact-name').value.trim(),
@@ -914,6 +1368,7 @@ function saveContactData() {
 }
 
 function deleteContact(idx) {
+    if (!requireAdmin()) return;
     if (confirm(`Удалить контакт ${EMPLOYEES_LIST[idx].name}?`)) {
         EMPLOYEES_LIST.splice(idx, 1);
         saveToStore(APP_STORAGE_KEYS.EMPLOYEES, EMPLOYEES_LIST);
@@ -949,11 +1404,11 @@ function renderVenuesTable() {
                 <button class="action-icon-btn" onclick="openVenueEditorModal(${originalIndex})">✏️</button>
                 <button class="action-icon-btn delete" onclick="deleteVenue(${originalIndex})">🗑️</button>
             </div>
-            <div class="contact-name">${v.name}</div>
-            <div class="contact-role">📍 <a href="${mapsUrl}" target="_blank" style="color: var(--am-cyan); text-decoration: none;">${addressText}</a></div>
+            <div class="contact-name">${escapeHtml(v.name)}</div>
+            <div class="contact-role">📍 <a href="${escapeHtml(mapsUrl)}" target="_blank" style="color: var(--am-cyan); text-decoration: none;">${escapeHtml(addressText)}</a></div>
             <div class="contact-info">
-                <div>👤 <b>Ответственный:</b> ${v.manager || '—'}</div>
-                ${v.phone ? `<div>📞 <a href="tel:${v.phone}">${formatPhoneNumberStr(v.phone)}</a></div>` : ''}
+                <div>👤 <b>Ответственный:</b> ${escapeHtml(v.manager || '—')}</div>
+                ${v.phone ? `<div>📞 <a href="tel:${escapeHtml(v.phone)}">${escapeHtml(formatPhoneNumberStr(v.phone))}</a></div>` : ''}
             </div>
         `;
         container.appendChild(card);
@@ -981,6 +1436,7 @@ function openVenueEditorModal(idx = -1) {
 function closeVenueEditorModal() { document.getElementById('venueEditorModal').style.display = 'none'; }
 
 function saveVenueData() {
+    if (!requireAdmin()) return;
     const idx = parseInt(document.getElementById('edit-venue-index').value);
     const data = {
         name: document.getElementById('edit-venue-name').value.trim(),
@@ -996,6 +1452,7 @@ function saveVenueData() {
 }
 
 function deleteVenue(idx) {
+    if (!requireAdmin()) return;
     if (confirm(`Удалить площадку ${VENUES_LIST[idx].name}?`)) {
         VENUES_LIST.splice(idx, 1);
         saveToStore(APP_STORAGE_KEYS.VENUES, VENUES_LIST);
@@ -1031,12 +1488,12 @@ function renderScheduleTable() {
                 <button class="action-icon-btn" onclick="openScheduleEditorModal(${originalIndex})">✏️</button>
                 <button class="action-icon-btn delete" onclick="deleteSchedule(${originalIndex})">🗑️</button>
             </div>
-            <div class="contact-role" style="font-family:'JetBrains Mono';">${s.time}</div>
-            <div class="contact-name">${s.comp}</div>
+            <div class="contact-role" style="font-family:'JetBrains Mono';">${escapeHtml(s.time)}</div>
+            <div class="contact-name">${escapeHtml(s.comp)}</div>
             <div class="contact-info">
-                <div>📍 <b>Локация:</b> <a href="${mapsUrl}" target="_blank" style="color: var(--am-cyan); text-decoration: none;">${locationText}</a></div>
-                <div>👤 <b>Участники:</b> ${s.participant}</div>
-                <div style="margin-top: 4px; color: var(--text-primary); font-size: 12px;">📝 ${s.desc}</div>
+                <div>📍 <b>Локация:</b> <a href="${escapeHtml(mapsUrl)}" target="_blank" style="color: var(--am-cyan); text-decoration: none;">${escapeHtml(locationText)}</a></div>
+                <div>👤 <b>Участники:</b> ${escapeHtml(s.participant)}</div>
+                <div style="margin-top: 4px; color: var(--text-primary); font-size: 12px;">📝 ${escapeHtml(s.desc)}</div>
             </div>
         `;
         container.appendChild(card);
@@ -1064,6 +1521,7 @@ function openScheduleEditorModal(idx = -1) {
 function closeScheduleEditorModal() { document.getElementById('scheduleEditorModal').style.display = 'none'; }
 
 function saveScheduleData() {
+    if (!requireAdmin()) return;
     const idx = parseInt(document.getElementById('edit-schedule-index').value);
     const data = {
         time: document.getElementById('edit-schedule-time').value.trim(),
@@ -1079,6 +1537,7 @@ function saveScheduleData() {
 }
 
 function deleteSchedule(idx) {
+    if (!requireAdmin()) return;
     if (confirm(`Удалить защиту ${SCHEDULE_LIST[idx].comp}?`)) {
         SCHEDULE_LIST.splice(idx, 1);
         saveToStore(APP_STORAGE_KEYS.SCHEDULE, SCHEDULE_LIST);
@@ -1112,11 +1571,11 @@ function renderChampContactsTable() {
                 <button class="action-icon-btn" onclick="openChampContactEditorModal(${originalIndex})">✏️</button>
                 <button class="action-icon-btn delete" onclick="deleteChampContact(${originalIndex})">🗑️</button>
             </div>
-            <div class="contact-role">${c.dept}</div>
-            <div class="contact-name">${c.name}</div>
+            <div class="contact-role">${escapeHtml(c.dept)}</div>
+            <div class="contact-name">${escapeHtml(c.name)}</div>
             <div class="contact-info">
-                <div>📌 <b>Задача:</b> ${c.task}</div>
-                <div>📞 <a href="tel:${c.phone}">${formatPhoneNumberStr(c.phone)}</a></div>
+                <div>📌 <b>Задача:</b> ${escapeHtml(c.task)}</div>
+                <div>📞 <a href="tel:${escapeHtml(c.phone)}">${escapeHtml(formatPhoneNumberStr(c.phone))}</a></div>
             </div>
         `;
         container.appendChild(card);
@@ -1142,6 +1601,7 @@ function openChampContactEditorModal(idx = -1) {
 function closeChampContactEditorModal() { document.getElementById('champContactEditorModal').style.display = 'none'; }
 
 function saveChampContactData() {
+    if (!requireAdmin()) return;
     const idx = parseInt(document.getElementById('edit-champ-contact-index').value);
     const data = {
         dept: document.getElementById('edit-champ-dept').value.trim(),
@@ -1156,6 +1616,7 @@ function saveChampContactData() {
 }
 
 function deleteChampContact(idx) {
+    if (!requireAdmin()) return;
     if (confirm(`Удалить контакт ${CHAMP_CONTACTS_LIST[idx].name}?`)) {
         CHAMP_CONTACTS_LIST.splice(idx, 1);
         saveToStore(APP_STORAGE_KEYS.CHAMP_CONTACTS, CHAMP_CONTACTS_LIST);
@@ -1175,10 +1636,82 @@ function openCallSheetModal() {
     renderCsEquipment();
     renderCsTransport();
     document.getElementById('callSheetModal').style.display = 'flex';
+    validateCallSheetLogisticsPreview();
     fetchOnlineWeatherAndSun();
 }
 
 function closeCallSheetModal() { document.getElementById('callSheetModal').style.display = 'none'; }
+
+function syncCallSheetToGoogle(callSheet) {
+    if (!navigator.onLine) return;
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({ type: 'saveCallSheet', callSheet }),
+        headers: { 'Content-Type': 'text/plain' }
+    }).catch(error => console.warn('Не удалось сохранить вызывной лист в облаке:', error));
+}
+
+async function copyCallSheetShareLink() {
+    const callSheet = collectCsData();
+    syncCallSheetToGoogle(callSheet);
+    const url = new URL(window.location.href);
+    url.search = `?callsheet=${encodeURIComponent(callSheet.id)}`;
+    url.hash = '';
+    try {
+        await navigator.clipboard.writeText(url.toString());
+        alert('Ссылка на мобильную версию скопирована.');
+    } catch (error) {
+        prompt('Скопируйте ссылку:', url.toString());
+    }
+}
+
+async function loadCallSheetViewFromUrl() {
+    const id = new URLSearchParams(window.location.search).get('callsheet');
+    if (!id) return;
+    try {
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getCallSheet&id=${encodeURIComponent(id)}`);
+        const result = await response.json();
+        if (!result.success || !result.data) throw new Error('Вызывной лист не найден');
+        renderMobileCallSheet(result.data);
+    } catch (error) {
+        document.body.insertAdjacentHTML('beforeend', `<div class="mobile-call-sheet-error">Не удалось загрузить вызывной лист</div>`);
+    }
+}
+
+function renderMobileCallSheet(callSheet) {
+    const app = document.querySelector('.container');
+    if (app) app.style.display = 'none';
+    const view = document.createElement('main');
+    view.id = 'mobile-call-sheet-view';
+    view.innerHTML = `
+        <header><div><small>ВЫЗЫВНОЙ ЛИСТ</small><h1>${escapeHtml(callSheet.projectName)}</h1></div><strong>${escapeHtml(callSheet.date)}</strong></header>
+        <section class="mobile-cs-summary"><b>${escapeHtml(callSheet.city)} · ${escapeHtml(callSheet.location)}</b><span>${escapeHtml(callSheet.address)}</span><span>${escapeHtml(callSheet.startTime || '')} - ${escapeHtml(callSheet.endTime || '')}</span><a target="_blank" href="https://yandex.ru/maps/?text=${encodeURIComponent(`${callSheet.location || ''}, ${callSheet.address || ''}`)}">Открыть точку заезда на Яндекс Картах</a></section>
+        <section><h2>Ближайший этап</h2><div id="mobile-cs-countdown" class="mobile-cs-countdown"></div></section>
+        <section><h2>Тайминг</h2><div class="mobile-cs-list">${(callSheet.milestones || []).map(item => `<div><time>${escapeHtml(item.time)}</time><span>${escapeHtml(item.event)}</span></div>`).join('')}</div></section>
+        <section><h2>Команда</h2><div class="mobile-cs-list">${(callSheet.crew || []).map(person => `<div><time>${escapeHtml(person.time)}</time><span><b>${escapeHtml(person.name)}</b><small>${escapeHtml(person.dept)} · ${escapeHtml(person.task)}</small>${person.phone ? `<a href="tel:${escapeHtml(person.phone)}">${escapeHtml(person.phone)}</a>` : ''}</span></div>`).join('')}</div></section>
+        <section><h2>Примечания</h2><p>${escapeHtml(callSheet.notes || 'Нет примечаний')}</p></section>`;
+    document.body.appendChild(view);
+    const update = () => updateMobileCallSheetCountdown(callSheet);
+    update();
+    window.setInterval(update, 30000);
+}
+
+function updateMobileCallSheetCountdown(callSheet) {
+    const target = document.getElementById('mobile-cs-countdown');
+    if (!target) return;
+    const now = new Date();
+    const next = (callSheet.milestones || []).map(item => {
+        const match = String(item.time || '').match(/^(\d{1,2}):(\d{2})$/);
+        if (!match) return null;
+        const dateParts = String(callSheet.date || '').split('.');
+        const eventDate = dateParts.length === 3 ? new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]), Number(match[1]), Number(match[2])) : null;
+        return eventDate && eventDate >= now ? { eventDate, event: item.event } : null;
+    }).filter(Boolean).sort((a, b) => a.eventDate - b.eventDate)[0];
+    if (!next) { target.innerText = 'Все этапы завершены'; return; }
+    const minutes = Math.ceil((next.eventDate - now) / 60000);
+    target.innerText = `Через ${Math.floor(minutes / 60)} ч ${minutes % 60} мин · ${next.event}`;
+}
 
 function renderCsTemplatesDropdown() {
     let container = document.getElementById('cs-templates-selector-container');
@@ -1191,9 +1724,11 @@ function renderCsTemplatesDropdown() {
             container.innerHTML = `
                 <select id="cs-template-select" style="padding: 8px 12px; font-size: 12px; border-radius: 10px; width: 180px;">
                     <option value="">-- Шаблоны смен --</option>
-                    ${CS_TEMPLATES_LIST.map((t, i) => `<option value="${i}">${t.name}</option>`).join('')}
+                    ${CS_TEMPLATES_LIST.map((t, i) => `<option value="${i}">${escapeHtml(t.name)}</option>`).join('')}
                 </select>
                 <button class="add-row-btn" onclick="applySelectedCsTemplate()" style="padding: 8px 12px; font-size: 11px;">Применить</button>
+                <button class="add-row-btn" onclick="saveCurrentCsTemplate()" style="padding: 8px 12px; font-size: 11px;">Сохранить</button>
+                <button class="delete-btn" onclick="deleteSelectedCsTemplate()" title="Удалить выбранный шаблон">✕</button>
             `;
             headerEl.querySelector('.modal-actions').prepend(container);
         }
@@ -1203,7 +1738,7 @@ function renderCsTemplatesDropdown() {
 function applySelectedCsTemplate() {
     const sel = document.getElementById('cs-template-select');
     if (!sel || sel.value === "") { alert('Выберите шаблон из списка!'); return; }
-    const template = CS_TEMPLATES_LIST[parseInt(sel.value)];
+    const template = normalizeCsTemplate(CS_TEMPLATES_LIST[parseInt(sel.value)]);
     if (!template) return;
 
     document.getElementById('cs-shift-num').value = template.shiftNum || '';
@@ -1213,6 +1748,39 @@ function applySelectedCsTemplate() {
 
     renderCsMilestones();
     alert(`Шаблон «${template.name}» успешно применен!`);
+}
+
+function saveCurrentCsTemplate() {
+    if (!requireAdmin()) return;
+    const name = prompt('Название шаблона смены:');
+    if (name === null) return;
+    const template = normalizeCsTemplate({
+        name,
+        shiftNum: document.getElementById('cs-shift-num')?.value,
+        milestones: callSheetData.milestones,
+        notes: document.getElementById('cs-notes')?.value
+    });
+    if (!template) { alert('Укажите название шаблона.'); return; }
+    CS_TEMPLATES_LIST.push(template);
+    CS_TEMPLATES_LIST = normalizeCsTemplates(CS_TEMPLATES_LIST);
+    saveToStore(APP_STORAGE_KEYS.CS_TEMPLATES, CS_TEMPLATES_LIST);
+    document.getElementById('cs-templates-selector-container')?.remove();
+    renderCsTemplatesDropdown();
+    alert(`Шаблон «${template.name}» сохранен.`);
+}
+
+function deleteSelectedCsTemplate() {
+    if (!requireAdmin()) return;
+    const sel = document.getElementById('cs-template-select');
+    if (!sel || sel.value === '') { alert('Выберите шаблон для удаления.'); return; }
+    const index = Number.parseInt(sel.value, 10);
+    const template = CS_TEMPLATES_LIST[index];
+    if (!template || !confirm(`Удалить шаблон «${template.name}»?`)) return;
+    CS_TEMPLATES_LIST.splice(index, 1);
+    CS_TEMPLATES_LIST = normalizeCsTemplates(CS_TEMPLATES_LIST);
+    saveToStore(APP_STORAGE_KEYS.CS_TEMPLATES, CS_TEMPLATES_LIST);
+    document.getElementById('cs-templates-selector-container')?.remove();
+    renderCsTemplatesDropdown();
 }
 
 function initTechDirSelect() {
@@ -1268,9 +1836,9 @@ function renderCsExtraInfo() {
     if (!container) return;
     container.innerHTML = callSheetData.extraInfo.map((item, idx) => `
         <div style="display:flex; gap:10px; align-items:center; background:rgba(25,34,60,0.4); padding:10px; border-radius:12px;">
-            <input type="text" value="${item.position}" placeholder="Должность" onchange="callSheetData.extraInfo[${idx}].position = this.value" style="flex:1;">
-            <input type="text" value="${item.name}" placeholder="ФИО" onchange="callSheetData.extraInfo[${idx}].name = this.value" style="flex:1.5;">
-            <input type="text" value="${formatPhoneNumberStr(item.phone)}" placeholder="Телефон" oninput="formatPhoneNumber(this); callSheetData.extraInfo[${idx}].phone = this.value" style="width:170px;">
+            <input type="text" value="${escapeHtml(item.position)}" placeholder="Должность" onchange="callSheetData.extraInfo[${idx}].position = this.value" style="flex:1;">
+            <input type="text" value="${escapeHtml(item.name)}" placeholder="ФИО" onchange="callSheetData.extraInfo[${idx}].name = this.value" style="flex:1.5;">
+            <input type="text" value="${escapeHtml(formatPhoneNumberStr(item.phone))}" placeholder="Телефон" oninput="formatPhoneNumber(this); callSheetData.extraInfo[${idx}].phone = this.value" style="width:170px;">
             <button class="delete-btn" onclick="removeCsExtraInfo(${idx})">✕</button>
         </div>
     `).join('');
@@ -1284,14 +1852,15 @@ function renderCsMilestones() {
     if (!container) return;
     container.innerHTML = callSheetData.milestones.map((m, idx) => `
         <div style="display:flex; gap:10px; align-items:center;">
-            <input type="text" value="${m.time}" style="width:100px;" onchange="callSheetData.milestones[${idx}].time = this.value">
-            <input type="text" value="${m.event}" style="flex:1;" onchange="callSheetData.milestones[${idx}].event = this.value">
+            <input type="time" value="${escapeHtml(m.time)}" aria-label="Время этапа" style="width:100px;" onchange="callSheetData.milestones[${idx}].time = this.value">
+            <input type="text" value="${escapeHtml(m.event)}" style="flex:1;" onchange="callSheetData.milestones[${idx}].event = this.value">
             <button class="delete-btn" onclick="removeCsMilestone(${idx})">✕</button>
         </div>
     `).join('');
 }
 
 function addCsMilestoneRow() { callSheetData.milestones.push({ time: '12:00', event: 'Новый этап' }); renderCsMilestones(); }
+function addCsDefenseRow() { callSheetData.milestones.push({ time: '10:00', event: 'Защита компетенции' }); renderCsMilestones(); }
 function removeCsMilestone(idx) { callSheetData.milestones.splice(idx, 1); renderCsMilestones(); }
 
 function renderCsCrew() {
@@ -1301,19 +1870,19 @@ function renderCsCrew() {
     callSheetData.crew.forEach((c, idx) => {
         const div = document.createElement('div');
         div.style.cssText = 'display:flex; gap:10px; align-items:center; flex-wrap:wrap;';
-        let nameHtml = `<input type="text" value="${c.name}" placeholder="ФИО" onchange="callSheetData.crew[${idx}].name = this.value" style="width:190px;">`;
+        let nameHtml = `<input type="text" value="${escapeHtml(c.name)}" placeholder="ФИО" onchange="callSheetData.crew[${idx}].name = this.value" style="width:190px;">`;
         if (c.type === 'ato') {
             const list = ["Зломанов Олег Викторович", "Смутный Богдан Сергеевич", "Белоусов Алексей Алексеевич", "Белоусова Анастасия Константиновна", "Сидоренко Артем Валерьевич"];
-            nameHtml = `<select onchange="onCsCrewAtoChange(${idx}, this.value)" style="width:210px;">${list.map(n => `<option value="${n}" ${n===c.name?'selected':''}>${n}</option>`).join('')}</select>`;
+            nameHtml = `<select onchange="onCsCrewAtoChange(${idx}, this.value)" style="width:210px;">${list.map(n => `<option value="${escapeHtml(n)}" ${n===c.name?'selected':''}>${escapeHtml(n)}</option>`).join('')}</select>`;
         } else if (c.type === 'emp') {
-            nameHtml = `<select onchange="onCsCrewEmpChange(${idx}, this.value)" style="width:210px;">${EMPLOYEES_LIST.map(e => `<option value="${e.name}" ${e.name===c.name?'selected':''}>${e.name}</option>`).join('')}</select>`;
+            nameHtml = `<select onchange="onCsCrewEmpChange(${idx}, this.value)" style="width:210px;">${EMPLOYEES_LIST.map(e => `<option value="${escapeHtml(e.name)}" ${e.name===c.name?'selected':''}>${escapeHtml(e.name)}</option>`).join('')}</select>`;
         }
         div.innerHTML = `
-            <input type="text" value="${c.time}" style="width:85px;" onchange="callSheetData.crew[${idx}].time = this.value">
-            <input type="text" value="${c.dept}" style="width:140px;" onchange="callSheetData.crew[${idx}].dept = this.value">
+            <input type="time" value="${escapeHtml(c.time)}" aria-label="Время сотрудника" style="width:85px;" onchange="callSheetData.crew[${idx}].time = this.value">
+            <input type="text" value="${escapeHtml(c.dept)}" style="width:140px;" onchange="callSheetData.crew[${idx}].dept = this.value">
             ${nameHtml}
-            <input type="text" value="${formatPhoneNumberStr(c.phone)}" style="width:160px;" oninput="formatPhoneNumber(this); callSheetData.crew[${idx}].phone = this.value">
-            <input type="text" value="${c.task}" placeholder="Задача" onchange="callSheetData.crew[${idx}].task = this.value" style="flex:1;">
+            <input type="text" value="${escapeHtml(formatPhoneNumberStr(c.phone))}" style="width:160px;" oninput="formatPhoneNumber(this); callSheetData.crew[${idx}].phone = this.value">
+            <input type="text" value="${escapeHtml(c.task)}" placeholder="Задача" onchange="callSheetData.crew[${idx}].task = this.value" style="flex:1;">
             <button class="delete-btn" onclick="removeCsCrew(${idx})">✕</button>
         `;
         container.appendChild(div);
@@ -1360,10 +1929,10 @@ function renderCsEquipment() {
     if (!container) return;
     container.innerHTML = callSheetData.equipment.map((eq, idx) => `
         <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-            <input type="text" value="${eq.name}" placeholder="Наименование" onchange="callSheetData.equipment[${idx}].name = this.value" style="flex:2;">
-            <input type="text" value="${eq.inv}" placeholder="Инв. №" onchange="callSheetData.equipment[${idx}].inv = this.value" style="width:140px;">
-            <input type="text" value="${eq.sn}" placeholder="SN" onchange="callSheetData.equipment[${idx}].sn = this.value" style="width:140px;">
-            <input type="text" value="${eq.count}" style="width:70px; text-align:center;" onchange="callSheetData.equipment[${idx}].count = this.value">
+            <input type="text" value="${escapeHtml(eq.name)}" placeholder="Наименование" onchange="callSheetData.equipment[${idx}].name = this.value" style="flex:2;">
+            <input type="text" value="${escapeHtml(eq.inv)}" placeholder="Инв. №" onchange="callSheetData.equipment[${idx}].inv = this.value" style="width:140px;">
+            <input type="text" value="${escapeHtml(eq.sn)}" placeholder="SN" onchange="callSheetData.equipment[${idx}].sn = this.value" style="width:140px;">
+            <input type="text" value="${escapeHtml(eq.count)}" style="width:70px; text-align:center;" onchange="callSheetData.equipment[${idx}].count = this.value">
             <button class="delete-btn" onclick="removeCsEquipment(${idx})">✕</button>
         </div>
     `).join('');
@@ -1398,11 +1967,11 @@ function renderCsTransport() {
     if (!container) return;
     container.innerHTML = callSheetData.transport.map((t, idx) => `
         <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-            <input type="text" value="${t.model}" placeholder="Марка" onchange="callSheetData.transport[${idx}].model = this.value" style="width:140px;">
-            <input type="text" value="${t.plate}" placeholder="Номер" onchange="callSheetData.transport[${idx}].plate = this.value" style="width:120px;">
-            <input type="text" value="${t.driver}" placeholder="Водитель" onchange="callSheetData.transport[${idx}].driver = this.value" style="width:180px;">
-            <input type="text" value="${formatPhoneNumberStr(t.phone)}" placeholder="Телефон" oninput="formatPhoneNumber(this); callSheetData.transport[${idx}].phone = this.value" style="width:160px;">
-            <input type="text" value="${t.task}" placeholder="Задача" onchange="callSheetData.transport[${idx}].task = this.value" style="flex:1;">
+            <input type="text" value="${escapeHtml(t.model)}" placeholder="Марка" onchange="callSheetData.transport[${idx}].model = this.value" style="width:140px;">
+            <input type="text" value="${escapeHtml(t.plate)}" placeholder="Номер" onchange="callSheetData.transport[${idx}].plate = this.value" style="width:120px;">
+            <input type="text" value="${escapeHtml(t.driver)}" placeholder="Водитель" onchange="callSheetData.transport[${idx}].driver = this.value" style="width:180px;">
+            <input type="text" value="${escapeHtml(formatPhoneNumberStr(t.phone))}" placeholder="Телефон" oninput="formatPhoneNumber(this); callSheetData.transport[${idx}].phone = this.value" style="width:160px;">
+            <input type="text" value="${escapeHtml(t.task)}" placeholder="Задача" onchange="callSheetData.transport[${idx}].task = this.value" style="flex:1;">
             <button class="delete-btn" onclick="removeCsTransport(${idx})">✕</button>
         </div>
     `).join('');
@@ -1418,8 +1987,63 @@ function saveCurrentCallSheetManually() {
     const h = getCsHistory();
     h.unshift(data);
     saveToStore(APP_STORAGE_KEYS.CS_HISTORY, h);
+    syncCallSheetToGoogle(data);
     alert('Сохранено в архив!');
     openCallSheetHistoryModal();
+}
+
+function parseCallSheetDate(date) {
+    const parts = String(date || '').split('-');
+    return parts.length === 3 ? `${parts[2]}.${parts[1]}.${parts[0]}` : '';
+}
+
+function timeToMinutes(value) {
+    const match = String(value || '').match(/^(\d{1,2}):(\d{2})$/);
+    return match ? Number(match[1]) * 60 + Number(match[2]) : null;
+}
+
+function getScheduleDateAndRange(value, year) {
+    const months = { января: 0, февраля: 1, марта: 2, апреля: 3, мая: 4, июня: 5, июля: 6, августа: 7, сентября: 8, октября: 9, ноября: 10, декабря: 11 };
+    const match = String(value || '').toLowerCase().match(/(\d{1,2})\s+([а-яё]+).*?(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/);
+    if (!match || months[match[2]] === undefined) return null;
+    return {
+        date: `${String(Number(match[1])).padStart(2, '0')}.${String(months[match[2]] + 1).padStart(2, '0')}.${year}`,
+        start: Number(match[3]) * 60 + Number(match[4]),
+        end: Number(match[5]) * 60 + Number(match[6])
+    };
+}
+
+function getCallSheetScheduleConflicts(data) {
+    const start = timeToMinutes(data.startTime);
+    const end = timeToMinutes(data.endTime);
+    const travel = Math.max(0, Number(data.logisticsMinutes) || 0);
+    if (start === null || end === null || !data.date || !data.location) return [];
+    const location = data.location.toLowerCase();
+    return SCHEDULE_LIST.filter(item => {
+        const schedule = getScheduleDateAndRange(item.time, Number(data.date.split('.')[2]));
+        if (!schedule || schedule.date !== data.date) return false;
+        const scheduleLocation = String(item.location || '').toLowerCase();
+        if (!scheduleLocation || (!location.includes(scheduleLocation) && !scheduleLocation.includes(location))) return false;
+        return start - travel < schedule.end && end + travel > schedule.start;
+    });
+}
+
+function validateCallSheetLogisticsPreview() {
+    const warning = document.getElementById('cs-logistics-warning');
+    if (!warning) return [];
+    const data = {
+        date: parseCallSheetDate(document.getElementById('cs-date')?.value),
+        startTime: document.getElementById('cs-start-time')?.value,
+        endTime: document.getElementById('cs-end-time')?.value,
+        location: document.getElementById('cs-location')?.value.trim(),
+        logisticsMinutes: document.getElementById('cs-logistics-minutes')?.value
+    };
+    const conflicts = getCallSheetScheduleConflicts(data);
+    warning.style.display = conflicts.length ? 'block' : 'none';
+    warning.innerText = conflicts.length
+        ? `⚠️ Возможное наложение с расписанием: ${conflicts.map(item => `${item.comp} (${item.time})`).join('; ')}`
+        : '';
+    return conflicts;
 }
 
 function collectCsData() {
@@ -1429,10 +2053,13 @@ function collectCsData() {
         id: 'CS-' + Date.now(),
         projectName: document.getElementById('cs-project-name').value,
         date: `${p[2]}.${p[1]}.${p[0]}`,
+        startTime: document.getElementById('cs-start-time').value,
+        endTime: document.getElementById('cs-end-time').value,
         shiftNum: document.getElementById('cs-shift-num').value,
         city: document.getElementById('cs-city').value,
         location: document.getElementById('cs-location').value,
         address: document.getElementById('cs-address').value,
+        logisticsMinutes: Number(document.getElementById('cs-logistics-minutes').value) || 0,
         compMgrName: document.getElementById('cs-comp-mgr-name').value,
         compMgrPhone: document.getElementById('cs-comp-mgr-phone').value,
         techDirRoleTitle: callSheetData.techDirRoleTitle,
@@ -1455,6 +2082,8 @@ function collectCsData() {
 
 function printCallSheet() {
     const cs = collectCsData();
+    const conflicts = getCallSheetScheduleConflicts(cs);
+    if (conflicts.length && !confirm('Обнаружено наложение смены с расписанием защит. Продолжить печать?')) return;
     fillCsPrintArea(cs);
     
     const printArea = document.getElementById('callsheet-print-area');
@@ -1465,6 +2094,7 @@ function printCallSheet() {
         actArea.style.display = 'none';
     }
     if (printArea) {
+        document.body.classList.add('printing');
         printArea.classList.add('active-print');
         printArea.style.display = 'block';
     }
@@ -1475,12 +2105,15 @@ function printCallSheet() {
         printArea.classList.remove('active-print');
         printArea.style.display = 'none';
     }
+    document.body.classList.remove('printing');
 }
 
 function fillCsPrintArea(cs) {
     document.getElementById('csp-project-name').innerText = cs.projectName;
     document.getElementById('csp-date').innerText = cs.date;
     document.getElementById('csp-shift-num').innerText = cs.shiftNum;
+    const shiftTime = [cs.startTime, cs.endTime].filter(Boolean).join(' - ');
+    document.getElementById('csp-shift-time').innerText = shiftTime ? `Время: ${shiftTime}` : '';
     document.getElementById('csp-weather-line').innerText = cs.weatherInfo;
     document.getElementById('csp-print-city').innerText = cs.city;
     document.getElementById('csp-print-location').innerText = cs.location;
@@ -1493,10 +2126,10 @@ function fillCsPrintArea(cs) {
     document.getElementById('csp-venue-td-print').innerText = `${cs.venueTechDirName} ${formatPhoneNumberStr(cs.venueTechDirPhone)}`;
     document.getElementById('csp-venue-mgr-print').innerText = `${cs.venueMgrName} ${formatPhoneNumberStr(cs.venueMgrPhone)}`;
     document.getElementById('csp-notes').innerText = cs.notes;
-    document.getElementById('csp-milestones-tbody').innerHTML = cs.milestones.map(m => `<tr><td>${m.time}</td><td style="text-align:left;">${m.event}</td></tr>`).join('');
-    document.getElementById('csp-crew-tbody').innerHTML = cs.crew.map(c => `<tr><td>${c.time}</td><td>${c.dept}</td><td>${c.name}</td><td>${formatPhoneNumberStr(c.phone)}</td><td style="text-align:left;">${c.task}</td></tr>`).join('');
-    document.getElementById('csp-equipment-tbody').innerHTML = cs.equipment.map((e, i) => `<tr><td>${i+1}</td><td>${e.name}</td><td>${e.inv}</td><td>${e.sn}</td><td>${e.count}</td></tr>`).join('');
-    document.getElementById('csp-transport-tbody').innerHTML = cs.transport.map(t => `<tr><td>${t.model}</td><td>${t.plate}</td><td>${t.driver}</td><td>${formatPhoneNumberStr(t.phone)}</td><td style="text-align:left;">${t.task}</td></tr>`).join('');
+    document.getElementById('csp-milestones-tbody').innerHTML = cs.milestones.map(m => `<tr><td>${escapeHtml(m.time)}</td><td style="text-align:left;">${escapeHtml(m.event)}</td></tr>`).join('');
+    document.getElementById('csp-crew-tbody').innerHTML = cs.crew.map(c => `<tr><td>${escapeHtml(c.time)}</td><td>${escapeHtml(c.dept)}</td><td>${escapeHtml(c.name)}</td><td>${escapeHtml(formatPhoneNumberStr(c.phone))}</td><td style="text-align:left;">${escapeHtml(c.task)}</td></tr>`).join('');
+    document.getElementById('csp-equipment-tbody').innerHTML = cs.equipment.map((e, i) => `<tr><td>${i+1}</td><td>${escapeHtml(e.name)}</td><td>${escapeHtml(e.inv)}</td><td>${escapeHtml(e.sn)}</td><td>${escapeHtml(e.count)}</td></tr>`).join('');
+    document.getElementById('csp-transport-tbody').innerHTML = cs.transport.map(t => `<tr><td>${escapeHtml(t.model)}</td><td>${escapeHtml(t.plate)}</td><td>${escapeHtml(t.driver)}</td><td>${escapeHtml(formatPhoneNumberStr(t.phone))}</td><td style="text-align:left;">${escapeHtml(t.task)}</td></tr>`).join('');
 }
 
 function openCallSheetHistoryModal() {
@@ -1523,16 +2156,16 @@ function filterCsHistoryTable() {
 
     tbody.innerHTML = filtered.map(cs => `
         <tr>
-            <td><b>${cs.projectName}</b></td>
-            <td>${cs.date}</td>
-            <td>${cs.city}</td>
-            <td>${cs.location}</td>
-            <td>${cs.compMgrName}</td>
+            <td><b>${escapeHtml(cs.projectName)}</b></td>
+            <td>${escapeHtml(cs.date)}</td>
+            <td>${escapeHtml(cs.city)}</td>
+            <td>${escapeHtml(cs.location)}</td>
+            <td>${escapeHtml(cs.compMgrName)}</td>
             <td>
                 <div style="display:flex; gap:6px;">
-                    <button class="select-btn" onclick="editCallSheetFromHistory('${cs.id}')">✏️</button>
-                    <button class="select-btn" onclick="reprintCallSheet('${cs.id}')">🖨️</button>
-                    <button class="delete-btn" onclick="deleteCallSheetFromHistory('${cs.id}')">🗑️</button>
+                    <button class="select-btn" onclick="editCallSheetFromHistory(${escapeHtml(JSON.stringify(cs.id))})">✏️</button>
+                    <button class="select-btn" onclick="reprintCallSheet(${escapeHtml(JSON.stringify(cs.id))})">🖨️</button>
+                    <button class="delete-btn" onclick="deleteCallSheetFromHistory(${escapeHtml(JSON.stringify(cs.id))})">🗑️</button>
                 </div>
             </td>
         </tr>
@@ -1554,6 +2187,7 @@ function reprintCallSheet(id) {
         actArea.style.display = 'none';
     }
     if (printArea) {
+        document.body.classList.add('printing');
         printArea.classList.add('active-print');
         printArea.style.display = 'block';
     }
@@ -1564,6 +2198,7 @@ function reprintCallSheet(id) {
         printArea.classList.remove('active-print');
         printArea.style.display = 'none';
     }
+    document.body.classList.remove('printing');
 }
 
 function deleteCallSheetFromHistory(id) {
@@ -1587,9 +2222,12 @@ function editCallSheetFromHistory(id) {
         }
     }
     document.getElementById('cs-shift-num').value = cs.shiftNum || '';
+    document.getElementById('cs-start-time').value = cs.startTime || '';
+    document.getElementById('cs-end-time').value = cs.endTime || '';
     document.getElementById('cs-city').value = cs.city || 'Москва';
     document.getElementById('cs-location').value = cs.location || '';
     document.getElementById('cs-address').value = cs.address || '';
+    document.getElementById('cs-logistics-minutes').value = cs.logisticsMinutes || 0;
     document.getElementById('cs-comp-mgr-name').value = cs.compMgrName || '';
     document.getElementById('cs-comp-mgr-phone').value = cs.compMgrPhone || '';
     document.getElementById('cs-venue-tech-dir-name').value = cs.venueTechDirName || '';
@@ -1624,6 +2262,8 @@ function editActFromHistory(actNum) {
     if (!act) { alert('Акт не найден в архиве!'); return; }
 
     document.getElementById('competence-select').value = act.comp || '';
+    const locationInput = document.getElementById('act-location-input');
+    if (locationInput) locationInput.value = act.location || '';
     document.getElementById('manager-select').value = act.manager || '';
     document.getElementById('recipient-role-select').value = act.role || 'Участник';
     
@@ -1696,8 +2336,8 @@ function exportDbToCSV() {
 }
 
 function exportActsToCSV() {
-    const rows = [["№", "Дата", "Возврат", "Компетенция", "Получатель", "Контакты", "Предметы"]];
-    getActsHistory().forEach(a => rows.push([a.num, a.date, a.returnDate, a.comp, a.participant, a.contact, a.items.map(i=>i.inv).join(', ')]));
+    const rows = [["№", "Дата", "Возврат", "Статус", "Компетенция", "Получатель", "Контакты", "Предметы"]];
+    getActsHistory().forEach(a => rows.push([a.num, a.date, a.returnDate, getActStatus(a), a.comp, a.participant, a.contact, a.items.map(i=>i.inv).join(', ')]));
     downloadCSV(`Acts_Registry_${new Date().toISOString().slice(0,10)}.csv`, rows);
 }
 
@@ -1709,10 +2349,18 @@ function exportCallSheetToCSV() {
     downloadCSV(`CallSheet_${cs.projectName}.csv`, rows);
 }
 
-function downloadActWord() {
+async function downloadActWord() {
+    if (currentAccessRole === 'viewer') { alert('Режим только чтения не позволяет оформлять выдачу.'); return; }
     const actData = collectActData();
     if (!actData) {
         alert('Невозможно скачать акт: добавьте оборудование в список!');
+        return;
+    }
+    try {
+        actData.num = await reserveNextActNumber();
+    } catch (e) {
+        alert('Не удалось получить уникальный номер накладной. Проверьте интернет и повторите попытку.');
+        console.error('Ошибка резервирования номера накладной:', e);
         return;
     }
     
@@ -1742,8 +2390,82 @@ function downloadActWord() {
     URL.revokeObjectURL(url);
 }
 
+
+function getAppConfigurationSnapshot() {
+    const storage = {};
+    Object.values(APP_STORAGE_KEYS).forEach(key => {
+        const value = localStorage.getItem(key);
+        if (value !== null) {
+            try { storage[key] = JSON.parse(value); } catch (error) { storage[key] = value; }
+        }
+    });
+    storage[APP_STORAGE_KEYS.EQUIPMENT_DB] = window.EQUIPMENT_DB || {};
+    return {
+        format: 'qr-scanner-am-config',
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        storage
+    };
+}
+
+function exportAppConfiguration() {
+    const snapshot = getAppConfigurationSnapshot();
+    const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `QR-scanner-AM-config-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+async function importAppConfiguration(event) {
+    if (!requireAdmin()) {
+        if (event.target) event.target.value = '';
+        return;
+    }
+    const input = event.target;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+    try {
+        const snapshot = JSON.parse(await file.text());
+        const storage = snapshot?.storage;
+        if (snapshot?.format !== 'qr-scanner-am-config' || snapshot.version !== 1 || !storage || typeof storage !== 'object') {
+            throw new Error('Неверный формат файла конфигурации');
+        }
+        const arrayKeys = [
+            APP_STORAGE_KEYS.EMPLOYEES,
+            APP_STORAGE_KEYS.VENUES,
+            APP_STORAGE_KEYS.SCHEDULE,
+            APP_STORAGE_KEYS.CHAMP_CONTACTS,
+            APP_STORAGE_KEYS.ACTS_HISTORY,
+            APP_STORAGE_KEYS.CS_HISTORY,
+            APP_STORAGE_KEYS.CS_TEMPLATES
+        ];
+        arrayKeys.forEach(key => {
+            if (storage[key] !== undefined && !Array.isArray(storage[key])) throw new Error(`Некорректные данные: ${key}`);
+        });
+        const equipment = storage[APP_STORAGE_KEYS.EQUIPMENT_DB];
+        if (equipment !== undefined && (equipment === null || Array.isArray(equipment) || typeof equipment !== 'object')) {
+            throw new Error('Некорректная база оборудования');
+        }
+        if (!confirm('Импорт заменит текущие локальные данные и архивы. Продолжить?')) return;
+        Object.entries(storage).forEach(([key, value]) => {
+            if (Object.values(APP_STORAGE_KEYS).includes(key)) saveToStore(key, value);
+        });
+        alert('Конфигурация импортирована. Приложение будет перезагружено.');
+        window.location.reload();
+    } catch (error) {
+        alert(`Не удалось импортировать конфигурацию: ${error.message}`);
+    }
+}
 function downloadCallSheetWord() {
     const cs = collectCsData();
+    const conflicts = getCallSheetScheduleConflicts(cs);
+    if (conflicts.length && !confirm('Обнаружено наложение смены с расписанием защит. Продолжить экспорт?')) return;
     fillCsPrintArea(cs);
     const printArea = document.getElementById('callsheet-print-area').innerHTML;
     const htmlContent = `

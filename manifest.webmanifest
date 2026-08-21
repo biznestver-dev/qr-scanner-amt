@@ -1,0 +1,10 @@
+{
+  "name": "Техотдел AM",
+  "short_name": "Техотдел AM",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#090c15",
+  "theme_color": "#090c15",
+  "lang": "ru",
+  "icons": []
+}

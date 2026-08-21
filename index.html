@@ -4,8 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Техотдел AM — ArtMasters</title>
+  <link rel="manifest" href="./manifest.webmanifest">
   <!-- Сканер QR-кодов html5-qrcode -->
   <script src="https://unpkg.com/html5-qrcode"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <!-- Шрифт Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,7 +20,7 @@
       --glass-bg: rgba(15, 21, 38, 0.75);
       --glass-border: rgba(255, 255, 255, 0.1);
       --glass-hover: rgba(25, 34, 60, 0.85);
-      
+
       --am-purple: #3b26a6;
       --am-magenta: #ff0043;
       --am-cyan: #00f0ff;
@@ -42,7 +45,10 @@
 
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg-gradient);
+      background-image: linear-gradient(rgba(4, 6, 10, 0.72), rgba(4, 6, 10, 0.88)), url('./photo_2026-08-20%2022.44.18.jpeg');
+      background-color: #04060a;
+      background-size: cover;
+      background-position: center;
       color: var(--text-primary);
       min-height: 100vh;
       padding: 32px 16px;
@@ -152,6 +158,15 @@
       width: 100%; max-width: 480px; margin: 0 auto 32px auto; border-radius: 20px; overflow: hidden;
       border: 1px dashed rgba(0, 240, 255, 0.3); background: rgba(9, 12, 21, 0.8);
     }
+    #scanner-controls { width: 100%; max-width: 480px; margin: -20px auto 20px; display: flex; gap: 8px; }
+    #scanner-controls select { flex: 1; padding: 10px 12px; font-size: 12px; }
+    .access-role-label { margin-left: auto; padding: 6px 10px; border: 1px solid var(--glass-border); border-radius: 8px; color: var(--text-secondary); font-size: 11px; }
+    .viewer-search-btn { display: none; margin: 0 auto 20px; }
+    body.access-viewer #reader, body.access-viewer #telegram-scan-btn, body.access-viewer #mass-return-banner,
+    body.access-viewer #section-mtb > .control-panels-wrapper, body.access-viewer #section-mtb > .form-grid,
+    body.access-viewer .config-actions, body.access-viewer .cs-section-controls { display: none !important; }
+    body.access-viewer .viewer-search-btn { display: inline-flex; }
+    body.access-viewer #dbTableBody td:last-child, body.access-viewer #dbModal .modal-actions .export-btn { display: none; }
 
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
     @media (max-width: 680px) { .form-grid { grid-template-columns: 1fr; } }
@@ -159,7 +174,7 @@
     .form-group.full-width { grid-column: 1 / -1; }
 
     label { font-size: 11px; font-weight: 800; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.08em; }
-    input[type="text"], input[type="date"], select, textarea {
+    input[type="text"], input[type="date"], input[type="time"], select, textarea {
       width: 100%; padding: 15px 18px; background: rgba(9, 12, 21, 0.7);
       border: 1px solid var(--glass-border); border-radius: 14px; color: var(--text-primary); font-size: 14px; font-family: inherit;
     }
@@ -174,6 +189,8 @@
     .phone-country-select { width: 115px !important; flex-shrink: 0; font-size: 13px; padding: 15px 10px; cursor: pointer; }
 
     input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+    input[type="time"]::-webkit-calendar-picker-indicator { display: none; }
+    input[type="time"] { color-scheme: dark; }
     input:focus, select:focus, textarea:focus { outline: none; border-color: var(--am-magenta); background: rgba(15, 21, 38, 0.95); }
     input#inv-input { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--am-cyan); }
     select option { background-color: #090c15; color: var(--text-primary); }
@@ -273,7 +290,22 @@
 
     .cs-section { background: rgba(9, 12, 21, 0.6); border: 1px solid var(--glass-border); border-radius: 16px; padding: 18px; margin-bottom: 20px; display: flex; flex-direction: column; }
     .cs-section-title { font-size: 12px; font-weight: 800; color: var(--am-cyan); text-transform: uppercase; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .cs-section-controls { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; margin-top: 12px; }
     .weather-widget-box { background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
+    .cs-logistics-warning { margin-top: 12px; padding: 10px 12px; border: 1px solid rgba(255, 170, 0, 0.5); border-radius: 10px; background: rgba(255, 170, 0, 0.1); color: #ffcc66; font-size: 12px; }
+    #mobile-call-sheet-view { max-width: 680px; margin: 0 auto; padding: 18px; color: #eef2ff; font-family: 'Plus Jakarta Sans', sans-serif; }
+    #mobile-call-sheet-view header { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; border-bottom: 1px solid var(--glass-border); padding-bottom: 16px; }
+    #mobile-call-sheet-view h1 { margin: 4px 0 0; font-size: 22px; }
+    #mobile-call-sheet-view h2 { font-size: 13px; color: var(--am-cyan); text-transform: uppercase; }
+    #mobile-call-sheet-view section { margin: 16px 0; padding: 16px; background: rgba(9, 12, 21, 0.72); border: 1px solid var(--glass-border); border-radius: 14px; }
+    .mobile-cs-summary { display: grid; gap: 7px; }
+    .mobile-cs-summary a, .mobile-cs-list a { color: var(--am-cyan); }
+    .mobile-cs-countdown { padding: 12px; border-radius: 10px; background: rgba(0, 240, 255, 0.1); color: var(--am-cyan); font-weight: 700; }
+    .mobile-cs-list { display: grid; gap: 10px; }
+    .mobile-cs-list > div { display: grid; grid-template-columns: 60px 1fr; gap: 10px; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px; }
+    .mobile-cs-list time { color: var(--am-cyan); font-family: 'JetBrains Mono', monospace; }
+    .mobile-cs-list small, .mobile-cs-list a { display: block; margin-top: 4px; }
+    .mobile-call-sheet-error { max-width: 680px; margin: 30px auto; padding: 20px; color: #ff6b8a; text-align: center; }
 
     #mass-return-banner { display: none; background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); padding: 10px 16px; border-radius: 12px; margin-bottom: 15px; align-items: center; justify-content: space-between; }
 
@@ -285,40 +317,93 @@
 
     /* ПРАВИЛА ПЕЧАТИ */
     @media print {
-      body * {
+      @page {
+        size: portrait;
+        margin: 15mm 10mm 15mm 15mm;
+      }
+
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        font-size: 11pt !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      body.printing > * {
         display: none !important;
       }
-      #act-print-area.active-print,
-      #act-print-area.active-print *,
-      #callsheet-print-area.active-print,
-      #callsheet-print-area.active-print * {
+
+      body.printing #act-print-area.active-print,
+      body.printing #callsheet-print-area.active-print {
         display: block !important;
         visibility: visible !important;
       }
-      #act-print-area.active-print table,
-      #callsheet-print-area.active-print table {
+
+      body.printing #act-print-area.active-print table,
+      body.printing #callsheet-print-area.active-print table {
         display: table !important;
-        width: 100% !important;
       }
-      #act-print-area.active-print tr,
-      #callsheet-print-area.active-print tr {
+
+      body.printing #act-print-area.active-print thead,
+      body.printing #callsheet-print-area.active-print thead {
+        display: table-header-group !important;
+      }
+
+      body.printing #act-print-area.active-print tbody,
+      body.printing #callsheet-print-area.active-print tbody {
+        display: table-row-group !important;
+      }
+
+      body.printing #act-print-area.active-print tr,
+      body.printing #callsheet-print-area.active-print tr {
         display: table-row !important;
       }
-      #act-print-area.active-print th,
-      #act-print-area.active-print td,
-      #callsheet-print-area.active-print th,
-      #callsheet-print-area.active-print td {
+
+      body.printing #act-print-area.active-print th,
+      body.printing #act-print-area.active-print td,
+      body.printing #callsheet-print-area.active-print th,
+      body.printing #callsheet-print-area.active-print td {
         display: table-cell !important;
       }
-      #act-print-area.active-print,
-      #callsheet-print-area.active-print {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        background: #ffffff !important;
-        color: #000000 !important;
+
+      body.printing #act-print-area.active-print,
+      body.printing #callsheet-print-area.active-print {
+        position: static !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
       }
+
+      table.act-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        margin-bottom: 20px !important;
+      }
+
+      table.act-table th,
+      table.act-table td {
+        border: 1px solid #000 !important;
+        padding: 8px 5px !important;
+        font-size: 10pt !important;
+        color: #000 !important;
+      }
+
+      .signatures-grid td {
+        border: none !important;
+        padding: 20px 0 !important;
+      }
+    }
+
+    .print-underline-date-issue, .print-underline-date-return {
+      border-bottom: 1px solid #000;
+      display: inline-block;
+      min-width: 180px;
+      text-align: center;
+      padding: 0 5px;
     }
 
     #act-print-area, #callsheet-print-area { display: none; }
@@ -339,6 +424,7 @@
           <h2>Техотдел AM</h2>
           <p>ArtMasters</p>
         </div>
+        <span id="access-role-label" class="access-role-label"></span>
       </div>
     </div>
 
@@ -407,6 +493,11 @@
             <div class="neon-card-desc">Дирекция, сотрудники, телефоны, мессенджеры Telegram и MAX</div>
           </div>
         </div>
+        <div class="config-actions" style="display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; margin-top: 22px;">
+          <button class="add-row-btn" onclick="exportAppConfiguration()">📤 Экспорт конфигурации</button>
+          <button class="add-row-btn" onclick="document.getElementById('config-import-input').click()">📥 Импорт конфигурации</button>
+          <input type="file" id="config-import-input" accept="application/json,.json" onchange="importAppConfiguration(event)" style="display: none;">
+        </div>
       </div>
     </div>
 
@@ -468,6 +559,8 @@
       </div>
 
       <div id="reader"></div>
+      <button class="viewer-search-btn add-row-btn" onclick="openDbModal()">🔎 Открыть базу для поиска</button>
+      <button id="telegram-scan-btn" class="btn" onclick="openTelegramQrScanner()" style="display: none; grid-column: 1 / -1; margin: -14px auto 20px;">📷 Сканировать QR через Telegram</button>
 
       <div style="grid-column: 1 / -1; display: flex; gap: 12px; margin-bottom: 20px;">
         <button class="btn" onclick="toggleMassReturnMode()" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: var(--status-free);">📥 Режим массового возврата</button>
@@ -511,6 +604,11 @@
             <option value="оператор механики сцены" class="comp-opt">оператор механики сцены</option>
             <option value="Офис" id="office-option" style="display: none;">Офис</option>
           </select>
+        </div>
+
+        <div class="form-group">
+          <label for="act-location-input">Площадка выдачи</label>
+          <input type="text" id="act-location-input" placeholder="Площадка или адрес выдачи...">
         </div>
 
         <div class="form-group">
@@ -697,6 +795,26 @@
     </div>
   </div>
 
+  <div id="equipmentHistoryModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="back-menu-btn" onclick="closeEquipmentHistory()">← Назад</button>
+          <h3 id="equipment-history-title">История перемещений</h3>
+        </div>
+        <button class="close-btn" onclick="closeEquipmentHistory()">&times;</button>
+      </div>
+      <div class="table-wrapper">
+        <table class="db-table">
+          <thead>
+            <tr><th>Накладная</th><th>Выдано</th><th>Получатель</th><th>Площадка / компетенция</th><th>Возвращено</th><th>Статус</th></tr>
+          </thead>
+          <tbody id="equipmentHistoryTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <div id="historyModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -713,7 +831,7 @@
       <div class="table-wrapper">
         <table class="db-table">
           <thead>
-            <tr><th>№ Накладной</th><th>Дата</th><th>Возврат до</th><th>Роль</th><th>Получатель (ФИО)</th><th>Контакты</th><th>Оборудование</th><th>Действия</th></tr>
+            <tr><th>№ Накладной</th><th>Дата</th><th>Возврат до</th><th>Статус</th><th>Роль</th><th>Получатель (ФИО)</th><th>Контакты</th><th>Оборудование</th><th>Действия</th></tr>
           </thead>
           <tbody id="historyTableBody"></tbody>
         </table>
@@ -746,7 +864,15 @@
             </div>
             <div class="form-group">
               <label>Дата смены</label>
-              <input type="date" id="cs-date" onchange="fetchOnlineWeatherAndSun()">
+              <input type="date" id="cs-date" onchange="fetchOnlineWeatherAndSun(); validateCallSheetLogisticsPreview()">
+            </div>
+            <div class="form-group">
+              <label>Начало смены</label>
+              <input type="time" id="cs-start-time" value="08:00" oninput="validateCallSheetLogisticsPreview()">
+            </div>
+            <div class="form-group">
+              <label>Окончание смены</label>
+              <input type="time" id="cs-end-time" value="21:00" oninput="validateCallSheetLogisticsPreview()">
             </div>
             <div class="form-group">
               <label>Номер смены / Этап</label>
@@ -758,13 +884,27 @@
             </div>
             <div class="form-group">
               <label>Локация (Место)</label>
-              <input type="text" id="cs-location" placeholder="Например: Театр «Маска»">
+              <input type="text" id="cs-location" placeholder="Например: Театр «Маска»" oninput="validateCallSheetLogisticsPreview()">
             </div>
             <div class="form-group">
               <label>Адрес</label>
               <input type="text" id="cs-address" placeholder="Улица, дом...">
             </div>
+            <div class="form-group">
+              <label>Время на заезд / выезд, мин.</label>
+              <select id="cs-logistics-minutes" onchange="validateCallSheetLogisticsPreview()">
+                <option value="0">Без дополнительного времени</option>
+                <option value="15">15 минут</option>
+                <option value="30">30 минут</option>
+                <option value="45">45 минут</option>
+                <option value="60" selected>60 минут</option>
+                <option value="90">90 минут</option>
+                <option value="120">120 минут</option>
+                <option value="180">180 минут</option>
+              </select>
+            </div>
           </div>
+          <div id="cs-logistics-warning" class="cs-logistics-warning" style="display: none;"></div>
         </div>
 
         <!-- Виджет погоды -->
@@ -814,54 +954,51 @@
 
         <!-- Дополнительные контакты -->
         <div class="cs-section">
-          <div class="cs-section-title">
-            <span>3. Дополнительные контакты в вызывном</span>
+          <div class="cs-section-title"><span>3. Дополнительные контакты в вызывном</span></div>
+          <div id="cs-extra-info-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+          <div class="cs-section-controls">
             <button class="add-row-btn" onclick="addCsExtraInfoRow()">+ Добавить строку</button>
           </div>
-          <div id="cs-extra-info-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
 
         <!-- Тайминг / Вехи -->
         <div class="cs-section">
-          <div class="cs-section-title">
-            <span>4. Тайминг смены (Основные этапы)</span>
+          <div class="cs-section-title"><span>4. Тайминг смены (Основные этапы)</span></div>
+          <div id="cs-milestones-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+          <div class="cs-section-controls">
+            <button class="add-row-btn" onclick="addCsDefenseRow()">+ Защита</button>
             <button class="add-row-btn" onclick="addCsMilestoneRow()">+ Добавить этап</button>
           </div>
-          <div id="cs-milestones-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
 
         <!-- Съемочная / Техническая группа -->
         <div class="cs-section">
-          <div class="cs-section-title">
-            <span>5. Персонал и техническая группа</span>
-            <div style="display: flex; gap: 6px;">
-              <button class="add-row-btn" onclick="addCsCrewMemberFromAto()">+ Из АТО</button>
-              <button class="add-row-btn" onclick="addCsCrewMemberFromEmployees()">+ Из сотрудников</button>
-              <button class="add-row-btn" onclick="addCsCrewRow()">+ Вручную</button>
-            </div>
-          </div>
+          <div class="cs-section-title"><span>5. Персонал и техническая группа</span></div>
           <div id="cs-crew-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+          <div class="cs-section-controls">
+            <button class="add-row-btn" onclick="addCsCrewMemberFromAto()">+ Из АТО</button>
+            <button class="add-row-btn" onclick="addCsCrewMemberFromEmployees()">+ Из сотрудников</button>
+            <button class="add-row-btn" onclick="addCsCrewRow()">+ Вручную</button>
+          </div>
         </div>
 
         <!-- Оборудование вызывного -->
         <div class="cs-section">
-          <div class="cs-section-title">
-            <span>6. Оборудование на смену</span>
-            <div style="display: flex; gap: 6px;">
-              <button class="add-row-btn" onclick="importCurrentActItemsToCallSheet()">📥 Импорт из текущего Акта</button>
-              <button class="add-row-btn" onclick="addCsEquipmentRow()">+ Добавить позицию</button>
-            </div>
-          </div>
+          <div class="cs-section-title"><span>6. Оборудование на смену</span></div>
           <div id="cs-equipment-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+          <div class="cs-section-controls">
+            <button class="add-row-btn" onclick="importCurrentActItemsToCallSheet()">📥 Импорт из текущего Акта</button>
+            <button class="add-row-btn" onclick="addCsEquipmentRow()">+ Добавить позицию</button>
+          </div>
         </div>
 
         <!-- Транспорт -->
         <div class="cs-section">
-          <div class="cs-section-title">
-            <span>7. Транспортная логистика</span>
+          <div class="cs-section-title"><span>7. Транспортная логистика</span></div>
+          <div id="cs-transport-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
+          <div class="cs-section-controls">
             <button class="add-row-btn" onclick="addCsTransportRow()">+ Добавить транспорт</button>
           </div>
-          <div id="cs-transport-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
 
         <!-- Примечания -->
@@ -874,6 +1011,7 @@
         <div style="display: flex; gap: 12px; margin-bottom: 20px;">
           <button class="btn" onclick="printCallSheet()" style="background: var(--am-purple);">🖨️ Напечатать вызывной</button>
           <button class="btn" onclick="downloadCallSheetWord()">📥 Скачать Word</button>
+          <button class="btn" onclick="copyCallSheetShareLink()">🔗 Мобильная ссылка</button>
           <button class="btn" onclick="saveCurrentCallSheetManually()" style="background: var(--status-free);">💾 Сохранить в архив</button>
         </div>
       </div>
@@ -903,6 +1041,41 @@
   </div>
 
   <!-- МОДАЛЬНЫЕ ОКНА РЕДАКТИРОВАНИЯ -->
+  <div id="contactEditorModal" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="font-size: 18px; color: white;">Редактировать сотрудника</h3>
+            <button class="close-btn" onclick="closeContactEditorModal()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">&times;</button>
+        </div>
+        <input type="hidden" id="edit-contact-index" value="-1">
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-secondary);">ФИО Сотрудника</label>
+            <input type="text" id="edit-contact-name" placeholder="Иванов Иван Иванович" style="width: 100%; padding: 12px; background: rgba(9, 12, 21, 0.7); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-secondary);">Должность</label>
+            <input type="text" id="edit-contact-role" placeholder="Например: Технический менеджер" style="width: 100%; padding: 12px; background: rgba(9, 12, 21, 0.7); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-secondary);">Телефон</label>
+            <input type="text" id="edit-contact-phone" placeholder="+7 900 000 00 00" oninput="formatPhoneNumber(this)" style="width: 100%; padding: 12px; background: rgba(9, 12, 21, 0.7); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+        </div>
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-secondary);">Email</label>
+            <input type="text" id="edit-contact-email" placeholder="example@artmasters.ru" style="width: 100%; padding: 12px; background: rgba(9, 12, 21, 0.7); border: 1px solid var(--glass-border); border-radius: 8px; color: white;">
+        </div>
+        <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: white; cursor: pointer;">
+                <input type="checkbox" id="edit-contact-tg" style="width: 18px; height: 18px;"> Telegram
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: white; cursor: pointer;">
+                <input type="checkbox" id="edit-contact-max" style="width: 18px; height: 18px;"> MAX
+            </label>
+        </div>
+        <button class="btn" onclick="saveContactData()" style="width: 100%; background: var(--am-magenta); color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Сохранить сотрудника</button>
+    </div>
+  </div>
+
   <div id="champContactEditorModal" class="modal">
     <div class="modal-content" style="max-width: 500px;">
         <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -1018,6 +1191,7 @@
             <th style="border: 1px solid #000; padding: 6px; font-size: 9pt;">Кол-во</th>
             <th style="border: 1px solid #000; padding: 6px; font-size: 9pt;">Дата выдачи</th>
             <th style="border: 1px solid #000; padding: 6px; font-size: 9pt;">Срок возврата</th>
+            <th style="border: 1px solid #000; padding: 6px; font-size: 9pt;">Статус</th>
             <th style="border: 1px solid #000; padding: 6px; font-size: 9pt;">Примечание</th>
           </tr>
         </thead>
@@ -1032,17 +1206,15 @@
         <tr>
           <td style="width: 50%; vertical-align: top; font-size: 10pt;">
             <b>ВЫДАЛ:</b><br>
-            <span id="print-manager-title-out"></span><br><br>
+            <span id="print-manager-title-out"></span><br><br><br>
             ___________________ / <span id="print-manager-out"></span> /<br><br>
-            <div class="print-underline-date-issue"></div>
+            Дата: <span class="print-underline-date-issue"></span>
           </td>
           <td style="width: 50%; vertical-align: top; font-size: 10pt;">
             <b>ПРИНЯЛ:</b><br>
-            <span id="print-manager-title-in" style="display:none;"></span>
-            <span id="print-recipient-role-grid">Участник</span><br><br>
-            ___________________ / <span id="print-participant-sig"></span> /<br>
-            <span id="print-manager-in" style="display:none;"></span><br>
-            <div class="print-underline-date-issue"></div>
+            <span id="print-recipient-role-grid">Участник</span><br><br><br>
+            ___________________ / <span id="print-participant-sig"></span> /<br><br>
+            Дата возврата: <span class="print-underline-date-return"></span>
           </td>
         </tr>
       </table>
@@ -1059,6 +1231,7 @@
         <div style="text-align: right;">
           <div style="font-size: 11pt; font-weight: bold;" id="csp-date"></div>
           <div style="font-size: 9pt; color: #333;" id="csp-shift-num"></div>
+          <div style="font-size: 9pt; color: #333;" id="csp-shift-time"></div>
         </div>
       </div>
 
