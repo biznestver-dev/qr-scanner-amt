@@ -350,33 +350,56 @@ async function initAccessMode() {
     document.body.classList.add('access-viewer');
     const label = document.getElementById('access-role-label');
     if (label) label.innerText = 'Проверка доступа...';
-    await new Promise(resolve => {
-        const render = () => {
-            if (!window.google?.accounts?.id) return false;
-            window.google.accounts.id.initialize({
-                client_id: GOOGLE_OAUTH_CLIENT_ID,
-                callback: handleGoogleCredential,
-                auto_select: false,
-                cancel_on_tap_outside: false
-            });
-            window.google.accounts.id.renderButton(document.getElementById('google-signin-button'), { theme: 'outline', size: 'large', width: 280, text: 'signin_with' });
-            return true;
-        };
-        if (render()) { resolve(); return; }
-        window.setTimeout(() => { render(); resolve(); }, 1200);
+    const authButton = document.getElementById('google-signin-button');
+    if (authButton) authButton.innerHTML = '<button type="button" class="google-login-btn" onclick="startGoogleSignIn()">Войти через Google</button>';
+    handleGoogleRedirectResult();
+}
+
+function startGoogleSignIn() {
+    const redirectUri = `${window.location.origin}${window.location.pathname}`;
+    const state = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
+    sessionStorage.setItem('google_auth_state', state);
+    const params = new URLSearchParams({
+        client_id: GOOGLE_OAUTH_CLIENT_ID,
+        redirect_uri: redirectUri,
+        response_type: 'id_token',
+        scope: 'openid email profile',
+        nonce: state,
+        state,
+        prompt: 'select_account'
     });
+    window.location.assign(`https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`);
+}
+
+function handleGoogleRedirectResult() {
+    const params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+    const idToken = params.get('id_token');
+    if (!idToken) return;
+    const expectedState = sessionStorage.getItem('google_auth_state');
+    if (!expectedState || params.get('state') !== expectedState) {
+        const error = document.getElementById('auth-error');
+        if (error) error.innerText = 'Не удалось проверить вход. Повторите попытку.';
+        return;
+    }
+    sessionStorage.removeItem('google_auth_state');
+    history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+    handleGoogleIdToken(idToken);
 }
 
 async function handleGoogleCredential(response) {
+    handleGoogleIdToken(response.credential);
+}
+
+async function handleGoogleIdToken(idToken) {
     const error = document.getElementById('auth-error');
     try {
         const result = await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify({ type: 'getSession', idToken: response.credential })
+            body: JSON.stringify({ type: 'getSession', idToken })
         }).then(res => res.json());
         if (!result.success || !['viewer', 'manager', 'admin'].includes(result.role)) throw new Error(result.error || 'Доступ запрещён');
-        currentGoogleIdToken = response.credential;
+        currentGoogleIdToken = idToken;
         currentAccessRole = result.role;
         document.body.classList.remove('access-admin', 'access-manager', 'access-viewer');
         document.body.classList.add(`access-${currentAccessRole}`, 'authenticated');

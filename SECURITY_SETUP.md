@@ -35,3 +35,9 @@ BOT_SHARED_SECRET=replace-with-a-long-random-value
 ## Вход в приложении
 
 На сайте нажмите **«Войти через Google»** и выберите аккаунт. Приложение отправляет Google ID token на Apps Script, где проверяются подпись, email и назначенная роль. До успешного входа рабочий интерфейс скрыт.
+
+В OAuth Client ID добавьте разрешённый redirect URI:
+
+```text
+https://biznestver-dev.github.io/qr-scanner-amt/
+```
