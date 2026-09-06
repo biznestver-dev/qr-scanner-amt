@@ -373,6 +373,12 @@ function startGoogleSignIn() {
 
 function handleGoogleRedirectResult() {
     const params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+    const oauthError = params.get('error');
+    if (oauthError) {
+        const error = document.getElementById('auth-error');
+        if (error) error.innerText = `Google не завершил вход: ${oauthError}`;
+        return;
+    }
     const idToken = params.get('id_token');
     if (!idToken) return;
     const expectedState = sessionStorage.getItem('google_auth_state');
