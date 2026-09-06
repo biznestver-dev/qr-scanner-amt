@@ -8,6 +8,7 @@
    - `MANAGER_EMAILS` — email менеджеров через запятую.
    - `VIEWER_EMAILS` — email пользователей только для чтения через запятую.
    - `BOT_SHARED_SECRET` — длинная случайная строка для запросов Telegram-бота.
+   - `GOOGLE_OAUTH_CLIENT_ID` — `302180099334-lp20e5uvn6q1lb374no19ljenjrqfofc.apps.googleusercontent.com`.
 2. Опубликуйте Web App с настройками:
    - **Execute as:** User accessing the web app.
    - **Who has access:** только пользователи вашей Google Workspace организации.
@@ -30,3 +31,7 @@ BOT_SHARED_SECRET=replace-with-a-long-random-value
 
 Без настроенных email-списков приложение работает только в режиме чтения, а серверные изменения отклоняются.
 Владелец из `OWNER_EMAIL` имеет полный доступ даже без добавления в `ADMIN_EMAILS` и должен лично управлять остальными списками доступа.
+
+## Вход в приложении
+
+На сайте нажмите **«Войти через Google»** и выберите аккаунт. Приложение отправляет Google ID token на Apps Script, где проверяются подпись, email и назначенная роль. До успешного входа рабочий интерфейс скрыт.

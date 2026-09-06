@@ -9,6 +9,7 @@
   <script src="https://unpkg.com/html5-qrcode"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <!-- Шрифт Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -164,6 +165,14 @@
     .scanner-actions .btn { margin: 0; }
     #scanner-status { color: var(--text-secondary); font-size: 12px; text-align: center; }
     .access-role-label { margin-left: auto; padding: 6px 10px; border: 1px solid var(--glass-border); border-radius: 8px; color: var(--text-secondary); font-size: 11px; }
+    #auth-screen { position: fixed; inset: 0; z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 20px; background: #04060a; }
+    #auth-card { width: 100%; max-width: 420px; padding: 32px 24px; text-align: center; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px; box-shadow: 0 25px 60px rgba(0,0,0,.55); }
+    #auth-card h1 { font-size: 22px; margin-bottom: 10px; }
+    #auth-card p { color: var(--text-secondary); font-size: 13px; line-height: 1.5; margin-bottom: 22px; }
+    #google-signin-button { min-height: 44px; display: flex; justify-content: center; }
+    #auth-error { color: #ff6b8a; font-size: 12px; margin-top: 14px; }
+    body:not(.authenticated) > .container { display: none; }
+    body.authenticated #auth-screen { display: none; }
     .viewer-search-btn { display: none; margin: 0 auto 20px; }
     body.access-viewer #reader, body.access-viewer #telegram-scan-btn, body.access-viewer #mass-return-banner,
     body.access-viewer #section-mtb > .control-panels-wrapper, body.access-viewer #section-mtb > .form-grid,
@@ -492,6 +501,15 @@
   </style>
 </head>
 <body>
+
+  <div id="auth-screen">
+    <div id="auth-card">
+      <h1>Вход в Техотдел AM</h1>
+      <p>Войдите через Google, чтобы получить доступ согласно назначенной роли.</p>
+      <div id="google-signin-button"></div>
+      <div id="auth-error" role="alert"></div>
+    </div>
+  </div>
 
   <div class="container">
     <div class="app-header">

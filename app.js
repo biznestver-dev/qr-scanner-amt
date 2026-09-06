@@ -15,8 +15,10 @@ const APP_STORAGE_KEYS = {
 };
 
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx6XQyX1upzSIrbq7zw37ZDi3F2giOy9ZbBY8VkjBkN8LiDkAXp0tXh85aKw9lDn8u2/exec";
+const GOOGLE_OAUTH_CLIENT_ID = '302180099334-lp20e5uvn6q1lb374no19ljenjrqfofc.apps.googleusercontent.com';
 const EQUIPMENT_POLL_INTERVAL_MS = 150000;
 let currentAccessRole = 'viewer';
+let currentGoogleIdToken = '';
 let equipmentPollingTimer = null;
 
 const MANAGER_TITLES = {
@@ -292,8 +294,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     await initAccessMode();
     initUI();
     initNetworkStatusListener();
-    loadDbFromCloud();
-    flushOfflineSyncQueue();
     loadCallSheetViewFromUrl();
 });
 
@@ -317,8 +317,9 @@ function initData() {
 }
 
 async function loadDbFromCloud() {
+    if (!currentGoogleIdToken) return;
     try {
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getEquipment&_=${Date.now()}`, { cache: 'no-store', credentials: 'include' });
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getEquipment&_=${Date.now()}${googleAuthQuery()}`, { cache: 'no-store', credentials: 'include' });
         const data = await response.json();
         if (data?.success === false) throw new Error(data.error || 'Authentication required');
         if (data && typeof data === 'object') {
@@ -349,18 +350,52 @@ async function initAccessMode() {
     document.body.classList.add('access-viewer');
     const label = document.getElementById('access-role-label');
     if (label) label.innerText = 'Проверка доступа...';
+    await new Promise(resolve => {
+        const render = () => {
+            if (!window.google?.accounts?.id) return false;
+            window.google.accounts.id.initialize({
+                client_id: GOOGLE_OAUTH_CLIENT_ID,
+                callback: handleGoogleCredential,
+                auto_select: false,
+                cancel_on_tap_outside: false
+            });
+            window.google.accounts.id.renderButton(document.getElementById('google-signin-button'), { theme: 'outline', size: 'large', width: 280, text: 'signin_with' });
+            return true;
+        };
+        if (render()) { resolve(); return; }
+        window.setTimeout(() => { render(); resolve(); }, 1200);
+    });
+}
+
+async function handleGoogleCredential(response) {
+    const error = document.getElementById('auth-error');
     try {
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getSession&_=${Date.now()}`, { cache: 'no-store', credentials: 'include' });
-        const session = await response.json();
-        if (session.success && ['viewer', 'manager', 'admin'].includes(session.role)) {
-            currentAccessRole = session.role;
-        }
-    } catch (error) {
-        console.warn('Не удалось определить пользователя Google Workspace:', error);
+        const result = await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({ type: 'getSession', idToken: response.credential })
+        }).then(res => res.json());
+        if (!result.success || !['viewer', 'manager', 'admin'].includes(result.role)) throw new Error(result.error || 'Доступ запрещён');
+        currentGoogleIdToken = response.credential;
+        currentAccessRole = result.role;
+        document.body.classList.remove('access-admin', 'access-manager', 'access-viewer');
+        document.body.classList.add(`access-${currentAccessRole}`, 'authenticated');
+        const label = document.getElementById('access-role-label');
+        if (label) label.innerText = currentAccessRole === 'viewer' ? 'Только чтение' : currentAccessRole === 'manager' ? 'Менеджер' : 'Полный доступ';
+        loadDbFromCloud();
+        flushOfflineSyncQueue();
+        loadCallSheetViewFromUrl();
+    } catch (e) {
+        if (error) error.innerText = e.message || 'Не удалось выполнить вход';
     }
-    document.body.classList.remove('access-admin', 'access-manager', 'access-viewer');
-    document.body.classList.add(`access-${currentAccessRole}`);
-    if (label) label.innerText = currentAccessRole === 'viewer' ? 'Только чтение' : currentAccessRole === 'manager' ? 'Менеджер' : 'Полный доступ';
+}
+
+function googleAuthQuery() {
+    return currentGoogleIdToken ? `&idToken=${encodeURIComponent(currentGoogleIdToken)}` : '';
+}
+
+function withGoogleToken(payload) {
+    return { ...payload, idToken: currentGoogleIdToken };
 }
 
 function requireAdmin() {
@@ -384,7 +419,7 @@ function registerServiceWorker() {
 function startEquipmentPolling() {
     if (equipmentPollingTimer) clearInterval(equipmentPollingTimer);
     equipmentPollingTimer = window.setInterval(() => {
-        if (navigator.onLine && document.visibilityState !== 'hidden') loadDbFromCloud();
+        if (currentGoogleIdToken && navigator.onLine && document.visibilityState !== 'hidden') loadDbFromCloud();
     }, EQUIPMENT_POLL_INTERVAL_MS);
 }
 
@@ -645,12 +680,12 @@ async function sendEquipmentStatusSync(transaction) {
             method: 'POST',
             mode: 'no-cors', 
             credentials: 'include',
-            body: JSON.stringify({
+            body: JSON.stringify(withGoogleToken({
                 type: 'updateEquipmentStatus',
                 inv: transaction.inv,
                 status: transaction.status,
                 timestamp: transaction.timestamp
-            }),
+            })),
             headers: { 'Content-Type': 'text/plain' }
         });
 }
@@ -704,7 +739,7 @@ async function reserveNextActNumber() {
         method: 'POST',
         mode: 'cors',
         credentials: 'include',
-        body: JSON.stringify({ type: 'reserveActNumber', year, minimum: localNextNumber }),
+        body: JSON.stringify(withGoogleToken({ type: 'reserveActNumber', year, minimum: localNextNumber })),
         headers: { 'Content-Type': 'text/plain' }
     });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -1058,7 +1093,7 @@ function syncActToGoogle(act) {
         method: 'POST',
         mode: 'no-cors',
         credentials: 'include',
-        body: JSON.stringify({ type: 'saveAct', act }),
+        body: JSON.stringify(withGoogleToken({ type: 'saveAct', act })),
         headers: { 'Content-Type': 'text/plain' }
     }).catch(error => console.warn('Не удалось сохранить акт в облаке:', error));
 }
@@ -1069,7 +1104,7 @@ function syncActStatusToGoogle(act) {
         method: 'POST',
         mode: 'no-cors',
         credentials: 'include',
-        body: JSON.stringify({ type: 'updateActStatus', num: act.num, status: getActStatus(act) }),
+        body: JSON.stringify(withGoogleToken({ type: 'updateActStatus', num: act.num, status: getActStatus(act) })),
         headers: { 'Content-Type': 'text/plain' }
     }).catch(error => console.warn('Не удалось обновить статус акта в облаке:', error));
 }
@@ -1162,7 +1197,7 @@ async function sendActReminder(actNum) {
             mode: 'cors',
             credentials: 'include',
             headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify({ type: 'sendActReminder', num: actNum })
+            body: JSON.stringify(withGoogleToken({ type: 'sendActReminder', num: actNum }))
         });
         const result = await response.json();
         if (!response.ok || !result.success) throw new Error(result.error || 'Не удалось отправить напоминание');
@@ -1771,7 +1806,7 @@ function syncCallSheetToGoogle(callSheet) {
         method: 'POST',
         mode: 'no-cors',
         credentials: 'include',
-        body: JSON.stringify({ type: 'saveCallSheet', callSheet }),
+        body: JSON.stringify(withGoogleToken({ type: 'saveCallSheet', callSheet })),
         headers: { 'Content-Type': 'text/plain' }
     }).catch(error => console.warn('Не удалось сохранить вызывной лист в облаке:', error));
 }
@@ -1792,9 +1827,9 @@ async function copyCallSheetShareLink() {
 
 async function loadCallSheetViewFromUrl() {
     const id = new URLSearchParams(window.location.search).get('callsheet');
-    if (!id) return;
+    if (!id || !currentGoogleIdToken) return;
     try {
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getCallSheet&id=${encodeURIComponent(id)}`, { credentials: 'include' });
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getCallSheet&id=${encodeURIComponent(id)}${googleAuthQuery()}`, { credentials: 'include' });
         const result = await response.json();
         if (!result.success || !result.data) throw new Error('Вызывной лист не найден');
         renderMobileCallSheet(result.data);

@@ -1,9 +1,10 @@
 const DEFAULT_OWNER_EMAIL = 'biznestver@gmail.com';
+const DEFAULT_GOOGLE_OAUTH_CLIENT_ID = '302180099334-lp20e5uvn6q1lb374no19ljenjrqfofc.apps.googleusercontent.com';
 
 // Обработка GET-запросов
 function doGet(e) {
   const action = e && e.parameter ? e.parameter.action : '';
-  const role = getAccessRole();
+  const role = getRequestRole(e);
 
   if (action === 'getSession') {
     return jsonResponse({
@@ -87,8 +88,12 @@ function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
     const ss = SpreadsheetApp.getActiveSpreadsheet();
+    if (data.type === 'getSession') {
+      const session = getTokenSession(data.idToken);
+      return jsonResponse(session || { success: false, error: 'Invalid Google token' });
+    }
     const sheet = ss.getSheetByName("Оборудование") || ss.getSheets()[0];
-    const role = getAccessRole();
+    const role = getRequestRole({ parameter: { idToken: data.idToken } });
 
     if (data.type !== 'saveUser' && (!role || !['manager', 'admin'].includes(role))) {
       return authErrorResponse();
@@ -235,8 +240,36 @@ function getActiveUserEmail() {
   return String(Session.getActiveUser().getEmail() || '').trim().toLowerCase();
 }
 
-function getAccessRole() {
-  const email = getActiveUserEmail();
+function getRequestRole(e) {
+  const token = e && e.parameter ? e.parameter.idToken : '';
+  if (token) {
+    const session = getTokenSession(token);
+    return session && session.success ? session.role : '';
+  }
+  return getAccessRole();
+}
+
+function getTokenSession(idToken) {
+  const token = String(idToken || '').trim();
+  if (!token) return null;
+  try {
+    const response = UrlFetchApp.fetch('https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(token), {
+      muteHttpExceptions: true
+    });
+    if (response.getResponseCode() !== 200) return null;
+    const data = JSON.parse(response.getContentText());
+    const configuredClientId = String(PropertiesService.getScriptProperties().getProperty('GOOGLE_OAUTH_CLIENT_ID') || DEFAULT_GOOGLE_OAUTH_CLIENT_ID).trim();
+    if (configuredClientId && String(data.aud || '') !== configuredClientId) return null;
+    if (String(data.email_verified || '').toLowerCase() !== 'true') return null;
+    const email = String(data.email || '').trim().toLowerCase();
+    const role = getRoleForEmail(email);
+    return role ? { success: true, role, email } : { success: false, error: 'Access denied' };
+  } catch (error) {
+    return null;
+  }
+}
+
+function getRoleForEmail(email) {
   if (!email) return '';
   const properties = PropertiesService.getScriptProperties();
   const ownerEmail = String(properties.getProperty('OWNER_EMAIL') || DEFAULT_OWNER_EMAIL).trim().toLowerCase();
@@ -248,6 +281,11 @@ function getAccessRole() {
   if (managerEmails.includes(email)) return 'manager';
   if (viewerEmails.includes(email)) return 'viewer';
   return '';
+}
+
+function getAccessRole() {
+  const email = getActiveUserEmail();
+  return getRoleForEmail(email);
 }
 
 function getConfiguredEmails(value) {
