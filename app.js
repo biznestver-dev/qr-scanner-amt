@@ -393,10 +393,9 @@ async function handleGoogleCredential(response) {
 async function handleGoogleIdToken(idToken) {
     const error = document.getElementById('auth-error');
     try {
-        const result = await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify({ type: 'getSession', idToken })
+        const result = await fetch(`${GOOGLE_SCRIPT_URL}?action=getSession&idToken=${encodeURIComponent(idToken)}`, {
+            cache: 'no-store',
+            credentials: 'omit'
         }).then(res => res.json());
         if (!result.success || !['viewer', 'manager', 'admin'].includes(result.role)) throw new Error(result.error || 'Доступ запрещён');
         currentGoogleIdToken = idToken;
