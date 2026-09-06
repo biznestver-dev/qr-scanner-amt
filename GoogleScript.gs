@@ -1,12 +1,25 @@
+const DEFAULT_OWNER_EMAIL = 'biznestver@gmail.com';
+
 // Обработка GET-запросов
 function doGet(e) {
   const action = e && e.parameter ? e.parameter.action : '';
+  const role = getAccessRole();
+
+  if (action === 'getSession') {
+    return jsonResponse({
+      success: Boolean(role),
+      role: role || null,
+      email: role ? getActiveUserEmail() : null
+    });
+  }
+
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName("Оборудование") || ss.getSheets()[0];
   const rows = sheet.getDataRange().getValues();
 
   // 1. Получение всей базы для веб-приложения
   if (action === 'getEquipment') {
+    if (!role) return authErrorResponse();
     const db = {};
     for (let i = 1; i < rows.length; i++) {
       const inv = String(rows[i][0]).trim();
@@ -59,6 +72,7 @@ function doGet(e) {
   }
 
   if (action === 'getCallSheet') {
+    if (!role) return authErrorResponse();
     const id = String(e.parameter.id || '').trim();
     const callSheet = readCallSheet(id);
     return jsonResponse(callSheet ? { success: true, data: callSheet } : { success: false, error: 'Call sheet not found' });
@@ -74,6 +88,11 @@ function doPost(e) {
     const data = JSON.parse(e.postData.contents);
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const sheet = ss.getSheetByName("Оборудование") || ss.getSheets()[0];
+    const role = getAccessRole();
+
+    if (data.type !== 'saveUser' && (!role || !['manager', 'admin'].includes(role))) {
+      return authErrorResponse();
+    }
 
     // Синхронизация статуса оборудования
     if (data.type === 'updateEquipmentStatus') {
@@ -100,6 +119,7 @@ function doPost(e) {
 
     // Сохранение пользователей бота
     if (data.type === 'saveUser') {
+      if (!isValidBotRequest(data)) return authErrorResponse();
       const chatId = String(data.chatId || '').trim();
       const username = String(data.username || '').trim().slice(0, 100);
       const firstName = String(data.firstName || '').trim().slice(0, 100);
@@ -108,9 +128,36 @@ function doPost(e) {
           .setMimeType(ContentService.MimeType.JSON);
       }
       const usersSheet = ss.getSheetByName("Пользователи") || ss.insertSheet("Пользователи");
-      usersSheet.appendRow([chatId, username, firstName, new Date()]);
+      const userRows = usersSheet.getDataRange().getValues();
+      const existingRow = userRows.findIndex((row, index) => index > 0 && String(row[0]).trim() === chatId);
+      if (existingRow >= 0) {
+        usersSheet.getRange(existingRow + 1, 1, 1, 4).setValues([[chatId, username, firstName, new Date()]]);
+      } else {
+        if (usersSheet.getLastRow() === 0) usersSheet.appendRow(['Chat ID', 'Username', 'Имя', 'Последняя регистрация']);
+        usersSheet.appendRow([chatId, username, firstName, new Date()]);
+      }
       return ContentService.createTextOutput(JSON.stringify({ success: true }))
         .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (data.type === 'sendActReminder') {
+      const num = String(data.num || '').trim();
+      if (!/^\d{4}-\d+$/.test(num)) return jsonResponse({ success: false, error: 'Invalid act number' });
+      const actsSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Накладные');
+      if (!actsSheet || actsSheet.getLastRow() < 2) return jsonResponse({ success: false, error: 'Acts sheet not found' });
+      const rows = actsSheet.getDataRange().getValues();
+      const rowIndex = rows.findIndex((row, index) => index > 0 && String(row[0]).trim() === num);
+      if (rowIndex < 0) return jsonResponse({ success: false, error: 'Act not found' });
+      const status = String(rows[rowIndex][6] || 'Выдано').trim();
+      if (status === 'Закрыт') return jsonResponse({ success: false, error: 'Act is already closed' });
+        const token = PropertiesService.getScriptProperties().getProperty('TELEGRAM_BOT_TOKEN');
+        if (!token) return jsonResponse({ success: false, error: 'Telegram bot token is not configured' });
+      const chatIds = getResponsibleChatIds(String(rows[rowIndex][3] || '').trim());
+      if (chatIds.length === 0) return jsonResponse({ success: false, error: 'No Telegram recipient for this responsible person' });
+      const text = `🔔 <b>Напоминание о возврате оборудования</b>\nНакладная: <b>${escapeTelegramHtml(rows[rowIndex][0])}</b>\nПолучатель: ${escapeTelegramHtml(rows[rowIndex][4])}\nСрок возврата: ${escapeTelegramHtml(rows[rowIndex][2])}\nСтатус: ${escapeTelegramHtml(status)}`;
+      const sentCount = chatIds.filter(chatId => sendTelegramMessage(token, chatId, text)).length;
+      if (sentCount > 0) actsSheet.getRange(rowIndex + 1, 10).setValue(new Date());
+      return jsonResponse({ success: sentCount > 0, sentCount, totalRecipients: chatIds.length });
     }
 
     if (data.type === 'saveAct') {
@@ -184,6 +231,40 @@ function isValidInventoryNumber(value) {
   return /^AM-[A-Z0-9]+(?:-[A-Z0-9]+)*$/.test(value);
 }
 
+function getActiveUserEmail() {
+  return String(Session.getActiveUser().getEmail() || '').trim().toLowerCase();
+}
+
+function getAccessRole() {
+  const email = getActiveUserEmail();
+  if (!email) return '';
+  const properties = PropertiesService.getScriptProperties();
+  const ownerEmail = String(properties.getProperty('OWNER_EMAIL') || DEFAULT_OWNER_EMAIL).trim().toLowerCase();
+  if (email === ownerEmail) return 'admin';
+  const adminEmails = getConfiguredEmails(properties.getProperty('ADMIN_EMAILS'));
+  const managerEmails = getConfiguredEmails(properties.getProperty('MANAGER_EMAILS'));
+  const viewerEmails = getConfiguredEmails(properties.getProperty('VIEWER_EMAILS'));
+  if (adminEmails.includes(email)) return 'admin';
+  if (managerEmails.includes(email)) return 'manager';
+  if (viewerEmails.includes(email)) return 'viewer';
+  return '';
+}
+
+function getConfiguredEmails(value) {
+  return String(value || '').split(',')
+    .map(email => email.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+function isValidBotRequest(data) {
+  const configuredSecret = PropertiesService.getScriptProperties().getProperty('BOT_SHARED_SECRET');
+  return Boolean(configuredSecret) && String(data.botSecret || '') === configuredSecret;
+}
+
+function authErrorResponse() {
+  return jsonResponse({ success: false, error: 'Authentication required' });
+}
+
 function readReferenceSheet(sheetName, fields) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
   if (!sheet || sheet.getLastRow() < 2) return [];
@@ -204,13 +285,13 @@ function saveActToSheet(act) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName('Накладные') || ss.insertSheet('Накладные');
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow(['Номер', 'Дата', 'Возврат до', 'Ответственный', 'Получатель', 'Контакты', 'Статус', 'Оборудование JSON', 'Уведомление отправлено']);
+    sheet.appendRow(['Номер', 'Дата', 'Возврат до', 'Ответственный', 'Получатель', 'Контакты', 'Статус', 'Оборудование JSON', 'Уведомление отправлено', 'Последнее напоминание']);
   }
   const rows = sheet.getDataRange().getValues();
   const values = [
     String(act.num || ''), String(act.date || ''), String(act.returnDate || ''),
     String(act.manager || ''), String(act.participant || ''), String(act.contact || ''),
-    String(act.status || 'Выдано'), JSON.stringify(act.items || []), ''
+    String(act.status || 'Выдано'), JSON.stringify(act.items || []), '', ''
   ].map(value => String(value).startsWith('=') ? "'" + value : value);
   const existingRow = rows.findIndex((row, index) => index > 0 && String(row[0]).trim() === values[0]);
   if (existingRow >= 0) sheet.getRange(existingRow + 1, 1, 1, values.length).setValues([values]);
@@ -218,30 +299,14 @@ function saveActToSheet(act) {
 }
 
 function checkOverdueReturns() {
-  const token = PropertiesService.getScriptProperties().getProperty('TELEGRAM_BOT_TOKEN');
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Накладные');
-  if (!token || !sheet || sheet.getLastRow() < 2) return;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const rows = sheet.getDataRange().getValues();
-  for (let i = 1; i < rows.length; i++) {
-    const returnDate = parseSheetDate(rows[i][2]);
-    const status = String(rows[i][6] || 'Выдано');
-    const notifiedAt = rows[i][8];
-    if (!returnDate || returnDate >= today || status === 'Закрыт' || notifiedAt) continue;
-    const chatIds = getResponsibleChatIds(String(rows[i][3] || '').trim());
-    if (chatIds.length === 0) continue;
-    const text = `⚠️ <b>Просрочен возврат оборудования</b>\nНакладная: <b>${escapeTelegramHtml(rows[i][0])}</b>\nПолучатель: ${escapeTelegramHtml(rows[i][4])}\nСрок возврата: ${escapeTelegramHtml(rows[i][2])}\nСтатус: ${escapeTelegramHtml(status)}`;
-    const sent = chatIds.every(chatId => sendTelegramMessage(token, chatId, text));
-    if (sent) sheet.getRange(i + 1, 9).setValue(new Date());
-  }
+  return;
 }
 
 function getResponsibleChatIds(managerName) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Ответственные');
-  if (!sheet || sheet.getLastRow() < 2) return [];
+  if (!managerName || !sheet || sheet.getLastRow() < 2) return [];
   return sheet.getDataRange().getValues().slice(1)
-    .filter(row => !managerName || String(row[0]).trim() === managerName)
+    .filter(row => String(row[0]).trim() === managerName)
     .map(row => String(row[1] || '').trim())
     .filter(chatId => /^\d+$/.test(chatId));
 }
@@ -273,7 +338,6 @@ function createDailyOverdueTrigger() {
   ScriptApp.getProjectTriggers().forEach(trigger => {
     if (trigger.getHandlerFunction() === 'checkOverdueReturns') ScriptApp.deleteTrigger(trigger);
   });
-  ScriptApp.newTrigger('checkOverdueReturns').timeBased().everyDays(1).atHour(9).create();
 }
 
 function saveCallSheet(callSheet) {

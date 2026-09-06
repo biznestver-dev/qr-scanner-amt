@@ -7,7 +7,7 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <!-- Сканер QR-кодов html5-qrcode -->
   <script src="https://unpkg.com/html5-qrcode"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <!-- Шрифт Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -160,11 +160,15 @@
     }
     #scanner-controls { width: 100%; max-width: 480px; margin: -20px auto 20px; display: flex; gap: 8px; }
     #scanner-controls select { flex: 1; padding: 10px 12px; font-size: 12px; }
+    .scanner-actions { width: 100%; max-width: 480px; margin: -14px auto 20px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .scanner-actions .btn { margin: 0; }
+    #scanner-status { color: var(--text-secondary); font-size: 12px; text-align: center; }
     .access-role-label { margin-left: auto; padding: 6px 10px; border: 1px solid var(--glass-border); border-radius: 8px; color: var(--text-secondary); font-size: 11px; }
     .viewer-search-btn { display: none; margin: 0 auto 20px; }
     body.access-viewer #reader, body.access-viewer #telegram-scan-btn, body.access-viewer #mass-return-banner,
     body.access-viewer #section-mtb > .control-panels-wrapper, body.access-viewer #section-mtb > .form-grid,
     body.access-viewer .config-actions, body.access-viewer .cs-section-controls { display: none !important; }
+    body.access-viewer #historyModal .modal-actions .delete-btn { display: none !important; }
     body.access-viewer .viewer-search-btn { display: inline-flex; }
     body.access-viewer #dbTableBody td:last-child, body.access-viewer #dbModal .modal-actions .export-btn { display: none; }
 
@@ -277,6 +281,9 @@
     .badge-status { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; }
     .badge-status.free { background: var(--status-free-bg); color: var(--status-free); border: 1px solid rgba(16, 185, 129, 0.4); }
     .badge-status.busy { background: var(--status-busy-bg); color: var(--status-busy); border: 1px solid rgba(255, 42, 109, 0.4); }
+    .debtors-summary { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+    .debtors-summary .badge-status { border-radius: 10px; }
+    .reminder-sent { color: var(--status-free); font-size: 11px; margin-top: 4px; }
 
     .select-btn, .return-btn, .delete-btn, .export-btn, .add-row-btn {
       padding: 8px 14px; font-size: 12px; font-weight: 700; border-radius: 8px; border: none; cursor: pointer;
@@ -291,6 +298,8 @@
     .cs-section { background: rgba(9, 12, 21, 0.6); border: 1px solid var(--glass-border); border-radius: 16px; padding: 18px; margin-bottom: 20px; display: flex; flex-direction: column; }
     .cs-section-title { font-size: 12px; font-weight: 800; color: var(--am-cyan); text-transform: uppercase; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
     .cs-section-controls { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; margin-top: 12px; }
+    .cs-section-controls button { min-height: 40px; }
+    .cs-action-buttons { display: flex; gap: 12px; margin-bottom: 20px; }
     .weather-widget-box { background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
     .cs-logistics-warning { margin-top: 12px; padding: 10px 12px; border: 1px solid rgba(255, 170, 0, 0.5); border-radius: 10px; background: rgba(255, 170, 0, 0.1); color: #ffcc66; font-size: 12px; }
     #mobile-call-sheet-view { max-width: 680px; margin: 0 auto; padding: 18px; color: #eef2ff; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -313,6 +322,79 @@
       body { padding: 8px 4px !important; }
       .container { padding: 16px 12px !important; border-radius: 16px !important; }
       .app-header { margin-bottom: 20px !important; padding-bottom: 14px !important; }
+
+      .modal { padding: 0; align-items: stretch; overflow-x: hidden; }
+      .modal-content { max-width: 100%; max-height: 100dvh; height: 100dvh; border-radius: 0; padding: 14px 12px; overflow-x: hidden; }
+      .modal-header { gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+      .modal-header h3 { font-size: 16px; line-height: 1.25; }
+      .modal-header > div:first-child { min-width: 0; flex: 1 1 100%; }
+      .modal-header > div:first-child h3 { overflow-wrap: anywhere; }
+      .modal-actions { width: 100%; justify-content: flex-end; flex-wrap: wrap; }
+      .modal-actions > button { min-height: 40px; }
+
+      #callSheetModal .modal-content { padding: 10px 10px 0; }
+      #callSheetModal .modal-header { position: sticky; top: -10px; z-index: 2; padding: 4px 0 10px; background: #090c15; }
+      #callSheetModal .modal-header > div:first-child { flex: 1 1 auto; width: auto; }
+      #callSheetModal .modal-header .back-menu-btn { padding: 9px 10px; }
+      #callSheetModal .modal-header .modal-actions { width: 100%; flex: 1 1 100%; min-width: 0; }
+      #callSheetModal .modal-header .modal-actions > button:not(.close-btn) { display: none; }
+      #callSheetModal .modal-header .close-btn { width: 40px; height: 40px; }
+      #callSheetModal #cs-templates-selector-container { order: 2; width: 100%; max-width: 100%; min-width: 0; flex-wrap: wrap; }
+      #callSheetModal .modal-header .close-btn { order: 1; align-self: flex-end; margin-left: auto; }
+      #callSheetModal #cs-templates-selector-container select { width: 100% !important; min-width: 0; }
+      #callSheetModal #cs-templates-selector-container button { flex: 1; }
+      #callSheetModal .call-sheet-scroll { min-height: 0; padding-right: 0 !important; gap: 12px !important; }
+      #callSheetModal .cs-section { padding: 14px 12px; margin-bottom: 0; border-radius: 12px; }
+      #callSheetModal .cs-section-title { line-height: 1.35; align-items: flex-start; }
+      #callSheetModal .cs-section-controls { display: grid; grid-template-columns: 1fr 1fr; justify-content: stretch; }
+      #callSheetModal .cs-section-controls button { width: 100%; min-width: 0; padding: 9px 8px; }
+      #callSheetModal .weather-widget-box { align-items: stretch; flex-direction: column; gap: 10px; margin-bottom: 0; }
+      #callSheetModal .weather-widget-box button { width: 100%; }
+      #callSheetModal .form-grid { gap: 14px; }
+      #callSheetModal .form-grid > *, #callSheetModal select { min-width: 0; }
+      #callSheetModal .form-group label { line-height: 1.3; }
+      #callSheetModal .cs-action-buttons { flex-direction: column; gap: 8px; margin-bottom: 12px; }
+      #callSheetModal .cs-action-buttons .btn { min-height: 46px; }
+
+      #cs-extra-info-container > div,
+      #cs-crew-container > div,
+      #cs-equipment-container > div,
+      #cs-transport-container > div {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 8px !important;
+        width: 100%;
+      }
+      #cs-milestones-container > div {
+        display: grid !important;
+        grid-template-columns: 88px 1fr auto;
+        gap: 8px !important;
+        width: 100%;
+      }
+      #callSheetModal #cs-extra-info-container input,
+      #callSheetModal #cs-milestones-container input,
+      #callSheetModal #cs-crew-container input,
+      #callSheetModal #cs-crew-container select,
+      #callSheetModal #cs-equipment-container input,
+      #callSheetModal #cs-transport-container input {
+        width: 100% !important;
+        min-width: 0;
+        padding: 12px 10px;
+        font-size: 13px;
+      }
+      #callSheetModal #cs-extra-info-container input:nth-of-type(3),
+      #callSheetModal #cs-crew-container input:nth-of-type(2),
+      #callSheetModal #cs-equipment-container input:nth-of-type(n+3),
+      #callSheetModal #cs-transport-container input:nth-of-type(n+4) { grid-column: span 2; }
+      #callSheetModal #cs-extra-info-container .delete-btn,
+      #callSheetModal #cs-crew-container .delete-btn,
+      #callSheetModal #cs-equipment-container .delete-btn,
+      #callSheetModal #cs-transport-container .delete-btn,
+      #callSheetModal #cs-milestones-container .delete-btn { min-width: 40px; min-height: 40px; padding: 8px; }
+
+      .inv-input-group, .phone-input-group { flex-wrap: wrap; }
+      .inv-input-group > input, .phone-input-group > input { min-width: 0; flex: 1 1 150px; }
+      .phone-country-select { width: 105px !important; }
     }
 
     /* ПРАВИЛА ПЕЧАТИ */
@@ -560,7 +642,10 @@
 
       <div id="reader"></div>
       <button class="viewer-search-btn add-row-btn" onclick="openDbModal()">🔎 Открыть базу для поиска</button>
-      <button id="telegram-scan-btn" class="btn" onclick="openTelegramQrScanner()" style="display: none; grid-column: 1 / -1; margin: -14px auto 20px;">📷 Сканировать QR через Telegram</button>
+      <div class="scanner-actions">
+        <button id="app-scan-btn" class="btn" onclick="toggleQrScanner()" disabled>📷 Сканировать QR</button>
+        <span id="scanner-status" aria-live="polite">Подготовка камеры...</span>
+      </div>
 
       <div style="grid-column: 1 / -1; display: flex; gap: 12px; margin-bottom: 20px;">
         <button class="btn" onclick="toggleMassReturnMode()" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: var(--status-free);">📥 Режим массового возврата</button>
@@ -676,7 +761,7 @@
         <div class="selected-items-list full-width">
           <h4>Выбранное оборудование для выдачи (<span id="items-count">0</span>)</h4>
           <div id="selected-items-container">
-            <p style="font-size: 13px; color: var(--text-muted);">Сканируйте QR или введите инвентарный номер и нажмите кнопку выше</p>
+            <p style="font-size: 13px; color: var(--text-muted);">Нажмите «Сканировать QR» или введите инвентарный номер</p>
           </div>
         </div>
       </div>
@@ -824,6 +909,7 @@
         </div>
         <div class="modal-actions">
           <button class="export-btn" onclick="exportActsToCSV()">📊 Экспорт CSV</button>
+          <button class="delete-btn" onclick="openDebtorsModal()">🔔 Должники</button>
           <button class="close-btn" onclick="closeHistoryModal()">&times;</button>
         </div>
       </div>
@@ -834,6 +920,27 @@
             <tr><th>№ Накладной</th><th>Дата</th><th>Возврат до</th><th>Статус</th><th>Роль</th><th>Получатель (ФИО)</th><th>Контакты</th><th>Оборудование</th><th>Действия</th></tr>
           </thead>
           <tbody id="historyTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="debtorsModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="back-menu-btn" onclick="closeDebtorsModal()">← Назад</button>
+          <h3>Должники и возвраты</h3>
+        </div>
+        <button class="close-btn" onclick="closeDebtorsModal()">&times;</button>
+      </div>
+      <div id="debtorsSummary" class="debtors-summary"></div>
+      <div class="table-wrapper">
+        <table class="db-table">
+          <thead>
+            <tr><th>Накладная</th><th>Получатель</th><th>Срок возврата</th><th>Статус</th><th>Контакт</th><th>Оборудование</th><th>Действие</th></tr>
+          </thead>
+          <tbody id="debtorsTableBody"></tbody>
         </table>
       </div>
     </div>
@@ -853,7 +960,7 @@
         </div>
       </div>
       
-      <div style="overflow-y: auto; flex: 1; padding-right: 5px; display: flex; flex-direction: column; gap: 20px;">
+      <div class="call-sheet-scroll" style="overflow-y: auto; flex: 1; padding-right: 5px; display: flex; flex-direction: column; gap: 20px;">
         <!-- Основная информация -->
         <div class="cs-section">
           <div class="cs-section-title">1. Основная информация о смене</div>
@@ -1008,7 +1115,7 @@
         </div>
 
         <!-- Кнопки действий -->
-        <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+        <div class="cs-action-buttons">
           <button class="btn" onclick="printCallSheet()" style="background: var(--am-purple);">🖨️ Напечатать вызывной</button>
           <button class="btn" onclick="downloadCallSheetWord()">📥 Скачать Word</button>
           <button class="btn" onclick="copyCallSheetShareLink()">🔗 Мобильная ссылка</button>

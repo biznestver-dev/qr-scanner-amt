@@ -16,7 +16,7 @@ const APP_STORAGE_KEYS = {
 
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx6XQyX1upzSIrbq7zw37ZDi3F2giOy9ZbBY8VkjBkN8LiDkAXp0tXh85aKw9lDn8u2/exec";
 const EQUIPMENT_POLL_INTERVAL_MS = 150000;
-let currentAccessRole = 'admin';
+let currentAccessRole = 'viewer';
 let equipmentPollingTimer = null;
 
 const MANAGER_TITLES = {
@@ -256,6 +256,7 @@ let html5Qrcode = null;
 let scannerCameras = [];
 let scannerCameraId = '';
 let scannerTorchEnabled = false;
+let scannerRunning = false;
 
 let callSheetData = {
     city: "Москва",
@@ -286,10 +287,13 @@ let callSheetData = {
     notes: DEFAULT_CS_TEMPLATES[0].notes
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     initData();
+    await initAccessMode();
     initUI();
     initNetworkStatusListener();
+    loadDbFromCloud();
+    flushOfflineSyncQueue();
     loadCallSheetViewFromUrl();
 });
 
@@ -310,14 +314,13 @@ function initData() {
         }
     }
     
-    loadDbFromCloud();
-    flushOfflineSyncQueue();
 }
 
 async function loadDbFromCloud() {
     try {
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getEquipment&_=${Date.now()}`, { cache: 'no-store' });
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getEquipment&_=${Date.now()}`, { cache: 'no-store', credentials: 'include' });
         const data = await response.json();
+        if (data?.success === false) throw new Error(data.error || 'Authentication required');
         if (data && typeof data === 'object') {
             window.EQUIPMENT_DB = data;
             saveToStore(APP_STORAGE_KEYS.EQUIPMENT_DB, data);
@@ -334,24 +337,41 @@ async function loadDbFromCloud() {
 function initUI() {
     setDefaultReturnDate();
     updateInvActionButton();
-    initAccessMode();
     registerServiceWorker();
     startEquipmentPolling();
     initTelegramWebApp();
     initQrScanner();
 }
 
-function initAccessMode() {
-    const requestedRole = new URLSearchParams(window.location.search).get('access');
-    currentAccessRole = ['viewer', 'manager', 'admin'].includes(requestedRole) ? requestedRole : 'admin';
-    document.body.classList.add(`access-${currentAccessRole}`);
+async function initAccessMode() {
+    currentAccessRole = 'viewer';
+    document.body.classList.remove('access-admin', 'access-manager', 'access-viewer');
+    document.body.classList.add('access-viewer');
     const label = document.getElementById('access-role-label');
+    if (label) label.innerText = 'Проверка доступа...';
+    try {
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getSession&_=${Date.now()}`, { cache: 'no-store', credentials: 'include' });
+        const session = await response.json();
+        if (session.success && ['viewer', 'manager', 'admin'].includes(session.role)) {
+            currentAccessRole = session.role;
+        }
+    } catch (error) {
+        console.warn('Не удалось определить пользователя Google Workspace:', error);
+    }
+    document.body.classList.remove('access-admin', 'access-manager', 'access-viewer');
+    document.body.classList.add(`access-${currentAccessRole}`);
     if (label) label.innerText = currentAccessRole === 'viewer' ? 'Только чтение' : currentAccessRole === 'manager' ? 'Менеджер' : 'Полный доступ';
 }
 
 function requireAdmin() {
     if (currentAccessRole === 'admin') return true;
     alert('Это действие доступно только в режиме полного доступа.');
+    return false;
+}
+
+function requireReminderAccess() {
+    if (['admin', 'manager'].includes(currentAccessRole)) return true;
+    alert('Отправлять напоминания могут только пользователи с правами менеджера или администратора.');
     return false;
 }
 
@@ -373,8 +393,6 @@ function initTelegramWebApp() {
     if (!telegram) return;
     telegram.ready();
     telegram.expand();
-    const button = document.getElementById('telegram-scan-btn');
-    if (button) button.style.display = 'block';
 }
 
 function openTelegramQrScanner() {
@@ -393,17 +411,16 @@ function openTelegramQrScanner() {
 }
 
 async function initQrScanner() {
-    if (typeof Html5Qrcode === 'undefined') return;
-    html5Qrcode = new Html5Qrcode('reader');
-    try {
-        scannerCameras = await Html5Qrcode.getCameras();
-        if (scannerCameras.length === 0) throw new Error('Камеры не найдены');
-        scannerCameraId = scannerCameras.find(camera => /back|rear|environment|задн/i.test(camera.label))?.id || scannerCameras[0].id;
-        renderScannerControls();
-        await startQrScanner(scannerCameraId);
-    } catch (error) {
-        console.warn('Не удалось запустить камеру:', error);
+    const scanButton = document.getElementById('app-scan-btn');
+    const status = document.getElementById('scanner-status');
+    if (typeof Html5Qrcode === 'undefined') {
+        if (scanButton) scanButton.disabled = true;
+        if (status) status.innerText = 'Сканер QR недоступен';
+        return;
     }
+    html5Qrcode = new Html5Qrcode('reader');
+    if (scanButton) scanButton.disabled = false;
+    if (status) status.innerText = 'Нажмите кнопку, чтобы включить камеру';
 }
 
 function renderScannerControls() {
@@ -425,29 +442,70 @@ function renderScannerControls() {
 }
 
 async function startQrScanner(cameraId) {
-    if (!html5Qrcode) return;
+    if (!html5Qrcode || scannerRunning) return;
     await html5Qrcode.start(
         { deviceId: { exact: cameraId } },
         { fps: 10, qrbox: { width: 220, height: 220 } },
         onScanSuccess,
         () => {}
     );
+    scannerRunning = true;
+    updateScannerButton();
+}
+
+async function toggleQrScanner() {
+    if (!html5Qrcode) return;
+    try {
+        if (scannerRunning) {
+            await html5Qrcode.stop();
+            scannerRunning = false;
+            scannerTorchEnabled = false;
+        } else {
+            if (scannerCameras.length === 0) {
+                const status = document.getElementById('scanner-status');
+                if (status) status.innerText = 'Поиск доступных камер...';
+                scannerCameras = await Html5Qrcode.getCameras();
+                if (scannerCameras.length === 0) throw new Error('Камеры не найдены');
+                scannerCameraId = scannerCameras.find(camera => /back|rear|environment|задн/i.test(camera.label))?.id || scannerCameras[0].id;
+                renderScannerControls();
+            }
+            await startQrScanner(scannerCameraId);
+        }
+        updateScannerButton();
+    } catch (error) {
+        const status = document.getElementById('scanner-status');
+        if (status) status.innerText = 'Не удалось получить доступ к камере';
+        console.warn('Не удалось изменить состояние сканера:', error);
+        alert('Не удалось запустить камеру. Проверьте разрешение на использование камеры.');
+    }
+}
+
+function updateScannerButton() {
+    const button = document.getElementById('app-scan-btn');
+    const status = document.getElementById('scanner-status');
+    if (button) button.innerText = scannerRunning ? '⏹️ Остановить сканер' : '📷 Сканировать QR';
+    if (status) status.innerText = scannerRunning ? 'Наведите камеру на QR-код оборудования' : 'Камера остановлена';
 }
 
 async function switchScannerCamera(cameraId) {
     if (!html5Qrcode || !cameraId || cameraId === scannerCameraId) return;
     try {
-        await html5Qrcode.stop();
+        const wasRunning = scannerRunning;
+        if (wasRunning) {
+            await html5Qrcode.stop();
+            scannerRunning = false;
+        }
         scannerCameraId = cameraId;
         scannerTorchEnabled = false;
-        await startQrScanner(cameraId);
+        if (wasRunning) await startQrScanner(cameraId);
+        else updateScannerButton();
     } catch (error) {
         console.warn('Не удалось переключить камеру:', error);
     }
 }
 
 async function toggleScannerTorch() {
-    if (!html5Qrcode) return;
+    if (!html5Qrcode || !scannerRunning) return;
     try {
         scannerTorchEnabled = !scannerTorchEnabled;
         await html5Qrcode.applyVideoConstraints({ advanced: [{ torch: scannerTorchEnabled }] });
@@ -586,6 +644,7 @@ async function sendEquipmentStatusSync(transaction) {
     await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors', 
+            credentials: 'include',
             body: JSON.stringify({
                 type: 'updateEquipmentStatus',
                 inv: transaction.inv,
@@ -644,6 +703,7 @@ async function reserveNextActNumber() {
     const response = await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'cors',
+        credentials: 'include',
         body: JSON.stringify({ type: 'reserveActNumber', year, minimum: localNextNumber }),
         headers: { 'Content-Type': 'text/plain' }
     });
@@ -997,6 +1057,7 @@ function syncActToGoogle(act) {
     fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
+        credentials: 'include',
         body: JSON.stringify({ type: 'saveAct', act }),
         headers: { 'Content-Type': 'text/plain' }
     }).catch(error => console.warn('Не удалось сохранить акт в облаке:', error));
@@ -1007,6 +1068,7 @@ function syncActStatusToGoogle(act) {
     fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
+        credentials: 'include',
         body: JSON.stringify({ type: 'updateActStatus', num: act.num, status: getActStatus(act) }),
         headers: { 'Content-Type': 'text/plain' }
     }).catch(error => console.warn('Не удалось обновить статус акта в облаке:', error));
@@ -1049,6 +1111,67 @@ function getNextActNumber() {
 
 function openHistoryModal() { renderHistoryTable(); document.getElementById('historyModal').style.display = 'flex'; }
 function closeHistoryModal() { document.getElementById('historyModal').style.display = 'none'; }
+function openDebtorsModal() { renderDebtorsTable(); document.getElementById('debtorsModal').style.display = 'flex'; }
+function closeDebtorsModal() { document.getElementById('debtorsModal').style.display = 'none'; }
+
+function getOutstandingActs() {
+    return getActsHistory().filter(act => getActStatus(act) !== 'Закрыт' && act.returnDate && act.returnDate !== '—');
+}
+
+function renderDebtorsTable() {
+    const tbody = document.getElementById('debtorsTableBody');
+    const summary = document.getElementById('debtorsSummary');
+    if (!tbody || !summary) return;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const acts = getOutstandingActs().sort((a, b) => (parseCustomDate(a.returnDate) || new Date(8640000000000000)) - (parseCustomDate(b.returnDate) || new Date(8640000000000000)));
+    const overdueCount = acts.filter(act => {
+        const date = parseCustomDate(act.returnDate);
+        return date && date < today;
+    }).length;
+    summary.innerHTML = `<span class="badge-status busy">Просрочено: ${overdueCount}</span><span class="badge-status ${acts.length ? 'busy' : 'free'}">Не закрыто: ${acts.length}</span>`;
+    if (acts.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;">Должников нет</td></tr>';
+        return;
+    }
+    tbody.innerHTML = acts.map(act => {
+        const returnDate = parseCustomDate(act.returnDate);
+        const isOverdue = returnDate && returnDate < today;
+        const items = Array.isArray(act.items) ? act.items.map(item => item.name || item.inv).join(', ') : (act.name || act.inv || '—');
+        const status = getActStatus(act);
+        return `<tr style="${isOverdue ? 'background: rgba(255, 42, 109, 0.1);' : ''}">
+            <td><b>№ ${escapeHtml(act.num)}</b></td>
+            <td>${escapeHtml(act.participant || '—')}</td>
+            <td>${escapeHtml(act.returnDate)}${isOverdue ? '<br><span class="badge-status busy">Просрочено</span>' : ''}</td>
+            <td><span class="badge-status busy">${escapeHtml(status)}</span></td>
+            <td>${escapeHtml(act.contact || '—')}</td>
+            <td>${escapeHtml(items)}</td>
+            <td><button class="delete-btn" onclick="sendActReminder(${escapeHtml(JSON.stringify(act.num))})">🔔 Напомнить</button></td>
+        </tr>`;
+    }).join('');
+}
+
+async function sendActReminder(actNum) {
+    if (!requireReminderAccess()) return;
+    const act = getActsHistory().find(item => item.num === actNum);
+    if (!act) return;
+    if (!confirm(`Отправить ответственному напоминание по акту № ${actNum}?`)) return;
+    try {
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'include',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({ type: 'sendActReminder', num: actNum })
+        });
+        const result = await response.json();
+        if (!response.ok || !result.success) throw new Error(result.error || 'Не удалось отправить напоминание');
+        alert(`Напоминание отправлено: ${result.sentCount} получ.`);
+        renderDebtorsTable();
+    } catch (error) {
+        alert(`Не удалось отправить напоминание: ${error.message}`);
+    }
+}
 
 function renderHistoryTable() {
     const tbody = document.getElementById('historyTableBody');
@@ -1647,6 +1770,7 @@ function syncCallSheetToGoogle(callSheet) {
     fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
+        credentials: 'include',
         body: JSON.stringify({ type: 'saveCallSheet', callSheet }),
         headers: { 'Content-Type': 'text/plain' }
     }).catch(error => console.warn('Не удалось сохранить вызывной лист в облаке:', error));
@@ -1670,7 +1794,7 @@ async function loadCallSheetViewFromUrl() {
     const id = new URLSearchParams(window.location.search).get('callsheet');
     if (!id) return;
     try {
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getCallSheet&id=${encodeURIComponent(id)}`);
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getCallSheet&id=${encodeURIComponent(id)}`, { credentials: 'include' });
         const result = await response.json();
         if (!result.success || !result.data) throw new Error('Вызывной лист не найден');
         renderMobileCallSheet(result.data);

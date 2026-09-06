@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qr-scanner-am-v2';
+const CACHE_NAME = 'qr-scanner-am-v3';
 const APP_SHELL = [
   './',
   './index.html',
@@ -7,7 +7,7 @@ const APP_SHELL = [
   './photo_2026-08-20%2022.44.18.jpeg',
   './manifest.webmanifest',
   'https://unpkg.com/html5-qrcode',
-  'https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js',
+  'https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js',
   'https://telegram.org/js/telegram-web-app.js',
   'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap'
 ];
