@@ -2,7 +2,7 @@ const CACHE_NAME = 'qr-scanner-am-v4';
 const APP_SHELL = [
   './',
   './index.html',
-  './app.js',
+  './app.js?v=4',
   './equipment.js',
   './photo_2026-08-20%2022.44.18.jpeg',
   './manifest.webmanifest',
