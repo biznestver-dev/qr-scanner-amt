@@ -15,10 +15,7 @@ const APP_STORAGE_KEYS = {
 };
 
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx6XQyX1upzSIrbq7zw37ZDi3F2giOy9ZbBY8VkjBkN8LiDkAXp0tXh85aKw9lDn8u2/exec";
-const GOOGLE_OAUTH_CLIENT_ID = '302180099334-lp20e5uvn6q1lb374no19ljenjrqfofc.apps.googleusercontent.com';
 const EQUIPMENT_POLL_INTERVAL_MS = 150000;
-let currentAccessRole = 'viewer';
-let currentGoogleIdToken = '';
 let equipmentPollingTimer = null;
 
 const MANAGER_TITLES = {
@@ -317,11 +314,10 @@ function initData() {
 }
 
 async function loadDbFromCloud() {
-    if (!currentGoogleIdToken) return;
     try {
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getEquipment&_=${Date.now()}${googleAuthQuery()}`, { cache: 'no-store', credentials: 'include' });
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getEquipment&_=${Date.now()}`, { cache: 'no-store' });
         const data = await response.json();
-        if (data?.success === false) throw new Error(data.error || 'Authentication required');
+        if (data?.success === false) throw new Error(data.error || 'Не удалось загрузить базу из облака');
         if (data && typeof data === 'object') {
             window.EQUIPMENT_DB = data;
             saveToStore(APP_STORAGE_KEYS.EQUIPMENT_DB, data);
@@ -340,102 +336,19 @@ function initUI() {
     updateInvActionButton();
     registerServiceWorker();
     startEquipmentPolling();
+    loadDbFromCloud();
+    flushOfflineSyncQueue();
     initTelegramWebApp();
     initQrScanner();
 }
 
 async function initAccessMode() {
-    currentAccessRole = 'viewer';
-    document.body.classList.remove('access-admin', 'access-manager', 'access-viewer');
-    document.body.classList.add('access-viewer');
     const label = document.getElementById('access-role-label');
-    if (label) label.innerText = 'Проверка доступа...';
-    const authButton = document.getElementById('google-signin-button');
-    if (authButton) authButton.innerHTML = '<button type="button" class="google-login-btn" onclick="startGoogleSignIn()">Войти через Google</button>';
-    handleGoogleRedirectResult();
-}
-
-function startGoogleSignIn() {
-    const redirectUri = `${window.location.origin}${window.location.pathname}`;
-    const state = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
-    sessionStorage.setItem('google_auth_state', state);
-    const params = new URLSearchParams({
-        client_id: GOOGLE_OAUTH_CLIENT_ID,
-        redirect_uri: redirectUri,
-        response_type: 'id_token',
-        scope: 'openid email profile',
-        nonce: state,
-        state,
-        prompt: 'select_account'
-    });
-    window.location.assign(`https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`);
-}
-
-function handleGoogleRedirectResult() {
-    const params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
-    const oauthError = params.get('error');
-    if (oauthError) {
-        const error = document.getElementById('auth-error');
-        if (error) error.innerText = `Google не завершил вход: ${oauthError}`;
-        return;
-    }
-    const idToken = params.get('id_token');
-    if (!idToken) return;
-    const expectedState = sessionStorage.getItem('google_auth_state');
-    if (!expectedState || params.get('state') !== expectedState) {
-        const error = document.getElementById('auth-error');
-        if (error) error.innerText = 'Не удалось проверить вход. Повторите попытку.';
-        return;
-    }
-    sessionStorage.removeItem('google_auth_state');
-    history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
-    handleGoogleIdToken(idToken);
-}
-
-async function handleGoogleCredential(response) {
-    handleGoogleIdToken(response.credential);
-}
-
-async function handleGoogleIdToken(idToken) {
-    const error = document.getElementById('auth-error');
-    try {
-        const result = await fetch(`${GOOGLE_SCRIPT_URL}?action=getSession&idToken=${encodeURIComponent(idToken)}`, {
-            cache: 'no-store',
-            credentials: 'omit'
-        }).then(res => res.json());
-        if (!result.success || !['viewer', 'manager', 'admin'].includes(result.role)) throw new Error(result.error || 'Доступ запрещён');
-        currentGoogleIdToken = idToken;
-        currentAccessRole = result.role;
-        document.body.classList.remove('access-admin', 'access-manager', 'access-viewer');
-        document.body.classList.add(`access-${currentAccessRole}`, 'authenticated');
-        const label = document.getElementById('access-role-label');
-        if (label) label.innerText = currentAccessRole === 'viewer' ? 'Только чтение' : currentAccessRole === 'manager' ? 'Менеджер' : 'Полный доступ';
-        loadDbFromCloud();
-        flushOfflineSyncQueue();
-        loadCallSheetViewFromUrl();
-    } catch (e) {
-        if (error) error.innerText = e.message || 'Не удалось выполнить вход';
-    }
-}
-
-function googleAuthQuery() {
-    return currentGoogleIdToken ? `&idToken=${encodeURIComponent(currentGoogleIdToken)}` : '';
+    if (label) label.innerText = 'Доступ открыт';
 }
 
 function withGoogleToken(payload) {
-    return { ...payload, idToken: currentGoogleIdToken };
-}
-
-function requireAdmin() {
-    if (currentAccessRole === 'admin') return true;
-    alert('Это действие доступно только в режиме полного доступа.');
-    return false;
-}
-
-function requireReminderAccess() {
-    if (['admin', 'manager'].includes(currentAccessRole)) return true;
-    alert('Отправлять напоминания могут только пользователи с правами менеджера или администратора.');
-    return false;
+    return payload;
 }
 
 function registerServiceWorker() {
@@ -447,7 +360,7 @@ function registerServiceWorker() {
 function startEquipmentPolling() {
     if (equipmentPollingTimer) clearInterval(equipmentPollingTimer);
     equipmentPollingTimer = window.setInterval(() => {
-        if (currentGoogleIdToken && navigator.onLine && document.visibilityState !== 'hidden') loadDbFromCloud();
+        if (navigator.onLine && document.visibilityState !== 'hidden') loadDbFromCloud();
     }, EQUIPMENT_POLL_INTERVAL_MS);
 }
 
@@ -838,7 +751,6 @@ function toggleNoReturnDate(checked) {
 }
 
 function toggleMassReturnMode() {
-    if (currentAccessRole !== 'admin') { alert('Режим возврата доступен только технической дирекции.'); return; }
     isMassReturnActive = !isMassReturnActive;
     const banner = document.getElementById('mass-return-banner');
     if (banner) banner.style.display = isMassReturnActive ? 'flex' : 'none';
@@ -1096,7 +1008,6 @@ function addSelectedItemsToActFromDb() {
 }
 
 function returnEquipmentToOffice(inv) {
-    if (currentAccessRole !== 'admin') { alert('Возврат доступен только технической дирекции.'); return; }
     if (window.EQUIPMENT_DB && window.EQUIPMENT_DB[inv]) {
         const newStatus = 'В офисе';
         window.EQUIPMENT_DB[inv].status = newStatus;
@@ -1215,7 +1126,6 @@ function renderDebtorsTable() {
 }
 
 async function sendActReminder(actNum) {
-    if (!requireReminderAccess()) return;
     const act = getActsHistory().find(item => item.num === actNum);
     if (!act) return;
     if (!confirm(`Отправить ответственному напоминание по акту № ${actNum}?`)) return;
@@ -1292,7 +1202,6 @@ function deleteActFromHistory(actNum) {
 }
 
 async function generateAndPrintAct() {
-    if (currentAccessRole === 'viewer') { alert('Режим только чтения не позволяет оформлять выдачу.'); return; }
     const data = collectActData();
     if (!data) {
         alert('Невозможно сформировать акт: проверьте, добавлено ли оборудование и заполнены ли обязательные поля.');
@@ -1537,7 +1446,6 @@ function openContactEditorModal(index = -1) {
 function closeContactEditorModal() { document.getElementById('contactEditorModal').style.display = 'none'; }
 
 function saveContactData() {
-    if (!requireAdmin()) return;
     const idx = parseInt(document.getElementById('edit-contact-index').value);
     const data = {
         name: document.getElementById('edit-contact-name').value.trim(),
@@ -1554,7 +1462,6 @@ function saveContactData() {
 }
 
 function deleteContact(idx) {
-    if (!requireAdmin()) return;
     if (confirm(`Удалить контакт ${EMPLOYEES_LIST[idx].name}?`)) {
         EMPLOYEES_LIST.splice(idx, 1);
         saveToStore(APP_STORAGE_KEYS.EMPLOYEES, EMPLOYEES_LIST);
@@ -1622,7 +1529,6 @@ function openVenueEditorModal(idx = -1) {
 function closeVenueEditorModal() { document.getElementById('venueEditorModal').style.display = 'none'; }
 
 function saveVenueData() {
-    if (!requireAdmin()) return;
     const idx = parseInt(document.getElementById('edit-venue-index').value);
     const data = {
         name: document.getElementById('edit-venue-name').value.trim(),
@@ -1638,7 +1544,6 @@ function saveVenueData() {
 }
 
 function deleteVenue(idx) {
-    if (!requireAdmin()) return;
     if (confirm(`Удалить площадку ${VENUES_LIST[idx].name}?`)) {
         VENUES_LIST.splice(idx, 1);
         saveToStore(APP_STORAGE_KEYS.VENUES, VENUES_LIST);
@@ -1707,7 +1612,6 @@ function openScheduleEditorModal(idx = -1) {
 function closeScheduleEditorModal() { document.getElementById('scheduleEditorModal').style.display = 'none'; }
 
 function saveScheduleData() {
-    if (!requireAdmin()) return;
     const idx = parseInt(document.getElementById('edit-schedule-index').value);
     const data = {
         time: document.getElementById('edit-schedule-time').value.trim(),
@@ -1723,7 +1627,6 @@ function saveScheduleData() {
 }
 
 function deleteSchedule(idx) {
-    if (!requireAdmin()) return;
     if (confirm(`Удалить защиту ${SCHEDULE_LIST[idx].comp}?`)) {
         SCHEDULE_LIST.splice(idx, 1);
         saveToStore(APP_STORAGE_KEYS.SCHEDULE, SCHEDULE_LIST);
@@ -1787,7 +1690,6 @@ function openChampContactEditorModal(idx = -1) {
 function closeChampContactEditorModal() { document.getElementById('champContactEditorModal').style.display = 'none'; }
 
 function saveChampContactData() {
-    if (!requireAdmin()) return;
     const idx = parseInt(document.getElementById('edit-champ-contact-index').value);
     const data = {
         dept: document.getElementById('edit-champ-dept').value.trim(),
@@ -1802,7 +1704,6 @@ function saveChampContactData() {
 }
 
 function deleteChampContact(idx) {
-    if (!requireAdmin()) return;
     if (confirm(`Удалить контакт ${CHAMP_CONTACTS_LIST[idx].name}?`)) {
         CHAMP_CONTACTS_LIST.splice(idx, 1);
         saveToStore(APP_STORAGE_KEYS.CHAMP_CONTACTS, CHAMP_CONTACTS_LIST);
@@ -1855,9 +1756,9 @@ async function copyCallSheetShareLink() {
 
 async function loadCallSheetViewFromUrl() {
     const id = new URLSearchParams(window.location.search).get('callsheet');
-    if (!id || !currentGoogleIdToken) return;
+    if (!id) return;
     try {
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getCallSheet&id=${encodeURIComponent(id)}${googleAuthQuery()}`, { credentials: 'include' });
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getCallSheet&id=${encodeURIComponent(id)}`);
         const result = await response.json();
         if (!result.success || !result.data) throw new Error('Вызывной лист не найден');
         renderMobileCallSheet(result.data);
@@ -1938,7 +1839,6 @@ function applySelectedCsTemplate() {
 }
 
 function saveCurrentCsTemplate() {
-    if (!requireAdmin()) return;
     const name = prompt('Название шаблона смены:');
     if (name === null) return;
     const template = normalizeCsTemplate({
@@ -1957,7 +1857,6 @@ function saveCurrentCsTemplate() {
 }
 
 function deleteSelectedCsTemplate() {
-    if (!requireAdmin()) return;
     const sel = document.getElementById('cs-template-select');
     if (!sel || sel.value === '') { alert('Выберите шаблон для удаления.'); return; }
     const index = Number.parseInt(sel.value, 10);
@@ -2537,7 +2436,6 @@ function exportCallSheetToCSV() {
 }
 
 async function downloadActWord() {
-    if (currentAccessRole === 'viewer') { alert('Режим только чтения не позволяет оформлять выдачу.'); return; }
     const actData = collectActData();
     if (!actData) {
         alert('Невозможно скачать акт: добавьте оборудование в список!');
@@ -2609,10 +2507,6 @@ function exportAppConfiguration() {
 }
 
 async function importAppConfiguration(event) {
-    if (!requireAdmin()) {
-        if (event.target) event.target.value = '';
-        return;
-    }
     const input = event.target;
     const file = input.files?.[0];
     input.value = '';
